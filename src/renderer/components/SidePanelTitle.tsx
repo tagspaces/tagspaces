@@ -39,12 +39,12 @@ function SidePanelTitle(props: TSButtonProps) {
       <TooltipTS title={tooltip}>
         <Typography
           variant="subtitle1"
-          style={{
+          sx={{
             textTransform: 'uppercase',
             fontSize: '0.9rem',
             flex: 1,
-            paddingLeft: 7,
-            paddingTop: 12,
+            paddingLeft: '7px',
+            paddingTop: '12px',
           }}
         >
           {title}

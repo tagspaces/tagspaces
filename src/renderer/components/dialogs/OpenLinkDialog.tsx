@@ -94,7 +94,7 @@ function OpenLinkDialog(props: Props) {
       onClick={onConfirm}
       data-tid="confirmOpenLink"
       variant="contained"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }

@@ -42,7 +42,7 @@ function ProgressDialog(props: Props) {
       style={{ minHeight: 200 }}
     >
       <DialogTitle
-        style={{ cursor: 'move', minHeight: 20 }}
+        sx={{ cursor: 'move', minHeight: '20px' }}
         data-tid="progressDialogTitle"
         id="draggable-dialog-title"
       >

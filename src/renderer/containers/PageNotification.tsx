@@ -19,6 +19,7 @@
 import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getLastPublishedVersion } from '-/reducers/settings';
@@ -27,7 +28,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import Snackbar from '@mui/material/Snackbar';
 import { styled } from '@mui/material/styles';
 import Links from 'assets/links';
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Pro } from '../pro';
@@ -36,7 +36,6 @@ import {
   AppDispatch,
   isUpdateAvailable,
 } from '../reducers/app';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
@@ -148,7 +147,7 @@ function PageNotification() {
             key="changelogButton"
             color="secondary"
             onClick={openChangelogPage}
-            style={{
+            sx={{
               marginLeft: AppConfig.defaultSpaceBetweenButtons,
             }}
           >
@@ -156,7 +155,7 @@ function PageNotification() {
           </TsButton>,
           <TsButton
             key="latestVersionButton"
-            style={{
+            sx={{
               marginLeft: AppConfig.defaultSpaceBetweenButtons,
             }}
             onClick={getLatestVersion}

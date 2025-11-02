@@ -120,7 +120,7 @@ function SettingsAdvanced(props: Props) {
     dispatch(SettingsActions.setHistory(key, value));
 
   return (
-    <List style={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
+    <List sx={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
       <ListItem>
         <TsButton
           data-tid="resetSettingsTID"
@@ -146,13 +146,13 @@ function SettingsAdvanced(props: Props) {
             )
           }
           color="secondary"
-          style={{ marginLeft: -7 }}
+          sx={{ marginLeft: '-7px' }}
         >
           {t('core:resetSettings')}
         </TsButton>
         <TsButton
           data-tid="reloadAppTID"
-          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+          sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
           onClick={() => {
             if (AppConfig.isElectron) {
               window.electronIO.ipcRenderer.sendMessage('reloadWindow');
@@ -183,9 +183,9 @@ function SettingsAdvanced(props: Props) {
       </ListItem>
       {workSpaces && workSpaces.length > 0 && (
         <List
-          style={{
-            padding: 5,
-            paddingLeft: 10,
+          sx={{
+            padding: '5px',
+            paddingLeft: '10px',
             backgroundColor: '#d3d3d34a',
             borderRadius: AppConfig.defaultCSSRadius,
           }}
@@ -352,9 +352,9 @@ function SettingsAdvanced(props: Props) {
         </TsButton>
       </ListItem>
       <List
-        style={{
-          padding: 5,
-          paddingLeft: 10,
+        sx={{
+          padding: '5px',
+          paddingLeft: '10px',
           backgroundColor: '#d3d3d34a',
           borderRadius: AppConfig.defaultCSSRadius,
         }}
@@ -382,7 +382,7 @@ function SettingsAdvanced(props: Props) {
                 <TooltipTS title={t('core:serverIsDefaultHelp')}>
                   <CheckIcon
                     data-tid="tileServerDefaultIndication"
-                    style={{ marginLeft: 10 }}
+                    sx={{ marginLeft: '10px' }}
                   />
                 </TooltipTS>
               )}

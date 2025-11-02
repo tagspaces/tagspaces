@@ -155,7 +155,7 @@ function RenameEntryDialog(props: Props) {
       onClick={onConfirm}
       data-tid="confirmRenameEntry"
       variant="contained"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }

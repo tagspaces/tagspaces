@@ -125,9 +125,9 @@ function MainToolbar(props: Props) {
 
   return (
     <Toolbar
-      style={{
-        paddingLeft: 5,
-        paddingRight: 5,
+      sx={{
+        paddingLeft: '5px',
+        paddingRight: '5px',
         position: 'absolute',
         zIndex: 1,
         background:

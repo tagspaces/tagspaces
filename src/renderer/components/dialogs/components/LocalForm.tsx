@@ -81,7 +81,7 @@ function LocalForm(props: Props) {
                 autoCorrect: 'off',
                 autoCapitalize: 'none',
                 endAdornment: (
-                  <InputAdornment position="end" style={{ height: 32 }}>
+                  <InputAdornment position="end" sx={{ height: '32px' }}>
                     <TsIconButton onClick={openDirectory}>
                       <FolderIcon />
                     </TsIconButton>

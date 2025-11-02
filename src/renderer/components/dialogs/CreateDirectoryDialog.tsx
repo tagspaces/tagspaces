@@ -176,7 +176,7 @@ function CreateDirectoryDialog(props: Props) {
       data-tid="confirmCreateNewDirectory"
       id="confirmCreateNewDirectory"
       variant="contained"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -241,13 +241,13 @@ function CreateDirectoryDialog(props: Props) {
             label={t('backgroundColor')}
             retrieveValue={() => backgroundColor.current}
             value={' '}
-            style={{ marginTop: 0 }}
+            sx={{ marginTop: 0 }}
             slotProps={{
               input: {
                 readOnly: true,
                 endAdornment: (
-                  <InputAdornment position="end" style={{ height: 300 }}>
-                    <Box style={{ padding: 10, width: 300 }}>
+                  <InputAdornment position="end" sx={{ height: '300px' }}>
+                    <Box sx={{ padding: '10px', width: '300px' }}>
                       {defaultBackgrounds.map((background, cnt) => (
                         <React.Fragment key={cnt}>
                           <TsIconButton
@@ -258,10 +258,10 @@ function CreateDirectoryDialog(props: Props) {
                               backgroundColor.current = background;
                               forceUpdate();
                             }}
-                            style={{
+                            sx={{
                               backgroundColor: background,
                               backgroundImage: background,
-                              margin: 5,
+                              margin: '5px',
                               ...(backgroundColor.current === background && {
                                 border: '0.5rem outset ' + background,
                               }),

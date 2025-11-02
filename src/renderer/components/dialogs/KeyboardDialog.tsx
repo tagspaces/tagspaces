@@ -79,7 +79,7 @@ function KeyboardDialog(props: Props) {
       data-tid="closeKeyboardDialog"
       onClick={onClose}
       variant="outlined"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }

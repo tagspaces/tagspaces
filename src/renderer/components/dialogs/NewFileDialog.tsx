@@ -222,7 +222,7 @@ function NewFileDialog(props: Props) {
         createFile(fileType, targetDirectoryPath);
       }}
       disabled={haveError.current}
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }

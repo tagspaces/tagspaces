@@ -156,10 +156,10 @@ function LocationManager(props: Props) {
       {locationDirectoryContextMenuAnchorEl && <LocationContextMenu />}
       <List
         data-tid="locationList"
-        style={{
+        sx={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          width: 310,
-          borderRadius: 5,
+          width: '310px',
+          borderRadius: '5px',
           paddingTop: 0,
           marginTop: 0,
           overflowY: 'auto',

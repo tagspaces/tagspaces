@@ -24,6 +24,7 @@ import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUp
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useExtensionsContext } from '-/hooks/useExtensionsContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
 import { getUserDataDir, loadExtensions, unZip } from '-/services/utils-io';
@@ -36,10 +37,9 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 function SettingsExtensions() {
   const { t } = useTranslation();
@@ -142,7 +142,7 @@ function SettingsExtensions() {
           aria-controls="internal-content"
           id="internal-header"
         >
-          <Typography style={{ fontWeight: 'bold' }}>
+          <Typography sx={{ fontWeight: 'bold' }}>
             {t('core:coreExtensions')}
           </Typography>
           <InfoIcon tooltip="These are extensions which are packaged with the current version of the app" />
@@ -167,7 +167,7 @@ function SettingsExtensions() {
           aria-controls="installed-content"
           id="installed-header"
         >
-          <Typography style={{ fontWeight: 'bold' }}>
+          <Typography sx={{ fontWeight: 'bold' }}>
             {t('core:thirdPartyExtensions')}
           </Typography>
           <InfoIcon tooltip="Extensions manually installed on top of the current app installation" />

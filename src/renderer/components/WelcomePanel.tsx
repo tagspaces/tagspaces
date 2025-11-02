@@ -165,10 +165,10 @@ function WelcomePanel() {
       <List
         dense
         aria-label="useful links in the welcome page"
-        style={{
+        sx={{
           height: 'calc(100% - 70px)',
-          marginTop: 45,
-          marginBottom: 15,
+          marginTop: '45px',
+          marginBottom: '15px',
           overflowY: 'auto',
           overflowX: 'hidden',
           backgroundColor: theme.palette.background.default,

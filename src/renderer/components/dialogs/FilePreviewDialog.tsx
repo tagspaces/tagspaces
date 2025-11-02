@@ -47,7 +47,6 @@ function FilePreviewDialog(props: Props) {
   const { isEditMode } = useFilePropertiesContext();
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  // const supportedFileTypes = useSelector(getSupportedFileTypes);
   const currentTheme = useSelector(getCurrentTheme);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
     useRef<HTMLIFrameElement>(null);
@@ -61,7 +60,6 @@ function FilePreviewDialog(props: Props) {
           ...(fsEntry.uuid && { uuid: fsEntry.uuid }),
           path: fsEntry.path,
           isFile: fsEntry.isFile,
-          // editMode: false,
         }
       : undefined;
 
@@ -77,7 +75,7 @@ function FilePreviewDialog(props: Props) {
             fileViewer.current &&
             fileViewer.current.contentWindow &&
             // @ts-ignore
-            fileViewer.current.contentWindow.setContent
+            fileViewer?.current?.contentWindow?.setContent
           ) {
             let fileDirectory = extractContainingDirectoryPath(openedFile.path);
             if (AppConfig.isWeb) {
@@ -143,8 +141,10 @@ function FilePreviewDialog(props: Props) {
       fullScreen={smallScreen}
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
-      PaperProps={{ sx: { width: '100%', height: '100%' } }}
-      slotProps={{ backdrop: { style: { backgroundColor: 'transparent' } } }}
+      slotProps={{
+        backdrop: { sx: { backgroundColor: 'transparent' } },
+        paper: { sx: { width: '100%', height: '100%' } },
+      }}
     >
       <TsDialogTitle
         dialogTitle="Preview"
@@ -152,11 +152,9 @@ function FilePreviewDialog(props: Props) {
         onClose={onClose}
       />
       <DialogContent
-        style={{
-          marginLeft: 'auto',
-          marginRight: 'auto',
+        sx={{
           overflowY: 'hidden',
-          padding: smallScreen ? '0' : 'inherited',
+          padding: '10px',
           flexGrow: 1,
         }}
         data-tid="filePreviewTID"
@@ -164,7 +162,7 @@ function FilePreviewDialog(props: Props) {
         <Typography
           variant="body2"
           gutterBottom
-          style={{ wordBreak: 'break-all', margin: 10 }}
+          sx={{ wordBreak: 'break-all', marginLeft: '15px' }}
         >
           {fsEntry.path}
         </Typography>
@@ -172,7 +170,6 @@ function FilePreviewDialog(props: Props) {
           key="FileViewPreviewID"
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
-          height={'90%'}
           handleMessage={handleMessage}
         />
       </DialogContent>

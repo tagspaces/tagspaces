@@ -45,7 +45,7 @@ function PerspectiveSelector(props: Props) {
   const perspectiveSelectorMenuItems = [];
   perspectiveSelectorMenuItems.push(
     <MenuItem
-      style={{ display: 'flex' }}
+      sx={{ display: 'flex' }}
       key={PerspectiveIDs.UNSPECIFIED}
       value={PerspectiveIDs.UNSPECIFIED}
     >

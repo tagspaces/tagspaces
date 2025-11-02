@@ -225,7 +225,11 @@ function CreateFile(props: Props) {
                     <Typography
                       variant="body2"
                       title={template.content}
-                      style={{ maxHeight: 75, height: 75, overflowY: 'auto' }}
+                      sx={{
+                        maxHeight: '75px',
+                        height: '75px',
+                        overflowY: 'auto',
+                      }}
                     >
                       {template.description || template.content}
                     </Typography>
@@ -233,10 +237,10 @@ function CreateFile(props: Props) {
                   <CardActions>
                     <TsButton
                       size="small"
-                      style={{
-                        marginLeft: 10,
-                        marginBottom: 10,
-                        marginTop: -10,
+                      sx={{
+                        marginLeft: '10px',
+                        marginBottom: '10px',
+                        marginTop: '-10px',
                       }}
                       onClick={() => createFile(template.type, template)}
                       data-tid={

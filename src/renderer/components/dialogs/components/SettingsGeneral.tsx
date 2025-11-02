@@ -321,7 +321,7 @@ function SettingsGeneral() {
                   <TsToggleButton
                     value={false}
                     data-tid="settingsSetPersistTagsInFileName"
-                    style={{
+                    sx={{
                       borderTopRightRadius: 0,
                       borderBottomRightRadius: 0,
                     }}
@@ -340,7 +340,7 @@ function SettingsGeneral() {
                   <TsToggleButton
                     value={true}
                     data-tid="settingsSetPersistTagsInSidecarFile"
-                    style={{
+                    sx={{
                       borderTopLeftRadius: 0,
                       borderBottomLeftRadius: 0,
                     }}
@@ -376,7 +376,7 @@ function SettingsGeneral() {
                 <TsToggleButton
                   value={false}
                   data-tid="fileNameBeginningTagTID"
-                  style={{
+                  sx={{
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                   }}
@@ -395,7 +395,7 @@ function SettingsGeneral() {
                 <TsToggleButton
                   value={true}
                   data-tid="fileNameEndTagTID"
-                  style={{
+                  sx={{
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
                   }}
@@ -548,7 +548,7 @@ function SettingsGeneral() {
               <TransparentBackground>
                 <TsButton
                   data-tid="settingsToggleDefaultTagBackgroundColor"
-                  style={{
+                  sx={{
                     backgroundColor: settings.tagBackgroundColor,
                     border: '1px solid lightgray',
                   }}
@@ -568,7 +568,7 @@ function SettingsGeneral() {
               <TransparentBackground>
                 <TsButton
                   data-tid="settingsToggleDefaultTagForegroundColor"
-                  style={{
+                  sx={{
                     border: '1px solid lightgray',
                     backgroundColor: settings.tagTextColor,
                   }}
@@ -626,7 +626,7 @@ function SettingsGeneral() {
             <ListItem>
               <ListItemText primary={t('core:maxSearchResultChoose')} />
               <TsTextField
-                style={{ maxWidth: '100px' }}
+                sx={{ maxWidth: '100px' }}
                 type="number"
                 data-tid="settingsMaxSearchResult"
                 value={settings.maxSearchResult}
@@ -757,7 +757,7 @@ function SettingsGeneral() {
                 }
               />
               <TsTextField
-                style={{ maxWidth: '100px' }}
+                sx={{ maxWidth: '100px' }}
                 data-tid="prefixTagContainerTID"
                 value={settings.prefixTagContainer}
                 onChange={(event) => setPrefixTagContainer(event.target.value)}
@@ -775,7 +775,7 @@ function SettingsGeneral() {
                 slotProps={{
                   input: { inputMode: 'numeric', min: 0 },
                 }}
-                style={{ maxWidth: '92px' }}
+                sx={{ maxWidth: '92px' }}
                 data-tid="prefixTagContainerTID"
                 value={maxCollectedTag}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -946,7 +946,7 @@ function SettingsGeneral() {
         />
       </Box>
       <List
-        style={{
+        sx={{
           overflowX: 'hidden',
           overflowY: 'auto',
           height: 'calc( 100% - 80px )',

@@ -25,6 +25,7 @@ import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import { useExtensionsContext } from '-/hooks/useExtensionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
@@ -54,7 +55,6 @@ import {
   TableVirtuoso,
   TableVirtuosoHandle,
 } from 'react-virtuoso';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 function SettingsFileTypes() {
   const { t } = useTranslation();
@@ -328,8 +328,8 @@ function SettingsFileTypes() {
             <TsTextField
               data-tid={'typeTID' + item.type}
               defaultValue={item.type}
-              style={{
-                width: 160,
+              sx={{
+                width: '160px',
                 marginTop: 0,
               }}
               error={
@@ -351,10 +351,10 @@ function SettingsFileTypes() {
                         <TsButton
                           tooltip={t('core:colorPickerDialogTitle')}
                           data-tid="settingsFileTypes_openColorPicker_"
-                          style={{
+                          sx={{
                             border: '1px solid lightgray',
                             backgroundColor: `${item.color}`,
-                            minWidth: 40,
+                            minWidth: '40px',
                           }}
                           onClick={() => {
                             openColorPicker(item);
@@ -394,7 +394,7 @@ function SettingsFileTypes() {
               data-tid={'viewerTID' + item.type}
               error={isValidationInProgress.current && item.viewer === ''}
               value={item.viewer}
-              style={{ minWidth: 150, marginTop: 0 }}
+              sx={{ minWidth: '150px', marginTop: 0 }}
               onChange={(event) => {
                 const extension: TS.Extension = extensions.find(
                   (ext) => ext.extensionId === event.target.value,
@@ -436,7 +436,7 @@ function SettingsFileTypes() {
           <FormControl fullWidth error={isValidationInProgress.current}>
             <TsSelect
               value={item.editor}
-              style={{ minWidth: 150, marginTop: 0 }}
+              sx={{ minWidth: '150px', marginTop: 0 }}
               onChange={(event) =>
                 updateItems(item, 'editor', event.target.value)
               }
@@ -467,20 +467,20 @@ function SettingsFileTypes() {
   return (
     <Paper
       data-tid="settingsFileTypesTID"
-      style={{
-        height: 500,
+      sx={{
+        height: '500px',
         width: '100%',
-        minWidth: 350,
+        minWidth: '350px',
         overflow: 'hidden',
         background: 'transparent',
-        paddingLeft: 10,
+        paddingLeft: '10px',
       }}
     >
       <TsButton
         data-tid="addNewFileTypeTID"
         onClick={onAddFileType}
         color="secondary"
-        style={{
+        sx={{
           marginTop: AppConfig.defaultSpaceBetweenButtons,
           marginBottom: AppConfig.defaultSpaceBetweenButtons,
         }}
@@ -496,7 +496,7 @@ function SettingsFileTypes() {
             dispatch(SettingsActions.setSupportedFileTypes(supportedFileTypes));
           }}
           color="secondary"
-          style={{
+          sx={{
             margin: AppConfig.defaultSpaceBetweenButtons,
           }}
         >

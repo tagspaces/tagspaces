@@ -120,7 +120,7 @@ Do you want to continue?`)
       style={{ minHeight: 200 }}
     >
       <DialogTitle
-        style={{ cursor: 'move', minHeight: 20 }}
+        sx={{ cursor: 'move', minHeight: '20px' }}
         data-tid="ImportMacTagDialogTitle"
         id="draggable-dialog-title"
       >

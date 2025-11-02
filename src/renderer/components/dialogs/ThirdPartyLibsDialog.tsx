@@ -40,7 +40,7 @@ function ThirdPartyLibsDialog(props: Props) {
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const okButton = (
     <TsButton
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }

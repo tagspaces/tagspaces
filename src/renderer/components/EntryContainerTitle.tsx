@@ -160,7 +160,7 @@ function EntryContainerTitle(props: Props) {
           title={t('closeButtonDialog')}
           aria-label="close"
           tabIndex={-1}
-          style={
+          sx={
             {
               WebkitAppRegion: 'no-drag',
             } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -196,10 +196,10 @@ function EntryContainerTitle(props: Props) {
             onClick={(event: React.MouseEvent<HTMLElement>) => {
               setAnchorEl(event.currentTarget);
             }}
-            style={
+            sx={
               {
                 backgroundColor: fileSystemEntryColor,
-                paddingLeft: 10,
+                paddingLeft: '10px',
                 WebkitAppRegion: 'no-drag',
               } as React.CSSProperties & { WebkitAppRegion?: string }
             }
@@ -224,10 +224,10 @@ function EntryContainerTitle(props: Props) {
           onClick={(event: React.MouseEvent<HTMLElement>) => {
             setAnchorEl(event.currentTarget);
           }}
-          style={
+          sx={
             {
               backgroundColor: AppConfig.defaultFolderColor,
-              paddingLeft: 10,
+              paddingLeft: '10px',
               WebkitAppRegion: 'no-drag',
             } as React.CSSProperties & { WebkitAppRegion?: string }
           }
@@ -266,14 +266,14 @@ function EntryContainerTitle(props: Props) {
           {bookmarksContext &&
           bookmarksContext.haveBookmark(openedEntry.path) ? (
             <EntryBookmarkIcon
-              style={{
-                color: theme.palette.primary.main,
+              sx={{
+                color: 'primary.main',
               }}
             />
           ) : (
             <EntryBookmarkAddIcon
-              style={{
-                color: theme.palette.text.secondary,
+              sx={{
+                color: 'text.secondary',
               }}
             />
           )}
@@ -283,8 +283,8 @@ function EntryContainerTitle(props: Props) {
       {openedEntry.isEncrypted && (
         <Tooltip title={t('core:encryptedTooltip')}>
           <EncryptedIcon
-            style={{
-              color: theme.palette.primary.main,
+            sx={{
+              color: 'primary.main',
             }}
           />
         </Tooltip>

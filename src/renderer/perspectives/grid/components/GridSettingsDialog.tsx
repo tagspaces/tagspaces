@@ -114,7 +114,7 @@ function GridSettingsDialog(props: Props) {
 
   const helpButton = (
     <TsButton
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -145,7 +145,7 @@ function GridSettingsDialog(props: Props) {
         {haveLocalSetting() && (
           <>
             <Typography
-              style={{ color: theme.palette.text.primary }}
+              sx={{ color: theme.palette.text.primary }}
               variant="caption"
             >
               {t('core:folderWithCustomPerspectiveSetting')}
@@ -165,14 +165,14 @@ function GridSettingsDialog(props: Props) {
         )}
         <Box style={{ display: 'flex', marginTop: 8 }}>
           <Typography
-            style={{ color: theme.palette.text.primary, alignSelf: 'center' }}
+            sx={{ color: theme.palette.text.primary, alignSelf: 'center' }}
             variant="body1"
           >
             {t('Size of the entries')}
           </Typography>
           <ZoomComponent preview={true} />
         </Box>
-        <Divider style={{ marginTop: 8, marginBottom: 8 }} />
+        <Divider sx={{ marginTop: '8px', marginBottom: '8px' }} />
         <FormGroup>
           <FormControlLabel
             // labelPlacement="start"
@@ -218,7 +218,7 @@ function GridSettingsDialog(props: Props) {
             }
             label={t('core:showHideEntriesDescription')}
           />
-          <Divider style={{ marginTop: 8, marginBottom: 8 }} />
+          <Divider sx={{ marginTop: '8px', marginBottom: '8px' }} />
           <FormControlLabel
             control={
               <Switch
@@ -248,7 +248,7 @@ function GridSettingsDialog(props: Props) {
             />
           )}
         </FormGroup>
-        <Divider style={{ marginTop: 8, marginBottom: 8 }} />
+        <Divider sx={{ marginTop: '8px', marginBottom: '8px' }} />
         <MenuItem
           data-tid="gridPerspectiveToggleThumbnailsMode"
           title={t('core:toggleThumbnailModeTitle')}
@@ -269,7 +269,7 @@ function GridSettingsDialog(props: Props) {
           </ListItemIcon>
           <ListItemText primary={t('core:toggleThumbnailMode')} />
         </MenuItem>
-        <Divider style={{ marginTop: 8, marginBottom: 8 }} />
+        <Divider sx={{ marginTop: '8px', marginBottom: '8px' }} />
         <MenuItem
           data-tid="sortByMenuTID"
           title={t('core:sortBy')}
@@ -379,7 +379,7 @@ function GridSettingsDialog(props: Props) {
               saveSettings(true);
               onClose();
             }}
-            style={{
+            sx={{
               marginTop: AppConfig.defaultSpaceBetweenButtons,
             }}
           >
@@ -392,7 +392,7 @@ function GridSettingsDialog(props: Props) {
                 saveSettings(false);
                 onClose();
               }}
-              style={{
+              sx={{
                 marginTop: AppConfig.defaultSpaceBetweenButtons,
                 marginLeft: AppConfig.defaultSpaceBetweenButtons,
               }}

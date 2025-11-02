@@ -261,7 +261,7 @@ function EditSearchQuery(props: Props) {
           value={tempSearchQuery.searchBoxing}
         >
           <TsToggleButton
-            style={{
+            sx={{
               borderTopRightRadius: 0,
               borderBottomRightRadius: 0,
             }}
@@ -271,7 +271,7 @@ function EditSearchQuery(props: Props) {
             {t('location')}
           </TsToggleButton>
           <TsToggleButton
-            style={{
+            sx={{
               borderRadius: 0,
             }}
             tooltip={t('searchCurrentFolderWithSubFolders')}
@@ -280,7 +280,7 @@ function EditSearchQuery(props: Props) {
             {t('folder')}
           </TsToggleButton>
           <TsToggleButton
-            style={{
+            sx={{
               borderTopLeftRadius: 0,
               borderBottomLeftRadius: 0,
             }}
@@ -306,7 +306,7 @@ function EditSearchQuery(props: Props) {
           value={tempSearchQuery.searchType}
         >
           <TsToggleButton
-            style={{
+            sx={{
               borderTopRightRadius: 0,
               borderBottomRightRadius: 0,
             }}
@@ -317,7 +317,7 @@ function EditSearchQuery(props: Props) {
             {t('searchTypeFuzzy')}
           </TsToggleButton>
           <TsToggleButton
-            style={{
+            sx={{
               borderRadius: 0,
             }}
             tooltip={t('searchTypeSemiStrictTooltip')}
@@ -327,7 +327,7 @@ function EditSearchQuery(props: Props) {
             {t('searchTypeSemiStrict')}
           </TsToggleButton>
           <TsToggleButton
-            style={{
+            sx={{
               borderTopLeftRadius: 0,
               borderBottomLeftRadius: 0,
             }}
@@ -353,7 +353,7 @@ function EditSearchQuery(props: Props) {
         >
           <TsToggleButton
             tooltip={t('useCurrentIndexTooltip')}
-            style={{
+            sx={{
               borderTopRightRadius: 0,
               borderBottomRightRadius: 0,
             }}
@@ -363,7 +363,7 @@ function EditSearchQuery(props: Props) {
           </TsToggleButton>
           <TsToggleButton
             tooltip={t('forceReindexTooltip')}
-            style={{
+            sx={{
               borderTopLeftRadius: 0,
               borderBottomLeftRadius: 0,
             }}
@@ -408,7 +408,7 @@ function EditSearchQuery(props: Props) {
         />
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
-        <FormHelperText style={{ marginLeft: 0 }}></FormHelperText>
+        <FormHelperText sx={{ marginLeft: 0 }}></FormHelperText>
         <TsSelect
           value={findPropertiesByValues(tempSearchQuery.fileTypes)}
           onChange={handleFileTypeChange}
@@ -633,7 +633,7 @@ function EditSearchQuery(props: Props) {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box position="relative" display="inline-flex">
               <div style={{ maxWidth: 180 }}>
-                <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+                <FormHelperText sx={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodFrom')}
                 </FormHelperText>
                 <TsDatePicker
@@ -653,7 +653,7 @@ function EditSearchQuery(props: Props) {
                 />
               </div>
               <div style={{ marginLeft: 5, maxWidth: 180 }}>
-                <FormHelperText style={{ marginLeft: 0, marginTop: 0 }}>
+                <FormHelperText sx={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodTo')}
                 </FormHelperText>
                 <TsDatePicker

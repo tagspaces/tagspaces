@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React from 'react';
 import {
   AIIcon,
   AdvancedSettingsIcon,
@@ -46,7 +45,7 @@ import Tabs from '@mui/material/Tabs';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export enum SettingsTab {
@@ -87,7 +86,7 @@ function SettingsDialog(props: Props) {
     <TsButton
       onClick={() => openURLExternally(Links.documentationLinks.settings, true)}
       color="secondary"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -118,7 +117,7 @@ function SettingsDialog(props: Props) {
       >
         <Tab
           value={SettingsTab.General}
-          style={{
+          sx={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
           }}
@@ -129,7 +128,7 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           value={SettingsTab.FileTypes}
-          style={{
+          sx={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
           }}
@@ -140,7 +139,7 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           value={SettingsTab.Templates}
-          style={{
+          sx={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
           }}
@@ -155,7 +154,7 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           value={SettingsTab.KeyBindings}
-          style={{
+          sx={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
           }}
@@ -166,7 +165,7 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           value={SettingsTab.Extensions}
-          style={{
+          sx={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
           }}
@@ -177,7 +176,7 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           value={SettingsTab.Advanced}
-          style={{
+          sx={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
           }}
@@ -188,7 +187,7 @@ function SettingsDialog(props: Props) {
         />
         <Tab
           value={SettingsTab.AI}
-          style={{
+          sx={{
             textTransform: 'unset',
             justifyContent: 'flex-start',
           }}

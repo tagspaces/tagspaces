@@ -31,13 +31,13 @@ function TargetPath() {
   const currentLocation = findLocation();
 
   return (
-    <Grid container style={{ marginTop: 20 }}>
+    <Grid container style={{ marginTop: '20px' }}>
       {targetDirectoryPath ? (
         <Typography
-          style={{ display: 'flex', alignItems: 'center' }}
+          sx={{ display: 'flex', alignItems: 'center' }}
           variant="caption"
         >
-          <InfoIcon style={{ paddingRight: 10 }} />
+          <InfoIcon sx={{ paddingRight: '10px' }} />
           {t('core:entriesWillBeCreatedIn') +
             ' ' +
             (currentLocation?.type === locationType.TYPE_CLOUD

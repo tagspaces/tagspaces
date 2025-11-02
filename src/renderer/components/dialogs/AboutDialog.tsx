@@ -130,7 +130,7 @@ function AboutDialog(props: Props) {
         onClose={onClose}
         closeButtonTestId="closeAboutDialogTID"
       />
-      <DialogContent style={{ overflowY: 'auto' }}>
+      <DialogContent sx={{ overflowY: 'auto' }}>
         <img
           alt="TagSpaces logo"
           src={LogoIcon}
@@ -161,7 +161,7 @@ function AboutDialog(props: Props) {
           is made possible by the TagSpaces project and other open source
           software listed in the:
           <TsButton
-            style={{ marginTop: 5 }}
+            sx={{ marginTop: '5px' }}
             onClick={() => openThirdPartyLibsDialog()}
           >
             Software Acknowledgements
@@ -183,7 +183,7 @@ function AboutDialog(props: Props) {
           <br />
           {imprintURL && (
             <TsButton
-              style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
+              sx={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
               variant="text"
               onClick={() => {
                 openURLExternally(imprintURL, true);
@@ -194,7 +194,7 @@ function AboutDialog(props: Props) {
           )}
           {privacyURL && (
             <TsButton
-              style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
+              sx={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
               variant="text"
               onClick={() => {
                 openURLExternally(privacyURL, true);
@@ -204,7 +204,7 @@ function AboutDialog(props: Props) {
             </TsButton>
           )}
           <TsButton
-            style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
+            sx={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
             variant="text"
             onClick={() => {
               openURLExternally(Links.links.changelogURL, true);
@@ -213,7 +213,7 @@ function AboutDialog(props: Props) {
             Changelog
           </TsButton>
           <TsButton
-            style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
+            sx={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
             variant="text"
             data-tid="openLicenseDialog"
             onClick={() => openLicenseDialog()}
@@ -231,7 +231,7 @@ function AboutDialog(props: Props) {
               onClick={() => {
                 openURLExternally(Links.links.productsOverview, true);
               }}
-              style={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
+              sx={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
             >
               Upgrade to PRO
             </TsButton>

@@ -46,9 +46,9 @@ function SearchBox(props: Props) {
           }}
           slotProps={{
             paper: {
-              style: {
+              sx: {
                 overflow: 'hidden',
-                height: 720,
+                height: '720px',
                 // background: alpha(theme.palette.background.default, 0.95),
                 // backdropFilter: 'blur(5px)',
               },

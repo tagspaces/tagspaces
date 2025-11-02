@@ -71,7 +71,7 @@ function LicenseDialog(props: Props) {
         // inputRef={ref => {
         //   licenseElement = ref;
         // }}
-        style={{ overflow: 'auto' }}
+        sx={{ overflow: 'auto' }}
       >
         <pre style={{ whiteSpace: 'pre-wrap', userSelect: 'text' }}>
           {Pro ? Pro.EULAContent : LicenseContent}

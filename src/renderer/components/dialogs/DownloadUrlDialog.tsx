@@ -151,7 +151,7 @@ function DownloadUrlDialog(props: Props) {
       variant="contained"
       data-tid={'downloadFileUrlTID'}
       onClick={() => downloadURL()}
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }

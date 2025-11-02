@@ -141,7 +141,7 @@ function ObjectStoreForm(props: Props) {
           />
           {cloudErrorTextName && (
             <FormHelperText
-              style={{ marginLeft: 0, marginTop: 0, marginBottom: 10 }}
+              sx={{ marginLeft: 0, marginTop: 0, marginBottom: '10px' }}
             >
               {t('core:invalidName')}
             </FormHelperText>
@@ -171,7 +171,7 @@ function ObjectStoreForm(props: Props) {
           />
           {cloudErrorTextPath && (
             <FormHelperText
-              style={{ marginLeft: 0, marginTop: 0, marginBottom: 10 }}
+              sx={{ marginLeft: 0, marginTop: 0, marginBottom: '10px' }}
             >
               {t('core:invalidPath')}
             </FormHelperText>
@@ -193,7 +193,7 @@ function ObjectStoreForm(props: Props) {
           />
           {cloudErrorAccessKey && (
             <FormHelperText
-              style={{ marginLeft: 0, marginTop: 0, marginBottom: 10 }}
+              sx={{ marginLeft: 0, marginTop: 0, marginBottom: '10px' }}
             >
               {t('core:invalidAccessKey')}
             </FormHelperText>

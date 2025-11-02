@@ -16,9 +16,9 @@
  *
  */
 
-import React from 'react';
-import { MenuItem } from '@mui/material';
 import TsSelect from '-/components/TsSelect';
+import { MenuItem } from '@mui/material';
+import React from 'react';
 interface Props {
   maxLoops: number;
   changeMaxLoops: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -33,8 +33,8 @@ function MaxLoopsSelect(props: Props) {
       fullWidth={false}
       onChange={changeMaxLoops}
       value={maxLoops}
-      style={{
-        minWidth: 100,
+      sx={{
+        minWidth: '100px',
       }}
     >
       <MenuItem value="1">

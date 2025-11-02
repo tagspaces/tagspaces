@@ -138,11 +138,8 @@ function EntryContainer() {
   useEffect(() => {
     try {
       if (
-        fileViewer &&
-        fileViewer.current &&
-        fileViewer.current.contentWindow &&
         // @ts-ignore
-        fileViewer.current.contentWindow.setTheme
+        fileViewer?.current?.contentWindow?.setTheme
       ) {
         // @ts-ignore call setContent from iframe
         fileViewer.current.contentWindow.setTheme(theme.palette.mode);
@@ -150,7 +147,7 @@ function EntryContainer() {
     } catch (e) {
       console.log('Error setTheme', e);
     }
-  }, [theme.palette.mode]); //settings.currentTheme
+  }, [theme.palette.mode]);
 
   const editingSupported: boolean =
     cLocation &&
@@ -565,29 +562,29 @@ function EntryContainer() {
         toggleFullScreen: keyBindings.toggleFullScreen,
       }}
     >
-      <div
-        style={{
+      <Box
+        sx={{
           height: '100%',
           ...(isPanelOpened && openedPanelStyle),
         }}
       >
-        <div
-          style={{
+        <Box
+          sx={{
             width: '100%',
             flexDirection: 'column',
             flex: '1 1 ' + entryPropertiesHeight + '%',
             display: 'flex',
             backgroundColor: theme.palette.background.default,
             overflow: 'hidden',
-            marginBottom: 1,
+            marginBottom: '1px',
           }}
         >
           <Box
-            style={{
+            sx={{
               paddingLeft: 0,
-              paddingRight: 55,
+              paddingRight: '55px',
               paddingTop: 0,
-              minHeight: 48,
+              minHeight: '48px',
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'flex-start',
@@ -610,29 +607,28 @@ function EntryContainer() {
           {tabsElement}
           {openedEntry.isFile && isPanelOpened && (
             <Tooltip title={t('core:togglePreviewSize')}>
-              <div
-                style={{
+              <Box
+                sx={{
                   textAlign: 'center',
-                  // maxHeight: 9,
-                  minHeight: 8,
-                  paddingTop: 2,
-                  backgroundColor: theme.palette.background.default,
+                  minHeight: '8px',
+                  paddingTop: '2px',
+                  backgroundColor: 'background.default',
                   borderBottom: '1px solid ' + theme.palette.divider,
                   cursor: 's-resize',
                 }}
                 onClick={toggleEntryPropertiesHeight}
               >
-                <div
-                  style={{
+                <Box
+                  sx={{
                     width: '10%',
                     border: '1px dashed ' + theme.palette.text.secondary,
                     margin: '2px auto',
                   }}
-                ></div>
-              </div>
+                ></Box>
+              </Box>
             </Tooltip>
           )}
-        </div>
+        </Box>
         {openedEntry.isFile && (
           <FileView
             key="FileViewID"
@@ -644,7 +640,7 @@ function EntryContainer() {
             handleMessage={handleMessage}
           />
         )}
-      </div>
+      </Box>
     </GlobalHotKeys>
   );
 }

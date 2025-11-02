@@ -120,7 +120,7 @@ function EditTagDialog(props: Props) {
       onClick={onConfirm}
       data-tid="editTagConfirm"
       variant="contained"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -157,7 +157,7 @@ function EditTagDialog(props: Props) {
         <FormControl
           fullWidth={true}
           error={inputError}
-          style={{ overflow: 'visible' }}
+          sx={{ overflow: 'visible' }}
         >
           {props.selectedTag.modified_date && (
             <div
@@ -202,16 +202,16 @@ function EditTagDialog(props: Props) {
             data-tid="editTagDescription"
           />
         </FormControl>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagBackgroundColor')} />
           <TransparentBackground>
             <TsButton
               onClick={() => setDisplayColorPicker(!displayColorPicker)}
               data-tid="tagBackgroundColorEditTagDialog"
-              style={{
-                height: 30,
-                borderRadius: 2,
-                borderWidth: 1,
+              sx={{
+                height: '30px',
+                borderRadius: '2px',
+                borderWidth: '1px',
                 borderStyle: 'solid',
                 borderColor: 'gray',
                 padding: '5px',
@@ -231,16 +231,16 @@ function EditTagDialog(props: Props) {
             />
           )}
         </ListItem>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagForegroundColor')} />
           <TransparentBackground>
             <TsButton
               onClick={() => setDisplayTextColorPicker(!displayTextColorPicker)}
               data-tid="tagForegroundColorEditTagDialog"
-              style={{
-                height: 30,
-                borderRadius: 2,
-                borderWidth: 1,
+              sx={{
+                height: '30px',
+                borderRadius: '2px',
+                borderWidth: '1px',
                 borderStyle: 'solid',
                 borderColor: 'gray',
                 padding: '5px',
@@ -260,7 +260,7 @@ function EditTagDialog(props: Props) {
             />
           )}
         </ListItem>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagPreview')} />
           <Tag backgroundColor={color} textColor={textcolor} isDragging={false}>
             <span style={{ textTransform: 'lowercase' }}>

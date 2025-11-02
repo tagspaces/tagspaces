@@ -29,7 +29,7 @@ function MenuKeyBinding(props: Props) {
     <Typography
       variant="body2"
       color="text.secondary"
-      style={{ textTransform: 'uppercase' }}
+      sx={{ textTransform: 'uppercase' }}
     >
       {adjustKeyBinding(keyBinding)}
     </Typography>

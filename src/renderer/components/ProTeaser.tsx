@@ -43,9 +43,9 @@ function ProTeaser(props: Props) {
   return (
     <Box style={{ display: 'block', marginBottom: 0 }}>
       <CardContent
-        style={{
-          paddingLeft: 5,
-          paddingRight: 5,
+        sx={{
+          paddingLeft: '5px',
+          paddingRight: '5px',
           paddingTop: 0,
           paddingBottom: 0,
           textAlign: 'center',
@@ -57,7 +57,7 @@ function ProTeaser(props: Props) {
             {t('core:achieveMore')}
           </span>
           <TsIconButton
-            style={{ right: 5, position: 'absolute' }}
+            sx={{ right: '5px', position: 'absolute' }}
             size="small"
             aria-label="close"
             onClick={(event) => {
@@ -81,13 +81,13 @@ function ProTeaser(props: Props) {
           {/* <img style={{ height: 35 }} src={ProTextLogo} alt="" /> */}
           <br />
           <ViewKanbanTwoToneIcon
-            style={{
-              fontSize: 50,
+            sx={{
+              fontSize: '50px',
               color: '#a466aa',
             }}
           />
-          <CameraTwoToneIcon style={{ fontSize: 50, color: '#f7901e' }} />
-          <MapTwoToneIcon style={{ fontSize: 50, color: '#33b5be' }} />
+          <CameraTwoToneIcon sx={{ fontSize: '50px', color: '#f7901e' }} />
+          <MapTwoToneIcon sx={{ fontSize: '50px', color: '#33b5be' }} />
           {/* <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" /> */}
         </div>
       </CardContent>
@@ -100,7 +100,7 @@ function ProTeaser(props: Props) {
       >
         <ButtonGroup>
           <TsButton
-            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+            sx={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
             onClick={(event: any) => {
               event.preventDefault();
               event.stopPropagation();
@@ -110,7 +110,7 @@ function ProTeaser(props: Props) {
             {t('showMeMore')}
           </TsButton>
           <TsButton
-            style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+            sx={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
             onClick={(event: any) => {
               event.preventDefault();
               event.stopPropagation();

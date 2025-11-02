@@ -85,7 +85,7 @@ function ColorPickerDialog(props: Props) {
       variant="contained"
       onClick={onConfirm}
       data-tid="colorPickerConfirm"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }

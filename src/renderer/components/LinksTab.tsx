@@ -142,7 +142,7 @@ function LinksTab(props: Props) {
               <LinkIcon />
             </TooltipTS>
           }
-          style={{
+          sx={{
             marginRight: AppConfig.defaultSpaceBetweenButtons,
             textTransform: 'none',
             fontWeight: 'normal',
@@ -183,7 +183,7 @@ function LinksTab(props: Props) {
               <LinkIcon />
             </TooltipTS>
           }
-          style={{
+          sx={{
             marginRight: AppConfig.defaultSpaceBetweenButtons,
             textTransform: 'none',
             fontWeight: 'normal',

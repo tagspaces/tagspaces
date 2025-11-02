@@ -144,7 +144,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
       <ButtonGroup>
         {isEditDescriptionMode && (
           <TsButton
-            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+            sx={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
             onClick={() => {
               resetMdContent(openedEntry.meta?.description);
               setEditMode(false);
@@ -167,7 +167,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
               //isEditMode ||
               findLocation(openedEntry.locationID)?.isReadOnly
             }
-            style={{
+            sx={{
               borderTopLeftRadius: isEditDescriptionMode
                 ? 0
                 : AppConfig.defaultCSSRadius,
@@ -204,7 +204,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
         tooltip={'Add AI generated description based on the file content'}
       >
         <AiGenDescButton
-          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+          sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
           variant="outlined"
         />
       </ProTooltip>
@@ -214,7 +214,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
             tooltip={'Add AI generated tags based on the description'}
           >
             <AiGenTagsButton
-              style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+              sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
               fromDescription={true}
               variant="outlined"
             />
@@ -224,7 +224,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
       <TsIconButton
         tooltip={t('core:moreActions')}
         onClick={handleMoreClick}
-        style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+        sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
         data-tid="moreActionsTID"
         aria-label={t('core:moreActions')}
         aria-controls={Boolean(anchorEl) ? 'account-menu' : undefined}

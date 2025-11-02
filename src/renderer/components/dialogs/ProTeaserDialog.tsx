@@ -81,7 +81,7 @@ function Slide(props: SlideProps) {
     >
       <Typography
         variant="h5"
-        style={{ textAlign: 'center', paddingBottom: 10 }}
+        sx={{ textAlign: 'center', paddingBottom: '10px' }}
       >
         {title}
       </Typography>
@@ -146,7 +146,7 @@ function Slide(props: SlideProps) {
               onClick={() => {
                 openURLExternally(ctaURL, true);
               }}
-              style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+              sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             >
               {ctaTitle}
             </TsButton>

@@ -21,6 +21,7 @@ import TsButton from '-/components/TsButton';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { TS } from '-/tagspaces.namespace';
 import FolderIcon from '@mui/icons-material/FolderOpen';
@@ -41,7 +42,6 @@ import {
 import { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TagsSelect from '../TagsSelect';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 
 interface Props {
   open: boolean;
@@ -168,10 +168,10 @@ function AddRemoveTagsDialog(props: Props) {
           tagMode="remove"
           autoFocus={true}
         />
-        <Typography style={{ marginTop: 10 }} variant="subtitle2">
+        <Typography sx={{ marginTop: '10px' }} variant="subtitle2">
           {t('selectedFilesAndFolders')}
         </Typography>
-        <List dense style={{ width: 550, marginLeft: -15 }}>
+        <List dense sx={{ width: '550px', marginLeft: '-15px' }}>
           {currentEntries.length > 0 &&
             currentEntries.map((entry) => (
               <ListItem key={entry.path} title={entry.path}>

@@ -130,7 +130,7 @@ function MapTileServerDialog(props: Props) {
           data-tid="tileServerUrlTID"
         />
         <FormHelperText
-          style={{ marginLeft: 0, marginTop: 0, marginBottom: 10 }}
+          sx={{ marginLeft: 0, marginTop: 0, marginBottom: '10px' }}
         >
           {t('core:tileServerUrlHelp')}
         </FormHelperText>
@@ -148,7 +148,7 @@ function MapTileServerDialog(props: Props) {
           data-tid="tileserverInfoTID"
         />
       </FormControl>
-      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('core:serverIsDefaultHelp')} />
         <Switch
           data-tid="serverIsDefaultTID"
@@ -187,8 +187,8 @@ function MapTileServerDialog(props: Props) {
       >
         {props.tileServer.uuid && (
           <TsButton
-            style={{
-              marginLeft: 10,
+            sx={{
+              marginLeft: '10px',
             }}
             data-tid="deleteTileServerTID"
             onClick={() => {
@@ -206,7 +206,7 @@ function MapTileServerDialog(props: Props) {
           <TsButton
             data-tid="saveTileServerDialogTID"
             onClick={saveTileServer}
-            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+            sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             variant="contained"
           >
             {t('core:confirmSaveButton')}

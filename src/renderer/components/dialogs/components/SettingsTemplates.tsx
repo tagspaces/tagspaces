@@ -156,7 +156,7 @@ function SettingsTemplates(props: Props) {
         <AccordionDetails>
           <Typography
             variant="caption"
-            style={{ display: 'block', marginTop: -20, marginBottom: 10 }}
+            sx={{ display: 'block', marginTop: '-20px', marginBottom: '10px' }}
           >
             Supported template variables in the template content are:{' '}
             <b>
@@ -190,7 +190,7 @@ function SettingsTemplates(props: Props) {
             onClick={() => {
               saveTemplate();
             }}
-            style={{ marginBottom: 10 }}
+            sx={{ marginBottom: '10px' }}
             startIcon={<CreateFileIcon />}
           >
             {t('addTemplate')}
@@ -202,8 +202,8 @@ function SettingsTemplates(props: Props) {
               fileTemplatesContext.resetTemplates();
               forceUpdate();
             }}
-            style={{
-              marginBottom: 10,
+            sx={{
+              marginBottom: '10px',
               marginLeft: AppConfig.defaultSpaceBetweenButtons,
             }}
             startIcon={<ReloadIcon />}
@@ -339,7 +339,7 @@ function SettingsTemplates(props: Props) {
                 <TsToggleButton
                   value={false}
                   data-tid="templateMdTypeTID"
-                  style={{
+                  sx={{
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                   }}
@@ -353,7 +353,7 @@ function SettingsTemplates(props: Props) {
                 <TsToggleButton
                   value={false}
                   data-tid="templateTxtTypeTID"
-                  style={{
+                  sx={{
                     borderTopRightRadius: 0,
                     borderBottomRightRadius: 0,
                     borderTopLeftRadius: 0,
@@ -369,7 +369,7 @@ function SettingsTemplates(props: Props) {
                 <TsToggleButton
                   value={false}
                   data-tid="templateTxtTypeTID"
-                  style={{
+                  sx={{
                     borderTopLeftRadius: 0,
                     borderBottomLeftRadius: 0,
                   }}

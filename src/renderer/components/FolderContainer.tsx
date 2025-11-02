@@ -176,7 +176,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
           key={perspective.id}
           data-tid={perspective.key}
           onClick={() => switchPerspective(perspective.id)}
-          style={{
+          sx={{
             opacity: 0.9,
             backgroundColor: theme.palette.background.default,
             border: '1px solid ' + theme.palette.divider,
@@ -423,7 +423,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
                   value=""
                   aria-label="chat-label"
                   data-tid="chatTID"
-                  style={{
+                  sx={{
                     marginLeft: '5px',
                     ...(readOnlyLocation
                       ? {}

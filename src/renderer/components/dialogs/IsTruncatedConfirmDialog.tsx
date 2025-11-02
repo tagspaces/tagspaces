@@ -16,24 +16,24 @@
  *
  */
 
-import React from 'react';
-import TsButton from '-/components/TsButton';
-import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContentText from '@mui/material/DialogContentText';
+import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
-import Dialog from '@mui/material/Dialog';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
+import InfoIcon from '-/components/InfoIcon';
+import TsButton from '-/components/TsButton';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
 import MaxLoopsSelect from '-/components/dialogs/MaxLoopsSelect';
-import AppConfig from '-/AppConfig';
-import Typography from '@mui/material/Typography';
-import InfoIcon from '-/components/InfoIcon';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { useTranslation } from 'react-i18next';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Typography from '@mui/material/Typography';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   open: boolean;
@@ -85,7 +85,7 @@ function IsTruncatedConfirmDialog(props: Props) {
       keepMounted
       scroll="paper"
     >
-      <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+      <DialogTitle sx={{ cursor: 'move' }} id="draggable-dialog-title">
         {t('core:warningDirectoryIsTruncated')}
         <DialogCloseButton testId="closeIsTruncatedTID" onClose={onClose} />
       </DialogTitle>

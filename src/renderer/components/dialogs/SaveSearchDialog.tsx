@@ -130,7 +130,7 @@ function SaveSearchDialog(props: Props) {
       onClick={onConfirm}
       data-tid="confirmSavedSearchTID"
       variant="contained"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -185,10 +185,7 @@ function SaveSearchDialog(props: Props) {
             retrieveValue={() => title.current}
             data-tid="savedSearchTID"
           />
-          <FormHelperText
-            style={{ marginLeft: 0 }}
-            error={!!inputError.current}
-          >
+          <FormHelperText sx={{ marginLeft: 0 }} error={!!inputError.current}>
             {!!inputError.current
               ? inputError.current
               : t('core:savedSearchHelp')}
@@ -209,7 +206,7 @@ function SaveSearchDialog(props: Props) {
             <TsButton
               data-tid="closeSavedSearchTID"
               onClick={() => onClose()}
-              style={{
+              sx={{
                 marginRight: AppConfig.defaultSpaceBetweenButtons,
               }}
             >

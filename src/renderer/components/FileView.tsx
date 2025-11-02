@@ -46,18 +46,12 @@ function FileView(props: Props) {
   const { i18n } = useTranslation();
   const theme = useTheme();
   const { openedEntry } = useOpenedEntryContext();
-  //const { saveFileOpen } = useResolveConflictContext();
   const { isEditMode } = useFilePropertiesContext();
   const { setFullscreen, isFullscreen, toggleFullScreen } =
     useFullScreenContext();
   const { searchQuery, isSearchMode } = useDirectoryContentContext();
-
   const { fileViewer, fileViewerContainer, height, handleMessage } = props;
-
   const eventID = useRef<string>(getUuid());
-  // const [thumb, setThumb] = useState<string | null>(null);
-  // const [loadingThumb, setLoadingThumb] = useState(true);
-  // const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -132,7 +126,6 @@ function FileView(props: Props) {
 
   useEventListener('message', (e) => {
     if (typeof e.data === 'string') {
-      // console.log(e.data);
       try {
         const dataObj = JSON.parse(e.data);
         if (dataObj.eventID === eventID.current) {
@@ -147,45 +140,8 @@ function FileView(props: Props) {
     }
   });
 
-  /*const savingFile = (force = false) => {
-    try {
-      if (
-        fileViewer &&
-        fileViewer.current &&
-        fileViewer.current.contentWindow &&
-        // @ts-ignore
-        fileViewer.current.contentWindow.getContent
-      ) {
-        // @ts-ignore
-        const fileContent = fileViewer.current.contentWindow.getContent();
-        //check if file is changed
-        if (fileChanged || force) {
-          setSavingInProgress(true);
-          forceUpdate();
-          saveFileOpen(openedEntry, fileContent).then((success) => {
-            if (success) {
-              setFileChanged(false);
-              // showNotification(
-              //   t('core:fileSavedSuccessfully'),
-              //   NotificationTypes.default
-              // );
-            }
-            // change state will not render DOT before file name too
-            setSavingInProgress(false);
-          });
-        }
-      }
-    } catch (e) {
-      setSavingInProgress(false);
-      console.debug('function getContent not exist for file:', e);
-    }
-  };*/
   const fileOpenerURL: string = useMemo(() => {
     if (openedEntry && openedEntry.path) {
-      // if (fileTitle.length > maxCharactersTitleLength) {
-      //   fileTitle = fileTitle.substr(0, maxCharactersTitleLength) + '...';
-      // }
-
       const textColor = theme.palette.text.primary;
       const primaryColor = theme.palette.primary.main;
       const bgndColor = theme.palette.background.default;
@@ -257,16 +213,6 @@ function FileView(props: Props) {
     isSearchMode,
   ]);
 
-  /*  useEffect(() => {
-    const el = fileViewer.current;
-    if (!el) return;
-    // note: el.src may return fully qualified URL — use === comparison will work if we set it before,
-    // otherwise you can compare el.getAttribute('src') to be stricter.
-    if (el.getAttribute('src') !== fileOpenerURL) {
-      el.setAttribute('src', fileOpenerURL);
-    }
-  }, [fileOpenerURL]); */
-
   return (
     <div
       ref={fileViewerContainer}
@@ -296,7 +242,7 @@ function FileView(props: Props) {
           <span>ESC</span>
         </div>
       )}
-      {openedEntry.isFile && ( //!loadingThumb && (
+      {openedEntry.isFile && (
         <iframe
           ref={fileViewer}
           style={{

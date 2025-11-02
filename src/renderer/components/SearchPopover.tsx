@@ -100,17 +100,17 @@ function SearchPopover(props: Props) {
       }
     >
       <div style={{ display: 'flex' }}>
-        <Typography variant="button" style={{ margin: '12px 0 10px 10px' }}>
+        <Typography variant="button" sx={{ margin: '12px 0 10px 10px' }}>
           {t('core:advancedSearch')}
         </Typography>
         <Typography
           variant="caption"
-          style={{ flex: 1, margin: 'auto', paddingLeft: 10 }}
+          sx={{ flex: 1, margin: 'auto', paddingLeft: '10px' }}
         >
           {indexStatus}
         </Typography>
         <TsIconButton
-          style={{ marginLeft: 'auto', height: 40 }}
+          sx={{ marginLeft: 'auto', height: '40px' }}
           data-tid="closeSearchTID"
           onClick={onClose}
         >
@@ -143,9 +143,9 @@ function SearchPopover(props: Props) {
             <TooltipTS title={t('storedSearchQueriesTooltip')}>
               <FormControl
                 variant="outlined"
-                style={{ width: '100%', marginTop: 6 }}
+                sx={{ width: '100%', marginTop: '6px' }}
               >
-                <FormHelperText style={{ marginLeft: 0 }}>
+                <FormHelperText sx={{ marginLeft: 0 }}>
                   {t('core:savedSearchesTitle')}
                 </FormHelperText>
                 <TsSelect
@@ -154,7 +154,7 @@ function SearchPopover(props: Props) {
                   onChange={handleSavedSearchChange}
                   value={tempSearchQuery.uuid ? tempSearchQuery.uuid : -1}
                 >
-                  <MenuItem value={-1} style={{ display: 'none' }} />
+                  <MenuItem value={-1} sx={{ display: 'none' }} />
                   {searches.length < 1 && (
                     <MenuItem>{t('noSavedSearches')}</MenuItem>
                   )}
@@ -172,7 +172,7 @@ function SearchPopover(props: Props) {
             style={{ display: 'flex', alignSelf: 'center', paddingTop: 25 }}
           >
             <ButtonGroup
-              style={{
+              sx={{
                 textAlign: 'center',
                 width: '100%',
               }}
@@ -221,7 +221,7 @@ function SearchPopover(props: Props) {
             {t('resetBtn')}
           </TsButton>
           <TsButton
-            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+            sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             variant="contained"
             disabled={isIndexing !== undefined}
             id="searchButtonAdvTID"

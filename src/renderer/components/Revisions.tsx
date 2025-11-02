@@ -16,15 +16,18 @@
  *
  */
 
-import React, { useEffect, useState } from 'react';
-import {
-  getBackupDir,
-  extractFileNameWithoutExt,
-  isMeta,
-} from '@tagspaces/tagspaces-common/paths';
-import { TS } from '-/tagspaces.namespace';
-import { format, formatDistanceToNow } from 'date-fns';
+import { DeleteIcon, PreviewIcon, RestoreIcon } from '-/components/CommonIcons';
+import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 import TsIconButton from '-/components/TsIconButton';
+import TsSelect from '-/components/TsSelect';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { Pro } from '-/pro';
+import { TS } from '-/tagspaces.namespace';
 import {
   Box,
   Paper,
@@ -36,18 +39,15 @@ import {
   TablePagination,
   TableRow,
 } from '@mui/material';
-import { Pro } from '-/pro';
-import { DeleteIcon, PreviewIcon, RestoreIcon } from '-/components/CommonIcons';
-import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
-import { useTranslation } from 'react-i18next';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import MenuItem from '@mui/material/MenuItem';
-import TsSelect from '-/components/TsSelect';
+import {
+  extractFileNameWithoutExt,
+  getBackupDir,
+  isMeta,
+} from '@tagspaces/tagspaces-common/paths';
+import { format, formatDistanceToNow } from 'date-fns';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const initialRowsPerPage = 10;
 
@@ -69,6 +69,12 @@ function Revisions() {
   >(undefined);
   const [revisionsType, setRevisionsType] = useState<'meta' | 'file'>('file');
   // const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+  useEffect(() => {
+    if (!openedEntry.isFile) {
+      setRevisionsType('meta');
+    }
+  }, [openedEntry]);
 
   useEffect(() => {
     // if no history item path - not loadHistoryItems for items in metaFolder
@@ -238,22 +244,24 @@ function Revisions() {
                   >
                     <DeleteIcon />
                   </TsIconButton>
-                  <TsSelect
-                    data-tid="revisionsTypeTID"
-                    fullWidth={false}
-                    value={revisionsType}
-                    onChange={(event: any) => {
-                      return setRevisionsType(event.target.value);
-                    }}
-                    sx={{ minWidth: 120 }}
-                  >
-                    <MenuItem key="file" value="file">
-                      {t('file')}
-                    </MenuItem>
-                    <MenuItem key="meta" value="meta">
-                      {t('meta')}
-                    </MenuItem>
-                  </TsSelect>
+                  {openedEntry.isFile && (
+                    <TsSelect
+                      data-tid="revisionsTypeTID"
+                      fullWidth={false}
+                      value={revisionsType}
+                      onChange={(event: any) => {
+                        return setRevisionsType(event.target.value);
+                      }}
+                      sx={{ minWidth: 120 }}
+                    >
+                      <MenuItem key="file" value="file">
+                        {t('file')}
+                      </MenuItem>
+                      <MenuItem key="meta" value="meta">
+                        {t('meta')}
+                      </MenuItem>
+                    </TsSelect>
+                  )}
                 </Box>
               </TableCell>
               <TableCell align="right">{t('created')}</TableCell>

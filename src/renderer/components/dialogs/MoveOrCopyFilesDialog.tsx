@@ -147,7 +147,7 @@ function MoveOrCopyFilesDialog(props: Props) {
           {t('core:moveCopyToPath') + ': ' + targetDir}
         </Typography>
         <Typography variant="subtitle2">{t('selectedFiles')}</Typography>
-        <List dense style={{ width: 550, marginLeft: -15 }}>
+        <List dense sx={{ width: '550px', marginLeft: '-15px' }}>
           {selectedFiles &&
             selectedFiles.length > 0 &&
             selectedFiles.map((file) => (

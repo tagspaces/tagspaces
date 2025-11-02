@@ -26,11 +26,13 @@ import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
+import { useReloadOnFocus } from '-/perspectives/common/useReloadOnFocus';
 import GridOptionsMenu from '-/perspectives/grid/components/GridOptionsMenu';
 import GridPagination from '-/perspectives/grid/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid/components/GridSettingsDialog';
@@ -43,13 +45,12 @@ import { getDesktopMode, getKeyBindingObject } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
+import { Box } from '@mui/material';
 import Links from 'assets/links';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useSelector } from 'react-redux';
 import GridCell from './GridCell';
-import { useReloadOnFocus } from '-/perspectives/common/useReloadOnFocus';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {}
 
@@ -321,9 +322,9 @@ function GridPerspective(props: Props) {
   };
 
   return (
-    <div
-      style={{
-        height: '100%', // 'calc(100% - 47px)'
+    <Box
+      sx={{
+        height: '100%',
       }}
       data-tid="gridPerspectiveContainer"
     >
@@ -395,7 +396,7 @@ function GridPerspective(props: Props) {
           openSettings={openSettings}
         />
       )}
-    </div>
+    </Box>
   );
 }
 export default GridPerspective;

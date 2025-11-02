@@ -16,10 +16,6 @@
  *
  */
 
-import React from 'react';
-import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
-import { NativeTypes } from 'react-dnd-html5-backend';
-import { useSelector } from 'react-redux';
 import AppConfig from '-/AppConfig';
 import CustomDragLayer from '-/components/CustomDragLayer';
 import DragItemTypes from '-/components/DragItemTypes';
@@ -43,8 +39,13 @@ import { getEntryContainerTab } from '-/reducers/settings';
 import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import DragHandleIcon from '@mui/icons-material/DragHandleOutlined';
+import { Box } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import React from 'react';
+import { NativeTypes } from 'react-dnd-html5-backend';
+import { useSelector } from 'react-redux';
 
 interface Props {
   fsEntry: TS.FileSystemEntry;
@@ -275,8 +276,8 @@ function CellView(props: Props) {
           AppConfig.isElectron &&
           currentLocation &&
           !currentLocation.haveObjectStoreSupport() && (
-            <div
-              style={{
+            <Box
+              sx={{
                 display: 'flex',
               }}
               draggable="true"
@@ -293,7 +294,7 @@ function CellView(props: Props) {
               >
                 {i18n.t('dragOutsideApp')}
               </Typography>
-            </div>
+            </Box>
           )}
 
         {cellContent(
@@ -311,8 +312,8 @@ function CellView(props: Props) {
   const { FILE } = NativeTypes;
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         position: 'relative',
       }}
       key={key}
@@ -335,7 +336,7 @@ function CellView(props: Props) {
           )}
         </TargetMoveFileBox>
       </TargetFileBox>
-    </div>
+    </Box>
   );
 }
 

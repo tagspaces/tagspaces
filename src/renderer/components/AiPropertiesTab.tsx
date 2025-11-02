@@ -41,7 +41,7 @@ function AiPropertiesTab(props: Props) {
       {openedEntry.meta?.description && (
         <AiGenTagsButton
           fromDescription={true}
-          style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+          sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
         />
       )}
     </Box>

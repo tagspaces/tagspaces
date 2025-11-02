@@ -78,7 +78,7 @@ function AddTagToTagGroupDialog(props: Props) {
       onClick={onConfirm}
       data-tid="createTagsConfirmButton"
       variant="contained"
-      style={
+      sx={
         {
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }

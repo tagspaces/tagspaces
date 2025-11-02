@@ -216,7 +216,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
           </TsButton>
           <TsButton
             disabled={haveError() && !isTagChanged}
-            style={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+            sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             onClick={onConfirm}
             data-tid="confirmEditTagEntryDialog"
             variant="contained"

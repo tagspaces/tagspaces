@@ -489,7 +489,7 @@ function SearchAutocomplete(props: Props) {
         }
       >
         <TsIconButton edge="end">
-          <HelpOutlineIcon style={{ color: 'lightgray' }} />
+          <HelpOutlineIcon sx={{ color: 'lightgray' }} />
         </TsIconButton>
       </Tooltip>
     );
@@ -1271,7 +1271,7 @@ function SearchAutocomplete(props: Props) {
         tooltip={t('core:advancedSearch')}
         id="advancedButton"
         data-tid="advancedSearch"
-        style={{ maxHeight: 34 }}
+        sx={{ maxHeight: '34px' }}
         size={desktopMode ? 'small' : 'medium'}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
           setAnchorSearch(event.currentTarget);
@@ -1286,7 +1286,7 @@ function SearchAutocomplete(props: Props) {
         onClick={() => {
           clearSearch();
         }}
-        style={{ maxHeight: 34 }}
+        sx={{ maxHeight: '34px' }}
         size={desktopMode ? 'small' : 'medium'}
         edge="end"
       >
@@ -1431,7 +1431,7 @@ function SearchAutocomplete(props: Props) {
                       }}
                       data-tid={dataTidFormat('menu' + option)}
                       variant="text"
-                      style={{
+                      sx={{
                         backgroundColor: 'transparent',
                         textTransform: 'lowercase',
                         padding: 0,
@@ -1439,7 +1439,7 @@ function SearchAutocomplete(props: Props) {
                       }}
                       endIcon={
                         <ArrowDropDownIcon
-                          style={{ marginLeft: -10 }}
+                          sx={{ marginLeft: '-10px' }}
                           fontSize="small"
                         />
                       }
@@ -1457,7 +1457,7 @@ function SearchAutocomplete(props: Props) {
                         onClick={() => {
                           handleChange(null, [option], 'remove-value');
                         }}
-                        style={{
+                        sx={{
                           padding: 0,
                           margin: 0,
                           textTransform: 'lowercase',
@@ -1493,19 +1493,19 @@ function SearchAutocomplete(props: Props) {
               {option.color ? (
                 <TsButton
                   variant="text"
-                  style={{
-                    fontSize: 13,
+                  sx={{
+                    fontSize: '13px',
                     textTransform: 'none',
                     color: option.textcolor,
                     backgroundColor: option.color,
                     minHeight: 0,
                     minWidth: 0,
-                    margin: 2,
+                    margin: '2px',
                     paddingTop: 0,
                     paddingBottom: 0,
-                    paddingRight: 5,
-                    paddingLeft: 5,
-                    borderRadius: 5,
+                    paddingRight: '5px',
+                    paddingLeft: '5px',
+                    borderRadius: '5px',
                   }}
                 >
                   {option.label}
@@ -1534,7 +1534,7 @@ function SearchAutocomplete(props: Props) {
             return (
               <TsTextField
                 {...params}
-                style={{ overflow: 'auto', maxHeight: 40 }}
+                sx={{ overflow: 'auto', maxHeight: '40px' }}
                 onBlur={() => {
                   isOpen.current = false;
                   forceUpdate();
@@ -1554,9 +1554,9 @@ function SearchAutocomplete(props: Props) {
           tooltip={isIndexing ? t('searchDisabledWhileIndexing') : ''}
           id="searchButton"
           disabled={isIndexing !== undefined}
-          style={{
-            marginRight: 10,
-            marginLeft: 10,
+          sx={{
+            marginRight: '10px',
+            marginLeft: '10px',
           }}
           onClick={clickSearchButton}
         >

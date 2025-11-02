@@ -291,11 +291,11 @@ function HowToStart() {
       </style>
       <Typography
         variant="inherit"
-        style={{
+        sx={{
           color: theme.palette.text.primary,
           textTransform: 'uppercase',
           textAlign: 'center',
-          paddingTop: 20,
+          paddingTop: '20px',
         }}
         noWrap
       >
@@ -306,7 +306,7 @@ function HowToStart() {
           <Step key={step.label}>
             <StepLabel>{step.label}</StepLabel>
             <StepContent>
-              <Typography style={{ color: theme.palette.text.primary }}>
+              <Typography sx={{ color: theme.palette.text.primary }}>
                 {step.description}
               </Typography>
               <Box sx={{ mb: 2 }}>
@@ -337,8 +337,7 @@ function HowToStart() {
         <Paper
           square
           elevation={0}
-          sx={{ p: 3 }}
-          style={{ backgroundColor: 'transparent' }}
+          sx={{ p: 3, backgroundColor: 'transparent' }}
         >
           <Typography>All steps completed - you&apos;re finished.</Typography>
           <TsButton onClick={handleReset} sx={{ mt: 1, mr: 1 }}>

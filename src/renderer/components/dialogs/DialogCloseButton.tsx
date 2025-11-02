@@ -33,11 +33,11 @@ function DialogCloseButton(props: Props) {
       title={t('closeButtonDialog')}
       aria-label="close"
       tabIndex={-1}
-      style={{
+      sx={{
         // float: 'right',
         position: 'absolute',
-        right: 15,
-        top: 15,
+        right: '15px',
+        top: '15px',
       }}
       data-tid={testId && testId}
       onClick={onClose}

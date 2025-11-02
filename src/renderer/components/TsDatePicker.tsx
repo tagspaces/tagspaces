@@ -32,7 +32,7 @@ function TsDatePicker(props) {
   return (
     <Box>
       {label && (
-        <FormHelperText style={{ marginLeft: 5, marginTop: 0 }}>
+        <FormHelperText sx={{ marginLeft: '5px', marginTop: 0 }}>
           {label}
         </FormHelperText>
       )}

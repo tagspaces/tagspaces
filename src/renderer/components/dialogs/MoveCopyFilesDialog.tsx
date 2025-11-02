@@ -203,10 +203,10 @@ function MoveCopyFilesDialog(props: Props) {
         </Typography>
         <List
           dense
-          style={{
+          sx={{
             overflowY: 'auto',
-            width: 550,
-            maxHeight: 200,
+            width: '550px',
+            maxHeight: '200px',
           }}
         >
           {currentEntries.length > 0 &&
