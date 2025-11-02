@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import { ArrowBackIcon, CloseDialogIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
 import { isDesktopMode } from '-/reducers/settings';
+import Box from '@mui/material/Box';
 import DialogTitle, { DialogTitleProps } from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -53,11 +54,11 @@ function TsDialogTitle(props: TSDialogTitle) {
       title={t('closeButtonDialog')}
       aria-label="close"
       tabIndex={-1}
-      style={
+      sx={
         {
           position: 'absolute',
-          right: 15,
-          top: 15,
+          right: '15px',
+          top: '15px',
           zIndex: 1000,
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -74,10 +75,10 @@ function TsDialogTitle(props: TSDialogTitle) {
       title={t('closeButtonDialog')}
       aria-label="close"
       tabIndex={-1}
-      style={
+      sx={
         {
           float: 'left',
-          marginLeft: AppConfig.isMacLike && desktopMode ? 40 : 0,
+          marginLeft: AppConfig.isMacLike && desktopMode ? '40px' : 0,
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }
       }
@@ -92,25 +93,23 @@ function TsDialogTitle(props: TSDialogTitle) {
     <DialogTitle
       id={smallScreen ? '' : 'draggable-dialog-title'}
       {...rest}
-      style={{
+      sx={{
         cursor: smallScreen ? 'unset' : 'move',
         ...style,
       }}
     >
       {smallScreen ? ( // && !desktopMode
         <>
-          <div style={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex' }}>
             {backButton}
-            <span style={{ alignSelf: 'center', margin: '0 auto' }}>
-              {title}
-            </span>
+            <Box sx={{ alignSelf: 'center', margin: '0 auto' }}>{title}</Box>
             {actionSlot && (
-              <span style={{ float: 'right', alignSelf: 'center' }}>
+              <Box sx={{ float: 'right', alignSelf: 'center' }}>
                 {actionSlot}
-              </span>
+              </Box>
             )}
-          </div>
-          <div style={{ textAlign: 'center' }}>{children}</div>
+          </Box>
+          <Box sx={{ textAlign: 'center' }}>{children}</Box>
         </>
       ) : (
         <>

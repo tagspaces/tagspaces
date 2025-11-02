@@ -23,6 +23,7 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import useEventListener from '-/utils/useEventListener';
+import { Box } from '@mui/material';
 import { rgbToHex, useTheme } from '@mui/material/styles';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import fscreen from 'fscreen';
@@ -214,9 +215,9 @@ function FileView(props: Props) {
   ]);
 
   return (
-    <div
+    <Box
       ref={fileViewerContainer}
-      style={{
+      sx={{
         width: '100%',
         height: height || '100%',
         display: 'flex',
@@ -225,13 +226,13 @@ function FileView(props: Props) {
       }}
     >
       {isFullscreen && (
-        <div
+        <Box
           data-tid="fullscreenTID"
-          style={{
+          sx={{
             position: 'absolute',
             textAlign: 'center',
-            top: 20,
-            right: 20,
+            top: '20px',
+            right: '20px',
             zIndex: 10000,
             color: theme.palette.primary.main,
           }}
@@ -240,7 +241,7 @@ function FileView(props: Props) {
           <CloseIcon />
           <br />
           <span>ESC</span>
-        </div>
+        </Box>
       )}
       {openedEntry.isFile && (
         <iframe
@@ -258,7 +259,7 @@ function FileView(props: Props) {
           id={'FileViewer' + eventID.current}
         />
       )}
-    </div>
+    </Box>
   );
 }
 
