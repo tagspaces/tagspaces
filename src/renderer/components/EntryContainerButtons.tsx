@@ -16,7 +16,6 @@
  *
  */
 
-import React from 'react';
 import AppConfig from '-/AppConfig';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
@@ -27,6 +26,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
 import { isDesktopMode, isRevisionsEnabled } from '-/reducers/settings';
 import { Box, ButtonGroup, Switch, Tooltip } from '@mui/material';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { CancelIcon, CloseEditIcon, SaveIcon } from './CommonIcons';
@@ -111,7 +111,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
               setEditMode(false);
               setFileChanged(false);
             }}
-            style={{
+            sx={{
               borderRadius: 'unset',
               borderTopLeftRadius: AppConfig.defaultCSSRadius,
               borderBottomLeftRadius: AppConfig.defaultCSSRadius,
@@ -126,11 +126,11 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
             startIcon={closeCancelIcon}
           >
             <Box
-              style={{
+              sx={{
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                maxWidth: 100,
+                maxWidth: '100px',
               }}
             >
               {fileChanged ? t('core:cancel') : t('core:exitEditMode')}
@@ -153,7 +153,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
                 data-tid="fileContainerSaveFile"
                 startIcon={desktopMode && <SaveIcon />}
                 loading={isSavingInProgress}
-                style={{
+                sx={{
                   borderRadius: 'unset',
                   borderTopRightRadius: AppConfig.defaultCSSRadius,
                   borderBottomRightRadius: AppConfig.defaultCSSRadius,
@@ -172,11 +172,11 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
 
   return (
     <Box
-      style={{
+      sx={{
         marginLeft: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        marginRight: 10,
+        marginRight: '10px',
         alignItems: 'anchor-center',
       }}
     >

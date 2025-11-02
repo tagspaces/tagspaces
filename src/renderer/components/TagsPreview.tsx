@@ -81,24 +81,27 @@ function TagsPreview(props: Props) {
   return (
     <Tooltip title={tagNames}>
       <Box
-        sx={{
-          display: 'inline-block',
-          minWidth: 15,
-          width: 18,
-          height: 15,
-          marginLeft: '4px',
-          marginRight: '4px',
-          borderRadius: '7px',
-          borderRight: moreThanOne ? 'white 1px solid' : 'initial',
-          boxShadow: moreThanOne ? '4px 0px 0px 0px ' + secondTagColor : 'none',
-          backgroundColor: firstTagColor,
-          fontSize: '11px',
-          lineHeight: '16px',
-          color: firstTagTextColor || defaultTextColor, //tag1Colors.textcolor ,
-          textAlign: 'center',
-          // @ts-ignore
-          WebkitAppRegion: 'no-drag',
-        }}
+        sx={
+          {
+            display: 'inline-block',
+            minWidth: 15,
+            width: 18,
+            height: 15,
+            marginLeft: '4px',
+            marginRight: '4px',
+            borderRadius: '7px',
+            borderRight: moreThanOne ? 'white 1px solid' : 'initial',
+            boxShadow: moreThanOne
+              ? '4px 0px 0px 0px ' + secondTagColor
+              : 'none',
+            backgroundColor: firstTagColor,
+            fontSize: '11px',
+            lineHeight: '16px',
+            color: firstTagTextColor || defaultTextColor, //tag1Colors.textcolor ,
+            textAlign: 'center',
+            WebkitAppRegion: 'no-drag',
+          } as React.CSSProperties
+        }
       >
         {moreThanOne ? tags.length : '1'}
       </Box>

@@ -136,23 +136,24 @@ function EntryContainerTitle(props: Props) {
   const addMacMargin =
     AppConfig.isMacLike && desktopMode && (smallScreen || isEntryInFullWidth);
 
-  const rightMargin = smallScreen ? 35 : 70;
+  const rightMargin = smallScreen ? '35px' : '70px';
 
   return (
-    <div
-      style={{
-        paddingLeft: 5,
-        display: 'flex',
-        alignItems: 'center',
-        marginRight: openedEntry.isFile ? rightMargin : 0,
-        flexDirection: 'row',
-        flex: '1 1',
-        overflowX: 'auto',
-        overflowY: 'hidden',
-        marginLeft: addMacMargin ? 60 : 0,
-        // @ts-ignore
-        WebkitAppRegion: 'drag',
-      }}
+    <Box
+      sx={
+        {
+          paddingLeft: '5px',
+          display: 'flex',
+          alignItems: 'center',
+          marginRight: openedEntry.isFile ? rightMargin : 0,
+          flexDirection: 'row',
+          flex: '1 1',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          marginLeft: addMacMargin ? '60px' : 0,
+          WebkitAppRegion: 'drag',
+        } as React.CSSProperties
+      }
     >
       {smallScreen && (
         <TsIconButton
@@ -174,14 +175,14 @@ function EntryContainerTitle(props: Props) {
         <>
           {fileChanged ? (
             <Tooltip title={t('core:fileChanged')}>
-              <span
+              <Box
                 style={{
                   color: theme.palette.text.primary,
-                  margin: 3,
+                  margin: '3px',
                 }}
               >
                 {String.fromCharCode(0x25cf)}
-              </span>
+              </Box>
             </Tooltip>
           ) : (
             ''
@@ -256,7 +257,7 @@ function EntryContainerTitle(props: Props) {
           data-tid="toggleBookmarkTID"
           aria-label="bookmark"
           onClick={bookmarkClick}
-          style={
+          sx={
             {
               WebkitAppRegion: 'no-drag',
             } as React.CSSProperties & { WebkitAppRegion?: string }
@@ -295,7 +296,7 @@ function EntryContainerTitle(props: Props) {
         reloadDocument={reloadDocument}
         fileViewerContainer={fileViewerContainer}
       />
-    </div>
+    </Box>
   );
 }
 

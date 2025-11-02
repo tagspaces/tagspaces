@@ -16,6 +16,7 @@
  *
  */
 
+import EntryContainerButtons from '-/components/EntryContainerButtons';
 import LoadingLazy from '-/components/LoadingLazy';
 import TsTabPanel from '-/components/TsTabPanel';
 import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
@@ -32,19 +33,7 @@ import { Box, Tab, Tabs, TabsProps } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import EntryContainerButtons from '-/components/EntryContainerButtons';
 
-/*interface StyledTabsProps {
-  children?: React.ReactNode;
-  value: number;
-  onChange: (event: React.SyntheticEvent, newValue: number) => void;
-}
-interface StyledTabProps {
-  title: string;
-  tinyMode: any;
-  icon: any;
-  onClick: (event: React.SyntheticEvent) => void;
-}*/
 const TabContent1 = React.lazy(
   () => import(/* webpackChunkName: "EntryProperties" */ './EntryProperties'),
 );
@@ -143,9 +132,6 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     if (!isPanelOpened && openedEntry.isFile) {
       return undefined;
     }
-    /*if (selectedTab === 0 || selectedTab === undefined) {
-      return 0;
-    }*/
     const index = tabsArray.current.findIndex(
       (tab) => tab.name === selectedTab,
     );
@@ -175,8 +161,8 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
   }
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -189,7 +175,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       }}
     >
       <Box
-        style={{
+        sx={{
           display: 'flex',
         }}
       >
@@ -207,19 +193,18 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
               // @ts-ignore
               icon={tab.icon}
               label={tab.title}
-              style={{
+              sx={{
                 paddingLeft: 0,
                 paddingRight: 0,
-                fontSize: 12,
+                fontSize: '12px',
                 fontWeight: 'normal',
                 textTransform: 'none',
                 paddingTop: '0px',
                 paddingBottom: '0px',
                 minHeight: '60px', // 68px
-                marginLeft: -8,
-                marginRight: -8,
+                marginLeft: '-8px',
+                marginRight: '-8px',
               }}
-              // sx={{ maxWidth: 70 }}
               id={`tab-${index}`}
               ariaControls={`simple-tabpanel-${index}`}
               onClick={() => handleTabClick(selectedTabIndex, index)}
@@ -240,7 +225,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           )}
         </TsTabPanel>
       ))}
-    </div>
+    </Box>
   );
 }
 

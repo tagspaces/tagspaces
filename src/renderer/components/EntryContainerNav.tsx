@@ -7,6 +7,7 @@ import TsIconButton from '-/components/TsIconButton';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { getKeyBindingObject } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -25,13 +26,12 @@ function EntryContainerNav(props: Props) {
   const theme = useTheme();
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         zIndex: 1,
         position: 'absolute',
         top: 5,
         right: 5,
-        // backgroundColor: theme.palette.background.default,
         display: 'flex',
         alignItems: 'center',
       }}
@@ -77,7 +77,7 @@ function EntryContainerNav(props: Props) {
           <CloseIcon />
         </TsIconButton>
       )}
-    </div>
+    </Box>
   );
 }
 

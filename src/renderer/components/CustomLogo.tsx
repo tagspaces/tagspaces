@@ -52,12 +52,13 @@ function CustomLogo() {
   return (
     <Box
       onClick={() => openAboutDialog()}
-      sx={{
-        width: '100%',
-        textAlign: 'center',
-        // @ts-ignore
-        WebkitAppRegion: 'drag',
-      }}
+      sx={
+        {
+          width: '100%',
+          textAlign: 'center',
+          WebkitAppRegion: 'drag',
+        } as React.CSSProperties
+      }
     >
       <Tooltip
         title={updateAvailable ? t('core:newVersionAvailable') : tsAboutTitle}

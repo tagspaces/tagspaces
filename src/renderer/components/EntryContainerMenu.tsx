@@ -17,6 +17,7 @@ import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import {
   getKeyBindingObject,
@@ -38,7 +39,6 @@ import {
 import { extractDirectoryName } from '@tagspaces/tagspaces-common/paths';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   anchorEl: null | HTMLElement;
@@ -60,7 +60,6 @@ function EntryContainerMenu(props: Props) {
   const { toggleFullScreen } = useFullScreenContext();
   const { openedEntry } = useOpenedEntryContext();
   const { t } = useTranslation();
-  // const theme = useTheme();
   const {
     toggleEntryFullWidth,
     openLink,
@@ -425,7 +424,6 @@ function EntryContainerMenu(props: Props) {
             <DeleteIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:deleteDirectory')} />
-          {/* <MenuKeyBinding keyBinding={keyBindings['deleteDocument']} /> */}
         </MenuItem>,
       );
     }
