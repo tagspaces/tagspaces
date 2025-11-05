@@ -177,7 +177,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
           data-tid={perspective.key}
           onClick={() => switchPerspective(perspective.id)}
           sx={{
-            opacity: 0.9,
+            opacity: '0.9',
             backgroundColor: theme.palette.background.default,
             border: '1px solid ' + theme.palette.divider,
           }}
@@ -412,33 +412,30 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
               aria-label="open folder ai chat"
               exclusive
             >
-              <Tooltip
-                title={
+              <TsToggleButton
+                value=""
+                tooltip={
                   readOnlyLocation
                     ? t('core:aiChatForFolderDisabled')
                     : t('core:aiChatForFolder')
                 }
+                aria-label="chat-label"
+                data-tid="chatTID"
+                sx={{
+                  marginLeft: '5px',
+                  // ...(readOnlyLocation
+                  //   ? {}
+                  //   : { color: theme.palette.primary.main }),
+                  backgroundColor: theme.palette.background.default,
+                  border: '1px solid ' + theme.palette.divider,
+                }}
+                onClick={() => {
+                  if (readOnlyLocation) return;
+                  openEntry(currentDirectoryPath, TabNames.aiTab);
+                }}
               >
-                <TsToggleButton
-                  value=""
-                  aria-label="chat-label"
-                  data-tid="chatTID"
-                  sx={{
-                    marginLeft: '5px',
-                    ...(readOnlyLocation
-                      ? {}
-                      : { color: theme.palette.primary.main }),
-                    backgroundColor: theme.palette.background.default,
-                    border: '1px solid ' + theme.palette.divider,
-                  }}
-                  onClick={() => {
-                    if (readOnlyLocation) return;
-                    openEntry(currentDirectoryPath, TabNames.aiTab);
-                  }}
-                >
-                  <AIIcon />
-                </TsToggleButton>
-              </Tooltip>
+                <AIIcon />
+              </TsToggleButton>
             </ToggleButtonGroup>
           )}
         </Box>

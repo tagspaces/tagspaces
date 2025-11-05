@@ -21,6 +21,7 @@ import TooltipTS from '-/components/Tooltip';
 import { isDesktopMode } from '-/reducers/settings';
 import { ToggleButton } from '@mui/material';
 import { ButtonPropsVariantOverrides } from '@mui/material/Button';
+import { alpha, useTheme } from '@mui/material/styles';
 import { ToggleButtonProps } from '@mui/material/ToggleButton';
 import { OverridableStringUnion } from '@mui/types';
 import { useSelector } from 'react-redux';
@@ -35,6 +36,7 @@ export type TSToggleButtonProps = ToggleButtonProps & {
 
 function TsToggleButton(props: TSToggleButtonProps) {
   const { children, sx, tooltip, selected, ...rest } = props;
+  const theme = useTheme();
   const desktopMode = useSelector(isDesktopMode);
   let button = (
     <ToggleButton
@@ -42,12 +44,23 @@ function TsToggleButton(props: TSToggleButtonProps) {
       variant="outlined" // text outlined contained
       {...rest}
       sx={{
+        ...sx,
         borderRadius: AppConfig.defaultCSSRadius,
         textTransform: 'none', //'capitalize',
-        fontSize: 14,
+        fontSize: '14px',
         // fontWeight: selected ? 'bold' : 'normal',
         fontWeight: 'normal',
-        ...sx,
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.background.default, 0.9),
+        },
+        '&.Mui-selected': {
+          // color: theme.palette.secondary.main,
+          backgroundColor: alpha(theme.palette.background.default, 0.9),
+        },
+        '&.Mui-selected:hover': {
+          // color: theme.palette.secondary.main,
+          backgroundColor: alpha(theme.palette.background.default, 0.9),
+        },
       }}
     >
       {children}
