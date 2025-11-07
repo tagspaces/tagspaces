@@ -203,6 +203,7 @@
   "reportIssues": "Problem melden",
   "forums": "Foren",
   "followOnX": "Folgen Sie uns auf X",
+  "followOnMastodon": "Follow us on Mastodon",
   "searchPlaceholder": "Aktuellen Speicherort durchsuchen",
   "tagSearchOR": "Mindestens ein Tag",
   "tagSearchORTitle": "Eintrag sollte mindestens einer Tag enthalten (ODER Suche)",
@@ -296,6 +297,7 @@
   "fileTags": "Tags",
   "fileSize": "Größe",
   "fileLDTM": "Änderungsdatum",
+  "creationDate": "Erstellungsdatum",
   "random": "Zufällig",
   "fileDirectory": "Verzeichnis",
   "fileFirstTag": "Erstes Tag",
@@ -1022,7 +1024,7 @@
   "htsLocationManager": "Um einen Ordner in TagSpaces zu verwenden, müssen Sie ihn mit dem Location Manager als Speicherort verbinden. Der Speicherort-Manager ermöglicht es Ihnen, Speicherorte zu erstellen, zu bearbeiten, zu entfernen, zu importieren und zu exportieren. Standardmäßig verknüpfte Speicherorte wie Dokumente oder Downloads können entfernt werden, wenn sie nicht benötigt werden.",
   "htsFindOutMore": "Mehr erfahren",
   "htsCreatingLocationTitle": "Einen Speicherort erstellen",
-  "htsCreatingLocation": "Über die hervorgehobene Schaltfläche können Sie einen Dialog öffnen, in dem Sie den Ordner auswählen, den Sie in TagSpaces verwenden möchten, und daraus einen verknüpften Speicherort erstellen. Abhängig vom Typ des Speicherorts kann sich der Ordner auf Ihrem Computer oder in einem S3-kompatiblen Cloud-Speicher wie AWS S3, Cloudflare R2, Wasabi oder Minio befinden.",
+  "htsCreatingLocation": "By selecting the highlighted button, you can open a dialog to choose which folder you'd like to use in TagSpaces and create a location linked to it. Depending on the type of location, the folder can be on your computer or in S3-compatible cloud storage such as AWS S3, Cloudflare R2 oder Wasabi.",
   "htsTagLibrary": "Die Tag-Bibliothek ist der Bereich, in dem Sie die Tags verwalten und organisieren können, mit denen Sie Ihre Dateien und Ordner versehen. Tag-Gruppen helfen Ihnen, verschiedene Tags zu kategorisieren, und das Anwenden eines Tags ist so einfach wie Drag & Drop auf eine Datei oder einen Ordner.",
   "htsQuickAccess": "Dieser Bereich bietet Ihnen schnellen Zugriff auf wichtige Inhalte:",
   "htsQuickAccessSection1": "Gespeicherte Suchen zur jederzeitigen Wiederverwendung",
@@ -1103,5 +1105,8 @@
   "importCompleted": "Importieren abgeschlossen",
   "importCompletedWithErrors": "Importieren mit Fehler abgeschlossen",
   "dateCreatedSearchTitle": "Erstellungsdatum",
+  "meta": "Meta",
+  "toggleSidebar": "Toggle sidebar",
+  "searchSettings": "Search settings",
   "-": "-"
 }
