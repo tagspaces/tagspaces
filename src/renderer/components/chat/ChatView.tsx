@@ -43,7 +43,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import React, { ChangeEvent, useReducer, useRef } from 'react';
+import React, { ChangeEvent, useCallback, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -68,42 +68,42 @@ function ChatView() {
   const currentMode = useRef<ChatMode>(undefined);
   const editorRef = useRef<CrepeRef>(null);
   const milkdownDivRef = useRef<HTMLDivElement>(null);
-  const chatMsg = useRef<string>(undefined);
+  const chatMsg = useRef<string>('');
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    chatMsg.current = event.target.value;
-    forceUpdate();
-  };
+  // Input change handler
+  const handleInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      chatMsg.current = event.target.value;
+      forceUpdate();
+    },
+    [],
+  );
 
-  const handleChangeModel = (newModelName: string) => {
-    changeCurrentModel(newModelName)
-      .then((success) => {
-        if (success) {
-          setModel(newModelName);
-          //forceUpdate();
-        }
-      })
-      .catch((err) => {
-        showNotification(
-          t('core:installCustomModel') + err.message + ': ' + newModelName,
-          'error',
-          false,
-        );
-        console.log(err);
-      });
-  };
+  // Model change handler
+  const handleChangeModel = useCallback(
+    (newModelName: string) => {
+      changeCurrentModel(newModelName)
+        .then((success) => {
+          if (success) {
+            setModel(newModelName);
+          }
+        })
+        .catch((err) => {
+          showNotification(
+            t('core:installCustomModel') + err.message + ': ' + newModelName,
+            'error',
+            false,
+          );
+          console.log(err);
+        });
+    },
+    [changeCurrentModel, setModel, showNotification, t],
+  );
 
-  /*const handleChangeMode = (event: ChangeEvent<HTMLInputElement>) => {
-    currentMode.current = event.target.value
-      ? (event.target.value as ChatMode)
-      : undefined;
-    forceUpdate();
-  };*/
-
-  const handleChatMessage = () => {
-    //isTyping.current = true;
+  // Chat message send handler
+  const handleChatMessage = useCallback(() => {
     isLoading.current = true;
     forceUpdate();
     newChatMessage(
@@ -127,30 +127,30 @@ function ChatView() {
           console.error('An error occurred:', error);
         }
       });
-  };
+  }, [newChatMessage]);
 
-  const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
+  // Menu handlers
+  const handleMoreClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    [],
+  );
+  const handleClose = useCallback(() => setAnchorEl(null), []);
+  const handleSelectAll = useCallback(() => {
     setAnchorEl(null);
-  };
-
-  const handleSelectAll = () => {
-    setAnchorEl(null);
-    const range = document.createRange(); // Create a new range
-    const selection = window.getSelection(); // Get the current selection
+    const range = document.createRange();
+    const selection = window.getSelection();
     if (milkdownDivRef.current) {
-      range.selectNodeContents(milkdownDivRef.current); // Select the text inside the div
-      selection.removeAllRanges(); // Clear any existing selections
-      selection.addRange(range); // Add the new range to the selection
+      range.selectNodeContents(milkdownDivRef.current);
+      selection.removeAllRanges();
+      selection.addRange(range);
     }
-  };
-
-  const handleCopy = () => {
+  }, []);
+  const handleCopy = useCallback(() => {
     setAnchorEl(null);
     if (milkdownDivRef.current) {
-      const textToCopy = milkdownDivRef.current.innerText; // Get the text content of the div
+      const textToCopy = milkdownDivRef.current.innerText;
       navigator.clipboard
         .writeText(textToCopy)
         .then(() => {
@@ -161,35 +161,27 @@ function ChatView() {
           showNotification(t('core:generatedHTMLFailed'));
         });
     }
-  };
-
-  const saveAsHtml = () => {
+  }, [showNotification, t]);
+  const saveAsHtml = useCallback(() => {
     setAnchorEl(null);
     if (milkdownDivRef.current) {
       const html = milkdownDivRef.current.innerHTML;
-      const blob = new Blob([html], {
-        type: 'text/html',
-      });
+      const blob = new Blob([html], { type: 'text/html' });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
-      const filename = 'tagspaces-chat [export ' + dateTimeTag + '].html';
-
+      const filename = `tagspaces-chat [export ${dateTimeTag}].html`;
       saveAsTextFile(blob, filename);
     }
-  };
-
-  const saveAsMarkdown = () => {
+  }, []);
+  const saveAsMarkdown = useCallback(() => {
     setAnchorEl(null);
     if (editorRef.current) {
       const md = editorRef.current.getMarkdown();
-      const blob = new Blob([md], {
-        type: 'text/markdown',
-      });
+      const blob = new Blob([md], { type: 'text/markdown' });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
-      const filename = 'tagspaces-chat [export ' + dateTimeTag + '].md';
-
+      const filename = `tagspaces-chat [export ${dateTimeTag}].md`;
       saveAsTextFile(blob, filename);
     }
-  };
+  }, []);
 
   const { FILE } = NativeTypes;
 
@@ -205,8 +197,9 @@ function ChatView() {
           overflow: 'hidden',
         }}
       >
+        {/* Model selection and menu */}
         <Grid container spacing={0} direction="row" sx={{ flexFlow: 'nowrap' }}>
-          <Grid size={11.5}>
+          <Grid sx={{ flexGrow: 1 }}>
             <SelectChatModel
               id="chatModelId"
               handleChangeModel={handleChangeModel}
@@ -238,7 +231,8 @@ function ChatView() {
             />
           </Grid>
         </Grid>
-        <Grid size="grow" sx={{ padding: 0, overflowY: 'auto' }}>
+        {/* Chat markdown editor */}
+        <Grid sx={{ padding: 0, overflowY: 'auto', flexGrow: 1 }}>
           <div className="chatMD" ref={milkdownDivRef}>
             <style>
               {`
@@ -258,11 +252,16 @@ function ChatView() {
             </MilkdownProvider>
           </div>
         </Grid>
+        {/* Images and chat input */}
         <Grid container spacing={1} direction="column">
           <Grid>
             {images.length > 0 &&
               images.map((image, index) => (
-                <Box position="relative" sx={{ float: 'right' }}>
+                <Box
+                  key={image.uuid}
+                  position="relative"
+                  sx={{ float: 'right' }}
+                >
                   <img
                     src={
                       'data:image/' +
@@ -276,9 +275,7 @@ function ChatView() {
                   <TsIconButton
                     size="small"
                     tooltip={t('core:remove')}
-                    onClick={(e) => {
-                      removeImage(image.uuid);
-                    }}
+                    onClick={() => removeImage(image.uuid)}
                     sx={{
                       position: 'absolute',
                       top: 8,
@@ -299,7 +296,6 @@ function ChatView() {
                   autoFocus
                   disabled={isTyping || isLoading.current}
                   name="entryName"
-                  //label={t('core:newChatMessage')}
                   placeholder={t('core:yourMessageForAI')}
                   onChange={handleInputChange}
                   value={chatMsg.current}
@@ -331,7 +327,7 @@ function ChatView() {
                             <CircularProgress size={24} color="inherit" />
                           )}
                           {isLoading.current && (
-                            <Tooltip title="Cancel Message">
+                            <Tooltip title={t('Cancel answer generation')}>
                               <TsIconButton
                                 onClick={() => {
                                   isLoading.current = false;
@@ -342,7 +338,6 @@ function ChatView() {
                               </TsIconButton>
                             </Tooltip>
                           )}
-
                           <TsIconButton
                             tooltip={t('core:send')}
                             onClick={handleChatMessage}

@@ -59,7 +59,7 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
 
         crepe.editor.onStatusChange((status: EditorStatus) => {
           if (status === EditorStatus.Created) {
-            console.log(status);
+            // console.log(status);
             crepeInstanceRef.current = crepe;
 
             // const content = document.querySelector('.chatMD');
@@ -94,7 +94,7 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
 
     // useEffect(() => {
     //   // Find the inner editable content area
-    //   const content = document.querySelector('.ProseMirror');
+    //   const content = document.querySelector('.chatMD');
     //   if (!content) return;
     //   content.scrollTo({
     //     top: content.scrollHeight,
@@ -106,32 +106,31 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
 
     function formatChatItems(chatItems: ChatItem[] = []): string {
       if (!chatItems.length) return '';
+      // console.log('formatChatItems', chatItems);
 
-      return (
-        [...chatItems] // clone to avoid mutating original
-          // .reverse() // reverse order
-          .map((item) => {
-            const dateStr = item.timestamp
-              ? `**User on ${format(item.timestamp, 'yyyy-MM-dd HH:mm:ss')}**`
-              : '**User**';
+      return [...chatItems] // clone to avoid mutating original
+        .reverse() // reverse order
+        .map((item) => {
+          const dateStr = item.timestamp
+            ? `**User on ${format(item.timestamp, 'yyyy-MM-dd HH:mm:ss')}**`
+            : '**User**';
 
-            const requestStr = item.request ?? '';
-            const modelName = item.modelName ?? 'AI model';
-            const responseStr = item.response
-              ? `**${modelName}**:\\\n${item.response}`
-              : '';
+          const requestStr = item.request ?? '';
+          const modelName = item.modelName ?? 'AI model';
+          const responseStr = item.response
+            ? `**${modelName}**:\\\n${item.response}`
+            : '';
 
-            const imagesStr = (item.imagePaths ?? [])
-              .map(
-                (img) =>
-                  `![chat image](${AppConfig.metaFolder}/${AppConfig.aiFolder}/${img})`,
-              )
-              .join('\n');
+          const imagesStr = (item.imagePaths ?? [])
+            .map(
+              (img) =>
+                `![chat image](${AppConfig.metaFolder}/${AppConfig.aiFolder}/${img})`,
+            )
+            .join('\n');
 
-            return `${dateStr}: \\\n${requestStr}\n${imagesStr}\n${responseStr}\n***\n`;
-          })
-          .join('\n')
-      );
+          return `${dateStr}: \\\n${requestStr}\n${imagesStr}\n${responseStr}\n***\n`;
+        })
+        .join('\n');
     }
 
     return <Milkdown />;
