@@ -45,6 +45,7 @@ import {
   getBackupDir,
   isMeta,
 } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { format, formatDistanceToNow } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -271,7 +272,7 @@ function Revisions() {
           <TableBody>
             {paginatedRows.map((row) => (
               <TableRow
-                data-tid={openedEntry.uuid}
+                data-tid={getUuid()}
                 key={row.path}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >

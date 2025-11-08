@@ -256,15 +256,16 @@ export async function getRevision(revIndex) {
   try {
     return await global.client.$$eval(
       'table[data-tid=tableRevisionsTID] tbody tr',
-      (rows) => {
-        if (rows.length > 0) {
+      (rows, revIndex) => {
+        if (rows.length > 0 && revIndex <= rows.length) {
           return {
-            id: rows[0].getAttribute('data-tid'),
-            file: rows[0].querySelector('th').innerText,
+            id: rows[revIndex].getAttribute('data-tid'),
+            file: rows[revIndex].querySelector('th').innerText,
           };
         }
         return undefined;
       },
+      revIndex
     );
   } catch (e) {
     console.log("Can't find getRevision:" + revIndex, e);
@@ -978,7 +979,7 @@ export async function expectFileContain(
       async () => {
         const fLocator = await frameLocator(iframeLocator);
         const bodyTxt = await fLocator.locator('body').innerText();
-        //console.log(bodyTxt);
+        // console.log('>>>>> '+ bodyTxt);
         return toContainTID(bodyTxt, [txtToContain]);
       },
       {
