@@ -9,9 +9,39 @@
   "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
   "fileAssociations": [
     {
-      "ext": ["md", "mdown", "html", "txt"],
-      "name": "TagSpaces Editor",
+      "ext": "md",
+      "name": "Markdown File",
       "role": "Editor"
+    },
+    {
+      "ext": "mdown",
+      "name": "Markdown File",
+      "role": "Editor"
+    },
+    {
+      "ext": "mmd",
+      "name": "Markdown Presentation File",
+      "role": "Editor"
+    },
+    {
+      "ext": "html",
+      "name": "HTML File",
+      "role": "Editor"
+    },
+    {
+      "ext": "txt",
+      "name": "Text File",
+      "role": "Editor"
+    },
+    {
+      "ext": "glb",
+      "name": "GLB File",
+      "role": "Viewer"
+    },
+    {
+      "ext": "url",
+      "name": "URL File",
+      "role": "Viewer"
     }
   ],
   "copyright": "Copyright © 2025 TagSpaces GmbH",
