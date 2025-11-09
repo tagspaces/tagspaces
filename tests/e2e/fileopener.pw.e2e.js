@@ -403,9 +403,10 @@ test.describe('TST08 - File folder properties', () => {
     await openFile(fileName);
     await createRevision();
 
-    const revision = await getRevision(0);
+    const revision = await getRevision(1);
     expect(revision).not.toBeUndefined();
-    await expectMetaFilesExist([revision.file], true, revision.id);
+    const entryId = revision.id.split('-')[0];
+    await expectMetaFilesExist([revision.file], true, entryId);
 
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=deleteEntryTID]');
