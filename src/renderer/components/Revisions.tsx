@@ -255,10 +255,10 @@ function Revisions() {
                       sx={{ minWidth: 120 }}
                     >
                       <MenuItem key="file" value="file">
-                        {t('file')}
+                        {t('mainFile')}
                       </MenuItem>
                       <MenuItem key="meta" value="meta">
-                        {t('meta')}
+                        {t('sidecarFile')}
                       </MenuItem>
                     </TsSelect>
                   )}
