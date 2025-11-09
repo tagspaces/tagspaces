@@ -47,8 +47,7 @@ type Props = TSButtonProps & {
 };
 
 function AiGenTagsButton(props: Props) {
-  const { fromDescription, variant, entries, generationCompleted, style } =
-    props;
+  const { fromDescription, variant, entries, generationCompleted, sx } = props;
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
@@ -114,7 +113,7 @@ function AiGenTagsButton(props: Props) {
   };
 
   return (
-    <ButtonGroup style={{ ...style }}>
+    <ButtonGroup sx={{ ...sx }}>
       <TsButton
         loading={isLoading}
         disabled={disabled}

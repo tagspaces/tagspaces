@@ -42,7 +42,7 @@ import { AIIcon } from '../CommonIcons';
 type Props = TSButtonProps & { style?: any };
 
 function AiGenDescButton(props: Props) {
-  const { style } = props;
+  const { sx } = props;
   const { t } = useTranslation();
   // const { disabled } = props;
   const dispatch: AppDispatch = useDispatch();
@@ -90,7 +90,7 @@ function AiGenDescButton(props: Props) {
   }
 
   return (
-    <ButtonGroup style={{ ...style }}>
+    <ButtonGroup sx={{ ...sx }}>
       <TsButton
         loading={isLoading}
         disabled={disabled}
