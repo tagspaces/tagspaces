@@ -171,6 +171,7 @@ function FilePreviewDialog(props: Props) {
           fileViewer={fileViewer}
           fileViewerContainer={fileViewerContainer}
           handleMessage={handleMessage}
+          height="calc(100% - 20px)"
         />
       </DialogContent>
     </Dialog>

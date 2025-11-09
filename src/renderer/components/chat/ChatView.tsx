@@ -254,9 +254,9 @@ function ChatView() {
         </Grid>
         {/* Images and chat input */}
         <Grid container spacing={1} direction="column">
-          <Grid>
-            {images.length > 0 &&
-              images.map((image, index) => (
+          {images.length > 0 && (
+            <Grid>
+              {images.map((image, index) => (
                 <Box
                   key={image.uuid}
                   position="relative"
@@ -288,7 +288,8 @@ function ChatView() {
                   </TsIconButton>
                 </Box>
               ))}
-          </Grid>
+            </Grid>
+          )}
           <Grid>
             <ChatDndTargetFile accepts={[FILE, DragItemTypes.FILE]}>
               <FormControl fullWidth>
