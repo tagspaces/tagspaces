@@ -172,6 +172,7 @@ AppConfig.defaultFileColor = '#33b5be';
 AppConfig.defaultCSSRadius = '10px';
 AppConfig.defaultSpaceBetweenButtons = '10px';
 AppConfig.aiFolder = 'ai';
+AppConfig.sidecarRevisionExtension = '.meta';
 AppConfig.defaultMapBounds =
   typeof window !== 'undefined' && window.ExtDefaultMapBounds !== undefined
     ? window.ExtDefaultMapBounds

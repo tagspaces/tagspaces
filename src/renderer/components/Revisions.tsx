@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import { DeleteIcon, PreviewIcon, RestoreIcon } from '-/components/CommonIcons';
 import FilePreviewDialog from '-/components/dialogs/FilePreviewDialog';
 import TsIconButton from '-/components/TsIconButton';
@@ -95,7 +96,9 @@ function Revisions() {
         location.listDirectoryPromise(backupPath, []).then((h) => {
           const history =
             revisionsType === 'meta'
-              ? h.filter((b) => b.path.endsWith('.meta'))
+              ? h.filter((b) =>
+                  b.path.endsWith(AppConfig.sidecarRevisionExtension),
+                )
               : h.filter((b) => b.path.endsWith(openedFile.extension));
           setRows(
             history.sort((a, b) =>
@@ -136,7 +139,7 @@ function Revisions() {
 
   function restoreRevision(revisionPath) {
     const location = findLocation(openedEntry.locationID);
-    if (revisionPath.endsWith('.meta')) {
+    if (revisionPath.endsWith(AppConfig.sidecarRevisionExtension)) {
       // restore description
       location
         .loadJSONFile(revisionPath)

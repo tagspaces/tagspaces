@@ -1939,7 +1939,9 @@ export const IOActionsContextProvider = ({
             if (fsEntryMeta && fsEntryMeta.description) {
               const backupDir = getBackupDir(entry);
               location.listDirectoryPromise(backupDir, []).then((backup) => {
-                const haveBackup = backup.some((b) => b.path.endsWith('.meta'));
+                const haveBackup = backup.some((b) =>
+                  b.path.endsWith(AppConfig.sidecarRevisionExtension),
+                );
                 if (!haveBackup) {
                   // init description
                   const targetPath = entry.isFile
@@ -1955,7 +1957,7 @@ export const IOActionsContextProvider = ({
                       );
                   saveTextFilePromise(
                     {
-                      path: targetPath + '.meta',
+                      path: targetPath + AppConfig.sidecarRevisionExtension,
                       locationID: entry.locationID,
                     },
                     JSON.stringify({ description: fsEntryMeta?.description }),
@@ -1978,7 +1980,10 @@ export const IOActionsContextProvider = ({
                     location.getDirSeparator(),
                   );
               saveTextFilePromise(
-                { path: targetPath + '.meta', locationID: entry.locationID },
+                {
+                  path: targetPath + AppConfig.sidecarRevisionExtension,
+                  locationID: entry.locationID,
+                },
                 JSON.stringify({
                   description: meta.description,
                   ...(author && { author: author }),

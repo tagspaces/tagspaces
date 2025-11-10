@@ -65,7 +65,7 @@ function FilePreviewDialog(props: Props) {
         }
       : undefined;
 
-  if (fsEntry?.name?.endsWith('meta')) {
+  if (fsEntry?.name?.endsWith(AppConfig.sidecarRevisionExtension)) {
     const fileType: TS.FileTypes = supportedFileTypes.find(
       (fileType) => fileType.viewer && fileType.type.toLowerCase() === 'json',
     );
