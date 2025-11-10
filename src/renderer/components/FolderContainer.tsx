@@ -167,9 +167,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
 
   const perspectiveToggleButtons = useMemo(
     () =>
-      AvailablePerspectives.filter(
-        (perspective) => devMode || perspective.id !== PerspectiveIDs.CALENDAR,
-      ).map((perspective) => (
+      AvailablePerspectives.map((perspective) => (
         <TsToggleButton
           value={perspective.id}
           aria-label={perspective.id}
@@ -214,9 +212,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
 
   const perspectiveMenuItems = useMemo(
     () =>
-      AvailablePerspectives.filter(
-        (perspective) => devMode || perspective.id !== PerspectiveIDs.CALENDAR,
-      ).map((perspective) => {
+      AvailablePerspectives.map((perspective) => {
         let badge = perspective.beta ? <BetaLabel /> : null;
         return (
           <MenuItem
