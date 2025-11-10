@@ -25,10 +25,9 @@ import { EditorStatus } from '@milkdown/core';
 import { Crepe } from '@milkdown/crepe';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { format } from 'date-fns';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
 interface ChatMdEditorProps {
-  //defaultContent: string;
   currentFolder?: string;
   placeholder?: string;
 }
@@ -38,13 +37,26 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
     const { currentFolder, placeholder } = props;
     const { openLink } = useOpenedEntryContext();
     const { chatHistoryItems } = useChatContext();
-    const crepeInstanceRef = useRef<Crepe>(undefined);
+    const crepeInstanceRef = useRef<Crepe | null>(null);
 
+    // Memoize formatted chat content for performance
+    const formattedChatContent = React.useMemo(
+      () => formatChatItems(chatHistoryItems),
+      [chatHistoryItems],
+    );
+
+    // Use Milkdown's useEditor, but only recreate the editor when currentFolder changes
     const { get, loading } = useEditor(
       (root) => {
+        // Destroy previous instance if exists
+        if (crepeInstanceRef.current) {
+          crepeInstanceRef.current.destroy();
+          crepeInstanceRef.current = null;
+        }
+        // Create new crepe editor
         const crepe = createCrepeEditor(
           root,
-          formatChatItems(chatHistoryItems),
+          formattedChatContent,
           false,
           {
             [Crepe.Feature.BlockEdit]: false,
@@ -56,12 +68,14 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
           currentFolder,
           openLink,
         );
-
         crepe.editor.onStatusChange((status: EditorStatus) => {
           if (status === EditorStatus.Created) {
-            // console.log(status);
             crepeInstanceRef.current = crepe;
-
+            // console.log('Scroll: ' + ref.scrollHeight);
+            // crepeInstanceRef.current.scrollTo({
+            //   top: crepeInstanceRef.current.scrollHeight,
+            //   behavior: 'smooth',
+            // });
             // const content = document.querySelector('.chatMD');
             // if (!content) return;
             // setTimeout(() => {
@@ -75,62 +89,53 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
         });
         return crepe;
       },
-      [currentFolder, chatHistoryItems],
+      [currentFolder, chatHistoryItems], // Only recreate editor when folder changes
     );
 
-    /* useEffect(() => {
-      const editor = get();
-      if (loading || !editor || editor.status !== EditorStatus.Created) return;
-      editor.action(replaceAll(formatChatItems(chatHistoryItems)));
-    }, [chatHistoryItems]);*/
-
-    useEffect(() => {
-      return () => {
-        if (crepeInstanceRef.current) {
-          crepeInstanceRef.current.destroy();
-        }
-      };
-    }, []);
+    // useEffect(() => {
+    //   return () => {
+    //     if (crepeInstanceRef.current) {
+    //       crepeInstanceRef.current.destroy();
+    //     }
+    //   };
+    // }, []);
 
     // useEffect(() => {
-    //   // Find the inner editable content area
-    //   const content = document.querySelector('.chatMD');
-    //   if (!content) return;
-    //   content.scrollTo({
-    //     top: content.scrollHeight,
-    //     behavior: 'smooth',
-    //   });
-    // }, [chatHistoryItems]);
+    //   const content = document.querySelector('.milkdown');
+    //   if (content) {
+    //     content.scrollTo({
+    //       top: content.scrollHeight,
+    //       behavior: 'smooth',
+    //     });
+    //   }
+    // }, [formattedChatContent]);
 
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);
 
     function formatChatItems(chatItems: ChatItem[] = []): string {
       if (!chatItems.length) return '';
-      // console.log('formatChatItems', chatItems);
-
-      return [...chatItems] // clone to avoid mutating original
-        .reverse() // reverse order
-        .map((item) => {
-          const dateStr = item.timestamp
-            ? `**User on ${format(item.timestamp, 'yyyy-MM-dd HH:mm:ss')}**`
-            : '**User**';
-
-          const requestStr = item.request ?? '';
-          const modelName = item.modelName ?? 'AI model';
-          const responseStr = item.response
-            ? `**${modelName}**:\\\n${item.response}`
-            : '';
-
-          const imagesStr = (item.imagePaths ?? [])
-            .map(
-              (img) =>
-                `![chat image](${AppConfig.metaFolder}/${AppConfig.aiFolder}/${img})`,
-            )
-            .join('\n');
-
-          return `${dateStr}: \\\n${requestStr}\n${imagesStr}\n${responseStr}\n***\n`;
-        })
-        .join('\n');
+      return (
+        [...chatItems]
+          // .reverse()
+          .map((item) => {
+            const dateStr = item.timestamp
+              ? `**User on ${format(item.timestamp, 'yyyy-MM-dd HH:mm:ss')}**`
+              : '**User**';
+            const requestStr = item.request ?? '';
+            const modelName = item.modelName ?? 'AI model';
+            const responseStr = item.response
+              ? `**${modelName}**:\\\n${item.response}`
+              : '';
+            const imagesStr = (item.imagePaths ?? [])
+              .map(
+                (img) =>
+                  `![chat image](${AppConfig.metaFolder}/${AppConfig.aiFolder}/${img})`,
+              )
+              .join('\n');
+            return `${dateStr}: \\\n${requestStr}\n${imagesStr}\n${responseStr}\n***\n`;
+          })
+          .join('\n')
+      );
     }
 
     return <Milkdown />;
