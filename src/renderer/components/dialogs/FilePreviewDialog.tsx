@@ -65,24 +65,17 @@ function FilePreviewDialog(props: Props) {
         }
       : undefined;
 
+  // Choosing the current json viewer as viewer of the meta revision file
   if (fsEntry?.name?.endsWith(AppConfig.sidecarRevisionExtension)) {
     const fileType: TS.FileTypes = supportedFileTypes.find(
       (fileType) => fileType.viewer && fileType.type.toLowerCase() === 'json',
     );
     if (fileType) {
-      openedEntry.isFile = true;
       openedEntry.viewingExtensionId = fileType.viewer;
       openedEntry.viewingExtensionPath = findExtensionPathForId(
         fileType.viewer,
         fileType.extensionExternalPath,
       );
-      // if (fileType.editor && fileType.editor.length > 0) {
-      //   openedEntry.editingExtensionId = fileType.editor;
-      //   openedEntry.editingExtensionPath = findExtensionPathForId(
-      //     fileType.editor,
-      //     fileType.extensionExternalPath,
-      //   );
-      // }
     }
   }
 

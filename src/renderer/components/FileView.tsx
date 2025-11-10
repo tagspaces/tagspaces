@@ -243,22 +243,20 @@ function FileView(props: Props) {
           <span>ESC</span>
         </Box>
       )}
-      {openedEntry.isFile && (
-        <iframe
-          ref={fileViewer}
-          style={{
-            width: '100%',
-            height: '100%',
-            zIndex: 3,
-            border: 0,
-          }}
-          allow="clipboard-write *"
-          src={fileOpenerURL}
-          allowFullScreen
-          sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
-          id={'FileViewer' + eventID.current}
-        />
-      )}
+      <iframe
+        ref={fileViewer}
+        style={{
+          width: '100%',
+          height: '100%',
+          zIndex: 3,
+          border: 0,
+        }}
+        allow="clipboard-write *"
+        src={fileOpenerURL}
+        allowFullScreen
+        sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
+        id={'FileViewer' + eventID.current}
+      />
     </Box>
   );
 }
