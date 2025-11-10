@@ -23,7 +23,8 @@ import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { getCurrentTheme } from '-/reducers/settings';
+import { getCurrentTheme, getSupportedFileTypes } from '-/reducers/settings';
+import { findExtensionPathForId } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
@@ -42,6 +43,7 @@ interface Props {
 
 function FilePreviewDialog(props: Props) {
   const { open = false, onClose, fsEntry } = props;
+  const supportedFileTypes = useSelector(getSupportedFileTypes);
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry } = useOpenedEntryContext();
   const { isEditMode } = useFilePropertiesContext();
@@ -62,6 +64,27 @@ function FilePreviewDialog(props: Props) {
           isFile: fsEntry.isFile,
         }
       : undefined;
+
+  if (fsEntry?.name?.endsWith('meta')) {
+    const fileType: TS.FileTypes = supportedFileTypes.find(
+      (fileType) => fileType.viewer && fileType.type.toLowerCase() === 'json',
+    );
+    if (fileType) {
+      openedEntry.isFile = true;
+      openedEntry.viewingExtensionId = fileType.viewer;
+      openedEntry.viewingExtensionPath = findExtensionPathForId(
+        fileType.viewer,
+        fileType.extensionExternalPath,
+      );
+      // if (fileType.editor && fileType.editor.length > 0) {
+      //   openedEntry.editingExtensionId = fileType.editor;
+      //   openedEntry.editingExtensionPath = findExtensionPathForId(
+      //     fileType.editor,
+      //     fileType.extensionExternalPath,
+      //   );
+      // }
+    }
+  }
 
   const handleMessage = (data: any) => {
     if (!openedFile || !openedFile.path) {
