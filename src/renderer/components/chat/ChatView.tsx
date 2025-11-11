@@ -150,7 +150,10 @@ function ChatView() {
   const handleCopy = useCallback(() => {
     setAnchorEl(null);
     if (milkdownDivRef.current) {
-      const textToCopy = milkdownDivRef.current.innerText;
+      const milkdownContent =
+        // @ts-ignore
+        milkdownDivRef.current.querySelector('.ProseMirror').innerText;
+      const textToCopy = milkdownContent || milkdownDivRef.current.innerText;
       navigator.clipboard
         .writeText(textToCopy)
         .then(() => {
@@ -165,8 +168,17 @@ function ChatView() {
   const saveAsHtml = useCallback(() => {
     setAnchorEl(null);
     if (milkdownDivRef.current) {
-      const html = milkdownDivRef.current.innerHTML;
-      const blob = new Blob([html], { type: 'text/html' });
+      const milkdownContent =
+        milkdownDivRef.current.querySelector('.ProseMirror').innerHTML;
+      const html = milkdownContent || milkdownDivRef.current.innerHTML;
+      const blob = new Blob(
+        [
+          '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>',
+          html,
+          '</body></html>',
+        ],
+        { type: 'text/html' },
+      );
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
       const filename = `tagspaces-chat [export ${dateTimeTag}].html`;
       saveAsTextFile(blob, filename);
@@ -232,25 +244,31 @@ function ChatView() {
           </Grid>
         </Grid>
         {/* Chat markdown editor */}
-        <Grid sx={{ padding: 0, overflowY: 'auto', flexGrow: 1 }}>
-          <div className="chatMD" ref={milkdownDivRef}>
-            <style>
-              {`
-                .chatMD .milkdown .ProseMirror {
+        <Grid
+          id="chatMD"
+          sx={{ padding: 0, overflowY: 'auto', flexGrow: 1 }}
+          ref={milkdownDivRef}
+        >
+          <style>
+            {`
+                #chatMD .milkdown .ProseMirror {
                     padding: 10px;
                 }
-                .chatMD .milkdown .ProseMirror a {
+                #chatMD .milkdown .ProseMirror a {
                     color: ${theme.palette.primary.main};
                 }
-                .chatMD .milkdown .ProseMirror img {
+                #chatMD .milkdown .ProseMirror img {
                     max-width: 99%;
                 }
             `}
-            </style>
-            <MilkdownProvider>
-              <ChatMdEditor ref={editorRef} currentFolder={openedEntry.path} />
-            </MilkdownProvider>
-          </div>
+          </style>
+          <MilkdownProvider>
+            <ChatMdEditor
+              showCurrent={isLoading.current}
+              ref={editorRef}
+              currentFolder={openedEntry.path}
+            />
+          </MilkdownProvider>
         </Grid>
         {/* Images and chat input */}
         <Grid container spacing={1} direction="column">
@@ -324,7 +342,7 @@ function ChatView() {
                       ),
                       endAdornment: (
                         <InputAdornment position="end" sx={{ height: 32 }}>
-                          {isTyping && (
+                          {isLoading.current && (
                             <CircularProgress size={24} color="inherit" />
                           )}
                           {isLoading.current && (
