@@ -120,51 +120,13 @@ function SettingsAdvanced(props: Props) {
     dispatch(SettingsActions.setHistory(key, value));
 
   return (
-    <List sx={{ overflowX: 'hidden', overflowY: 'auto', height: '100%' }}>
-      <ListItem>
-        <TsButton
-          data-tid="resetSettingsTID"
-          onClick={() =>
-            openConfirmDialog(
-              t('core:confirm'),
-              t('core:confirmResetSettings'),
-              (result) => {
-                if (result) {
-                  clearAllURLParams();
-                  localStorage.clear();
-                  // eslint-disable-next-line no-restricted-globals
-                  if (AppConfig.isElectron) {
-                    window.electronIO.ipcRenderer.sendMessage('reloadWindow');
-                  } else {
-                    window.location.reload();
-                  }
-                }
-              },
-              'cancelResetSettingsDialogTID',
-              'confirmResetSettingsDialogTID',
-              'confirmResetSettingsDialogContentTID',
-            )
-          }
-          color="secondary"
-          sx={{ marginLeft: '-7px' }}
-        >
-          {t('core:resetSettings')}
-        </TsButton>
-        <TsButton
-          data-tid="reloadAppTID"
-          sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
-          onClick={() => {
-            if (AppConfig.isElectron) {
-              window.electronIO.ipcRenderer.sendMessage('reloadWindow');
-            } else {
-              window.location.reload();
-            }
-          }}
-          color="secondary"
-        >
-          {t('core:reloadApplication')}
-        </TsButton>
-      </ListItem>
+    <List
+      sx={{
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        height: 'calc(100% - 18px)',
+      }}
+    >
       <ListItem>
         <ListItemText
           primary={
@@ -424,6 +386,56 @@ function SettingsAdvanced(props: Props) {
           onClick={() => setDevMode(!devMode)}
           checked={devMode}
         />
+      </ListItem>
+      <ListItem>
+        <ListItemText primary={<>{t('Danger Zone')}</>} />
+        <TsButton
+          data-tid="resetSettingsTID"
+          onClick={() =>
+            openConfirmDialog(
+              t('core:confirm'),
+              t('core:confirmResetSettings'),
+              (result) => {
+                if (result) {
+                  clearAllURLParams();
+                  localStorage.clear();
+                  // eslint-disable-next-line no-restricted-globals
+                  if (AppConfig.isElectron) {
+                    window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+                  } else {
+                    window.location.reload();
+                  }
+                }
+              },
+              'cancelResetSettingsDialogTID',
+              'confirmResetSettingsDialogTID',
+              'confirmResetSettingsDialogContentTID',
+            )
+          }
+          color="secondary"
+          sx={{ color: 'red' }}
+        >
+          {t('core:resetSettings')}
+        </TsButton>
+        {devMode && (
+          <TsButton
+            data-tid="reloadAppTID"
+            sx={{
+              color: 'red',
+              marginLeft: AppConfig.defaultSpaceBetweenButtons,
+            }}
+            onClick={() => {
+              if (AppConfig.isElectron) {
+                window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+              } else {
+                window.location.reload();
+              }
+            }}
+            color="secondary"
+          >
+            {t('core:reloadApplication')}
+          </TsButton>
+        )}
       </ListItem>
     </List>
   );
