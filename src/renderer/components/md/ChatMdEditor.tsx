@@ -21,11 +21,13 @@ import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
 import { createCrepeEditor } from '-/components/md/utils';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { getAuthor } from '-/reducers/settings';
 import { EditorStatus } from '@milkdown/core';
 import { Crepe } from '@milkdown/crepe';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { format } from 'date-fns';
 import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 interface ChatMdEditorProps {
   currentFolder?: string;
@@ -39,6 +41,7 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
     const { openLink } = useOpenedEntryContext();
     const { chatHistoryItems } = useChatContext();
     const crepeInstanceRef = useRef<Crepe | null>(null);
+    const author = useSelector(getAuthor);
 
     // Memoize formatted chat content for performance
     const formattedChatContent = React.useMemo(
@@ -97,16 +100,17 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
 
     function formatChatItems(chatItems: ChatItem[] = []): string {
       if (!chatItems.length) return '';
+      const user = author || 'You';
       return [...chatItems]
         .reverse()
         .map((item) => {
           const dateStr = item.timestamp
-            ? `**You on ${format(item.timestamp, 'yyyy-MM-dd HH:mm:ss')}**`
-            : '**You**';
+            ? `**${user} on ${format(item.timestamp, 'yyyy-MM-dd HH:mm:ss')}**`
+            : `**${user}**`;
           const requestStr = item.request ?? '';
           const modelName = item.modelName ?? 'AI model';
           const responseStr = item.response
-            ? `**AI (${modelName})**:\\\n${item.response}`
+            ? `**AI/LLM (${modelName})**:\\\n${item.response}`
             : '';
           const imagesStr = (item.imagePaths ?? [])
             .map(
