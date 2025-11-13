@@ -150,12 +150,25 @@ function ChatView() {
   const handleCopy = useCallback(() => {
     setAnchorEl(null);
     if (milkdownDivRef.current) {
-      const milkdownContent =
+      const textContent =
         // @ts-ignore
         milkdownDivRef.current.querySelector('.ProseMirror').innerText;
-      const textToCopy = milkdownContent || milkdownDivRef.current.innerText;
+      const htmlContent =
+        milkdownDivRef.current.querySelector('.ProseMirror').innerHTML;
+      const textToCopy = textContent || milkdownDivRef.current.innerText;
+      const htmlToCopy = htmlContent || milkdownDivRef.current.innerHTML;
+      const htmlType = 'text/html';
+      const plainTextType = 'text/plain';
+      const cbi = [
+        new ClipboardItem({
+          [htmlType]: new Blob([htmlToCopy], {
+            type: htmlType,
+          }),
+          [plainTextType]: new Blob([textToCopy], { type: plainTextType }),
+        }),
+      ];
       navigator.clipboard
-        .writeText(textToCopy)
+        .write(cbi)
         .then(() => {
           showNotification(t('core:copyToClipboard'));
         })
