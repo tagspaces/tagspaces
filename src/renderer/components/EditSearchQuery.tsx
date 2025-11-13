@@ -602,7 +602,7 @@ function EditSearchQuery(props: Props) {
         <TsSelect
           value={tempSearchQuery.dateCreated}
           onChange={handleDateCreatedChange}
-          label={t('core:dateCreatedSearchTitle')}
+          label={t('core:creationDate')}
         >
           <MenuItem value="">{t('core:anyTime')}</MenuItem>
           <MenuItem value={AppConfig.SearchTimePeriods.today.key}>

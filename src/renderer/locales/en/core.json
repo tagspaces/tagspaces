@@ -1109,5 +1109,7 @@
   "mainFile": "Main File",
   "toggleSidebar": "Toggle sidebar",
   "searchSettings": "Search settings",
+  "lastModifiedDate": "Last Modified Date",
+  "createdDate": "Creation Date",
   "-": "-"
 }

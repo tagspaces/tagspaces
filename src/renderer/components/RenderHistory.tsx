@@ -193,7 +193,7 @@ function RenderHistory({
                     <b>{t('core:filePath')}:</b> {item.path}
                     <br />
                     <br />
-                    <b>{t('dateCreatedSearchTitle')}:&nbsp;</b>
+                    <b>{t('creationDate')}:&nbsp;</b>
                     {new Date(item.creationTimeStamp)
                       .toISOString()
                       .substring(0, 19)
