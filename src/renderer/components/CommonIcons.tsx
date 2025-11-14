@@ -317,6 +317,8 @@ export { default as PinGroupingOnIcon } from '@mui/icons-material/ScatterPlotTwo
 
 export { default as CopyToClipboardIcon } from '@mui/icons-material/ContentCopy';
 
+export { default as SelectAllIcon } from '@mui/icons-material/SelectAll';
+
 export const MastodonIcon = (props) => (
   <SvgIcon>
     <svg

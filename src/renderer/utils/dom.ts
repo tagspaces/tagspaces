@@ -1,4 +1,4 @@
-import { getRelativeEntryPath } from '-/services/utils-io';
+import { getMimeType, getRelativeEntryPath } from '-/services/utils-io';
 
 export function isVisibleOnScreen(element: any) {
   const rectangle = element.getBoundingClientRect();
@@ -160,15 +160,13 @@ export function base64ToBlob(base64) {
 }
 
 export function generateClipboardLink(url, name?) {
-  const htmlType = 'text/html';
-  const plainTextType = 'text/plain';
   const htmlLink = `<a href="${url}">${name ? name : url}</a>`;
   const cbi = [
     new ClipboardItem({
-      [htmlType]: new Blob([htmlLink], {
-        type: htmlType,
+      [getMimeType('html')]: new Blob([htmlLink], {
+        type: getMimeType('html'),
       }),
-      [plainTextType]: new Blob([url], { type: plainTextType }),
+      [getMimeType('txt')]: new Blob([url], { type: getMimeType('txt') }),
     }),
   ];
   return cbi;

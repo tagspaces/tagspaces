@@ -31,7 +31,7 @@ import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
-import { saveAsTextFile } from '-/services/utils-io';
+import { getMimeType, saveAsTextFile } from '-/services/utils-io';
 import { MilkdownProvider } from '@milkdown/react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
@@ -150,30 +150,32 @@ function ChatView() {
   const handleCopy = useCallback(() => {
     setAnchorEl(null);
     if (milkdownDivRef.current) {
-      const textContent =
-        // @ts-ignore
-        milkdownDivRef.current.querySelector('.ProseMirror').innerText;
-      const htmlContent =
-        milkdownDivRef.current.querySelector('.ProseMirror').innerHTML;
-      const textToCopy = textContent || milkdownDivRef.current.innerText;
-      const htmlToCopy = htmlContent || milkdownDivRef.current.innerHTML;
-      const htmlType = 'text/html';
-      const plainTextType = 'text/plain';
-      const cbi = [
-        new ClipboardItem({
-          [htmlType]: new Blob([htmlToCopy], {
-            type: htmlType,
-          }),
-          [plainTextType]: new Blob([textToCopy], { type: plainTextType }),
-        }),
-      ];
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        console.warn('No text selected');
+        return;
+      }
+
+      // Extract plain text
+      const text = selection.toString();
+
+      // Extract HTML
+      const range = selection.getRangeAt(0);
+      const container = document.createElement('div');
+      container.appendChild(range.cloneContents());
+      const html = container.innerHTML;
+
+      // Create ClipboardItem with both types
+      const clipboardItem = new ClipboardItem({
+        [getMimeType('txt')]: new Blob([text], { type: getMimeType('txt') }),
+        [getMimeType('html')]: new Blob([html], { type: getMimeType('html') }),
+      });
+
       navigator.clipboard
-        .write(cbi)
-        .then(() => {
-          showNotification(t('core:copyToClipboard'));
-        })
+        .write([clipboardItem])
+        .then(() => showNotification(t('core:copyToClipboard')))
         .catch((err) => {
-          console.error('Failed to copy text:', err);
+          console.log('Error copy to clipboard: ' + err);
           showNotification(t('core:generatedHTMLFailed'));
         });
     }
@@ -184,13 +186,23 @@ function ChatView() {
       const milkdownContent =
         milkdownDivRef.current.querySelector('.ProseMirror').innerHTML;
       const html = milkdownContent || milkdownDivRef.current.innerHTML;
+      // tmp solution for hiding unneeded markup
+      const milkdownCleanerCSS = `
+        <style>
+          .label-wrapper, .tools, .cm-gutter, .cm-gap,
+          .milkdown-table-block, .handle { display: none }
+        </style>
+      `;
       const blob = new Blob(
         [
-          '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>',
-          html,
-          '</body></html>',
+          `<!DOCTYPE html><html>
+            <head><meta charset="UTF-8">${milkdownCleanerCSS}</head>
+            <body>${html}</body>
+           </html>`,
         ],
-        { type: 'text/html' },
+        {
+          type: getMimeType('html'),
+        },
       );
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
       const filename = `tagspaces-chat [export ${dateTimeTag}].html`;
@@ -201,7 +213,7 @@ function ChatView() {
     setAnchorEl(null);
     if (editorRef.current) {
       const md = editorRef.current.getMarkdown();
-      const blob = new Blob([md], { type: 'text/markdown' });
+      const blob = new Blob([md], { type: getMimeType('md') });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
       const filename = `tagspaces-chat [export ${dateTimeTag}].md`;
       saveAsTextFile(blob, filename);

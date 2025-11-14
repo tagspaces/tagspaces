@@ -16,16 +16,20 @@
  *
  */
 
-import { AIIcon, DeleteIcon } from '-/components/CommonIcons';
+import AppConfig from '-/AppConfig';
+import {
+  AIIcon,
+  CopyToClipboardIcon,
+  DeleteIcon,
+  HTMLFileIcon,
+  MarkdownFileIcon,
+  SelectAllIcon,
+} from '-/components/CommonIcons';
 import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
 import { SettingsTab } from '-/components/dialogs/SettingsDialog';
 import TsMenuList from '-/components/TsMenuList';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import CopyIcon from '@mui/icons-material/FileCopy';
-import HtmlIcon from '@mui/icons-material/Html';
-import RttIcon from '@mui/icons-material/Rtt';
-import SelectAllIcon from '@mui/icons-material/SelectAll';
 import {
   Divider,
   ListItemIcon,
@@ -95,12 +99,14 @@ function ChatMenu(props: ChatMenuProps) {
           </ListItemIcon>
           <ListItemText primary={t('core:selectAll')} />
         </MenuItem>
-        <MenuItem onClick={handleCopy}>
-          <ListItemIcon>
-            <CopyIcon />
-          </ListItemIcon>
-          <ListItemText primary={t('core:copy')} />
-        </MenuItem>
+        {!AppConfig.isElectron && (
+          <MenuItem onClick={handleCopy}>
+            <ListItemIcon>
+              <CopyToClipboardIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('core:copy')} />
+          </MenuItem>
+        )}
         <MenuItem onClick={clearHistory}>
           <ListItemIcon>
             <DeleteIcon />
@@ -110,13 +116,13 @@ function ChatMenu(props: ChatMenuProps) {
         <Divider />
         <MenuItem onClick={saveAsHtml}>
           <ListItemIcon>
-            <HtmlIcon />
+            <HTMLFileIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:saveAsHtml')} />
         </MenuItem>
         <MenuItem onClick={saveAsMarkdown}>
           <ListItemIcon>
-            <RttIcon />
+            <MarkdownFileIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:saveAsMd')} />
         </MenuItem>

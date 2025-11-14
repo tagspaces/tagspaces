@@ -1222,6 +1222,7 @@ export function removePrefix(str, prefix) {
 export function getMimeType(extension: string): string | undefined {
   const mimeTypes: { [key: string]: string } = {
     txt: 'text/plain',
+    md: 'text/markdown',
     html: 'text/html',
     htm: 'text/html',
     css: 'text/css',

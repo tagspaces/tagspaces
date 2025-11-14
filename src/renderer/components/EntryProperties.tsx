@@ -869,12 +869,12 @@ function EntryProperties({ tileServer }: Props) {
                           !openedEntry.isFile,
                           location?.getDirSeparator(),
                         );
-                        const clibboardItem = generateClipboardLink(
+                        const clipboardItem = generateClipboardLink(
                           sharingLink,
                           entryTitle,
                         );
                         const promise =
-                          navigator.clipboard.write(clibboardItem);
+                          navigator.clipboard.write(clipboardItem);
                         showNotification(t('core:linkCopied'));
                       }}
                     >
