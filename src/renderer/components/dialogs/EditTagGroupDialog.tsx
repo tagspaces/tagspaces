@@ -15,8 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
+import DraggablePaper from '-/components/DraggablePaper';
 import { ProLabel } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
 import Tag from '-/components/Tag';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
@@ -25,6 +26,7 @@ import TsTextField from '-/components/TsTextField';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
@@ -32,7 +34,7 @@ import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { useMediaQuery, useTheme } from '@mui/material';
+import { Paper, useMediaQuery, useTheme } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
@@ -41,9 +43,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import WorkSpacesDropdown from './components/WorkSpacesDropdown';
 
 const defaultTagGroupLocation = 'TAG_LIBRARY';
 
@@ -210,7 +212,12 @@ function EditTagGroupDialog(props: Props) {
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <TsSelect
             fullWidth
-            label={t('core:tagGroupLocation')}
+            label={
+              <>
+                {t('core:tagGroupLocation')}
+                <InfoIcon tooltip={t('tagGroupLocationHelp')} />
+              </>
+            }
             defaultValue={
               selectedTagGroupEntry.locationId || defaultTagGroupLocation
             }
@@ -329,6 +336,7 @@ function EditTagGroupDialog(props: Props) {
     <Dialog
       open={open}
       fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       onClose={onClose}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.keyCode === 13) {

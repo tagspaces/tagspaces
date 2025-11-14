@@ -19,6 +19,7 @@
 import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
 import { ProLabel } from '-/components/HelperComponents';
+import InfoIcon from '-/components/InfoIcon';
 import Tag from '-/components/Tag';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
@@ -27,6 +28,7 @@ import TsTextField from '-/components/TsTextField';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
@@ -51,7 +53,6 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import WorkSpacesDropdown from '-/components/dialogs/components/WorkSpacesDropdown';
 
 interface Props {
   open: boolean;
@@ -223,7 +224,12 @@ function CreateTagGroupDialog(props: Props) {
           <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
             <TsSelect
               data-tid="tagGroupLocationTID"
-              label={t('core:tagGroupLocation')}
+              label={
+                <>
+                  {t('core:tagGroupLocation')}
+                  <InfoIcon tooltip={t('tagGroupLocationHelp')} />
+                </>
+              }
               defaultValue={defaultTagGroupLocation}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 locationId.current = event.target.value;

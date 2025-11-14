@@ -662,6 +662,7 @@
   "welcomeToTagSpaces": "Welcome to TagSpaces",
   "startUsingTagSpaces": "Start using TagSpaces",
   "tagGroupLocation": "Store Tag Group in",
+  "tagGroupLocationHelp": "Selecting “Tag Library” makes the tag group available only on this TagSpaces installation (or this browser in the web version). Selecting a “Location” stores the tag group in that location, making it available on all devices connected to it.",
   "enterTimePeriod": "Enter time period",
   "enterTimePeriodTooltip": "Shows only files and folders tagged with date tag pointing to the given time period",
   "storedSearchQueriesTooltip": "Stored search queries for later use",
