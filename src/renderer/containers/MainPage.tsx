@@ -342,6 +342,7 @@ function MainPage() {
               .react-split .secondary .full-content {
                 display: flex;
                 flex-direction: column;
+                overflow: clip;
               }
           `}
           </style>
