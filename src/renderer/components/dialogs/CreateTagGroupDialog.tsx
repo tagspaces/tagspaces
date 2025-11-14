@@ -224,10 +224,12 @@ function CreateTagGroupDialog(props: Props) {
           <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
             <TsSelect
               data-tid="tagGroupLocationTID"
+              disabled={!Pro}
               label={
                 <>
                   {t('core:tagGroupLocation')}
                   <InfoIcon tooltip={t('tagGroupLocationHelp')} />
+                  <ProLabel />
                 </>
               }
               defaultValue={defaultTagGroupLocation}

@@ -212,10 +212,12 @@ function EditTagGroupDialog(props: Props) {
         <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
           <TsSelect
             fullWidth
+            disabled={!Pro}
             label={
               <>
                 {t('core:tagGroupLocation')}
                 <InfoIcon tooltip={t('tagGroupLocationHelp')} />
+                <ProLabel />
               </>
             }
             defaultValue={

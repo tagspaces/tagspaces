@@ -883,7 +883,7 @@ function SettingsGeneral() {
               />
               <Switch
                 data-tid="saveTagInLocationTID"
-                disabled={window.ExtUseLocationTags !== undefined}
+                disabled={!Pro || window.ExtUseLocationTags !== undefined}
                 onClick={() => {
                   Pro && setSaveTagInLocation(!settings.saveTagInLocation);
                 }}
