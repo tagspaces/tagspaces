@@ -56,7 +56,7 @@
     "generate-jwt": "node scripts/jwt_generate.js",
     "postinstall": "npx rimraf node_modules/canvas && ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run prepare-node && node -r ts-node/register ./.erb/scripts/link-modules.ts && npm run build:dll",
     "clean-pro-ext": "npx rimraf release/app/node_modules/@tagspacespro",
-    "install-ext-node": "rimraf release/app/node_modules && cd ./release/app && npm install && cd ../..",
+    "install-ext-node": "rimraf release/app/node_modules && cd ./release/app && npm install && cd ../.. && npm run generate-extensions",
     "install-ext-node-check": "npx cross-env PD_PLATFORM=node node scripts/checkWSinstalled.js",
     "install-ext-node-win": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=win32 --arch=x64",
     "install-ext-node-linux": "rimraf release/app/node_modules && npm install --prefix ./release/app --platform=linux --arch=x64",
