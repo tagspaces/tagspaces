@@ -479,7 +479,6 @@ function SettingsFileTypes() {
       <TsButton
         data-tid="addNewFileTypeTID"
         onClick={onAddFileType}
-        color="secondary"
         sx={{
           marginTop: AppConfig.defaultSpaceBetweenButtons,
           marginBottom: AppConfig.defaultSpaceBetweenButtons,
@@ -497,6 +496,7 @@ function SettingsFileTypes() {
           }}
           color="secondary"
           sx={{
+            color: 'red',
             margin: AppConfig.defaultSpaceBetweenButtons,
           }}
         >
