@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { DeleteIcon } from '-/components/CommonIcons';
+import { CreateFileIcon, DeleteIcon } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import TooltipTS from '-/components/Tooltip';
@@ -139,6 +139,7 @@ function SettingsAdvanced(props: Props) {
         <TsButton
           disabled={!Pro}
           onClick={(event) => editWorkSpacesClick(event)}
+          startIcon={<CreateFileIcon />}
         >
           {t('createWorkspace')}
         </TsButton>
@@ -309,6 +310,7 @@ function SettingsAdvanced(props: Props) {
         <ListItemText primary={t('core:tileServerTitle')} />
         <TsButton
           onClick={(event) => handleEditTileServerClick(event, {}, true)}
+          startIcon={<CreateFileIcon />}
         >
           {t('tileServerDialogAdd')}
         </TsButton>

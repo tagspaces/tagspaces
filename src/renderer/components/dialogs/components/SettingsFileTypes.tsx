@@ -17,7 +17,11 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { RemoveIcon } from '-/components/CommonIcons';
+import {
+  CreateFileIcon,
+  ReloadIcon,
+  RemoveIcon,
+} from '-/components/CommonIcons';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -483,6 +487,7 @@ function SettingsFileTypes() {
           marginTop: AppConfig.defaultSpaceBetweenButtons,
           marginBottom: AppConfig.defaultSpaceBetweenButtons,
         }}
+        startIcon={<CreateFileIcon />}
       >
         {t('core:addNewFileType')}
       </TsButton>
@@ -494,9 +499,10 @@ function SettingsFileTypes() {
             items.current = defaultSettings.supportedFileTypes;
             dispatch(SettingsActions.setSupportedFileTypes(supportedFileTypes));
           }}
-          color="secondary"
+          variant="text"
+          startIcon={<ReloadIcon />}
           sx={{
-            color: 'red',
+            // color: 'red',
             margin: AppConfig.defaultSpaceBetweenButtons,
           }}
         >
