@@ -217,7 +217,7 @@ function TagLibrary({ reduceHeightBy }: Props) {
                     tag.functionality && tag.functionality.length > 0;
                   return (
                     <TagContainerDnd
-                      key={tagGroup.uuid + tag.title}
+                      key={tagGroup.uuid + idx}
                       index={idx}
                       tag={tag}
                       tagGroup={tagGroup}
