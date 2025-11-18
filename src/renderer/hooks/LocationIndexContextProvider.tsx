@@ -50,7 +50,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 type LocationIndexContextData = {
-  //index: TS.FileSystemEntry[];
   indexLoadedOn: number;
   isIndexing: string;
   getIndex: () => TS.FileSystemEntry[];
@@ -71,7 +70,6 @@ type LocationIndexContextData = {
     workSpace?: TS.WorkSpace,
   ) => void;
   setIndex: (i: TS.FileSystemEntry[], location?: CommonLocation) => void;
-  //indexUpdateSidecarTags: (path: string, tags: Array<TS.Tag>) => void;
   reflectUpdateSidecarMeta: (path: string, entryMeta: Object) => void;
   findLinks: (
     link: string,
@@ -123,11 +121,9 @@ export const LocationIndexContextProvider = ({
 
   const enableWS = useSelector(getEnableWS);
   const tagDelimiter: string = useSelector(getTagDelimiter);
-  //const allLocations = useSelector(getLocations);
 
   const isIndexing = useRef<string>(undefined);
   const walkingRef = useRef(true);
-  //const lastError = useRef(undefined);
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -160,12 +156,6 @@ export const LocationIndexContextProvider = ({
           reflectDeleteEntry(action.entry.path);
         } else if (action.action === 'update') {
           reflectUpdateEntry(action.oldEntryPath, action.entry);
-          /*let i = index.current.findIndex(
-            (e) => e.path === action.oldEntryPath,
-          );
-          if (i !== -1) {
-            index.current[i] = action.entry;
-          }*/
         }
       }
     }
@@ -315,20 +305,6 @@ export const LocationIndexContextProvider = ({
     return foundEntriesLinkingToId;
   }
 
-  /*function indexUpdateSidecarTags(path: string, tags: Array<TS.Tag>) {
-    if (!index.current || index.current.length < 1) {
-      return;
-    }
-    for (let i = 0; i < index.current.length; i += 1) {
-      if (index.current[i].path === path) {
-        index.current[i].tags = [
-          ...index.current[i].tags.filter((tag) => tag.type === 'plain'),
-          ...tags,
-        ];
-      }
-    }
-  }*/
-
   function reflectUpdateSidecarMeta(path: string, entryMeta: Object) {
     if (!index.current || index.current.length < 1) {
       return;
@@ -345,14 +321,6 @@ export const LocationIndexContextProvider = ({
       }),
       currentLocation,
     );
-    /*for (let i = 0; i < index.current.length; i += 1) {
-      if (index.current[i].path === path) {
-        index.current[i] = {
-          ...index.current[i],
-          meta: {...(index.current[i].meta && index.current[i].meta), ...entryMeta},
-        };
-      }
-    }*/
   }
 
   function isWalking() {
@@ -605,15 +573,6 @@ export const LocationIndexContextProvider = ({
     forceUpdate();
   }
 
-  function normalizePath(filePath) {
-    //filePath = filePath.replace(new RegExp("//+", "g"), "/");
-    filePath = filePath.replace('\\', '/');
-    if (filePath.indexOf('/') === 0) {
-      filePath = filePath.substr(1);
-    }
-    return decodeURIComponent(filePath);
-  }
-
   function enhanceSearchEntry(
     entry: TS.FileSystemEntry,
   ): Promise<TS.FileSystemEntry> {
@@ -643,40 +602,6 @@ export const LocationIndexContextProvider = ({
     return undefined;
   }
 
-  /*function getURLforPath(path: string, location: CommonLocation) {
-    const api = objectStoreAPI.getS3Api(location);
-    return api.getSignedUrl('getObject', {
-      Bucket: location.bucketName,
-      Key: normalizePath(path),
-      Expires: 900,
-    });
-  }*/
-
-  /*function checkFileExist(
-    path: string,
-    location: CommonLocation,
-  ): Promise<boolean> {
-    if (location.type === locationType.TYPE_LOCAL) {
-      return window.electronIO.ipcRenderer.invoke('checkFileExist', path);
-    } else if (location.type === locationType.TYPE_CLOUD) {
-      const api = objectStoreAPI.getS3Api(location);
-      return api
-        .headObject({
-          Bucket: location.bucketName,
-          Key: normalizePath(path),
-        })
-        .promise()
-        .then(
-          () => true,
-          (err) => false,
-        );
-    } else if (location.type === locationType.TYPE_WEBDAV) {
-      // TODO
-    } else if (AppConfig.isCordova) {
-      return cordovaIO.checkFileExist(path);
-    }
-  }*/
-
   function enhanceSearchEntries(entries: TS.FileSystemEntry[]) {
     const promises: Promise<TS.FileSystemEntry>[] = entries.map(
       (entry: TS.FileSystemEntry) => enhanceSearchEntry(entry),
@@ -689,11 +614,9 @@ export const LocationIndexContextProvider = ({
   function getSearchResults(
     searchIndex: TS.FileSystemEntry[],
     searchQuery: TS.SearchQuery,
-    //isCloudLocation: boolean,
   ): Promise<TS.FileSystemEntry[]> {
     return Search.searchLocationIndex(searchIndex, searchQuery, tagDelimiter)
       .then((searchResults) => {
-        //enhanceSearchEntries(searchResults);
         return searchResults;
       })
       .catch((err) => {
@@ -711,7 +634,6 @@ export const LocationIndexContextProvider = ({
   function searchLocationIndex(searchQuery: TS.SearchQuery) {
     walkingRef.current = true;
     if (!currentLocation) {
-      //showNotification(t('core:pleaseOpenLocation'), 'warning', true);
       searchAllLocations(searchQuery);
       return;
     }
@@ -809,7 +731,6 @@ export const LocationIndexContextProvider = ({
             (!directoryIndex ||
               directoryIndex.length < 1 ||
               searchQuery.forceIndexing)
-            // || (!location.disableIndexing && !indexExist)
           ) {
             console.log('Creating index for : ' + nextPath);
             directoryIndex = await createDirectoryIndexWrapper(
@@ -825,12 +746,10 @@ export const LocationIndexContextProvider = ({
           }
           return getSearchResults(directoryIndex, searchQuery).then(
             (results) => {
-              //searchResultCount += results.length;
               if (results.length > 0) {
                 searchResults = [...searchResults, ...results];
                 appendSearchResults(results);
               }
-              //hideNotifications();
               return true;
             },
           );
@@ -963,28 +882,6 @@ export const LocationIndexContextProvider = ({
     }
     return Promise.resolve(undefined);
   }
-
-  /*const context = useMemo(() => {
-    return {
-      //index: index.current,
-      indexLoadedOn: indexLoadedOn.current,
-      isIndexing: isIndexing.current,
-      cancelDirectoryIndexing,
-      createLocationIndex,
-      createLocationsIndexes,
-      clearDirectoryIndex,
-      searchLocationIndex,
-      searchAllLocations,
-      setIndex,
-      getIndex,
-      //reflectDeleteEntry,
-      //reflectDeleteEntries,
-      //reflectCreateEntry,
-      //reflectRenameEntry,
-      //indexUpdateSidecarTags,
-      reflectUpdateSidecarMeta,
-    };
-  }, [currentLocation, index.current, isIndexing.current, enableWS]);*/
 
   const context = {
     indexLoadedOn: indexLoadedOn.current,
