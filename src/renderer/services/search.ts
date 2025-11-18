@@ -139,11 +139,19 @@ const fuseOptions = {
     {
       name: 'tagsDescription',
       getFn: (entry) => {
-        if (!entry.tags) return;
         let descriptions = '';
-        for (const tag of entry.tags) {
-          if (tag.description) {
-            descriptions += ' ' + String(tag.description);
+        if (entry.tags) {
+          for (const tag of entry.tags) {
+            if (tag.description) {
+              descriptions += ' ' + String(tag.description);
+            }
+          }
+        }
+        if (entry.meta?.tags) {
+          for (const tag of entry.meta.tags) {
+            if (tag.description) {
+              descriptions += ' ' + String(tag.description);
+            }
           }
         }
         return descriptions;
