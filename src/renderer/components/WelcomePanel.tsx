@@ -101,7 +101,7 @@ function WelcomePanel() {
 
   function renderRecentItems() {
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <Typography variant="inherit" className={classes.recentTitle} noWrap>
           {t('core:fileOpenHistory')}
         </Typography>
@@ -347,53 +347,53 @@ function WelcomePanel() {
   return (
     <Root
       data-tid="WelcomePanelTID"
-      style={{
+      sx={{
         overflow: 'hidden',
         position: 'relative',
-        paddingLeft: 20,
+        paddingLeft: '20px',
         height: '100%',
       }}
     >
       <Grid
-        style={{
+        sx={{
           position: 'relative',
           height: '100%',
         }}
         container
         spacing={2}
       >
-        <Grid style={{ height: '100%', zIndex: 1, minWidth: 300 }}>
+        <Grid sx={{ height: '100%', zIndex: 1, minWidth: '300px' }}>
           {renderQuickLinks()}
         </Grid>
         {desktopMode && (
-          <Grid style={{ height: '100%' }}>
-            <div
-              style={{
+          <Grid sx={{ height: '100%' }}>
+            <Box
+              sx={{
                 margin: 'auto',
-                marginTop: 15,
-                marginBottom: 15,
+                marginTop: '15px',
+                marginBottom: '15px',
                 overflowY: 'auto',
                 height: 'calc(100% - 50px)',
                 backgroundColor: theme.palette.background.default,
               }}
             >
               <HowToStart />
-            </div>
+            </Box>
           </Grid>
         )}
-        <Grid style={{ height: '100%', minWidth: 300 }}>
-          <div
-            style={{
+        <Grid sx={{ height: '100%', minWidth: '300px' }}>
+          <Box
+            sx={{
               margin: 'auto',
-              marginTop: 55,
-              marginBottom: 15,
+              marginTop: '55px',
+              marginBottom: '15px',
               overflowY: 'auto',
               height: 'calc(100% - 50px)',
               backgroundColor: theme.palette.background.default,
             }}
           >
             {renderRecentItems()}
-          </div>
+          </Box>
         </Grid>
       </Grid>
     </Root>

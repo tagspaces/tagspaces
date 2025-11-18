@@ -81,7 +81,7 @@ function ConfirmDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
-      style={{ zIndex: 1301 }}
+      sx={{ zIndex: 1301 }}
     >
       <DialogTitle sx={{ cursor: 'move' }} id="draggable-dialog-title">
         {title}
