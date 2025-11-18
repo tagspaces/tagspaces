@@ -45,9 +45,12 @@ export const createTSTheme = (themeName: string, isDark: boolean = false) => {
     components: {
       MuiDialog: {
         styleOverrides: {
-          paper: {
-            borderRadius: '15px', // AppConfig.defaultCSSRadius,
-          },
+          paper: ({ theme }) => ({
+            borderRadius: '15px',
+            [theme.breakpoints.down('md')]: {
+              borderRadius: '0px',
+            },
+          }),
         },
       },
     },
