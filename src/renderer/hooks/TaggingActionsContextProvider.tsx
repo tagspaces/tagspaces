@@ -16,19 +16,17 @@
  *
  */
 
-import React, { createContext, useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
-import mgrs from 'mgrs';
+import AppConfig from '-/AppConfig';
+import LoadingLazy from '-/components/LoadingLazy';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
+import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 import { Pro } from '-/pro';
-import { useTranslation } from 'react-i18next';
-import { TS } from '-/tagspaces.namespace';
-import OpenLocationCode from 'open-location-code-typescript';
-import {
-  immutablySwapItems,
-  formatDateTime4Tag,
-} from '@tagspaces/tagspaces-common/misc';
-import { setTagLibrary } from '-/services/taglibrary-utils';
-import { isGeoTag } from '-/utils/geo';
 import {
   getAddTagsToLibrary,
   getFileNameTagPlace,
@@ -40,6 +38,15 @@ import {
   getTagDelimiter,
   getTagTextColor,
 } from '-/reducers/settings';
+import { setTagLibrary } from '-/services/taglibrary-utils';
+import { getAllTags } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { isGeoTag } from '-/utils/geo';
+import {
+  formatDateTime4Tag,
+  immutablySwapItems,
+} from '@tagspaces/tagspaces-common/misc';
 import {
   extractContainingDirectoryPath,
   extractFileName,
@@ -48,18 +55,11 @@ import {
   generateFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
-import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
-import AppConfig from '-/AppConfig';
-import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
-import { CommonLocation } from '-/utils/CommonLocation';
-import LoadingLazy from '-/components/LoadingLazy';
-import { getAllTags } from '-/services/utils-io';
+import mgrs from 'mgrs';
+import OpenLocationCode from 'open-location-code-typescript';
+import React, { createContext, useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 type TaggingActionsContextData = {
   addTagsToFsEntries: (
@@ -288,7 +288,7 @@ export const TaggingActionsContextProvider = ({
     const processedTags = [];
     tags.map((pTag) => {
       const tag = { ...pTag };
-      tag.type = persistTagsInSidecarFile ? 'sidecar' : 'plain';
+      // tag.type = persistTagsInSidecarFile ? 'sidecar' : 'plain';
       if (tag.id) {
         delete tag.id;
       }

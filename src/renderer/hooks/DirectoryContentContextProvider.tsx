@@ -385,8 +385,11 @@ export const DirectoryContentContextProvider = ({
 
   useEffect(() => {
     if (!firstRender) {
-      reflectActions(actions).catch(console.error);
-      reflectSelection(actions);
+      reflectActions(actions)
+        .then(() => {
+          reflectSelection(actions);
+        })
+        .catch(console.error);
     }
   }, [actions]);
 
@@ -502,6 +505,7 @@ export const DirectoryContentContextProvider = ({
         }
       }
       if (updated) {
+        setSelectedEntries([]);
         setSelectedEntries(selected);
       }
     }
@@ -1264,7 +1268,6 @@ export const DirectoryContentContextProvider = ({
             meta: {
               ...(entry.meta && entry.meta),
               ...meta,
-              // description: getDescriptionPreview(meta.description, 200),
             },
           },
           tagDelimiter,
@@ -1289,7 +1292,6 @@ export const DirectoryContentContextProvider = ({
           return {
             ...(metaAdd && metaAdd),
             ...meta,
-            // description: getDescriptionPreview(meta.description, 200),
           };
         }
         return undefined;
@@ -1310,7 +1312,6 @@ export const DirectoryContentContextProvider = ({
           return {
             ...(metaAdd && metaAdd),
             ...meta,
-            // description: getDescriptionPreview(meta.description, 200),
           };
         }
         return undefined;
