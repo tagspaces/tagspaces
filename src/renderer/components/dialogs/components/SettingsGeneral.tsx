@@ -45,9 +45,10 @@ import {
 } from '-/reducers/settings';
 import { isWorkerAvailable, setLanguage } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import { darkThemes, lightThemes } from '-/utils/Themes';
 import CheckIcon from '@mui/icons-material/Check';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { Box, IconButton, InputAdornment } from '@mui/material';
+import { Box, IconButton, InputAdornment, ListItemIcon } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -248,11 +249,32 @@ function SettingsGeneral() {
                   )
                 }
               >
-                {settings.supportedRegularThemes.map((theme) => (
-                  <MenuItem key={theme} value={theme}>
-                    {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                  </MenuItem>
-                ))}
+                {Object.entries(lightThemes).map((theme) => {
+                  const themeKey = theme[0];
+                  const themeValue = theme[1];
+                  const themeName =
+                    themeKey.charAt(0).toUpperCase() + themeKey.slice(1);
+                  return (
+                    <MenuItem key={themeKey} value={themeKey}>
+                      <div style={{ display: 'flex' }}>
+                        <ListItemIcon>
+                          <Box
+                            component="div"
+                            sx={{
+                              // @ts-ignore
+                              backgroundColor: themeValue.primary.main,
+                              width: '30px',
+                              height: '30px',
+                              borderRadius: AppConfig.defaultCSSRadius,
+                              marginRight: '10px',
+                            }}
+                          ></Box>
+                        </ListItemIcon>
+                        <ListItemText>{themeName}</ListItemText>
+                      </div>
+                    </MenuItem>
+                  );
+                })}
               </TsSelect>
             </ListItem>
           ),
@@ -272,11 +294,32 @@ function SettingsGeneral() {
                   )
                 }
               >
-                {settings.supportedDarkThemes.map((theme) => (
-                  <MenuItem key={theme} value={theme}>
-                    {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                  </MenuItem>
-                ))}
+                {Object.entries(darkThemes).map((theme) => {
+                  const themeKey = theme[0];
+                  const themeValue = theme[1];
+                  const themeName =
+                    themeKey.charAt(0).toUpperCase() + themeKey.slice(1);
+                  return (
+                    <MenuItem key={themeKey} value={themeKey}>
+                      <div style={{ display: 'flex' }}>
+                        <ListItemIcon>
+                          <Box
+                            component="div"
+                            sx={{
+                              // @ts-ignore
+                              backgroundColor: themeValue.primary.main,
+                              width: '30px',
+                              height: '30px',
+                              borderRadius: AppConfig.defaultCSSRadius,
+                              marginRight: '10px',
+                            }}
+                          ></Box>
+                        </ListItemIcon>
+                        <ListItemText>{themeName}</ListItemText>
+                      </div>
+                    </MenuItem>
+                  );
+                })}
               </TsSelect>
             </ListItem>
           ),

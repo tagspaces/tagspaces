@@ -16,94 +16,17 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
 import {
   getCurrentTheme,
   getDefaultDarkTheme,
   getDefaultRegularTheme,
 } from '-/reducers/settings';
-import {
-  StyledEngineProvider,
-  ThemeProvider,
-  createTheme,
-} from '@mui/material/styles';
+import { createTSTheme } from '-/utils/Themes';
+import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useEffect, useMemo } from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-
-declare module '@mui/material/styles' {
-  interface Theme extends Record<string, any> {}
-}
-
-// Theme definitions
-const legacyTheme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      light: AppConfig.lightThemeLightColor,
-      main: AppConfig.lightThemeMainColor,
-      dark: AppConfig.lightThemeMainColor,
-    },
-    secondary: { main: '#777' },
-    divider: '#ddd',
-  },
-});
-
-const newlightTheme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      light: '#a6def4',
-      main: '#3bc8ff',
-      dark: '#3bc8ff',
-    },
-    secondary: { main: '#777' },
-    divider: '#ddd',
-  },
-});
-
-const darklegacyTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      light: AppConfig.darkThemeLightColor,
-      main: AppConfig.darkThemeMainColor,
-      dark: AppConfig.darkThemeMainColor,
-    },
-    secondary: { main: '#bbb' },
-    divider: '#555',
-  },
-});
-
-const darkblueTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      light: '#a6def4',
-      main: '#3bc8ff',
-      dark: '#3bc8ff',
-    },
-    secondary: { main: '#bbb' },
-    background: { default: '#001E3C' },
-    divider: '#555',
-  },
-});
-
-const draculaTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      light: '#503d50',
-      main: '#BD93F9',
-      dark: '#BD93F9',
-    },
-    secondary: { main: '#bbb' },
-    divider: '#555',
-    background: { default: '#282A36' },
-    text: { primary: '#f8f8f2' },
-  },
-});
 
 interface Props {
   children: React.ReactNode;
@@ -118,37 +41,18 @@ function App({ children }: Props) {
 
   // Memoize theme selection for performance and clarity
   const theme = useMemo(() => {
-    let regularTheme = legacyTheme;
-    let darkTheme = darklegacyTheme;
+    let lightTheme = createTSTheme(defaultRegularTheme, false);
+    let darkTheme = createTSTheme(defaultDarkTheme, true);
 
-    switch (defaultRegularTheme) {
-      case 'newlight':
-        regularTheme = newlightTheme;
-        break;
-      case 'legacy':
-      default:
-        regularTheme = legacyTheme;
-    }
-    switch (defaultDarkTheme) {
-      case 'darkblue':
-        darkTheme = darkblueTheme;
-        break;
-      case 'dracula':
-        darkTheme = draculaTheme;
-        break;
-      case 'darklegacy':
-      default:
-        darkTheme = darklegacyTheme;
-    }
     switch (currentTheme) {
       case 'light':
-        return regularTheme;
+        return lightTheme;
       case 'dark':
         return darkTheme;
       case 'system':
-        return systemDarkMode ? darkTheme : regularTheme;
+        return systemDarkMode ? darkTheme : lightTheme;
       default:
-        return regularTheme;
+        return lightTheme;
     }
   }, [currentTheme, defaultDarkTheme, defaultRegularTheme, systemDarkMode]);
 
@@ -170,5 +74,4 @@ function App({ children }: Props) {
     </StyledEngineProvider>
   );
 }
-
 export default App;

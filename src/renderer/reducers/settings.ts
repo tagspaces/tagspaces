@@ -16,15 +16,9 @@
  *
  */
 
-import semver from 'semver';
 import AppConfig from '-/AppConfig';
-import defaultSettings from './settings-default';
-import Links from 'assets/links';
-import versionMeta from '-/version.json';
-import { actions as AppActions } from './app';
-import { TS } from '-/tagspaces.namespace';
-import { Pro } from '../pro';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { AIProvider } from '-/components/chat/ChatTypes';
+import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import {
   getDefaultEditor,
   getDefaultViewer,
@@ -32,8 +26,14 @@ import {
   setZoomFactorElectron,
   updateByProp,
 } from '-/services/utils-io';
-import { AIProvider } from '-/components/chat/ChatTypes';
-import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
+import { TS } from '-/tagspaces.namespace';
+import versionMeta from '-/version.json';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import Links from 'assets/links';
+import semver from 'semver';
+import { Pro } from '../pro';
+import { actions as AppActions } from './app';
+import defaultSettings from './settings-default';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
@@ -146,10 +146,7 @@ export default (state: any = defaultSettings, action: any) => {
         currentRegularTheme:
           window.ExtRegularTheme || state.currentRegularTheme,
         currentDarkTheme: window.ExtDarkTheme || state.currentDarkTheme,
-        // TODO dynamically add supportedThemes functionality
         supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
-        supportedRegularThemes: defaultSettings.supportedRegularThemes, // taking always the themes from default settings
-        supportedDarkThemes: defaultSettings.supportedDarkThemes, // taking always the themes from default settings
         supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
         keyBindings: [
           // ...defaultSettings.keyBindings, // use to reset to the default key bindings
