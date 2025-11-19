@@ -262,10 +262,24 @@ function SettingsGeneral() {
                             component="div"
                             sx={{
                               // @ts-ignore
+                              backgroundColor: themeValue.background.default,
+                              width: '30px',
+                              height: '30px',
+                              borderTopLeftRadius: AppConfig.defaultCSSRadius,
+                              borderBottomLeftRadius:
+                                AppConfig.defaultCSSRadius,
+                            }}
+                          ></Box>
+                          <Box
+                            component="div"
+                            sx={{
+                              // @ts-ignore
                               backgroundColor: themeValue.primary.main,
                               width: '30px',
                               height: '30px',
-                              borderRadius: AppConfig.defaultCSSRadius,
+                              borderTopRightRadius: AppConfig.defaultCSSRadius,
+                              borderBottomRightRadius:
+                                AppConfig.defaultCSSRadius,
                               marginRight: '10px',
                             }}
                           ></Box>
@@ -307,10 +321,24 @@ function SettingsGeneral() {
                             component="div"
                             sx={{
                               // @ts-ignore
+                              backgroundColor: themeValue.background.default,
+                              width: '30px',
+                              height: '30px',
+                              borderTopLeftRadius: AppConfig.defaultCSSRadius,
+                              borderBottomLeftRadius:
+                                AppConfig.defaultCSSRadius,
+                            }}
+                          ></Box>
+                          <Box
+                            component="div"
+                            sx={{
+                              // @ts-ignore
                               backgroundColor: themeValue.primary.main,
                               width: '30px',
                               height: '30px',
-                              borderRadius: AppConfig.defaultCSSRadius,
+                              borderTopRightRadius: AppConfig.defaultCSSRadius,
+                              borderBottomRightRadius:
+                                AppConfig.defaultCSSRadius,
                               marginRight: '10px',
                             }}
                           ></Box>

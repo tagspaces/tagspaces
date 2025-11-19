@@ -142,17 +142,6 @@ lightThemes['legacy'] = {
   background: { default: '#fff' },
   divider: '#ddd',
 };
-lightThemes['lemonblue'] = {
-  mode: 'light',
-  primary: {
-    light: '#486989ff',
-    main: '#486989ff',
-    dark: '#486989ff',
-  },
-  secondary: { main: '#777' },
-  background: { default: '#f6f1dfff' },
-  divider: '#fff',
-};
 lightThemes['newlight'] = {
   mode: 'light',
   primary: {
@@ -173,7 +162,7 @@ lightThemes['orange'] = {
   },
   secondary: { main: '#777' },
   background: { default: '#f4f4f4ff' },
-  divider: '#fff',
+  divider: '#ddd',
 };
 lightThemes['herbal'] = {
   mode: 'light',
@@ -184,5 +173,27 @@ lightThemes['herbal'] = {
   },
   secondary: { main: '#777' },
   background: { default: '#f4f4f4ff' },
-  divider: '#fff',
+  divider: '#ddd',
+};
+lightThemes['lemonblue'] = {
+  mode: 'light',
+  primary: {
+    light: '#486989ff',
+    main: '#486989ff',
+    dark: '#486989ff',
+  },
+  secondary: { main: '#777' },
+  background: { default: '#f6f1dfff' },
+  divider: '#ddd',
+};
+lightThemes['vanilablue'] = {
+  mode: 'light',
+  primary: {
+    light: '#4c9db0',
+    main: '#4c9db0',
+    dark: '#4c9db0',
+  },
+  secondary: { main: '#777' },
+  background: { default: '#ffebaf' },
+  divider: '#ddd',
 };
