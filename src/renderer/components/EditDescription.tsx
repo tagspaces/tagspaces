@@ -22,8 +22,9 @@ import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { Pro } from '-/pro';
 import { MilkdownProvider } from '@milkdown/react';
+import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 function EditDescription() {
   const theme = useTheme();
@@ -50,8 +51,8 @@ function EditDescription() {
   };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         height: 'calc(100% - 50px)',
       }}
     >
@@ -60,7 +61,7 @@ function EditDescription() {
         resetMdContent={resetMdContent}
         setEditMode={setEditMode}
       />
-      <div
+      <Box
         ref={milkdownDivRef}
         className="descriptionEditor"
         data-tid="descriptionTID"
@@ -70,7 +71,7 @@ function EditDescription() {
             setEditMode(true);
           }
         }}
-        style={{
+        sx={{
           border: '1px solid lightgray',
           borderRadius: AppConfig.defaultCSSRadius,
           height: 'calc(100% - 20px)',
@@ -92,8 +93,8 @@ function EditDescription() {
         <MilkdownProvider>
           <DescriptionMdEditor ref={fileDescriptionRef} />
         </MilkdownProvider>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

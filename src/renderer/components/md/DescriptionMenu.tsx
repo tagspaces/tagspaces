@@ -16,11 +16,10 @@
  *
  */
 
-import React from 'react';
-import { ListItemIcon, Menu, MenuItem } from '@mui/material';
+import { HTMLFileIcon, MarkdownFileIcon } from '-/components/CommonIcons';
+import TsMenuList from '-/components/TsMenuList';
+import { ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import HtmlIcon from '@mui/icons-material/Html';
-import RttIcon from '@mui/icons-material/Rtt';
 
 interface DescriptionMenuProps {
   anchorEl: null | HTMLElement;
@@ -43,18 +42,20 @@ function DescriptionMenu(props: DescriptionMenuProps) {
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
-      <MenuItem onClick={saveAsHtml}>
-        <ListItemIcon>
-          <HtmlIcon fontSize="small" />
-        </ListItemIcon>
-        {t('core:saveAsHtml')}
-      </MenuItem>
-      <MenuItem onClick={saveAsMarkdown}>
-        <ListItemIcon>
-          <RttIcon fontSize="small" />
-        </ListItemIcon>
-        {t('core:saveAsMd')}
-      </MenuItem>
+      <TsMenuList>
+        <MenuItem onClick={saveAsHtml}>
+          <ListItemIcon>
+            <HTMLFileIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:saveAsHtml')} />
+        </MenuItem>
+        <MenuItem onClick={saveAsMarkdown}>
+          <ListItemIcon>
+            <MarkdownFileIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:saveAsMd')} />
+        </MenuItem>
+      </TsMenuList>
     </Menu>
   );
 }

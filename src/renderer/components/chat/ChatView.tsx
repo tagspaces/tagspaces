@@ -18,7 +18,7 @@
 
 import { CloseIcon, MoreMenuIcon, OllamaIcon } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
-import Tooltip from '-/components/Tooltip';
+import TooltipTS from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
@@ -359,15 +359,17 @@ function ChatView() {
                     input: {
                       startAdornment: (
                         <InputAdornment position="start" sx={{ height: 32 }}>
-                          <Tooltip
+                          <TooltipTS
                             title={
                               aiDefaultProvider?.name +
                               ' - ' +
-                              aiDefaultProvider?.engine
+                              aiDefaultProvider?.url
                             }
                           >
-                            <OllamaIcon />
-                          </Tooltip>
+                            <Box>
+                              <OllamaIcon />
+                            </Box>
+                          </TooltipTS>
                         </InputAdornment>
                       ),
                       endAdornment: (
@@ -376,16 +378,15 @@ function ChatView() {
                             <CircularProgress size={24} color="inherit" />
                           )}
                           {isLoading.current && (
-                            <Tooltip title={t('Cancel answer generation')}>
-                              <TsIconButton
-                                onClick={() => {
-                                  isLoading.current = false;
-                                  cancelMessage();
-                                }}
-                              >
-                                <CancelIcon />
-                              </TsIconButton>
-                            </Tooltip>
+                            <TsIconButton
+                              tooltip={t('core:cancelAnswerGeneration')}
+                              onClick={() => {
+                                isLoading.current = false;
+                                cancelMessage();
+                              }}
+                            >
+                              <CancelIcon />
+                            </TsIconButton>
                           )}
                           <TsIconButton
                             tooltip={t('core:send')}

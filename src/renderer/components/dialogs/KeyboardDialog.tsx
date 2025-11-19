@@ -19,8 +19,10 @@
 import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
+import { SettingsTab } from '-/components/dialogs/SettingsDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
+import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
 import { getKeyBindingObject } from '-/reducers/settings';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -33,8 +35,6 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { SettingsTab } from './SettingsDialog';
-import { useSettingsDialogContext } from './hooks/useSettingsDialogContext';
 
 export function adjustKeyBinding(keyBinding: string) {
   if (!keyBinding || !keyBinding.length) return '';
@@ -74,20 +74,6 @@ function KeyboardDialog(props: Props) {
   const theme = useTheme();
   const { openSettingsDialog } = useSettingsDialogContext();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const okButton = (
-    <TsButton
-      data-tid="closeKeyboardDialog"
-      onClick={onClose}
-      variant="outlined"
-      sx={
-        {
-          WebkitAppRegion: 'no-drag',
-        } as React.CSSProperties & { WebkitAppRegion?: string }
-      }
-    >
-      {t('core:ok')}
-    </TsButton>
-  );
 
   return (
     <Dialog
@@ -102,7 +88,6 @@ function KeyboardDialog(props: Props) {
         dialogTitle={t('core:shortcutKeys')}
         closeButtonTestId="closeKeyboardTID"
         onClose={onClose}
-        actionSlot={okButton}
       />
       <DialogContent
         data-tid="keyboardShortCutsDialog"
@@ -117,13 +102,13 @@ function KeyboardDialog(props: Props) {
               <ListItem key={shortcutKey}>
                 <ListItemText primary={t('core:' + shortcutKey)} />
                 <Box
-                  style={{
-                    backgroundColor: 'gray',
+                  sx={{
+                    backgroundColor: theme.palette.primary.main,
                     color: 'white',
                     font: 'Console',
                     fontFamily: 'monospace',
-                    padding: '5px',
-                    borderRadius: '5px',
+                    padding: '5px 10px 5px 10px',
+                    borderRadius: AppConfig.defaultCSSRadius,
                   }}
                 >
                   {adjustKeyBinding(keyBindings[shortcutKey])}
@@ -148,7 +133,9 @@ function KeyboardDialog(props: Props) {
           >
             {t('core:manageShortcutKeys')}
           </TsButton>
-          {okButton}
+          <TsButton data-tid="closeKeyboardDialog" onClick={onClose}>
+            {t('core:ok')}
+          </TsButton>
         </TsDialogActions>
       )}
     </Dialog>
