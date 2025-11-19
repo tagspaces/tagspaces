@@ -105,15 +105,27 @@ darkThemes['oilgreen'] = {
   text: { primary: '#f8f8f2' },
   divider: '#555',
 };
-darkThemes['Orangefire'] = {
+darkThemes['orangegreen'] = {
   mode: 'dark',
   primary: {
-    light: '#fd8f52',
-    main: '#fd8f52',
+    light: '#f3b759',
+    main: '#f3b759',
     dark: '#fd8f52',
   },
   secondary: { main: '#bbb' },
-  background: { default: '#1c1c1cff' },
+  background: { default: '#0d4a3a' },
+  text: { primary: '#f8f8f2' },
+  divider: '#555',
+};
+darkThemes['limecoal'] = {
+  mode: 'dark',
+  primary: {
+    light: '#a8b735ff', // fe7f2d
+    main: '#a8b735ff',
+    dark: '#a8b735ff',
+  },
+  secondary: { main: '#bbb' },
+  background: { default: '#233d4d' },
   text: { primary: '#f8f8f2' },
   divider: '#555',
 };
@@ -129,6 +141,17 @@ lightThemes['legacy'] = {
   secondary: { main: '#777' },
   background: { default: '#fff' },
   divider: '#ddd',
+};
+lightThemes['lemonblue'] = {
+  mode: 'light',
+  primary: {
+    light: '#486989ff',
+    main: '#486989ff',
+    dark: '#486989ff',
+  },
+  secondary: { main: '#777' },
+  background: { default: '#f6f1dfff' },
+  divider: '#fff',
 };
 lightThemes['newlight'] = {
   mode: 'light',
