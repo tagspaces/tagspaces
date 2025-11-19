@@ -31,8 +31,11 @@ import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
-import { getMimeType, saveAsTextFile } from '-/services/utils-io';
-import versionMeta from '-/version.json';
+import {
+  convertMarkDownToHtml,
+  getMimeType,
+  saveAsTextFile,
+} from '-/services/utils-io';
 import { MilkdownProvider } from '@milkdown/react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
@@ -44,7 +47,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
-import DOMPurify from 'dompurify';
 import React, { ChangeEvent, useCallback, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
@@ -184,31 +186,12 @@ function ChatView() {
   }, [showNotification, t]);
   const saveAsHtml = useCallback(() => {
     setAnchorEl(null);
-    if (milkdownDivRef.current) {
-      const creationDate = new Date().toISOString();
-      const milkdownContent =
-        milkdownDivRef.current.querySelector('.ProseMirror').innerHTML;
-      const html = milkdownContent || milkdownDivRef.current.innerHTML;
-      // tmp solution for hiding unneeded markup
-      const milkdownCleanerCSS = `
-        <style>
-          .label-wrapper, .tools, .cm-gutter, .cm-gap,
-          .milkdown-table-block, .handle { display: none }
-        </style>
-      `;
-      const blob = new Blob(
-        [
-          `<!DOCTYPE html><html>
-            <head><meta charset="UTF-8">${milkdownCleanerCSS}</head>
-            <body data-createdwith="${versionMeta.name}" data-createdon="${creationDate}">
-              ${DOMPurify.sanitize(html)}
-            </body>
-           </html>`,
-        ],
-        {
-          type: getMimeType('html'),
-        },
-      );
+    if (editorRef.current) {
+      const md = editorRef.current.getMarkdown();
+      const html = convertMarkDownToHtml(md);
+      const blob = new Blob([html], {
+        type: getMimeType('html'),
+      });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
       const filename = `tagspaces-chat [export ${dateTimeTag}].html`;
       saveAsTextFile(blob, filename);

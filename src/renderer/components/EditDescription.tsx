@@ -57,7 +57,6 @@ function EditDescription() {
       }}
     >
       <EditDescriptionButtons
-        getHtml={() => milkdownDivRef.current?.innerHTML}
         resetMdContent={resetMdContent}
         setEditMode={setEditMode}
       />

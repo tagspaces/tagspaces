@@ -10,7 +10,11 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Pro } from '-/pro';
-import { saveAsTextFile } from '-/services/utils-io';
+import {
+  convertMarkDownToHtml,
+  getMimeType,
+  saveAsTextFile,
+} from '-/services/utils-io';
 import { ButtonGroup, Tooltip, useTheme } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
@@ -18,13 +22,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ButtonsProps {
-  getHtml: () => string;
   resetMdContent: (md: string) => void;
   setEditMode: (editMode: boolean) => void;
 }
 
 const EditDescriptionButtons: React.FC<ButtonsProps> = ({
-  getHtml,
   resetMdContent,
   setEditMode,
 }) => {
@@ -82,18 +84,13 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
 
   const saveAsHtml = () => {
     setAnchorEl(null);
-    const html = getHtml();
-    if (html) {
+    if (openedEntry.meta?.description) {
+      const html = convertMarkDownToHtml(openedEntry.meta?.description);
       const blob = new Blob([html], {
-        type: 'text/html',
+        type: getMimeType('html'),
       });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
-      const filename =
-        extractTitle(openedEntry.name) +
-        ' [description ' +
-        dateTimeTag +
-        '].html';
-
+      const filename = `${extractTitle(openedEntry.name)} [description ${dateTimeTag}].html`;
       saveAsTextFile(blob, filename);
     }
   };
@@ -102,14 +99,10 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
     setAnchorEl(null);
     if (openedEntry.meta?.description) {
       const blob = new Blob([openedEntry.meta.description], {
-        type: 'text/markdown',
+        type: getMimeType('md'),
       });
       const dateTimeTag = formatDateTime4Tag(new Date(), true);
-      const filename =
-        extractTitle(openedEntry.name) +
-        ' [description ' +
-        dateTimeTag +
-        '].md';
+      const filename = `${extractTitle(openedEntry.name)} [description ${dateTimeTag}].md`;
 
       saveAsTextFile(blob, filename);
     }

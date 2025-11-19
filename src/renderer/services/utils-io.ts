@@ -28,7 +28,9 @@ import {
   extractTagsAsObjects,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import DOMPurify from 'dompurify';
 import { saveAs } from 'file-saver';
+import { marked } from 'marked';
 import removeMd from 'remove-markdown';
 import versionMeta from '../version.json';
 
@@ -547,6 +549,25 @@ export function getDescriptionPreview(mdContent, maxLength = 200) {
   return preview.replaceAll('\n', ' ').replaceAll('|', '').replaceAll('\\', '');
   // .replaceAll('\\\\', '');
   // return preview.replace(/[#*!_\[\]()`]/g, '');
+}
+
+export function convertMarkDownToHtml(mdContent: string) {
+  marked.setOptions({
+    pedantic: false,
+    gfm: true,
+    breaks: false,
+  });
+  const creationDate = new Date().toISOString();
+  // @ts-ignore
+  const sanitiezedHTML = DOMPurify.sanitize(marked.parse(mdContent));
+  const result = `<!DOCTYPE html><html>
+<head><meta charset="UTF-8"></head>
+<body data-createdwith="${versionMeta.name}" data-createdon="${creationDate}">
+${sanitiezedHTML}
+</body>
+</html>`;
+
+  return result;
 }
 
 // export function removeMarkDown(mdContent) {
