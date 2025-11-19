@@ -1,3 +1,4 @@
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useEffect, useRef } from 'react';
 
 /**
@@ -11,6 +12,7 @@ export function useReloadOnFocus(
 ): void {
   const lastLoadRef = useRef<number>(Date.now());
   const reloadTimeout = 15000;
+  const { isSearchMode } = useDirectoryContentContext();
 
   function throttledLoad() {
     const now = Date.now();
@@ -24,6 +26,7 @@ export function useReloadOnFocus(
 
   useEffect(() => {
     if (!reloadOnFocus) return;
+    if (isSearchMode) return;
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
