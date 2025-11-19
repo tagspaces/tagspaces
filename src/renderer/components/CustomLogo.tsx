@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import LogoIcon from '-/assets/images/icon100x100.svg';
+import LogoIcon from '-/assets/icons/icon.png';
 import TextLogoIcon from '-/assets/images/text-logo.svg';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';

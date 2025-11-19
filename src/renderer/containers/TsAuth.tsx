@@ -16,7 +16,8 @@
  *
  */
 
-import React from 'react';
+import LogoIcon from '-/assets/icons/icon.png';
+import HandleAuth from '-/utils/HandleAuth';
 import {
   AmplifyAuthenticator,
   AmplifySignIn,
@@ -24,8 +25,7 @@ import {
   AmplifyTotpSetup,
 } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
-import HandleAuth from '-/utils/HandleAuth';
-import LogoIcon from '-/assets/images/icon100x100.svg';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const TsAuth: React.FC<any> = (props) => {

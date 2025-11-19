@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import LogoIcon from '-/assets/images/icon100x100.svg';
+import LogoIcon from '-/assets/icons/icon.png';
 import DraggablePaper from '-/components/DraggablePaper';
 import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
