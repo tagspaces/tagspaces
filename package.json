@@ -162,7 +162,8 @@
     "update-changelog": "git log v6.6.4..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd tagspacespro && git log v5.6.2..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
     "update-i18n": "./tx pull -a -f",
-    "version-meta": "node scripts/versionmeta.js"
+    "version-meta": "node scripts/versionmeta.js",
+    "create-icns": "icnsify -i assets/icon.png -o assets/icon.icns && icnsify -i tagspacespro/resources/iconpro.png -o tagspacespro/resources/iconpro.icns"
   },
   "browserslist": [],
   "dependencies": {
@@ -242,7 +243,7 @@
     "zod-to-json-schema": "^3.24.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.197"
+    "@tagspacespro/tagspacespro": "5.0.198"
   },
   "devDependencies": {
     "@electron/notarize": "^2.5.0",
