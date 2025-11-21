@@ -910,7 +910,7 @@
   "engineUrl": "AI Engine URL",
   "chooseModel": "Choose AI Model",
   "selectedAIModel": "Selected AI Model",
-  "installedAIModel": "Installed AI Model",
+  "installedAIModels": "Installed AI Models",
   "moreActions": "More Actions",
   "exampleInstallableModels": "Example Installable AI Models",
   "noAIModelsInstaller": "No AI Models Installed",

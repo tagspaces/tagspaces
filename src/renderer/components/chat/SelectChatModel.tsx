@@ -22,16 +22,16 @@ import TsSelect from '-/components/TsSelect';
 import { AIProvider } from '-/components/chat/ChatTypes';
 import { getOllamaModels } from '-/components/chat/OllamaClient';
 import { useChatContext } from '-/hooks/useChatContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import DownloadIcon from '@mui/icons-material/Download';
-import { ListItemIcon, MenuItem } from '@mui/material';
+import { ListItemIcon, ListSubheader, MenuItem } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import { format, parseISO } from 'date-fns';
 import { ModelResponse } from 'ollama';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   id?: string;
@@ -113,7 +113,7 @@ function SelectChatModel(props: Props) {
       size_vram: 0,
       details: {
         family: 'ollama',
-        format: 'requires least 8GB of VRAM.',
+        format: 'requires least 8GB of RAM.',
         parent_model: 'ollama',
         families: ['ollama'],
         parameter_size: '',
@@ -139,24 +139,6 @@ function SelectChatModel(props: Props) {
       },
     },
     {
-      name: 'codegemma',
-      model: 'codegemma',
-      modified_at: new Date(),
-      size: 1,
-      digest: '',
-      expires_at: new Date(),
-      size_vram: 0,
-      details: {
-        family: 'ollama',
-        format:
-          'CodeGemma models are text-to-text and text-to-code decoder-only models and are available as a 7 billion pretrained variant that specializes in code completion and code generation tasks, a 7 billion parameter instruction-tuned variant for code chat and instruction following and a 2 billion parameter pretrained variant.',
-        parent_model: 'ollama',
-        families: ['ollama'],
-        parameter_size: '',
-        quantization_level: '',
-      },
-    },
-    {
       name: 'llava',
       model: 'llava',
       modified_at: new Date(),
@@ -168,23 +150,6 @@ function SelectChatModel(props: Props) {
         family: 'ollama',
         format:
           'large multimodal model that is designed to understand and generate content based on both visual inputs (images) and textual instructions.',
-        parent_model: 'ollama',
-        families: ['ollama'],
-        parameter_size: '',
-        quantization_level: '',
-      },
-    },
-    {
-      name: 'tinyllama',
-      model: 'tinyllama',
-      modified_at: new Date(),
-      size: 1,
-      digest: '',
-      expires_at: new Date(),
-      size_vram: 0,
-      details: {
-        family: 'ollama',
-        format: 'TinyLlama is a compact model with only 1.1B parameters.',
         parent_model: 'ollama',
         families: ['ollama'],
         parameter_size: '',
@@ -251,9 +216,7 @@ function SelectChatModel(props: Props) {
         <MenuItem value="init" disabled>
           {t('core:chooseModel')}
         </MenuItem>
-        <MenuItem value="" disabled>
-          {t('core:installedAIModel')}
-        </MenuItem>
+        <ListSubheader>{t('core:installedAIModels')}</ListSubheader>
         {installedModels && installedModels.length > 0 ? (
           installedModels.map((model) => (
             <MenuItem
@@ -261,7 +224,6 @@ function SelectChatModel(props: Props) {
               value={model.name}
               title={getTitle(model)}
             >
-              {' '}
               <ListItemIcon>
                 <AIIcon fontSize="small" />
               </ListItemIcon>
@@ -273,9 +235,7 @@ function SelectChatModel(props: Props) {
             {t('core:noAIModelsInstaller')}
           </MenuItem>
         )}
-        <MenuItem value="" disabled>
-          {t('core:exampleInstallableModels')}
-        </MenuItem>
+        <ListSubheader>{t('core:exampleInstallableModels')}</ListSubheader>
         {ollamaAvailableModels.map((model) => (
           <MenuItem
             key={model.name}
@@ -288,9 +248,7 @@ function SelectChatModel(props: Props) {
             {model.name}
           </MenuItem>
         ))}
-        <MenuItem value="" disabled>
-          {t('core:moreActions')}
-        </MenuItem>
+        <ListSubheader>{t('core:moreActions')}</ListSubheader>
         <MenuItem value="customModel">
           <ListItemIcon>
             <DownloadIcon fontSize="small" />

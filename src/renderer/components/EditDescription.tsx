@@ -71,7 +71,7 @@ function EditDescription() {
           }
         }}
         sx={{
-          border: '1px solid lightgray',
+          // border: '1px solid lightgray',
           borderRadius: AppConfig.defaultCSSRadius,
           height: 'calc(100% - 20px)',
           width: '100%',

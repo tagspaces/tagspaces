@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import { CloseIcon, MoreMenuIcon, OllamaIcon } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import TooltipTS from '-/components/Tooltip';
@@ -259,7 +260,13 @@ function ChatView() {
         {/* Chat markdown editor */}
         <Grid
           id="chatMD"
-          sx={{ padding: 0, overflowY: 'auto', flexGrow: 1 }}
+          sx={{
+            padding: 0,
+            overflowY: 'auto',
+            flexGrow: 1,
+            borderRadius: AppConfig.defaultCSSRadius,
+            // border: '1px solid lightgray',
+          }}
           ref={milkdownDivRef}
         >
           <style>

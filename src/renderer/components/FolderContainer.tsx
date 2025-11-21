@@ -439,7 +439,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
         <>
           <Fab
             size="medium"
-            color="secondary"
+            color="primary"
             aria-label="add"
             sx={{
               bottom: -30,

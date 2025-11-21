@@ -95,6 +95,7 @@ function ConfirmDialog(props: Props) {
               fullWidth
               label={helpText}
               value={promptValue}
+              focused
               onChange={(e) => setPromptValue(e.target.value)}
               placeholder={prompt}
             />
