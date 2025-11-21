@@ -182,7 +182,7 @@ function LocationManager(props: Props) {
                         {...prov.dragHandleProps}
                       >
                         <LocationView
-                          key={location.uuid}
+                          key={location.uuid + index}
                           workspace={getWorkSpace(location)}
                           location={{
                             isFile: false,

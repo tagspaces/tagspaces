@@ -29,7 +29,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { Box } from '@mui/material';
+import { Box, emphasize, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useContext, useRef } from 'react';
@@ -61,6 +61,7 @@ function TagGroupTitleDnD(props: Props) {
   } = props;
   const { findLocation } = useCurrentLocationContext();
   const tagGroupRef = useRef<HTMLSpanElement>(null);
+  const theme = useTheme();
   const { t } = useTranslation();
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
     ? useContext<TS.WorkSpacesContextData>(
@@ -151,6 +152,9 @@ function TagGroupTitleDnD(props: Props) {
         padding: 0,
         height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
+        '&:hover, &:focus': {
+          backgroundColor: emphasize(theme.palette.background.paper, 0.06),
+        },
       }}
     >
       <Grid
@@ -158,7 +162,7 @@ function TagGroupTitleDnD(props: Props) {
         direction="row"
         alignItems="stretch"
         alignContent="center"
-        sx={{ flexWrap: 'nowrap' }}
+        sx={{ flexWrap: 'nowrap', cursor: 'grab' }}
       >
         <Grid size={2} sx={{ maxWidth: 40 }}>
           <TsIconButton
