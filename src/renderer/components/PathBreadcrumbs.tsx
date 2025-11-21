@@ -27,6 +27,7 @@ import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { Box } from '@mui/material';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Chip from '@mui/material/Chip';
 import { emphasize, styled } from '@mui/material/styles';
@@ -61,10 +62,6 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     },
   };
 }) as typeof Chip; // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
-
-// const NoWrapBreadcrumb = styled(StyledBreadcrumb)(({ theme }) => {
-//   return { flexWrap: 'nowrap' };
-// });
 
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => {
   return {
@@ -207,26 +204,24 @@ function PathBreadcrumbs(props: Props) {
   }
 
   return (
-    <>
-      <StyledBreadcrumbs
-        maxItems={isDesktopMode ? 2 : 1}
-        itemsAfterCollapse={isDesktopMode ? 1 : 1}
-        itemsBeforeCollapse={isDesktopMode ? 1 : 0}
-        aria-label="breadcrumb"
-        separator={
-          <span
-            style={{
-              marginLeft: -3,
-              marginRight: -3,
-            }}
-          >
-            {'›'}
-          </span>
-        }
-      >
-        {getBreadcrumbs()}
-      </StyledBreadcrumbs>
-    </>
+    <StyledBreadcrumbs
+      maxItems={isDesktopMode ? 2 : 1}
+      itemsAfterCollapse={isDesktopMode ? 1 : 1}
+      itemsBeforeCollapse={isDesktopMode ? 1 : 0}
+      aria-label="breadcrumb"
+      separator={
+        <Box
+          sx={{
+            marginLeft: '-3px',
+            marginRight: '-3px',
+          }}
+        >
+          {'›'}
+        </Box>
+      }
+    >
+      {getBreadcrumbs()}
+    </StyledBreadcrumbs>
   );
 }
 
