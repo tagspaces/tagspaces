@@ -8,7 +8,7 @@
 
 .rc-table-cell:hover {
   border-radius: 5px;
-  background-color: #dcf3ec !important;
+  background-color: #dcf3ec88 !important;
 }
 
 .rc-table td {

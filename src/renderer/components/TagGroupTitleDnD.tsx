@@ -153,7 +153,7 @@ function TagGroupTitleDnD(props: Props) {
         height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
         '&:hover, &:focus': {
-          backgroundColor: emphasize(theme.palette.background.paper, 0.06),
+          backgroundColor: emphasize(theme.palette.background.default, 0.06),
         },
       }}
     >

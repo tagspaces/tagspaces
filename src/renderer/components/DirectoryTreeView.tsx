@@ -27,7 +27,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { getShowUnixHiddenEntries } from '-/reducers/settings';
 import { resolveRelativePath } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
@@ -195,9 +195,14 @@ const DirectoryTreeView = forwardRef(
               marginRight: '6px',
               marginBottom: '-8px',
               display: 'inline-block',
+              color: theme.palette.text.primary,
             }}
           />
-          {field.length > 25 ? field.substr(0, 25) + '...' : field}
+          <Typography
+            sx={{ color: theme.palette.text.primary, display: 'inline' }}
+          >
+            {field.length > 25 ? field.substr(0, 25) + '...' : field}
+          </Typography>
         </Box>
       );
       return { children, props: {} };

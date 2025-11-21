@@ -297,6 +297,7 @@ function LocationView(props: Props) {
         paddingLeft: '5px',
         paddingRight: 0,
         height: '100%',
+        overflowX: 'hidden',
       }}
     >
       <TargetFileBox
