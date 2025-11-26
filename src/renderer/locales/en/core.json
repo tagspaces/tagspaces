@@ -1113,5 +1113,16 @@
   "searchSettings": "Search settings",
   "lastModifiedDate": "Last Modified Date",
   "createdDate": "Creation Date",
+  "month": "Month",
+  "monthViewSwitch": "Switch to Month view",
+  "year": "Year",
+  "yearViewSwitch": "Switch to Year view",
+  "years": "Years",
+  "yearsViewSwitch": "Switch to Years view",
+  "dateTags": "Date Tags",
+  "dateTagsGrouping": "Group by date tags like 20250607 or 202504",
+  "folderNameGrouping": "Group by the name of the parent folder if it represent a date like 202507 for July 2025",
+  "lastModifiedDateGrouping": "Group by last modified date",
+  "createdDateGrouping": "Group by creation date",
   "-": "-"
 }
