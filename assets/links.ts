@@ -40,6 +40,7 @@ const Links = {
     productEnterprise:
       'https://www.tagspaces.org/products/enterprise/' + urlParams,
     downloadURL: 'https://www.tagspaces.org/downloads/' + urlParams,
+    downloadProURL: 'https://tagspacesstore.onfastspring.com/account',
     howToStart: 'https://www.tagspaces.org/products/howtostart/' + urlParams,
     changelogURL: 'https://www.tagspaces.org/whatsnew/' + urlParams,
     imprintURL: 'https://www.tagspaces.org/about/imprint/' + urlParams,

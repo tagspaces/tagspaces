@@ -72,7 +72,8 @@ function PageNotification() {
 
   const getLatestVersion = () => {
     if (Pro) {
-      showNotification(t('core:getLatestVersionPro'), 'default', false);
+      // showNotification(t('core:getLatestVersionPro'), 'default', false);
+      openURLExternally(Links.links.downloadProURL, true);
     } else {
       openURLExternally(Links.links.downloadURL, true);
     }
