@@ -39,10 +39,8 @@ import {
 
 const TSNotification = styled(Snackbar)(({ theme }) => {
   return {
-    root: {
-      '& .MuiSnackbarContent-root': {
-        borderRadius: AppConfig.defaultCSSRadius,
-      },
+    '& .MuiSnackbarContent-root': {
+      borderRadius: AppConfig.defaultCSSRadius,
     },
   };
 }) as typeof Snackbar;
@@ -136,17 +134,19 @@ function PageNotification() {
         ]}
       />
       <TSNotification
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        open={updateAvailable}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        //open={updateAvailable}
+        open
         autoHideDuration={undefined}
-        message={'Version ' + lastPublishedVersion + ' available.'}
+        message={t('versionAvailable', {
+          version: lastPublishedVersion,
+        })}
         action={[
-          <TsButton key="laterButton" color="secondary" onClick={skipRelease}>
+          <TsButton key="laterButton" onClick={skipRelease}>
             {t('core:later')}
           </TsButton>,
           <TsButton
             key="changelogButton"
-            color="secondary"
             onClick={openChangelogPage}
             sx={{
               marginLeft: AppConfig.defaultSpaceBetweenButtons,
