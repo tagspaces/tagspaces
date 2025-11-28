@@ -135,8 +135,7 @@ function PageNotification() {
       />
       <TSNotification
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        //open={updateAvailable}
-        open
+        open={updateAvailable}
         autoHideDuration={undefined}
         message={t('versionAvailable', {
           version: lastPublishedVersion,
