@@ -73,6 +73,8 @@ const Links = {
       'https://docs.tagspaces.org/perspectives/gallery' + urlParams,
     kanbanPerspective:
       'https://docs.tagspaces.org/perspectives/kanban' + urlParams,
+    calendarPerspective:
+      'https://docs.tagspaces.org/perspectives/calendar' + urlParams,
     locations: 'https://docs.tagspaces.org/ui/locations' + urlParams,
     revisions:
       'https://docs.tagspaces.org/editing-files#file-revisions' + urlParams,
