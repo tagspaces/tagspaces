@@ -397,6 +397,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
             data-tid="floatingPerspectiveSwitcher"
             disabled={showWelcomePanel}
             aria-label="change perspective"
+            color="primary"
             exclusive
           >
             {perspectiveToggleButtons}
