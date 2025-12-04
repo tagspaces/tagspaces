@@ -114,32 +114,6 @@ export const ThumbGenerationContextProvider = ({
     // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
   ];
 
-  /*useEffect(() => {
-    if (currentDirectoryPath !== undefined) {
-      const entries =
-        pageFiles && pageFiles.length > 0 ? pageFiles : currentDirectoryEntries;
-      if (
-        entries &&
-        entries.length > 0
-        //&& isGeneratingThumbs.current === false
-      ) {
-        generateThumbnails(entries).then(() => {
-          //if (!isMetaFolderExist) {
-          // initial thumbnail generation without .ts folder
-          loadCurrentDirMeta(
-            currentDirectoryPath,
-            currentDirectoryEntries,
-            entries.filter((entry) => entry.isFile),
-          ).then((entries) => {
-            updateCurrentDirEntries(entries);
-          });
-          // }
-          return true;
-        });
-      }
-    }
-  }, [currentDirectoryPath, page]); //, isMetaFolderExist]);*/
-
   function pickByExtensionPriority(
     entries: TS.FileSystemEntry[],
     priority: string[] = ['jpg', 'jpeg', 'png', 'pdf'],
@@ -547,7 +521,7 @@ export const ThumbGenerationContextProvider = ({
     const content = base64ToBlob(baseString);
     return saveBinaryFilePromise(
       { path: filePath, locationID },
-      content, //PlatformIO.isMinio() ? content : content.buffer,
+      content,
       true,
       undefined,
       'thumbgen',
