@@ -3910,7 +3910,7 @@ Apache License
 
 The following npm package may be included in this product:
 
- - fswin@3.24.829
+ - fswin@3.25.1108
 
 This package contains the following license:
 
@@ -4022,7 +4022,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.198
+ - @tagspacespro/tagspacespro@5.0.200
 
 This package contains the following license:
 
@@ -8216,7 +8216,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 The following npm packages may be included in this product:
 
  - form-data@4.0.3
- - form-data@4.0.4
+ - form-data@4.0.5
 
 These packages each contain the following license:
 
@@ -16954,15 +16954,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws3@4.5.102
- - @tagspaces/tagspaces-common-cordova@4.5.102
- - @tagspaces/tagspaces-common-node@4.5.102
- - @tagspaces/tagspaces-common@4.5.102
- - @tagspaces/tagspaces-indexer@4.5.102
+ - @tagspaces/tagspaces-common-aws3@4.5.104
+ - @tagspaces/tagspaces-common-cordova@4.5.104
+ - @tagspaces/tagspaces-common-node@4.5.104
+ - @tagspaces/tagspaces-common@4.5.104
+ - @tagspaces/tagspaces-indexer@4.5.104
  - @tagspaces/tagspaces-pdf-extraction@4.5.53
  - @tagspaces/tagspaces-thumbgen-image@4.5.60
- - @tagspaces/tagspaces-workers@4.5.102
- - @tagspaces/tagspaces-ws@4.5.102
+ - @tagspaces/tagspaces-workers@4.5.104
+ - @tagspaces/tagspaces-ws@4.5.104
 
 These packages each contain the following license:
 
