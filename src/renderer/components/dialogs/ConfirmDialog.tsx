@@ -73,12 +73,21 @@ function ConfirmDialog(props: Props) {
     onClose();
   }
 
+  function handleKeyDown(event: React.KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+      onConfirm(true);
+    }
+  }
+
   return (
     <Dialog
       aria-labelledby="draggable-dialog-title"
       PaperComponent={DraggablePaper}
       open={open}
       onClose={onClose}
+      onKeyDown={handleKeyDown}
       keepMounted
       scroll="paper"
       sx={{ zIndex: 1301 }}

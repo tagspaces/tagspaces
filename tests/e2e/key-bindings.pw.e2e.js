@@ -102,6 +102,22 @@ test.describe('TST13 - Settings Key Bindings [electron]', () => {
     await expectElementExist(getGridFileSelector(testFileName), false);
   });
 
+  test('TST13151 - Test delete file with ENTER key on confirm dialog [electron,minio,s3]', async () => {
+    const testFile = 'sample.txt';
+    await clickOn(getGridFileSelector(testFile));
+    if (isMac) {
+      await global.client.keyboard.press('F8');
+    } else {
+      await global.client.keyboard.press('Delete');
+    }
+    // Wait for confirm dialog to appear
+    await expectElementExist('[data-tid=confirmDeleteFileDialog]', true, 5000);
+    // Press ENTER to confirm deletion
+    await global.client.keyboard.press('Enter');
+    // Verify file was deleted
+    await expectElementExist(getGridFileSelector(testFile), false);
+  });
+
   test('TST1316 - Show help and feedback panel in the left [electron,minio,s3]', async () => {
     await clickOn(getGridFileSelector('sample.txt'));
     await global.client.keyboard.press('F1');
