@@ -2,14 +2,14 @@
  * Base webpack config used across other specific configs
  */
 
-import webpack from 'webpack';
-const Dotenv = require('dotenv-webpack');
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
-import webpackPaths from './webpack.paths';
+import webpack from 'webpack';
+import { TsMetaPlugin } from '../../plugins/TsMetaPlugin';
 import { dependencies as externals } from '../../release/app/package.json';
+import webpackPaths from './webpack.paths';
+const Dotenv = require('dotenv-webpack');
 //import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import path = require('path');
-import { TsMetaPlugin } from '../../plugins/TsMetaPlugin';
 
 const configuration: webpack.Configuration = {
   // packages that is not included in the bundle
@@ -18,22 +18,6 @@ const configuration: webpack.Configuration = {
     {
       fsevents: "require('fsevents')",
     },
-    /*
-    {
-      fswin: "require('fswin')",
-    },*/
-    /*{
-      fs: "require('fs')",
-    },
-    {
-      'fs-extra': "require('fs-extra')",
-    },
-    {
-      'graceful-fs': "require('graceful-fs')",
-    },
-    {
-      'child-process': "require('child-process')",
-    },*/
   ],
 
   stats: 'errors-only',
