@@ -1124,6 +1124,5 @@
   "folderNameGrouping": "Group by the name of the parent folder if it represent a date like 202507 for July 2025",
   "lastModifiedDateGrouping": "Group by last modified date",
   "createdDateGrouping": "Group by creation date",
-  "noImageSelected": "No image selected",
   "-": "-"
 }
