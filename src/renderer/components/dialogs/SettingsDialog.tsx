@@ -111,9 +111,9 @@ function SettingsDialog(props: Props) {
         onChange={handleTabClick}
         indicatorColor="primary"
         scrollButtons="auto"
-        variant={smallScreen ? 'scrollable' : 'standard'}
+        variant="scrollable"
         orientation={smallScreen ? 'horizontal' : 'vertical'}
-        // allowScrollButtonsMobile
+        allowScrollButtonsMobile
       >
         <Tab
           value={SettingsTab.General}
