@@ -197,7 +197,7 @@ function MoveCopyFilesDialog(props: Props) {
         closeButtonTestId="closeMCFilesTID"
         onClose={onClose}
       />
-      <DialogContent style={{ overflow: 'hidden' }}>
+      <DialogContent sx={{ overflowX: 'hidden', overflowY: 'auto' }}>
         <Typography variant="subtitle2">
           {t('selectedFilesAndFolders')}
         </Typography>
@@ -232,7 +232,7 @@ function MoveCopyFilesDialog(props: Props) {
           targetPath={targetPath}
           targetLocationID={targetLocation?.uuid}
         />
-        <Box style={{ marginTop: 10 }}>
+        <Box sx={{ marginTop: '10px' }}>
           {targetPath ? (
             <Typography variant="subtitle2">
               {t('moveCopyToPath') + ': ' + targetPath}
