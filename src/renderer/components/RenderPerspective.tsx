@@ -134,9 +134,11 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.FolderVizPerspective) {
 function FolderVizPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <ThumbGenerationContextProvider>
-        <FolderVizPerspective {...props} />
-      </ThumbGenerationContextProvider>
+      <PerspectiveSettingsContextProvider>
+        <ThumbGenerationContextProvider>
+          <FolderVizPerspective {...props} />
+        </ThumbGenerationContextProvider>
+      </PerspectiveSettingsContextProvider>
     </React.Suspense>
   );
 }
@@ -148,9 +150,11 @@ if (Pro && Pro.Perspectives && Pro.Perspectives.CalendarPerspective) {
 function CalendarPerspectiveAsync(props) {
   return (
     <React.Suspense fallback={<LoadingLazy />}>
-      <ThumbGenerationContextProvider>
-        <CalendarPerspective {...props} />
-      </ThumbGenerationContextProvider>
+      <PerspectiveSettingsContextProvider>
+        <ThumbGenerationContextProvider>
+          <CalendarPerspective {...props} />
+        </ThumbGenerationContextProvider>
+      </PerspectiveSettingsContextProvider>
     </React.Suspense>
   );
 }

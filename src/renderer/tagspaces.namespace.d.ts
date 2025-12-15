@@ -290,6 +290,15 @@ export namespace TS {
 
   type ThumbnailMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
 
+  type FolderVizType =
+    | 'tree'
+    | 'radial'
+    | 'treemap'
+    | 'linksgraph'
+    | 'tagsgraph';
+
+  type CalendarType = 'years' | 'year' | 'month';
+
   type BookmarksContextData = {
     bookmarks: TS.BookmarkItem[];
     setBookmark: (filePath: string, url: string) => void;
@@ -423,6 +432,12 @@ export namespace TS {
     // pageOffset?: number; // KanBan
     filesLimit?: number; // KanBan
     layoutType?: string;
+    folderVizType?: FolderVizType;
+    calendarType?: CalendarType;
+    calendarGroupByDateTags?: boolean;
+    calendarGroupByFolderName?: boolean;
+    calendarGroupByLastModifiedDate?: boolean;
+    calendarGroupByCreationDate?: boolean;
     orderBy?: boolean;
     sortBy?: string;
     singleClickAction?: string;

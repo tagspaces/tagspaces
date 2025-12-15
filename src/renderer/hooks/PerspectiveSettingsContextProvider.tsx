@@ -16,6 +16,14 @@
  *
  */
 
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { Pro } from '-/pro';
+import { mergeFsEntryMeta } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import useFirstRender from '-/utils/useFirstRender';
 import React, {
   createContext,
   useEffect,
@@ -23,14 +31,6 @@ import React, {
   useReducer,
   useRef,
 } from 'react';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { TS } from '-/tagspaces.namespace';
-import { Pro } from '-/pro';
-import { useIOActionsContext } from '-/hooks/useIOActionsContext';
-import { mergeFsEntryMeta } from '-/services/utils-io';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import useFirstRender from '-/utils/useFirstRender';
 
 type PerspectiveSettingsContextData = {
   settings: TS.FolderSettings;
@@ -45,6 +45,12 @@ type PerspectiveSettingsContextData = {
   showEntriesDescription: boolean;
   showTags: boolean;
   gridPageLimit: number;
+  folderVizType: TS.FolderVizType;
+  calendarType?: TS.CalendarType;
+  calendarGroupByDateTags?: boolean;
+  calendarGroupByFolderName?: boolean;
+  calendarGroupByLastModifiedDate?: boolean;
+  calendarGroupByCreationDate?: boolean;
   showFolderContent: boolean; //KanBan
   layoutType: string; //KanBan
   showSubFolderDetails: boolean; // KanBan
@@ -71,6 +77,12 @@ export const PerspectiveSettingsContext =
     gridPageLimit: 100,
     showFolderContent: false,
     layoutType: 'grid',
+    folderVizType: 'tree',
+    calendarType: 'year',
+    calendarGroupByDateTags: true,
+    calendarGroupByFolderName: true,
+    calendarGroupByLastModifiedDate: false,
+    calendarGroupByCreationDate: false,
     showSubFolderDetails: false,
     filesLimit: 15,
     haveLocalSetting: undefined,
@@ -260,6 +272,13 @@ export const PerspectiveSettingsContextProvider = ({
       entrySize: settings.current.entrySize,
       thumbnailMode: settings.current.thumbnailMode,
       gridPageLimit: settings.current.gridPageLimit,
+      folderVizType: settings.current.folderVizType,
+      calendarType: settings.current.calendarType,
+      calendarGroupByDateTags: settings.current.calendarGroupByDateTags,
+      calendarGroupByFolderName: settings.current.calendarGroupByFolderName,
+      calendarGroupByLastModifiedDate:
+        settings.current.calendarGroupByLastModifiedDate,
+      calendarGroupByCreationDate: settings.current.calendarGroupByCreationDate,
       showFolderContent: settings.current.showFolderContent,
       layoutType: settings.current.layoutType,
       showSubFolderDetails: settings.current.showSubFolderDetails,
