@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
 import Tooltip from '@mui/material/Tooltip';
 
@@ -54,12 +55,17 @@ function TooltipTS(props: Props) {
   }
   return (
     <Tooltip
-      arrow
+      arrow={true}
       title={tooltipText}
       disableInteractive
       placement={placement}
       slotProps={{
         popper: {
+          sx: {
+            '& .MuiTooltip-tooltip': {
+              borderRadius: AppConfig.defaultCSSRadius,
+            },
+          },
           modifiers: [
             {
               name: 'offset',
