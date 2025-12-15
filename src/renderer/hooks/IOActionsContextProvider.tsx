@@ -1822,7 +1822,7 @@ export const IOActionsContextProvider = ({
         );
       }
       const meta = mergeFsEntryMeta(metaData);
-      const content = JSON.stringify(cleanMetaData(meta));
+      const content = JSON.stringify(cleanMetaData(meta), null, 2);
       return saveTextFilePromise(
         { path: metaFilePath, locationID: entry.locationID },
         content,
