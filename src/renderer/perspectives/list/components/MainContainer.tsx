@@ -33,7 +33,6 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { fileOperationsEnabled } from '-/perspectives/common/main-container';
 import { useReloadOnFocus } from '-/perspectives/common/useReloadOnFocus';
-import GridOptionsMenu from '-/perspectives/grid/components/GridOptionsMenu';
 import GridPagination from '-/perspectives/grid/components/GridPagination';
 import GridSettingsDialog from '-/perspectives/grid/components/GridSettingsDialog';
 import MainToolbar from '-/perspectives/grid/components/MainToolbar';
@@ -94,8 +93,8 @@ function ListPerspective(props: Props) {
     useState<null | HTMLElement>(null);
   const [sortingContextMenuAnchorEl, setSortingContextMenuAnchorEl] =
     useState<null | HTMLElement>(null);
-  const [optionsContextMenuAnchorEl, setOptionsContextMenuAnchorEl] =
-    useState<null | HTMLElement>(null);
+  // const [optionsContextMenuAnchorEl, setOptionsContextMenuAnchorEl] =
+  //   useState<null | HTMLElement>(null);
   const [isAddTagDialogOpened, setIsAddTagDialogOpened] =
     useState<TS.Tag>(undefined);
   const [isGridSettingsDialogOpened, setIsGridSettingsDialogOpened] =
@@ -156,12 +155,12 @@ function ListPerspective(props: Props) {
   };
 
   const openHelpWebPage = () => {
-    closeOptionsMenu();
+    // closeOptionsMenu();
     openURLExternally(Links.documentationLinks.defaultPerspective, true);
   };
 
   const openSettings = () => {
-    closeOptionsMenu();
+    // closeOptionsMenu();
     setIsGridSettingsDialogOpened(true);
   };
 
@@ -178,9 +177,9 @@ function ListPerspective(props: Props) {
     setTagContextMenuAnchorEl(event.currentTarget);
   };
 
-  const closeOptionsMenu = () => {
-    setOptionsContextMenuAnchorEl(null);
-  };
+  // const closeOptionsMenu = () => {
+  //   setOptionsContextMenuAnchorEl(null);
+  // };
 
   const keyMap = {
     nextDocument: keyBindings.nextDocument,
@@ -387,7 +386,7 @@ function ListPerspective(props: Props) {
           handleSortBy={handleSortBy}
         />
       )}
-      {Boolean(optionsContextMenuAnchorEl) && (
+      {/* {Boolean(optionsContextMenuAnchorEl) && (
         <GridOptionsMenu
           open={Boolean(optionsContextMenuAnchorEl)}
           onClose={closeOptionsMenu}
@@ -395,7 +394,7 @@ function ListPerspective(props: Props) {
           openHelpWebPage={openHelpWebPage}
           openSettings={openSettings}
         />
-      )}
+      )} */}
     </Box>
   );
 }
