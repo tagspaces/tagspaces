@@ -294,6 +294,7 @@ export namespace TS {
     | 'tree'
     | 'radial'
     | 'treemap'
+    | 'sunburst'
     | 'linksgraph'
     | 'tagsgraph';
 

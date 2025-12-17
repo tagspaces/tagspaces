@@ -633,9 +633,13 @@ export const DirectoryContentContextProvider = ({
       return defaultListSettings;
     } else if (Pro) {
       if (perspective === PerspectiveIDs.GALLERY) {
-        return Pro.Perspectives.galleryDefaultSettings;
+        return Pro.Perspectives.GalleryDefaultSettings;
       } else if (perspective === PerspectiveIDs.MAPIQUE) {
-        return Pro.Perspectives.mapiqueDefaultSettings;
+        return Pro.Perspectives.MapiqueDefaultSettings;
+      } else if (perspective === PerspectiveIDs.CALENDAR) {
+        return Pro.Perspectives.CalendarDefaultSettings;
+      } else if (perspective === PerspectiveIDs.FOLDERVIZ) {
+        return Pro.Perspectives.FolderVizDefaultSettings;
       } else if (perspective === PerspectiveIDs.KANBAN) {
         return Pro.Perspectives.KanBanPerspectiveSettings;
       }
