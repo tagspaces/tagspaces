@@ -29,7 +29,6 @@ import TsTextField from '-/components/TsTextField';
 import TsToggleButton from '-/components/TsToggleButton';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
@@ -37,7 +36,6 @@ import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getFileNameTagPlace,
-  getMapTileServers,
   getMaxCollectedTag,
   getPersistTagsInSidecarFile,
   getSettings,
@@ -84,8 +82,6 @@ function SettingsGeneral() {
 
   // --- Advanced settings imports ---
   const maxCollectedTag = useSelector(getMaxCollectedTag);
-  const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
-  const { delAllHistory } = useHistoryContext();
   const { openConfirmDialog } = useNotificationContext();
   const devMode = useSelector(isDevMode);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
@@ -95,7 +91,6 @@ function SettingsGeneral() {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
-  const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -108,23 +103,6 @@ function SettingsGeneral() {
   }, [settings.enableWS]);
 
   // --- Advanced settings handlers ---
-  function setConfirmDialogKey(key: string) {
-    if (key) {
-      openConfirmDialog(
-        t('core:confirm'),
-        t('core:confirm' + key + 'Deletion'),
-        (result) => {
-          if (result) {
-            delAllHistory(key);
-          }
-        },
-        'cancelDelete' + key + 'Dialog',
-        'confirmDelete' + key + 'Dialog',
-        'confirmDelete' + key + 'DialogContent',
-      );
-    }
-  }
-
   const toggleDefaultTagBackgroundColorPicker = () => {
     setDisplayColorPicker(!displayColorPicker);
   };
@@ -151,8 +129,6 @@ function SettingsGeneral() {
   const setDesktopMode = (desktopMode) =>
     dispatch(SettingsActions.setDesktopMode(desktopMode));
 
-  const setDevMode = (devMode) => dispatch(SettingsActions.setDevMode(devMode));
-
   const setEnableWS = (enableWS) =>
     dispatch(SettingsActions.setEnableWS(enableWS));
 
@@ -168,12 +144,6 @@ function SettingsGeneral() {
 
   const setRevisionsEnabled = (enabled) =>
     dispatch(SettingsActions.setRevisionsEnabled(enabled));
-
-  const setGeoTaggingFormat = (geoTaggingFormat) =>
-    dispatch(SettingsActions.setGeoTaggingFormat(geoTaggingFormat));
-
-  const setHistory = (key, value) =>
-    dispatch(SettingsActions.setHistory(key, value));
 
   const setPrefixTagContainer = (prefix) =>
     dispatch(SettingsActions.setPrefixTagContainer(prefix));
