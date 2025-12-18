@@ -206,7 +206,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
                 marginRight: '-8px',
               }}
               id={`tab-${index}`}
-              ariaControls={`simple-tabpanel-${index}`}
+              aria-controls={`simple-tabpanel-${index}`}
               onClick={() => handleTabClick(selectedTabIndex, index)}
             />
           ))}

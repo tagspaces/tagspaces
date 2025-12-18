@@ -24,17 +24,10 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import DOMPurify from 'dompurify';
 import JSZip from 'jszip';
-import * as pdfjsModule from 'pdfjs-dist/legacy/build/pdf.min.mjs';
+import { getDocument } from 'pdfjs-dist/build/pdf.min.mjs';
 import TgaLoader from 'tga-js';
 import UTIF from 'utif';
-
-const pdfjs = (
-  'default' in pdfjsModule ? pdfjsModule['default'] : pdfjsModule
-) as typeof pdfjsModule;
-
-import('pdfjs-dist/build/pdf.worker.mjs');
-//import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
-//pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+import('pdfjs-dist/build/pdf.worker.min.mjs');
 
 let maxSize = AppConfig.maxThumbSize;
 const pdfMaxSize = 1000;
@@ -179,7 +172,7 @@ export async function extractPDFcontent(
   let extractedText = '';
   if (arrayBuffer) {
     try {
-      const pdfDocument = await pdfjs.getDocument(arrayBuffer).promise;
+      const pdfDocument = await getDocument(arrayBuffer).promise;
       for (let i = 1; i <= pdfDocument.numPages; i++) {
         const page = await pdfDocument.getPage(i);
         const textContent = await page.getTextContent();
@@ -207,7 +200,7 @@ export function generatePDFThumbnail(
 
       let canvas: HTMLCanvasElement = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const loadingTask = pdfjs.getDocument(arrayBuffer);
+      const loadingTask = getDocument(arrayBuffer);
       loadingTask.promise
         .then((pdf) => {
           pdf
