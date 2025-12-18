@@ -30,7 +30,7 @@ const FileExtBadge = styled(Typography)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   textShadow: '1px 1px #8f8f8f',
-  height: 28,
+  height: '25px',
   alignSelf: 'center',
   textTransform: 'uppercase',
 }));
