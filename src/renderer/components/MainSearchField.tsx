@@ -16,7 +16,6 @@
  *
  */
 
-import React from 'react';
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 
@@ -45,7 +44,7 @@ const MainSearchField = styled(TextField)(({ theme }) => ({
   //   boxShadow: '0 0 0 4px rgba(21, 156, 228, 0.4)'
   // },
   '&:hover': {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.action.hover,
     // boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`
   },
 }));

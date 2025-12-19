@@ -29,7 +29,7 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { Box, emphasize, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useContext, useRef } from 'react';
@@ -153,7 +153,7 @@ function TagGroupTitleDnD(props: Props) {
         height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
         '&:hover, &:focus': {
-          backgroundColor: emphasize(theme.palette.background.default, 0.06),
+          backgroundColor: theme.palette.action.hover,
         },
       }}
     >

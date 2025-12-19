@@ -36,7 +36,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export type TabItem = {
-  //dataTid: string;
   icon: React.ReactNode;
   title: string;
   name: (typeof TabNames)[keyof typeof TabNames];
@@ -54,22 +53,11 @@ export const TabNames = {
 type EntryPropsTabsContextData = {
   getTabsArray: (openedEntry: TS.OpenedEntry) => Promise<TabItem[]>;
   isEditable: (openedEntry: TS.OpenedEntry) => boolean;
-  /*setOpenedTab: (
-    tabName: (typeof TabNames)[keyof typeof TabNames],
-    openedEntry: TS.OpenedEntry,
-  ) => Promise<number>;*/
-  /*isTabOpened: (
-    tabName: (typeof TabNames)[keyof typeof TabNames],
-    openedEntry: TS.OpenedEntry,
-    selectedTabIndex: number,
-  ) => Promise<boolean>;*/
 };
 
 export const EntryPropsTabsContext = createContext<EntryPropsTabsContextData>({
   getTabsArray: undefined,
   isEditable: undefined,
-  //setOpenedTab: undefined,
-  //isTabOpened: undefined,
 });
 
 export type EntryPropsTabsContextProviderProps = {
@@ -82,28 +70,16 @@ export const EntryPropsTabsContextProvider = ({
   const { t } = useTranslation();
 
   const { findLocation } = useCurrentLocationContext();
-  // const dispatch: AppDispatch = useDispatch();
   const devMode: boolean = useSelector(isDevMode);
 
-  //const haveRevisions = useRef<boolean>(isEditable());
-  //const tabsArray = useRef<TabItem[]>(getTabsArray(openedEntry));
-  //const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
-
   function haveRevisions(openedEntry: TS.OpenedEntry): Promise<boolean> {
-    //if (isEditable(openedEntry)) {
     const location: CommonLocation = findLocation(openedEntry.locationID);
     const backupPath = getBackupDir(openedEntry);
     return location?.checkDirExist(backupPath);
-    //}
-    //return Promise.resolve(false);
   }
 
   function isEditable(openedEntry: TS.OpenedEntry): boolean {
     if (openedEntry) {
-      /* const fileExtension = extractFileExtension(
-        openedEntry.path,
-        currentLocation?.getDirSeparator(),
-      );*/
       const location: CommonLocation = findLocation(openedEntry.locationID);
       return (
         !location.isReadOnly &&
@@ -162,44 +138,10 @@ export const EntryPropsTabsContextProvider = ({
     return tabsArray;
   }
 
-  /**
-   * @param tabName
-   * @param openedEntry
-   * return tabIndex or -1 if not tab exist with tabName
-   */
-  /*async function setOpenedTab(
-    tabName: (typeof TabNames)[keyof typeof TabNames],
-    openedEntry: TS.OpenedEntry,
-  ): Promise<number> {
-    const allTabs = await getTabsArray(openedEntry);
-    const tabIndex = allTabs.findIndex((tab) => tab.name === tabName);
-    if (tabIndex > -1) {
-      dispatch(SettingsActions.setEntryContainerTab(tabIndex));
-    } else {
-      console.log('no tab with name:' + tabName + ' exist!');
-    }
-    return tabIndex;
-  }*/
-
-  /*async function isTabOpened(
-    tabName: (typeof TabNames)[keyof typeof TabNames],
-    openedEntry: TS.OpenedEntry,
-    selectedTabIndex: number,
-  ): Promise<boolean> {
-    const allTabs = await getTabsArray(openedEntry);
-    const tabIndex = allTabs.findIndex((tab) => tab.name === tabName);
-    const maxTabIndex = allTabs.length - 1;
-    const currentOpenedTab =
-      selectedTabIndex > maxTabIndex ? maxTabIndex : selectedTabIndex;
-    return tabIndex !== -1 && tabIndex === currentOpenedTab;
-  }*/
-
   const context = useMemo(() => {
     return {
       getTabsArray,
       isEditable,
-      //setOpenedTab,
-      //isTabOpened,
     };
   }, []);
 

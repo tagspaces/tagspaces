@@ -319,7 +319,7 @@ function RowCell(props: Props) {
           borderRadius: AppConfig.defaultCSSRadius,
           backgroundColor,
           '&:hover': {
-            backgroundColor: `${theme.palette.divider} !important`,
+            backgroundColor: theme.palette.action.hover,
           },
         }}
       >

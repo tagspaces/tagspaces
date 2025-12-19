@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import EntryContainerButtons from '-/components/EntryContainerButtons';
 import LoadingLazy from '-/components/LoadingLazy';
 import TsTabPanel from '-/components/TsTabPanel';
@@ -34,20 +35,20 @@ import { styled, useTheme } from '@mui/material/styles';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const TabContent1 = React.lazy(
+const TabProperties = React.lazy(
   () => import(/* webpackChunkName: "EntryProperties" */ './EntryProperties'),
 );
-const TabContent2 = React.lazy(
+const TabDescription = React.lazy(
   () => import(/* webpackChunkName: "EditDescription" */ './EditDescription'),
 );
-const TabContent3 = React.lazy(
+const TabRevisions = React.lazy(
   () => import(/* webpackChunkName: "Revisions" */ './Revisions'),
 );
-const TabContent4 = React.lazy(
+const TabAI = React.lazy(
   () => import(/* webpackChunkName: "AiPropertiesTab" */ './AiPropertiesTab'),
 );
-const TabContent5 = React.lazy(
-  () => import(/* webpackChunkName: "AiPropertiesTab" */ './LinksTab'),
+const TabLinks = React.lazy(
+  () => import(/* webpackChunkName: "LinksTab" */ './LinksTab'),
 );
 
 interface EntryContainerTabsProps {
@@ -145,15 +146,15 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
 
   function getTabContainer(tabName: string) {
     if (tabName === TabNames.propertiesTab) {
-      return <TabContent1 key={openedEntry.path} tileServer={tileServer} />;
+      return <TabProperties key={openedEntry.path} tileServer={tileServer} />;
     } else if (tabName === TabNames.descriptionTab) {
-      return <TabContent2 />;
+      return <TabDescription />;
     } else if (tabName === TabNames.revisionsTab) {
-      return <TabContent3 />;
+      return <TabRevisions />;
     } else if (tabName === TabNames.aiTab) {
-      return <TabContent4 />;
+      return <TabAI />;
     } else if (tabName === TabNames.linksTab) {
-      return <TabContent5 />;
+      return <TabLinks />;
     }
   }
   if (tabsArray.current.length === 0) {
@@ -202,8 +203,12 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
                 paddingTop: '0px',
                 paddingBottom: '0px',
                 minHeight: '60px', // 68px
-                marginLeft: '-8px',
+                // marginLeft: '-8px',
                 marginRight: '-8px',
+                borderRadius: AppConfig.defaultCSSRadius,
+                '&:hover': {
+                  backgroundColor: theme.palette.action.hover,
+                },
               }}
               id={`tab-${index}`}
               aria-controls={`simple-tabpanel-${index}`}
