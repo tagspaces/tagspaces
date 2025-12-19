@@ -33,6 +33,9 @@ const FileExtBadge = styled(Typography)(({ theme }) => ({
   height: '25px',
   alignSelf: 'center',
   textTransform: 'uppercase',
+  '&:hover': {
+    textShadow: '2px 2px #8f8f8f',
+  },
 }));
 
 export default FileExtBadge;
