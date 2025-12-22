@@ -994,13 +994,18 @@ function EntryProperties({ tileServer }: Props) {
                                     handleChangeColor(background);
                                     handlePopoverClose();
                                   }}
-                                  sx={{
-                                    backgroundColor: background,
-                                    backgroundImage: background,
-                                    margin: '5px',
-                                  }}
                                 >
-                                  <SetColorIcon />
+                                  <Box
+                                    sx={{
+                                      width: '35px',
+                                      paddingTop: '5px',
+                                      borderRadius: AppConfig.defaultCSSRadius,
+                                      backgroundColor: background,
+                                      backgroundImage: background,
+                                    }}
+                                  >
+                                    <SetColorIcon />
+                                  </Box>
                                 </TsIconButton>
                                 {cnt % 4 === 3 && <br />}
                               </>
