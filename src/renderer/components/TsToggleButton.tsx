@@ -51,14 +51,14 @@ function TsToggleButton(props: TSToggleButtonProps) {
         // fontWeight: selected ? 'bold' : 'normal',
         fontWeight: 'normal',
         '&:hover': {
-          backgroundColor: theme.palette.action.hover,
+          backgroundColor: alpha(theme.palette.background.default, 0.8),
         },
         '&.Mui-selected': {
           color: theme.palette.primary.main,
           backgroundColor: alpha(theme.palette.background.default, 0.9),
         },
         '&.Mui-selected:hover': {
-          backgroundColor: theme.palette.action.hover,
+          backgroundColor: alpha(theme.palette.background.default, 0.8),
         },
       }}
     >
