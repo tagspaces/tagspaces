@@ -85,7 +85,7 @@ export const FolderVizPerspectiveMeta = {
   id: PerspectiveIDs.FOLDERVIZ,
   key: 'openFolderVizPerspective',
   pro: true,
-  beta: false,
+  beta: true,
   icon: <FolderVizPerspectiveIcon />,
   title: 'FolderViz Perspective',
 };
