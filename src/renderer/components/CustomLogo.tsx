@@ -65,7 +65,7 @@ function CustomLogo() {
         placeCloser
       >
         <Badge
-          color="secondary"
+          color="primary"
           variant="dot"
           anchorOrigin={{
             vertical: 'top',
