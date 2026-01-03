@@ -259,7 +259,7 @@ export { default as SetColorIcon } from '@mui/icons-material/WaterDropOutlined';
 
 export { default as QrCodeIcon } from '@mui/icons-material/QrCode2Outlined';
 
-export { default as EntryBookmarkAddIcon } from '@mui/icons-material/BookmarkAddTwoTone';
+export { default as EntryBookmarkAddIcon } from '@mui/icons-material/BookmarkAddOutlined';
 
 export { default as EntryBookmarkIcon } from '@mui/icons-material/BookmarkTwoTone';
 
