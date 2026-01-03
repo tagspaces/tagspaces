@@ -702,7 +702,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       ? currentLocation.getDirSeparator()
       : AppConfig.dirSeparator;
     const metaFolder = getMetaDirectoryPath(openedEntry.path, dirSeparator);
-    const fileName = name ? name : 'tsc.json';
+    const fileName = name ? name : AppConfig.aiChatFileName;
     return (
       metaFolder + dirSeparator + AppConfig.aiFolder + dirSeparator + fileName
     );

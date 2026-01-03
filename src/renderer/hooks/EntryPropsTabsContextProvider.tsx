@@ -38,6 +38,7 @@ import { useSelector } from 'react-redux';
 export type TabItem = {
   icon: React.ReactNode;
   title: string;
+  showBadge: boolean;
   name: (typeof TabNames)[keyof typeof TabNames];
 };
 
@@ -78,6 +79,23 @@ export const EntryPropsTabsContextProvider = ({
     return location?.checkDirExist(backupPath);
   }
 
+  function haveAIChat(openedEntry: TS.OpenedEntry): Promise<boolean> {
+    if (openedEntry.isFile) {
+      return Promise.resolve(false);
+    }
+    const location: CommonLocation = findLocation(openedEntry.locationID);
+    const dirSeparator = location
+      ? location.getDirSeparator()
+      : AppConfig.dirSeparator;
+    const aiChatPath =
+      openedEntry.path +
+      dirSeparator +
+      AppConfig.metaFolder +
+      dirSeparator +
+      AppConfig.aiFolder;
+    return location?.checkDirExist(aiChatPath);
+  }
+
   function isEditable(openedEntry: TS.OpenedEntry): boolean {
     if (openedEntry) {
       const location: CommonLocation = findLocation(openedEntry.locationID);
@@ -94,6 +112,7 @@ export const EntryPropsTabsContextProvider = ({
     const openedLocation: CommonLocation = findLocation(oEntry.locationID);
     const tab1: TabItem = {
       icon: <EntryPropertiesIcon />,
+      showBadge: false,
       title: t('core:details'),
       name: TabNames.propertiesTab,
     };
@@ -104,6 +123,7 @@ export const EntryPropsTabsContextProvider = ({
         ) : (
           <DescriptionIcon />
         ),
+      showBadge: Boolean(oEntry && oEntry.meta && oEntry.meta.description),
       title: t('core:filePropertiesDescription'),
       name: TabNames.descriptionTab,
     };
@@ -113,6 +133,7 @@ export const EntryPropsTabsContextProvider = ({
     if (revisions) {
       const tab3: TabItem = {
         icon: <RevisionIcon />,
+        showBadge: false,
         title: t('core:revisions'),
         name: TabNames.revisionsTab,
       };
@@ -120,17 +141,18 @@ export const EntryPropsTabsContextProvider = ({
     }
 
     if ((oEntry && !oEntry.isFile) || (devMode && Pro)) {
-      if (!openedLocation.isReadOnly) {
-        const tab4: TabItem = {
-          icon: <AIIcon />,
-          title: oEntry.isFile ? t('core:aiSettingsTab') : t('core:aiChatTab'),
-          name: TabNames.aiTab,
-        };
-        tabsArray.push(tab4);
-      }
+      const aiChatAvailable = await haveAIChat(oEntry);
+      const tab4: TabItem = {
+        showBadge: aiChatAvailable,
+        icon: <AIIcon />,
+        title: oEntry.isFile ? t('core:aiSettingsTab') : t('core:aiChatTab'),
+        name: TabNames.aiTab,
+      };
+      tabsArray.push(tab4);
     }
     const tab5: TabItem = {
       icon: <LinkIcon />,
+      showBadge: false,
       title: t('core:links'),
       name: TabNames.linksTab,
     };

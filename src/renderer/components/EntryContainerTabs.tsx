@@ -30,7 +30,7 @@ import {
   getEntryContainerTab,
   getMapTileServer,
 } from '-/reducers/settings';
-import { Box, Tab, Tabs, TabsProps } from '@mui/material';
+import { Badge, Box, Tab, Tabs, TabsProps } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useEffect, useReducer, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -191,19 +191,29 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
             <Tab
               key={'key' + tab.name + index}
               data-tid={tab.name + 'TID'}
-              // @ts-ignore
-              icon={tab.icon}
+              icon={
+                <Badge
+                  color="primary"
+                  variant="dot"
+                  invisible={!tab.showBadge}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                >
+                  {tab.icon}
+                </Badge>
+              }
               label={tab.title}
               sx={{
                 paddingLeft: 0,
                 paddingRight: 0,
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: 'normal',
                 textTransform: 'none',
                 paddingTop: '0px',
                 paddingBottom: '0px',
-                minHeight: '60px', // 68px
-                // marginLeft: '-8px',
+                minHeight: '60px',
                 marginRight: '-8px',
                 borderRadius: AppConfig.defaultCSSRadius,
                 '&:hover': {
