@@ -94,9 +94,8 @@ function AiGenDescButton(props: Props) {
       <TsButton
         loading={isLoading}
         disabled={disabled}
-        // tooltip="Uses currently configured AI model to generate description for this file"
         data-tid="generateDescriptionAITID"
-        style={{
+        sx={{
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
         }}
@@ -111,13 +110,12 @@ function AiGenDescButton(props: Props) {
       </TsButton>
       <TsButton
         disabled={disabled}
-        // tooltip={t('core:openGenSettings')}
-        aria-label={t('core:openGenSettings')}
+        aria-label={'open AI settings'}
         data-tid="openGenSettingsAIDesc"
         onClick={() => {
           openAiGenerationDialog('summary', [openedEntry]);
         }}
-        style={{
+        sx={{
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
         }}
