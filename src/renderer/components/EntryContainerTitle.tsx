@@ -226,7 +226,7 @@ function EntryContainerTitle(props: Props) {
           {fileTitle}
         </Box>
       </Tooltip>
-      <TagsPreview tags={getAllTags(openedEntry, tagDelimiter)} />
+      <TagsPreview showFirstTag tags={getAllTags(openedEntry, tagDelimiter)} />
       {openedEntry.isEncrypted && (
         <Tooltip title={t('core:encryptedTooltip')}>
           <EncryptedIcon

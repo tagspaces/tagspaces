@@ -35,6 +35,23 @@ function AiPropertiesTab(props: Props) {
     return <ChatView />;
   }
 
+  // const iframe = document.getElementsByTagName('iframe')[0];
+
+  // function getIframeSelection() {
+  //   const iframeWindow = iframe.contentWindow;
+  //   const selection = iframeWindow.getSelection();
+  //   const selectionText = selection.toString();
+  //   if (selectionText) {
+  //     return selectionText;
+  //   } else {
+  //     const childIframe =
+  //       iframeWindow.document.getElementsByTagName('iframe')[0];
+  //     const subselection = childIframe.contentWindow.getSelection();
+  //     return subselection.toString();
+  //   }
+  // }
+  // alert(getIframeSelection());
+
   return (
     <Box position="relative" display="inline-flex">
       <AiGenDescButton />

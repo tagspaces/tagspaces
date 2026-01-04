@@ -251,7 +251,7 @@ function GridPagination(props: Props) {
             ))}
           </Box>
         ) : (
-          <TagsPreview tags={directoryMeta?.tags} />
+          <TagsPreview showFirstTag tags={directoryMeta?.tags} />
         )}
       </Box>
       <Box

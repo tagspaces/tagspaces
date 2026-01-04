@@ -27,6 +27,7 @@ import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
+  showFirstTag?: boolean;
   tags: Array<TS.Tag>;
 }
 
@@ -36,14 +37,14 @@ function TagsPreview(props: Props) {
   const defaultBackgroundColor = useSelector(getTagColor);
   const defaultTextColor = useSelector(getTagTextColor);
 
-  const { tags } = props;
+  const { tags, showFirstTag = false } = props;
 
   if (!tags || tags.length < 1) {
     return <></>;
   }
-  let tagNames = t('core:searchTags') + ': ';
-  tags.forEach((tag) => {
-    tagNames = tagNames + tag.title + ' ';
+  let tagNames = t('core:tags') + ': ';
+  tags.forEach((tag, index) => {
+    tagNames = tagNames + (index > 0 ? ', ' : '') + tag.title;
   });
 
   let firstTagColor: string;
@@ -85,10 +86,11 @@ function TagsPreview(props: Props) {
           {
             display: 'inline-block',
             minWidth: 15,
-            width: 18,
             height: 15,
             marginLeft: '4px',
             marginRight: '4px',
+            paddingLeft: showFirstTag ? '4px' : '0',
+            paddingRight: showFirstTag ? '4px' : '0',
             borderRadius: '7px',
             borderRight: moreThanOne ? 'white 1px solid' : 'initial',
             boxShadow: moreThanOne
@@ -103,7 +105,7 @@ function TagsPreview(props: Props) {
           } as React.CSSProperties
         }
       >
-        {moreThanOne ? tags.length : '1'}
+        {showFirstTag ? tags[0].title : moreThanOne ? tags.length : '1'}
       </Box>
     </Tooltip>
   );
