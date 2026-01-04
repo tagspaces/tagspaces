@@ -1145,5 +1145,7 @@
   "toggleEdgeShape": "Toggle Edge Shape",
   "diskUsage": "Disk Usage",
   "hideToolbox": "Hide Toolbox\nUseful for making screenshots",
+  "descriptionAvailable": "Description available",
+  "aiChatAvailable": "AI Chat available",
   "-": "-"
 }

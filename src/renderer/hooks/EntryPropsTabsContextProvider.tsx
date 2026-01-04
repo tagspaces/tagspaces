@@ -20,7 +20,6 @@ import AppConfig from '-/AppConfig';
 import {
   AIIcon,
   DescriptionIcon,
-  EditDescriptionIcon,
   EntryPropertiesIcon,
   RevisionIcon,
 } from '-/components/CommonIcons';
@@ -39,6 +38,7 @@ export type TabItem = {
   icon: React.ReactNode;
   title: string;
   showBadge: boolean;
+  badgeTooltip?: string;
   name: (typeof TabNames)[keyof typeof TabNames];
 };
 
@@ -117,13 +117,15 @@ export const EntryPropsTabsContextProvider = ({
       name: TabNames.propertiesTab,
     };
     const tab2: TabItem = {
-      icon:
-        oEntry && oEntry.meta && oEntry.meta.description ? (
-          <EditDescriptionIcon />
-        ) : (
-          <DescriptionIcon />
-        ),
+      // icon:
+      //   oEntry && oEntry.meta && oEntry.meta.description ? (
+      //     <EditDescriptionIcon />
+      //   ) : (
+      //     <DescriptionIcon />
+      //   ),
+      icon: <DescriptionIcon />,
       showBadge: Boolean(oEntry && oEntry.meta && oEntry.meta.description),
+      badgeTooltip: t('core:descriptionAvailable'),
       title: t('core:filePropertiesDescription'),
       name: TabNames.descriptionTab,
     };
@@ -146,6 +148,7 @@ export const EntryPropsTabsContextProvider = ({
         showBadge: aiChatAvailable,
         icon: <AIIcon />,
         title: oEntry.isFile ? t('core:aiSettingsTab') : t('core:aiChatTab'),
+        badgeTooltip: t('core:aiChatAvailable'),
         name: TabNames.aiTab,
       };
       tabsArray.push(tab4);

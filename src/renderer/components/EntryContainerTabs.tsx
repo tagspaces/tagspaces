@@ -19,6 +19,7 @@
 import AppConfig from '-/AppConfig';
 import EntryContainerButtons from '-/components/EntryContainerButtons';
 import LoadingLazy from '-/components/LoadingLazy';
+import TooltipTS from '-/components/Tooltip';
 import TsTabPanel from '-/components/TsTabPanel';
 import { TabItem, TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useChatContext } from '-/hooks/useChatContext';
@@ -192,17 +193,19 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
               key={'key' + tab.name + index}
               data-tid={tab.name + 'TID'}
               icon={
-                <Badge
-                  color="primary"
-                  variant="dot"
-                  invisible={!tab.showBadge}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                >
-                  {tab.icon}
-                </Badge>
+                <TooltipTS arrow={false} title={tab.badgeTooltip}>
+                  <Badge
+                    color="primary"
+                    variant="dot"
+                    invisible={!tab.showBadge || selectedTabIndex === index}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                  >
+                    {tab.icon}
+                  </Badge>
+                </TooltipTS>
               }
               label={tab.title}
               sx={{

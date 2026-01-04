@@ -26,6 +26,7 @@ interface Props {
   children: any;
   classes?: any;
   placeCloser?: boolean;
+  arrow?: boolean;
   placement?:
     | 'bottom-end'
     | 'bottom-start'
@@ -47,6 +48,7 @@ function TooltipTS(props: Props) {
     placement = 'top',
     keyBinding,
     placeCloser = false,
+    arrow = true,
     ...restProps
   } = props;
   let tooltipText = title;
@@ -55,7 +57,7 @@ function TooltipTS(props: Props) {
   }
   return (
     <Tooltip
-      arrow={true}
+      arrow={arrow}
       title={tooltipText}
       disableInteractive
       placement={placement}
