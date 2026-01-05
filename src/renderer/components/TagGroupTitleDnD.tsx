@@ -32,7 +32,7 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import { Box, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { useContext, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 
@@ -74,6 +74,9 @@ function TagGroupTitleDnD(props: Props) {
     tagGroupCollapsed && tagGroupCollapsed.includes(tagGroup.uuid)
   );
 
+  // Track if this item is a valid drop target during drag
+  const [isDropTarget, setIsDropTarget] = useState(false);
+
   // Drag and drop logic for tag group reordering
   const [, drag] = useDrag({
     type: DragItemTypes.TAG_GROUP,
@@ -113,10 +116,18 @@ function TagGroupTitleDnD(props: Props) {
     dragItem.index = hoverIndex;
   };
 
-  const [, drop] = useDrop({
+  const [{ isOver }, drop] = useDrop({
     accept: DragItemTypes.TAG_GROUP,
     drop: dropHandler,
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
   });
+
+  // Update visual feedback when hovering over drop target
+  useEffect(() => {
+    setIsDropTarget(isOver && !isReadOnly);
+  }, [isOver, isReadOnly]);
 
   const handleTagGroupTitleClick = (event: Object, tagGroup) => {
     toggleTagGroup(tagGroup.uuid);
@@ -152,8 +163,17 @@ function TagGroupTitleDnD(props: Props) {
         padding: 0,
         height: '100%',
         borderRadius: AppConfig.defaultCSSRadius,
+        backgroundColor: isDropTarget
+          ? theme.palette.action.selected
+          : 'transparent',
+        border: isDropTarget
+          ? `2px solid ${theme.palette.primary.main}`
+          : '2px solid transparent',
+        transition: 'all 0.2s ease-in-out',
         '&:hover, &:focus': {
-          backgroundColor: theme.palette.action.hover,
+          backgroundColor: isDropTarget
+            ? theme.palette.action.selected
+            : theme.palette.action.hover,
         },
       }}
     >
