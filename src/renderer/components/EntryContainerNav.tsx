@@ -84,11 +84,7 @@ function EntryContainerNav(props: Props) {
               }}
             />
           ) : (
-            <EntryBookmarkAddIcon
-              sx={{
-                color: 'text.secondary',
-              }}
-            />
+            <EntryBookmarkAddIcon />
           )}
         </TsIconButton>
       </ProTooltip>

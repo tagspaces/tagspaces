@@ -381,7 +381,6 @@ function RowCell(props: Props) {
               }
             >
               {entryTitle}
-              &nbsp;
               {showTags && entryTags.length > 0 ? renderTags : tagPlaceholder}
             </Typography>
           </Grid>

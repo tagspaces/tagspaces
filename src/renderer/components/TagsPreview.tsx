@@ -85,6 +85,7 @@ function TagsPreview(props: Props) {
         sx={
           {
             display: 'inline-block',
+            verticalAlign: 'middle',
             minWidth: 15,
             height: 15,
             marginLeft: '4px',
