@@ -26,7 +26,7 @@ import {
 import EntryContainerMenu from '-/components/EntryContainerMenu';
 import FileExtBadge from '-/components/FileExtBadge';
 import TagsPreview from '-/components/TagsPreview';
-import Tooltip from '-/components/Tooltip';
+import TooltipTS from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
@@ -148,7 +148,7 @@ function EntryContainerTitle(props: Props) {
       {openedEntry.isFile ? (
         <>
           {fileChanged ? (
-            <Tooltip title={t('core:fileChanged')}>
+            <TooltipTS title={t('core:fileChanged')}>
               <Box
                 sx={{
                   color: theme.palette.text.primary,
@@ -157,7 +157,7 @@ function EntryContainerTitle(props: Props) {
               >
                 {String.fromCharCode(0x25cf)}
               </Box>
-            </Tooltip>
+            </TooltipTS>
           ) : (
             ''
           )}
@@ -210,32 +210,35 @@ function EntryContainerTitle(props: Props) {
           <MoreMenuIcon sx={{ fontSize: '20px' }} />
         </FileExtBadge>
       )}
-      <Tooltip title={openedEntry.isFile && fileName}>
-        <Box
-          data-tid={'OpenedTID' + dataTidFormat(fileName)}
-          sx={{
-            color: theme.palette.text.primary,
-            display: 'inline',
-            fontSize: '17px',
-            marginLeft: '5px',
-            maxHeight: '40px',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-          }}
-        >
-          {fileTitle}
-        </Box>
-      </Tooltip>
-      <TagsPreview showFirstTag tags={getAllTags(openedEntry, tagDelimiter)} />
-      {openedEntry.isEncrypted && (
-        <Tooltip title={t('core:encryptedTooltip')}>
-          <EncryptedIcon
-            sx={{
-              color: 'primary.main',
-            }}
-          />
-        </Tooltip>
-      )}
+      <Box
+        data-tid={'OpenedTID' + dataTidFormat(fileName)}
+        sx={{
+          color: theme.palette.text.primary,
+          display: 'inline',
+          marginLeft: '4px',
+          lineHeight: '15px',
+          maxHeight: '40px',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+        }}
+      >
+        {openedEntry.isEncrypted && (
+          <TooltipTS title={t('core:encryptedTooltip')}>
+            <Box
+              component="span"
+              sx={{ display: 'inline-block', verticalAlign: 'middle' }}
+            >
+              <EncryptedIcon fontSize="small" />
+            </Box>
+          </TooltipTS>
+        )}
+        {fileTitle}
+        <TagsPreview
+          showFirstTag
+          tags={getAllTags(openedEntry, tagDelimiter)}
+        />
+      </Box>
+
       <EntryContainerMenu
         anchorEl={anchorEl}
         startClosingEntry={startClosingEntry}
