@@ -80,7 +80,7 @@ function TagGroupTitleDnD(props: Props) {
     item: { tagGroup: tagGroup, index: index },
   });
 
-  const dropHover = (dragItem, monitor) => {
+  const dropHandler = (dragItem, monitor) => {
     const dragIndex = dragItem.index;
     const hoverIndex = index;
     if (dragIndex === hoverIndex) {
@@ -115,7 +115,7 @@ function TagGroupTitleDnD(props: Props) {
 
   const [, drop] = useDrop({
     accept: DragItemTypes.TAG_GROUP,
-    hover: dropHover,
+    drop: dropHandler,
   });
 
   const handleTagGroupTitleClick = (event: Object, tagGroup) => {
