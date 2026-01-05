@@ -612,7 +612,7 @@ function EntryProperties({ tileServer }: Props) {
               tagMode="default"
               handleChange={handleChange}
               selectedEntry={openedEntry}
-              autoFocus={true}
+              // autoFocus={true}
               generateButton={true}
             />
           </TagDropContainer>
