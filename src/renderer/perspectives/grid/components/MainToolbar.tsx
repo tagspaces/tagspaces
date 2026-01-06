@@ -300,7 +300,11 @@ function MainToolbar(props: Props) {
           }}
           title={t('core:dragModeCaption')}
         >
-          {nativeDragModeEnabled ? <DragOnIcon /> : <DragOffIcon />}
+          {nativeDragModeEnabled ? (
+            <DragOnIcon color="primary" />
+          ) : (
+            <DragOffIcon />
+          )}
         </TsToolbarButton>
       )}
       <Box sx={{ flexGrow: 1 }} />
