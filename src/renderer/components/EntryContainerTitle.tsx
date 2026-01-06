@@ -216,10 +216,11 @@ function EntryContainerTitle(props: Props) {
           color: theme.palette.text.primary,
           display: 'inline',
           marginLeft: '4px',
-          lineHeight: '15px',
+          lineHeight: '17px',
           maxHeight: '40px',
           overflowY: 'auto',
           overflowX: 'hidden',
+          wordBreak: 'break-all',
         }}
       >
         {openedEntry.isEncrypted && (
