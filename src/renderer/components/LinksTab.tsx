@@ -35,6 +35,7 @@ import {
 import { useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import InfoIcon from './InfoIcon';
 import TooltipTS from './Tooltip';
 
 interface Props {}
@@ -203,9 +204,12 @@ function LinksTab(props: Props) {
       <Box display="block">
         {links.current && links.current.length > 0 && (
           <>
-            <Typography variant="caption">
-              {t('core:outgoingLinks')} (
-              {t('found in the file content and/or its description')}):
+            <Typography variant="body2">
+              <b>{t('core:outgoingLinks')}</b> (
+              {openedEntry.isFile
+                ? t('from the file content and/or its description')
+                : t('from the folder description')}
+              ):
             </Typography>
             <br />
             {links.current?.map((link) => outgoingLinkButton(link))}
@@ -213,9 +217,12 @@ function LinksTab(props: Props) {
         )}
       </Box>
       <Box display="block">
-        <Typography variant="caption">
-          {t('core:incomingLinks')} (
-          {t('full text search should be enabled for this location')}):
+        <Typography variant="body2">
+          <b>{t('core:incomingLinks')}</b> (
+          {t('from content and description of other files and folders')}
+          )
+          <InfoIcon tooltip="Full text search with link extraction for the current location is needed for this feature." />
+          :
         </Typography>
         <br />
         {inboundLinks.current?.length ? (

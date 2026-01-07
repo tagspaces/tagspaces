@@ -489,6 +489,7 @@ function GridCell(props: Props) {
               overflowX: 'clip',
               textWrap: 'nowrap',
               whiteSpace: 'nowrap',
+              fontStyle: 'italic',
               color: 'gray',
             }}
           >
