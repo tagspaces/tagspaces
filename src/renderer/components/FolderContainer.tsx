@@ -43,6 +43,7 @@ import {
   getKeyBindingObject,
   isDevMode,
 } from '-/reducers/settings';
+import { CommonLocation } from '-/utils/CommonLocation';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
 import { Fab, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -82,7 +83,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const {
     currentDirectoryEntries,
-    currentDirectoryPath,
+    currentDirectory,
     currentPerspective,
     setManualDirectoryPerspective,
     enterSearchMode,
@@ -106,7 +107,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   );
 
   const showWelcomePanel =
-    !currentDirectoryPath && currentDirectoryEntries.length < 1;
+    !currentDirectory.path && currentDirectoryEntries.length < 1;
 
   // Memoized progress value calculation
   const getProgressValue = useCallback(() => {
@@ -116,6 +117,20 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
     );
     return objProgress ? objProgress.progress : 100;
   }, [progress]);
+
+  function haveAIChat(): Promise<boolean> {
+    const location: CommonLocation = findLocation();
+    const dirSeparator = location
+      ? location.getDirSeparator()
+      : AppConfig.dirSeparator;
+    const aiChatPath =
+      currentDirectory.path +
+      dirSeparator +
+      AppConfig.metaFolder +
+      dirSeparator +
+      AppConfig.aiFolder;
+    return location?.checkDirExist(aiChatPath);
+  }
 
   // Memoized search key binding
   const openSearchKeyBinding = useMemo(
@@ -418,7 +433,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
                 }}
                 onClick={() => {
                   if (readOnlyLocation) return;
-                  openEntry(currentDirectoryPath, TabNames.aiTab);
+                  openEntry(currentDirectory.path, TabNames.aiTab);
                 }}
               >
                 <AIIcon />
