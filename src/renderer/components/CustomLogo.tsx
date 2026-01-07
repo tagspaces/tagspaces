@@ -40,12 +40,12 @@ function CustomLogo() {
 
   const logo = useMemo(() => {
     let customLogo = TextLogoIcon;
-    // if (AppConfig.isWeb) {
-    //   customLogo = WebLogoIcon;
-    // }
     if (AppConfig.customLogo) {
       customLogo = AppConfig.customLogo;
     }
+    // 1x1 px transparent PNG dataulr
+    // customLogo =
+    //  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+XGqkAAAAASUVORK5CYII=';
     return customLogo;
   }, []);
 
