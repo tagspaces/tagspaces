@@ -52,7 +52,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
@@ -95,6 +95,14 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
 
   const [perspectiveMenuAnchorEl, setPerspectiveMenuAnchorEl] =
     useState<null | HTMLElement>(null);
+  const [hasAIChat, setHasAIChat] = useState<boolean>(false);
+
+  // Check if AI chat folder exists
+  useEffect(() => {
+    haveAIChat()
+      .then((hasChat) => setHasAIChat(hasChat))
+      .catch(() => setHasAIChat(false));
+  }, [currentDirectory?.path]);
 
   const openPerspectiveMenu = useCallback(
     (event: React.MouseEvent<HTMLElement>) =>
@@ -107,7 +115,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   );
 
   const showWelcomePanel =
-    !currentDirectory.path && currentDirectoryEntries.length < 1;
+    !currentDirectory?.path && currentDirectoryEntries.length < 1;
 
   // Memoized progress value calculation
   const getProgressValue = useCallback(() => {
@@ -119,6 +127,8 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   }, [progress]);
 
   function haveAIChat(): Promise<boolean> {
+    if (!currentDirectory || !currentDirectory.path)
+      return Promise.resolve(false);
     const location: CommonLocation = findLocation();
     const dirSeparator = location
       ? location.getDirSeparator()
@@ -422,7 +432,9 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
                 tooltip={
                   readOnlyLocation
                     ? t('core:aiChatForFolderDisabled')
-                    : t('core:aiChatForFolder')
+                    : hasAIChat
+                      ? t('core:aiChatAvailable')
+                      : t('core:aiChatForFolder')
                 }
                 aria-label="chat-label"
                 data-tid="chatTID"
@@ -436,7 +448,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
                   openEntry(currentDirectory.path, TabNames.aiTab);
                 }}
               >
-                <AIIcon />
+                <AIIcon color={hasAIChat ? 'primary' : 'inherit'} />
               </TsToggleButton>
             </ToggleButtonGroup>
           )}
