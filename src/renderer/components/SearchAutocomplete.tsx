@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CloseIcon } from '-/components/CommonIcons';
+import { ArrowDropDownIcon, CloseIcon } from '-/components/CommonIcons';
 import {
   ActionType,
   ExecActions,
@@ -55,7 +55,6 @@ import { dataTidFormat } from '-/services/test';
 import { removePrefix } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
 import { Autocomplete, Box } from '@mui/material';

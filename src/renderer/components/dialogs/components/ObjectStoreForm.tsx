@@ -16,12 +16,11 @@
  *
  */
 
+import { VisibilityOffIcon, VisibilityOnIcon } from '-/components/CommonIcons';
 import InfoIcon from '-/components/InfoIcon';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import { isDevMode } from '-/reducers/settings';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -224,7 +223,11 @@ function ObjectStoreForm(props: Props) {
                         setShowSecretAccessKey(!showSecretAccessKey)
                       }
                     >
-                      {showSecretAccessKey ? <Visibility /> : <VisibilityOff />}
+                      {showSecretAccessKey ? (
+                        <VisibilityOnIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
                     </TsIconButton>
                   </InputAdornment>
                 ),

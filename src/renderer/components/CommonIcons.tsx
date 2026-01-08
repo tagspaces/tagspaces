@@ -85,7 +85,7 @@ export { default as OpenLinkIcon } from '@mui/icons-material/Link';
 
 export { default as KeyShortcutsIcon } from '@mui/icons-material/KeyboardOutlined';
 
-export { default as CancelIcon } from '@mui/icons-material/Undo';
+export { default as UndoIcon } from '@mui/icons-material/Undo';
 
 export { default as CloseEditIcon } from '@mui/icons-material/DisabledByDefault';
 
@@ -130,6 +130,12 @@ export { default as ArchiveIcon } from '@mui/icons-material/ArchiveOutlined';
 export { default as SearchIcon } from '@mui/icons-material/Search';
 
 export { default as CloseIcon } from '@mui/icons-material/CancelOutlined';
+
+export { default as CancelIcon } from '@mui/icons-material/Cancel';
+
+export { default as WarningIcon } from '@mui/icons-material/Warning';
+
+export { default as SendIcon } from '@mui/icons-material/Send';
 
 export { default as CloseDialogIcon } from '@mui/icons-material/Close';
 
@@ -190,6 +196,9 @@ export const PrevDocumentIcon = (props) => (
 );
 
 export { default as NextDocumentIcon } from '@mui/icons-material/ExpandCircleDownOutlined';
+
+export { default as NavigateBeforeIcon } from '@mui/icons-material/NavigateBefore';
+export { default as NavigateNextIcon } from '@mui/icons-material/NavigateNext';
 
 export { default as ThemingIcon } from '@mui/icons-material/InvertColors';
 
@@ -326,6 +335,14 @@ export { default as PinGroupingOnIcon } from '@mui/icons-material/ScatterPlotTwo
 export { default as CopyToClipboardIcon } from '@mui/icons-material/ContentCopy';
 
 export { default as SelectAllIcon } from '@mui/icons-material/SelectAll';
+
+export { default as VisibilityOnIcon } from '@mui/icons-material/Visibility';
+
+export { default as VisibilityOffIcon } from '@mui/icons-material/VisibilityOff';
+
+export { default as PasswordIcon } from '@mui/icons-material/Password';
+
+export { default as ArrowDropDownIcon } from '@mui/icons-material/ArrowDropDown';
 
 export const MastodonIcon = (props) => (
   <SvgIcon>

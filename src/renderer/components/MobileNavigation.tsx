@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import {
   AccountIcon,
   AddExistingFileIcon,
+  ArrowDropDownIcon,
   AudioFileIcon,
   CreateFileIcon,
   DownloadIcon,
@@ -71,7 +72,6 @@ import {
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
 import { ClickAwayListener, Divider, Popover } from '@mui/material';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -244,7 +244,7 @@ function MobileNavigation(props: Props) {
                 data-tid="createNewDropdownButtonTID"
                 onClick={handleToggle}
                 startIcon={<CreateFileIcon />}
-                endIcon={<ArrowDropDown />}
+                endIcon={<ArrowDropDownIcon />}
                 sx={{
                   borderRadius: 'unset',
                   borderTopLeftRadius: AppConfig.defaultCSSRadius,
@@ -273,7 +273,7 @@ function MobileNavigation(props: Props) {
                   aria-haspopup="menu"
                   data-tid="openedWorkSpaceMenuButtonTID"
                   onClick={handleToggleWorkSpaces}
-                  endIcon={<ArrowDropDown />}
+                  endIcon={<ArrowDropDownIcon />}
                   sx={{ borderRadius: 'unset' }}
                 >
                   <Box

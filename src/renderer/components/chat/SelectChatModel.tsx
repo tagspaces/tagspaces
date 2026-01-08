@@ -16,7 +16,7 @@
  *
  */
 
-import { AIIcon, RemoveIcon } from '-/components/CommonIcons';
+import { AIIcon, DownloadIcon, RemoveIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import { AIProvider } from '-/components/chat/ChatTypes';
@@ -24,7 +24,6 @@ import { getOllamaModels } from '-/components/chat/OllamaClient';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
-import DownloadIcon from '@mui/icons-material/Download';
 import { ListItemIcon, ListSubheader, MenuItem } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import { format, parseISO } from 'date-fns';

@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { DeleteIcon, ExpandIcon } from '-/components/CommonIcons';
 import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -29,8 +30,6 @@ import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions, isDevMode } from '-/reducers/settings';
 import { getUserDataDir, loadExtensions, unZip } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -138,7 +137,7 @@ function SettingsExtensions() {
     >
       <Accordion defaultExpanded>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandIcon />}
           aria-controls="internal-content"
           id="internal-header"
         >
@@ -163,7 +162,7 @@ function SettingsExtensions() {
       </Accordion>
       <Accordion defaultExpanded>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandIcon />}
           aria-controls="installed-content"
           id="installed-header"
         >

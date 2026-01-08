@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { CloseIcon, WarningIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
@@ -31,8 +32,6 @@ import {
   getProgress,
 } from '-/reducers/app';
 import { uploadAbort } from '-/services/utils-io';
-import CloseIcon from '@mui/icons-material/Close';
-import WarningIcon from '@mui/icons-material/Warning';
 import { Grid, LinearProgress, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';

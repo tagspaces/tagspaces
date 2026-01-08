@@ -17,7 +17,12 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CreateFileIcon, DeleteIcon } from '-/components/CommonIcons';
+import {
+  CheckIcon,
+  CreateFileIcon,
+  DeleteIcon,
+  EditIcon,
+} from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import TooltipTS from '-/components/Tooltip';
@@ -39,8 +44,6 @@ import {
 import { isWorkerAvailable } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { clearAllURLParams } from '-/utils/dom';
-import CheckIcon from '@mui/icons-material/Check';
-import EditIcon from '@mui/icons-material/Edit';
 import { ListItemIcon } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';

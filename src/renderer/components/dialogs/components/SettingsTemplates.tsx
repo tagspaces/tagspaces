@@ -18,6 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  CheckIcon,
   CreateFileIcon,
   ExpandIcon,
   ReloadIcon,
@@ -33,7 +34,6 @@ import TemplatesDropDown from '-/components/dialogs/components/TemplatesDropDown
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { TS } from '-/tagspaces.namespace';
-import CheckIcon from '@mui/icons-material/Check';
 import {
   Accordion,
   AccordionDetails,

@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CloseIcon, ReloadIcon } from '-/components/CommonIcons';
+import { CheckIcon, CloseIcon, ReloadIcon } from '-/components/CommonIcons';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
@@ -44,7 +44,6 @@ import {
 import { isWorkerAvailable, setLanguage } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { darkThemes, lightThemes } from '-/utils/Themes';
-import CheckIcon from '@mui/icons-material/Check';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { Box, IconButton, InputAdornment, ListItemIcon } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';

@@ -21,6 +21,7 @@ import {
   AIIcon,
   DescriptionIcon,
   EntryPropertiesIcon,
+  LinkIcon,
   RevisionIcon,
 } from '-/components/CommonIcons';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -28,7 +29,6 @@ import { Pro } from '-/pro';
 import { isDevMode } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import LinkIcon from '@mui/icons-material/Link';
 import { getBackupDir } from '@tagspaces/tagspaces-common/paths';
 import React, { createContext, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

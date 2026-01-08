@@ -21,6 +21,7 @@ import BrowserExtension from '-/assets/images/collectcontent.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import NewLook from '-/assets/images/desktop.svg';
 import Organize from '-/assets/images/organize.svg';
+import { NavigateBeforeIcon, NavigateNextIcon } from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
 import TsToggleButton from '-/components/TsToggleButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
@@ -32,8 +33,6 @@ import {
   getPersistTagsInSidecarFile,
 } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';

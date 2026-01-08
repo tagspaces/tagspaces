@@ -16,6 +16,7 @@
  *
  */
 import AppConfig from '-/AppConfig';
+import { EditIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
@@ -28,7 +29,6 @@ import { TS } from '-/tagspaces.namespace';
 import { isDateTimeTag, isYear, isYearMonth } from '-/utils/dates';
 import { isGeoTag } from '-/utils/geo';
 import useValidation from '-/utils/useValidation';
-import EditIcon from '@mui/icons-material/Edit';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';

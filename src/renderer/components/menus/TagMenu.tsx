@@ -16,25 +16,26 @@
  *
  */
 
+import {
+  DeleteIcon,
+  EditIcon,
+  SearchIcon,
+  TagIcon,
+} from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import DeleteIcon from '@mui/icons-material/DeleteForever';
-import Edit from '@mui/icons-material/Edit';
-import ApplyTagIcon from '@mui/icons-material/LocalOfferOutlined';
-import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import React from 'react';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 
 interface Props {
   anchorEl?: Element;
@@ -119,7 +120,7 @@ function TagMenu(props: Props) {
               onClick={showFilesWithThisTag}
             >
               <ListItemIcon>
-                <ShowEntriesWithTagIcon />
+                <SearchIcon />
               </ListItemIcon>
               <ListItemText primary={t('core:showFilesWithThisTag')} />
             </MenuItem>
@@ -130,7 +131,7 @@ function TagMenu(props: Props) {
             !currentLocation?.isReadOnly && (
               <MenuItem data-tid="applyTagTID" onClick={applyTag}>
                 <ListItemIcon>
-                  <ApplyTagIcon />
+                  <TagIcon />
                 </ListItemIcon>
                 <ListItemText primary={t('core:applyTag')} />
               </MenuItem>
@@ -138,7 +139,7 @@ function TagMenu(props: Props) {
           {!tagGroupReadOnly && !isSmartTag && (
             <MenuItem data-tid="editTagDialog" onClick={showEditTagMenuDialog}>
               <ListItemIcon>
-                <Edit />
+                <EditIcon />
               </ListItemIcon>
               <ListItemText primary={t('core:editTag')} />
             </MenuItem>

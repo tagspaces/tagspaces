@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { CloseEditIcon, SaveIcon, UndoIcon } from '-/components/CommonIcons';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
@@ -29,7 +30,6 @@ import { Box, ButtonGroup, Switch, Tooltip } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { CancelIcon, CloseEditIcon, SaveIcon } from './CommonIcons';
 import EditFileButton from './EditFileButton';
 import TsButton from './TsButton';
 
@@ -96,7 +96,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
 
   let closeCancelIcon;
   if (desktopMode) {
-    closeCancelIcon = fileChanged ? <CancelIcon /> : <CloseEditIcon />;
+    closeCancelIcon = fileChanged ? <UndoIcon /> : <CloseEditIcon />;
   }
 
   let editFile = null;

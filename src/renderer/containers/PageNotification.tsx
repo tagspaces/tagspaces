@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { CloseIcon } from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -24,7 +25,6 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getLastPublishedVersion } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
-import CloseIcon from '@mui/icons-material/Close';
 import Snackbar from '@mui/material/Snackbar';
 import { styled } from '@mui/material/styles';
 import Links from 'assets/links';

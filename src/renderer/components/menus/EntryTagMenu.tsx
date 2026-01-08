@@ -16,16 +16,18 @@
  *
  */
 
+import {
+  AddIcon,
+  DeleteIcon,
+  EditIcon,
+  SearchIcon,
+} from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
-import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -100,7 +102,7 @@ function EntryTagMenu(props: Props) {
       onClick={showFilesWithThisTag}
     >
       <ListItemIcon>
-        <ShowEntriesWithTagIcon />
+        <SearchIcon />
       </ListItemIcon>
       <ListItemText primary={t('core:showFilesWithThisTag')} />
     </MenuItem>,

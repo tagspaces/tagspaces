@@ -22,8 +22,6 @@ import TsButton from '-/components/TsButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import { openURLExternally } from '-/services/utils-io';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Box } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -35,6 +33,7 @@ import Links from 'assets/links';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Slider from 'react-slick';
+import { NavigateBeforeIcon, NavigateNextIcon } from '../CommonIcons';
 
 interface Props {
   open: boolean;

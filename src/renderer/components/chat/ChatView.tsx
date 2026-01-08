@@ -17,7 +17,13 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CloseIcon, MoreMenuIcon, OllamaIcon } from '-/components/CommonIcons';
+import {
+  CancelIcon,
+  CloseIcon,
+  MoreMenuIcon,
+  OllamaIcon,
+  SendIcon,
+} from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
 import TooltipTS from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
@@ -38,8 +44,6 @@ import {
   saveAsTextFile,
 } from '-/services/utils-io';
 import { MilkdownProvider } from '@milkdown/react';
-import CancelIcon from '@mui/icons-material/Cancel';
-import SendIcon from '@mui/icons-material/Send';
 import { Box, Grid } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';

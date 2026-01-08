@@ -17,7 +17,15 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { ExpandIcon, IDIcon, RemoveIcon } from '-/components/CommonIcons';
+import {
+  CheckIcon,
+  ExpandIcon,
+  IDIcon,
+  PasswordIcon,
+  RemoveIcon,
+  VisibilityOffIcon,
+  VisibilityOnIcon,
+} from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import { BetaLabel, ProLabel, ProTooltip } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
@@ -40,10 +48,6 @@ import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
-import CheckIcon from '@mui/icons-material/Check';
-import PasswordIcon from '@mui/icons-material/Password';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {
   Accordion,
   AccordionDetails,
@@ -1228,9 +1232,9 @@ function CreateEditLocationDialog(props: Props) {
                             }
                           >
                             {showEncryptionKey ? (
-                              <Visibility />
+                              <VisibilityOnIcon />
                             ) : (
-                              <VisibilityOff />
+                              <VisibilityOffIcon />
                             )}
                           </TsIconButton>
                           <TsIconButton
