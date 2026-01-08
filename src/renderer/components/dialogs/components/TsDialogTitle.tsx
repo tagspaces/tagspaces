@@ -28,7 +28,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 export type TSDialogTitle = DialogTitleProps & {
-  dialogTitle: string;
+  dialogTitle: any;
   closeButtonTestId: string;
   onClose: () => void;
   actionSlot?: any;

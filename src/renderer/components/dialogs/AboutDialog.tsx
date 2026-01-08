@@ -18,8 +18,9 @@
 
 import AppConfig from '-/AppConfig';
 import LogoIcon from '-/assets/icons/icon.png';
+import TextLogoIcon from '-/assets/images/text-logo.svg';
 import DraggablePaper from '-/components/DraggablePaper';
-import Tooltip from '-/components/Tooltip';
+import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TranslucentDialog from '-/components/dialogs/components/TranslucentDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
@@ -30,6 +31,7 @@ import { Pro } from '-/pro';
 import { getLastVersionPromise } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import versionMeta from '-/version.json';
+import { Box } from '@mui/material';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -60,6 +62,7 @@ function AboutDialog(props: Props) {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const { open, onClose } = props;
+  const tsType = Pro ? 'PRO' : 'LITE';
 
   function checkForUpdates() {
     if (updateAvailable) {
@@ -126,7 +129,19 @@ function AboutDialog(props: Props) {
       aria-labelledby="draggable-dialog-title"
     >
       <TsDialogTitle
-        dialogTitle={productName}
+        dialogTitle={
+          <Box sx={{ display: 'flex' }}>
+            <img
+              style={{
+                maxHeight: 26,
+                maxWidth: 200,
+                marginRight: 10,
+              }}
+              src={TextLogoIcon}
+              alt="Application Text Logo"
+            />
+          </Box>
+        }
         onClose={onClose}
         closeButtonTestId="closeAboutDialogTID"
       />
@@ -136,7 +151,7 @@ function AboutDialog(props: Props) {
           src={LogoIcon}
           style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
         />
-        <Tooltip
+        <TooltipTS
           placement="top"
           title={
             'Build on: ' +
@@ -145,13 +160,14 @@ function AboutDialog(props: Props) {
             navigator.userAgent
           }
         >
-          <Typography variant="subtitle1">
+          <Typography component="span" variant="subtitle1">
             Version:&nbsp;
-            {versionMeta.version}
-            &nbsp;BuildID:&nbsp;
+            {tsType}&nbsp;{versionMeta.version}
+            &nbsp;Build ID:&nbsp;
             {buildID}
           </Typography>
-        </Tooltip>
+        </TooltipTS>
+        <br />
         <br />
         <Typography id="aboutContent" variant="body1">
           <strong>
