@@ -21,17 +21,29 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import MarkdownRawIcon from '@mui/icons-material/SimCardDownloadOutlined';
 import SvgIcon from '@mui/material/SvgIcon';
 
+import TagsIcon from '@mui/icons-material/LocalOfferOutlined';
+
+export const TagIcon = (props) => (
+  <TagsIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
+);
+
+export const TagLibraryIcon = (props) => (
+  <TagsIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
+);
+
 export const ParentFolderIcon = (props) => (
   <KeyboardReturnIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
 );
 
 export const MarkdownFileIcon = (props) => (
-  <MarkdownRawIcon sx={{ transform: 'scaleX(-1)' }} />
+  <MarkdownRawIcon sx={{ transform: 'scaleX(-1)' }} {...props} />
 );
 
 export { default as WorkspacesIcon } from '@mui/icons-material/WorkspacesOutline';
 
-export const NavigateToFolderIcon = (props) => <KeyboardReturnIcon />;
+export const NavigateToFolderIcon = (props) => (
+  <KeyboardReturnIcon {...props} />
+);
 
 export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';
 
@@ -155,8 +167,6 @@ export { default as SaveIcon } from '@mui/icons-material/Save';
 
 export { default as DownloadIcon } from '@mui/icons-material/DownloadForOfflineOutlined';
 
-export { default as TagIcon } from '@mui/icons-material/LocalOfferOutlined';
-
 export { default as IDIcon } from '@mui/icons-material/Abc';
 
 export { default as AudioFileIcon } from '@mui/icons-material/AudioFileOutlined';
@@ -182,8 +192,6 @@ export const PrevDocumentIcon = (props) => (
 export { default as NextDocumentIcon } from '@mui/icons-material/ExpandCircleDownOutlined';
 
 export { default as ThemingIcon } from '@mui/icons-material/InvertColors';
-
-export { default as TagLibraryIcon } from '@mui/icons-material/LocalOfferOutlined';
 
 export { default as RecentThingsIcon } from '@mui/icons-material/BookmarksOutlined';
 
