@@ -58,7 +58,7 @@ function TsDialogTitle(props: TSDialogTitle) {
         {
           position: 'absolute',
           right: '15px',
-          top: '15px',
+          top: '10px',
           zIndex: 1000,
           WebkitAppRegion: 'no-drag',
         } as React.CSSProperties & { WebkitAppRegion?: string }
