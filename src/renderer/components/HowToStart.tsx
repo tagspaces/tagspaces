@@ -13,14 +13,6 @@ import Links from 'assets/links';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-/*export const styles: any = (theme: any) => ({
-  recentTitle: {
-    color: theme.palette.text.primary,
-    textTransform: 'uppercase',
-    textAlign: 'center'
-  }
-});*/
-
 const selectByTID: any = (tid) =>
   document.querySelector('[data-tid="' + tid + '"]');
 
@@ -283,16 +275,16 @@ function HowToStart() {
             z-index: 1;
         }
         @keyframes pulsate {
-            0%   { box-shadow: 0 0 7px 6px #da15d8; }
+            0%   { box-shadow: 0 0 7px 6px ${theme.palette.secondary.main}; }
             50%  { box-shadow: 0 0 0 transparent; }
-            100% { box-shadow: 0 0 7px 6px #da15d8; }
+            100% { box-shadow: 0 0 7px 6px ${theme.palette.secondary.main}; }
         }
         `}
       </style>
       <Typography
         variant="inherit"
         sx={{
-          color: theme.palette.text.primary,
+          color: 'text.primary',
           textTransform: 'uppercase',
           textAlign: 'center',
           paddingTop: '20px',
@@ -306,7 +298,7 @@ function HowToStart() {
           <Step key={step.label}>
             <StepLabel>{step.label}</StepLabel>
             <StepContent>
-              <Typography sx={{ color: theme.palette.text.primary }}>
+              <Typography sx={{ color: 'text.primary' }}>
                 {step.description}
               </Typography>
               <Box sx={{ mb: 2 }}>

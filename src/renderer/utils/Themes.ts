@@ -62,10 +62,10 @@ darkThemes['darklegacy'] = {
   mode: 'dark',
   primary: {
     light: AppConfig.darkThemeLightColor,
-    main: AppConfig.darkThemeMainColor,
+    main: AppConfig.darkThemeMainColor, // #ff9abe
     dark: AppConfig.darkThemeMainColor,
   },
-  secondary: { main: '#bbb' },
+  secondary: { main: '#006541' },
   background: { default: '#282A36' },
   divider: '#555',
 };
@@ -76,7 +76,7 @@ darkThemes['dracula'] = {
     main: '#BD93F9',
     dark: '#BD93F9',
   },
-  secondary: { main: '#bbb' },
+  secondary: { main: '#426c06' },
   divider: '#555',
   background: { default: '#282A36' },
   text: { primary: '#f8f8f2' },
@@ -88,7 +88,7 @@ darkThemes['darkblue'] = {
     main: '#3bc8ff',
     dark: '#3bc8ff',
   },
-  secondary: { main: '#bbb' },
+  secondary: { main: '#c43700' },
   background: { default: '#001E3C' },
   text: { primary: '#f8f8f2' },
   divider: '#555',
@@ -100,7 +100,7 @@ darkThemes['oilgreen'] = {
     main: '#138086',
     dark: '#04484cff',
   },
-  secondary: { main: '#bbb' },
+  secondary: { main: '#ec7f79' },
   background: { default: '#000' },
   text: { primary: '#f8f8f2' },
   divider: '#555',
@@ -112,7 +112,7 @@ darkThemes['orangegreen'] = {
     main: '#f3b759',
     dark: '#fd8f52',
   },
-  secondary: { main: '#bbb' },
+  secondary: { main: '#0c48a6' },
   background: { default: '#0d4a3a' },
   text: { primary: '#f8f8f2' },
   divider: '#555',
@@ -124,7 +124,7 @@ darkThemes['limecoal'] = {
     main: '#a8b735ff',
     dark: '#a8b735ff',
   },
-  secondary: { main: '#bbb' },
+  secondary: { main: '#5748ca' },
   background: { default: '#233d4d' },
   text: { primary: '#f8f8f2' },
   divider: '#555',
@@ -135,10 +135,10 @@ lightThemes['legacy'] = {
   mode: 'light',
   primary: {
     light: AppConfig.lightThemeLightColor,
-    main: AppConfig.lightThemeMainColor,
+    main: AppConfig.lightThemeMainColor, // #1dd19f
     dark: AppConfig.lightThemeMainColor,
   },
-  secondary: { main: '#777' },
+  secondary: { main: '#e22e60' },
   background: { default: '#fff' },
   divider: '#ddd',
 };
@@ -149,7 +149,7 @@ lightThemes['newlight'] = {
     main: '#3bc8ff',
     dark: '#3bc8ff',
   },
-  secondary: { main: '#777' },
+  secondary: { main: '#c43700' },
   background: { default: '#f4f4f4ff' },
   divider: '#ddd',
 };
@@ -160,7 +160,7 @@ lightThemes['orange'] = {
     main: '#ed7a13',
     dark: '#b45808ff',
   },
-  secondary: { main: '#777' },
+  secondary: { main: '#1285ec' },
   background: { default: '#f4f4f4ff' },
   divider: '#ddd',
 };
@@ -171,18 +171,18 @@ lightThemes['herbal'] = {
     main: '#6a8042',
     dark: '#1e3006',
   },
-  secondary: { main: '#777' },
+  secondary: { main: '#957fbd' },
   background: { default: '#f4f4f4ff' },
   divider: '#ddd',
 };
 lightThemes['lemonblue'] = {
   mode: 'light',
   primary: {
-    light: '#486989ff',
+    light: '#6a92baff',
     main: '#486989ff',
     dark: '#486989ff',
   },
-  secondary: { main: '#777' },
+  secondary: { main: '#b79676' },
   background: { default: '#f6f1dfff' },
   divider: '#ddd',
 };
@@ -193,7 +193,7 @@ lightThemes['vanilablue'] = {
     main: '#4c9db0',
     dark: '#4c9db0',
   },
-  secondary: { main: '#777' },
-  background: { default: '#ffebaf' },
+  secondary: { main: '#b3624f' },
+  background: { default: '#fbf0cdff' },
   divider: '#ddd',
 };
