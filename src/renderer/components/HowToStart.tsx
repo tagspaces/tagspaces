@@ -184,7 +184,7 @@ function HowToStart() {
               <ProSign />
             </li>
             <li>
-              {t('htsCreatingFilesTemplate')}&nbsp;
+              {t('htsCreatingFilesTemplates')}&nbsp;
               <ProSign />
             </li>
           </ul>
@@ -339,7 +339,7 @@ function HowToStart() {
           elevation={0}
           sx={{ p: 3, backgroundColor: 'transparent' }}
         >
-          <Typography>All steps completed - you&apos;re finished.</Typography>
+          <Typography>All steps completed!</Typography>
           <TsButton onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             {t('core:resetBtn')}
           </TsButton>
