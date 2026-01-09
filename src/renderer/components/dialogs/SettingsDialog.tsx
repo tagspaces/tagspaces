@@ -85,7 +85,6 @@ function SettingsDialog(props: Props) {
   const helpButton = (
     <TsButton
       onClick={() => openURLExternally(Links.documentationLinks.settings, true)}
-      color="secondary"
       sx={
         {
           WebkitAppRegion: 'no-drag',

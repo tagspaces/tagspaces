@@ -417,7 +417,6 @@ function SettingsAdvanced(props: Props) {
               'confirmResetSettingsDialogContentTID',
             )
           }
-          color="secondary"
           sx={{ color: 'red' }}
         >
           {t('core:resetSettings')}
@@ -436,7 +435,6 @@ function SettingsAdvanced(props: Props) {
                 window.location.reload();
               }
             }}
-            color="secondary"
           >
             {t('core:reloadApplication')}
           </TsButton>

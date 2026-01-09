@@ -125,7 +125,6 @@ function PageNotification() {
         action={[
           <TsButton
             key="cancelIndexButton"
-            color="secondary"
             onClick={() => cancelDirectoryIndexing(isIndexing)}
             data-tid="cancelDirectoryIndexing"
           >

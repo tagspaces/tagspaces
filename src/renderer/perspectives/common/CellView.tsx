@@ -288,9 +288,8 @@ function CellView(props: Props) {
             >
               <DragHandleIcon sx={{ color: theme.palette.text.primary }} />
               <Typography
-                color="textSecondary"
                 variant="caption"
-                sx={{ alignSelf: 'center' }}
+                sx={{ alignSelf: 'center', opacity: 0.5, marginLeft: '5px' }}
               >
                 {i18n.t('dragOutsideApp')}
               </Typography>

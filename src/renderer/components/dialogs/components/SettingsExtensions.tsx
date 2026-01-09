@@ -215,11 +215,10 @@ function SettingsExtensions() {
               <Typography variant="subtitle1">No extensions found</Typography>
             )}
           {devMode && AppConfig.isElectron && (
-            <Box style={{ textAlign: 'center' }}>
+            <Box>
               <TsButton
                 data-tid="installExtensionTID"
                 onClick={() => fileInputRef.current.click()}
-                color="secondary"
               >
                 {t('core:installExtension')}
               </TsButton>

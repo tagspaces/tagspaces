@@ -349,15 +349,14 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
                 <TsButton
                   data-tid="toggleSearch"
                   onClick={openSearchMode}
-                  color="secondary"
                   startIcon={<SearchIcon />}
                   sx={{
                     marginTop: '-2px',
                     marginRight: '5px',
-                    minWidth: 100,
+                    minWidth: '80px',
                     maxHeight: 32,
                     width: 'stretch',
-                    maxWidth: 300,
+                    maxWidth: '200px',
                     margin: '0 auto',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',

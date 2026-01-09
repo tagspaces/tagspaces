@@ -52,10 +52,8 @@ function ProTeaser(props: Props) {
           cursor: 'pointer',
         }}
       >
-        <Typography color="textSecondary" variant="caption">
-          <span style={{ textTransform: 'lowercase' }}>
-            {t('core:achieveMore')}
-          </span>
+        <Typography variant="caption" sx={{ textTransform: 'lowercase' }}>
+          {t('core:achieveMore')}
           <TsIconButton
             sx={{ right: '5px', position: 'absolute' }}
             size="small"

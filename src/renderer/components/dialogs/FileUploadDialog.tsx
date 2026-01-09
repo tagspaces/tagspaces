@@ -88,9 +88,7 @@ function FileUploadDialog(props: Props) {
           <LinearProgress variant="determinate" {...prop} />
         </Box>
         <Box minWidth={35}>
-          <Typography variant="body2" color="textSecondary">
-            {`${prop.value}%`}
-          </Typography>
+          <Typography variant="body2">{`${prop.value}%`}</Typography>
         </Box>
       </Box>
     );
@@ -245,7 +243,7 @@ function FileUploadDialog(props: Props) {
                             : t('core:fileExist')
                         }
                       >
-                        <WarningIcon color="secondary" />
+                        <WarningIcon color="warning" />
                       </Tooltip>
                     )}
                   </Grid>
