@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { NavigateBeforeIcon, NavigateNextIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
@@ -33,7 +34,6 @@ import Links from 'assets/links';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Slider from 'react-slick';
-import { NavigateBeforeIcon, NavigateNextIcon } from '../CommonIcons';
 
 interface Props {
   open: boolean;
