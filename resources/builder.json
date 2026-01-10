@@ -44,7 +44,7 @@
       "role": "Viewer"
     }
   ],
-  "copyright": "Copyright © 2025 TagSpaces GmbH",
+  "copyright": "Copyright © 2026 TagSpaces GmbH",
   "artifactName": "${name}-${os}-${arch}-${version}.${ext}",
   "win": {
     "target": ["nsis", "zip"],
