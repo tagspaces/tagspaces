@@ -2,10 +2,10 @@
  * Build config for electron renderer process
  */
 
-import path from 'path';
-import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import path from 'path';
+import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 //import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
@@ -188,7 +188,7 @@ const configuration: webpack.Configuration = {
 
       // Common Image Formats
       {
-        test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
+        test: /\.(?:ico|gif|png|jpg|jpeg|webp|avif)$/,
         type: 'asset/resource',
       },
       {

@@ -17,6 +17,7 @@
  */
 
 import AiToolsImage from '-/assets/images/ai-tools.jpg';
+import CalendarImage from '-/assets/images/calendar-perspective.avif';
 import CustomFolderColor from '-/assets/images/custom-folder-color.jpg';
 import EntryDescription from '-/assets/images/entry-description.jpg';
 import FolderVizImage from '-/assets/images/folderviz-perspective.jpg';
@@ -33,6 +34,7 @@ export const slidesNames = [
   'general',
   PerspectiveIDs.KANBAN,
   PerspectiveIDs.FOLDERVIZ,
+  PerspectiveIDs.CALENDAR,
   PerspectiveIDs.MAPIQUE,
   PerspectiveIDs.GALLERY,
   'ai',
@@ -86,6 +88,35 @@ export function getProTeaserSlides(t) {
     pictureHeight: 350,
   };
   slidesEN[slidesNames[3]] = {
+    title: t('Calendar Perspective – See Your Files in Time'),
+    description: (
+      <>
+        <ul style={{ marginTop: 0 }}>
+          <li>
+            📅 <b>Organize files by date</b> using creation date, last modified
+            date, folder names, or date tags
+          </li>
+          <li>
+            🔎 <b>Quickly find what matters</b> by browsing your files day by
+            day, month by month, or year by year
+          </li>
+          <li>
+            🗂️ <b>Perfect for notes, projects, and logs</b> where time matters
+          </li>
+          <li>
+            ⚡ <b>Works instantly with your existing folders</b> — no setup
+            required
+          </li>
+        </ul>
+      </>
+    ),
+    ctaURL: Links.documentationLinks.calendarPerspective,
+    ctaTitle: t('showMeMore'),
+    pictureURL: CalendarImage,
+    pictureShadow: true,
+    pictureHeight: 350,
+  };
+  slidesEN[slidesNames[4]] = {
     title: t('core:ptsMapiqueTitle'),
     description: (
       <>
@@ -99,7 +130,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 300,
   };
-  slidesEN[slidesNames[4]] = {
+  slidesEN[slidesNames[5]] = {
     title: t('core:ptsGalleryTitle'),
     description: t('core:ptsGallery'),
     ctaURL: Links.documentationLinks.galleryPerspective,
@@ -108,7 +139,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 300,
   };
-  slidesEN[slidesNames[5]] = {
+  slidesEN[slidesNames[6]] = {
     title: t('core:ptsAITitle'),
     description: (
       <>
@@ -127,7 +158,7 @@ export function getProTeaserSlides(t) {
     pictureURL: AiToolsImage,
     pictureHeight: 300,
   };
-  slidesEN[slidesNames[6]] = {
+  slidesEN[slidesNames[7]] = {
     title: t('core:ptsAnnotateLinkTitle'),
     description: t('core:ptsAnnotateLink'),
     items: [
@@ -143,7 +174,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 300,
   };
-  slidesEN[slidesNames[7]] = {
+  slidesEN[slidesNames[8]] = {
     title: t('core:ptsRevisionsTitle'),
     description: (
       <>
@@ -157,7 +188,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 400,
   };
-  slidesEN[slidesNames[8]] = {
+  slidesEN[slidesNames[9]] = {
     title: t('core:ptsCustomBackgroundTitle'),
     description: t('core:ptsCustomBackground'),
     ctaURL: Links.links.productProFolderColor,
@@ -166,7 +197,7 @@ export function getProTeaserSlides(t) {
     pictureShadow: true,
     pictureHeight: 300,
   };
-  slidesEN[slidesNames[9]] = {
+  slidesEN[slidesNames[10]] = {
     title: 'TagSpaces Pro Web',
     description: t('core:ptsProWeb'),
     items: [

@@ -2,17 +2,20 @@
  * Build config for electron renderer process
  */
 
-import path from 'path';
-import webpack from 'webpack';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import path from 'path';
+import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
 //import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
 // import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+import deleteSourceMaps from '../scripts/delete-source-maps';
+
+deleteSourceMaps();
 
 // CheckNodeEnv('production');
 const configuration: webpack.Configuration = {
@@ -187,7 +190,7 @@ const configuration: webpack.Configuration = {
 
       // Common Image Formats
       {
-        test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
+        test: /\.(?:ico|gif|png|jpg|jpeg|webp|avif)$/,
         type: 'asset/resource',
       },
       {

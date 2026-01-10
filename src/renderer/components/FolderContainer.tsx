@@ -246,6 +246,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
           PerspectiveIDs.MAPIQUE,
           PerspectiveIDs.KANBAN,
           PerspectiveIDs.FOLDERVIZ,
+          PerspectiveIDs.CALENDAR,
         ].includes(perspectiveId)
       ) {
         openProTeaserDialog(perspectiveId);
