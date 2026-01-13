@@ -17,7 +17,6 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { NavigateBeforeIcon, NavigateNextIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
@@ -31,9 +30,12 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import Slider from 'react-slick';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Navigation } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 interface Props {
   open: boolean;
@@ -72,10 +74,8 @@ function Slide(props: SlideProps) {
   return (
     <div
       style={{
-        padding: 15,
-        textAlign: 'left',
-        overflowY: 'hidden',
-        overflowX: 'hidden',
+        padding: 40,
+        marginTop: -40,
       }}
     >
       <Typography
@@ -158,8 +158,7 @@ function Slide(props: SlideProps) {
 
 function ProTeaserDialog(props: Props) {
   const { t } = useTranslation();
-  //const swiperElRef = useRef(null); //<SwiperRef>
-  //const slideIndex = useSelector(getProTeaserIndex);
+  const swiperRef = useRef(null);
 
   const slidesEN = getProTeaserSlides(t);
 
@@ -168,45 +167,7 @@ function ProTeaserDialog(props: Props) {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const slides = [];
-  for (let index in slidesEN) {
-    slides.push(<Slide key={index} {...slidesEN[index]} />);
-  }
-
   const initialSlide = slideIndex && slideIndex > -1 ? Number(slideIndex) : 0;
-
-  function NextArrow(props) {
-    const { className, style, onClick } = props;
-    return (
-      <div className={className} onClick={onClick}>
-        <NavigateNextIcon fontSize="large" color="primary" />
-      </div>
-    );
-  }
-
-  function PrevArrow(props) {
-    const { className, style, onClick } = props;
-    return (
-      <div className={className} onClick={onClick}>
-        <NavigateBeforeIcon fontSize="large" color="primary" />
-      </div>
-    );
-  }
-
-  const sliderSettings = {
-    className: 'center',
-    centerMode: true,
-    // dots: true,
-    infinite: false,
-    initialSlide: initialSlide,
-    centerPadding: '0px',
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    adaptiveHeight: true,
-    nextArrow: <NextArrow />,
-    prevArrow: <PrevArrow />,
-  };
 
   return (
     <Dialog
@@ -225,27 +186,45 @@ function ProTeaserDialog(props: Props) {
       />
       <DialogContent
         style={{
-          overflowY: 'auto',
-          overflowX: 'hidden',
+          padding: 0,
         }}
       >
-        <style>
-          {`
-            .slick-arrow {
-              height: 200px;
-              width: 50px;
-              display: flex;
-              align-items: center;
-            } 
-            .slick-next:before {
-              content: '';
-            }
-            .slick-prev:before {
-              content: '';
-            }
-        `}
-        </style>
-        <Slider {...sliderSettings}>{slides}</Slider>
+        {open && (
+          <>
+            <style>
+              {`
+                .pro-teaser-swiper {
+                  width: 100%;
+                  height: 100%;
+                }
+                .swiper-slide {
+                  height: auto;
+                }
+                .swiper-button-next,
+                .swiper-button-prev {
+                  color: ${theme.palette.primary.main} !important;
+                }
+              `}
+            </style>
+            <Swiper
+              ref={swiperRef}
+              modules={[Navigation]}
+              navigation
+              pagination={{ clickable: true }}
+              slidesPerView={1}
+              speed={500}
+              initialSlide={initialSlide}
+              loop={false}
+              className="pro-teaser-swiper"
+            >
+              {Object.values(slidesEN).map((slideData, index) => (
+                <SwiperSlide key={index}>
+                  <Slide {...slideData} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

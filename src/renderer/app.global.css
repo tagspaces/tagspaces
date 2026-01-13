@@ -6,8 +6,6 @@
 @import 'assets/rc-table.css';
 @import '~leaflet/dist/leaflet.css';
 @import '~react-image-gallery/styles/css/image-gallery.css';
-@import "~slick-carousel/slick/slick.css"; /* used from react-slick */
-@import "~slick-carousel/slick/slick-theme.css";
 @import '~react-leaflet-markercluster/styles';
 @import "~@milkdown/crepe/theme/common/style.css";
 @import "~@milkdown/crepe/theme/frame.css";
