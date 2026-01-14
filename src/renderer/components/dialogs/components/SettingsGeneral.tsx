@@ -966,7 +966,6 @@ function SettingsGeneral() {
           placeholder={t('core:searchSettings')}
           value={filterText}
           onChange={(e) => setFilterText(e.target.value)}
-          sx={{ marginBottom: 2 }}
           slotProps={{
             input: {
               endAdornment: filterText && (

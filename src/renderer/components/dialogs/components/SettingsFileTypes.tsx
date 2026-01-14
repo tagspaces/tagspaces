@@ -43,10 +43,11 @@ import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
 import {
   Box,
-  FormControl,
   InputAdornment,
   MenuItem,
   Paper,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -81,47 +82,45 @@ const TypeCell = React.memo(
       (isValidationInProgress && item.type === '') || hasDuplicates;
 
     return (
-      <FormControl error={isError} sx={{ width: '100%' }}>
-        <TsTextField
-          data-tid={'typeTID' + item.type}
-          defaultValue={item.type}
-          sx={{
-            width: '100%',
-            marginTop: 0,
-          }}
-          error={isError}
-          onBlur={(event) => {
-            const nextValue = event.target.value;
-            const withoutSpecialChars = sanitizeInput(nextValue);
-            onUpdateItems(item, 'type', withoutSpecialChars);
-          }}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <TransparentBackground>
-                    <TsButton
-                      tooltip={t('core:colorPickerDialogTitle')}
-                      data-tid="settingsFileTypes_openColorPicker_"
-                      sx={{
-                        border: '1px solid lightgray',
-                        backgroundColor: `${item.color}`,
-                        minWidth: '40px',
-                      }}
-                      onClick={() => {
-                        onOpenColorPicker(item);
-                      }}
-                    >
-                      &nbsp;
-                      <div />
-                    </TsButton>
-                  </TransparentBackground>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-      </FormControl>
+      <TsTextField
+        data-tid={'typeTID' + item.type}
+        defaultValue={item.type}
+        sx={{
+          width: '100%',
+          marginTop: 0,
+        }}
+        error={isError}
+        onBlur={(event) => {
+          const nextValue = event.target.value;
+          const withoutSpecialChars = sanitizeInput(nextValue);
+          onUpdateItems(item, 'type', withoutSpecialChars);
+        }}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <TransparentBackground>
+                  <TsButton
+                    tooltip={t('core:colorPickerDialogTitle')}
+                    data-tid="settingsFileTypes_openColorPicker_"
+                    sx={{
+                      border: '1px solid lightgray',
+                      backgroundColor: `${item.color}`,
+                      minWidth: '40px',
+                    }}
+                    onClick={() => {
+                      onOpenColorPicker(item);
+                    }}
+                  >
+                    &nbsp;
+                    <div />
+                  </TsButton>
+                </TransparentBackground>
+              </InputAdornment>
+            ),
+          },
+        }}
+      />
     );
   },
 );
@@ -150,47 +149,42 @@ const ViewerCell = React.memo(
     );
 
     return (
-      <FormControl
-        fullWidth
+      <TsSelect
+        data-tid={'viewerTID' + item.type}
         error={isValidationInProgress && item.viewer === ''}
+        value={item.viewer}
+        sx={{ minWidth: '150px', marginTop: 0 }}
+        onChange={(event) => {
+          const extension = extensions.find(
+            (ext) => ext.extensionId === event.target.value,
+          );
+          if (extension?.extensionExternal) {
+            getUserDataDir().then((dataDir) => {
+              const externalExtensionPath =
+                dataDir + AppConfig.dirSeparator + 'tsplugins';
+              onUpdateItems(
+                item,
+                'extensionExternalPath',
+                externalExtensionPath,
+              );
+            });
+          }
+          onUpdateItems(item, 'viewer', extension.extensionId);
+        }}
       >
-        <TsSelect
-          data-tid={'viewerTID' + item.type}
-          error={isValidationInProgress && item.viewer === ''}
-          value={item.viewer}
-          sx={{ minWidth: '150px', marginTop: 0 }}
-          onChange={(event) => {
-            const extension = extensions.find(
-              (ext) => ext.extensionId === event.target.value,
-            );
-            if (extension?.extensionExternal) {
-              getUserDataDir().then((dataDir) => {
-                const externalExtensionPath =
-                  dataDir + AppConfig.dirSeparator + 'tsplugins';
-                onUpdateItems(
-                  item,
-                  'extensionExternalPath',
-                  externalExtensionPath,
-                );
-              });
-            }
-            onUpdateItems(item, 'viewer', extension.extensionId);
-          }}
-        >
-          {viewerExtensions.map((extension) => (
-            <MenuItem
-              data-tid={dataTidFormat(
-                extension.extensionName + 'viewerTID' + item.type,
-              )}
-              key={extension.extensionName}
-              value={extension.extensionId}
-              title={'v' + extension.version}
-            >
-              {extension.extensionName}
-            </MenuItem>
-          ))}
-        </TsSelect>
-      </FormControl>
+        {viewerExtensions.map((extension) => (
+          <MenuItem
+            data-tid={dataTidFormat(
+              extension.extensionName + 'viewerTID' + item.type,
+            )}
+            key={extension.extensionName}
+            value={extension.extensionId}
+            title={'v' + extension.version}
+          >
+            {extension.extensionName}
+          </MenuItem>
+        ))}
+      </TsSelect>
     );
   },
 );
@@ -217,26 +211,22 @@ const EditorCell = React.memo(
     );
 
     return (
-      <FormControl fullWidth error={isValidationInProgress}>
-        <TsSelect
-          value={item.editor}
-          sx={{ minWidth: '150px', marginTop: 0 }}
-          onChange={(event) =>
-            onUpdateItems(item, 'editor', event.target.value)
-          }
-        >
-          <MenuItem value="">{t('clearEditor')}</MenuItem>
-          {editorExtensions.map((extension) => (
-            <MenuItem
-              key={extension.extensionName}
-              value={extension.extensionId}
-              title={'v' + extension.version}
-            >
-              {extension.extensionName}
-            </MenuItem>
-          ))}
-        </TsSelect>
-      </FormControl>
+      <TsSelect
+        value={item.editor}
+        sx={{ minWidth: '150px', marginTop: 0 }}
+        onChange={(event) => onUpdateItems(item, 'editor', event.target.value)}
+      >
+        <MenuItem value="">{t('clearEditor')}</MenuItem>
+        {editorExtensions.map((extension) => (
+          <MenuItem
+            key={extension.extensionName}
+            value={extension.extensionId}
+            title={'v' + extension.version}
+          >
+            {extension.extensionName}
+          </MenuItem>
+        ))}
+      </TsSelect>
     );
   },
 );
@@ -250,7 +240,7 @@ interface ActionCellProps {
 
 const ActionCell = React.memo(({ item, onRemoveItem, t }: ActionCellProps) => (
   <TsIconButton
-    sx={{ marginTop: '-10px' }}
+    sx={{ marginTop: '-15px' }}
     tooltip={t('removeFileType', { itemType: item.type })}
     data-tid="settingsFileTypes_remove_"
     onClick={() => onRemoveItem(item)}
@@ -266,6 +256,8 @@ function SettingsFileTypes() {
   const { extensions } = useExtensionsContext();
   const { openConfirmDialog } = useNotificationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   // Helper function to create deep copies of file types to break refs to frozen Redux objects
   const deepCopyFileTypes = (fileTypes: Array<TS.FileTypes>) =>
@@ -412,7 +404,7 @@ function SettingsFileTypes() {
     {
       field: 'type',
       headerName: t('core:fileExtension'),
-      width: 150,
+      width: 130,
       renderCell: (params) => (
         <TypeCell
           item={params.row}
@@ -430,7 +422,7 @@ function SettingsFileTypes() {
     {
       field: 'viewer',
       headerName: t('core:fileOpener'),
-      width: 200,
+      width: 160,
       renderCell: (params) => (
         <ViewerCell
           item={params.row}
@@ -446,7 +438,7 @@ function SettingsFileTypes() {
     {
       field: 'editor',
       headerName: t('core:fileEditor'),
-      width: 200,
+      width: 160,
       renderCell: (params) => (
         <EditorCell
           item={params.row}
@@ -542,14 +534,16 @@ function SettingsFileTypes() {
           placeholder={t('filterByFileExtension')}
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}
+          size="small"
           sx={{
-            maxWidth: '200px',
+            maxWidth: '150px',
             marginRight: AppConfig.defaultSpaceBetweenButtons,
           }}
         />
         <TsButton
           data-tid="addNewFileTypeTID"
           onClick={onAddFileType}
+          tooltip={t('core:addNewFileType')}
           sx={{
             marginRight: AppConfig.defaultSpaceBetweenButtons,
           }}
@@ -588,7 +582,12 @@ function SettingsFileTypes() {
           </TsButton>
         )}
       </Box>
-      <div style={{ height: 'calc(100% - 50px)', width: '100%' }}>
+      <div
+        style={{
+          height: smallScreen ? 'calc(100% - 80px)' : 'calc(100% - 50px)',
+          width: '100%',
+        }}
+      >
         <DataGrid
           ref={dataGridRef}
           rows={getFilteredRows()}
@@ -597,15 +596,9 @@ function SettingsFileTypes() {
           disableColumnMenu
           // pageSizeOptions={[100]}
           disableRowSelectionOnClick
+          disableColumnSelector
+          rowHeight={60}
           // hideFooter
-          sx={{
-            '& .MuiDataGrid-cell': {
-              padding: '4px',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              padding: '8px',
-            },
-          }}
         />
       </div>
       <ColorPickerDialog
