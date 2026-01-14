@@ -1060,9 +1060,7 @@ export const getKeyBindings = (state: any) => state.settings.keyBindings;
 export const getKeyBindingObject = (state: any) =>
   generateKeyBindingObject(state.settings.keyBindings);
 export const getSupportedFileTypes = (state: any) =>
-  state.settings.supportedFileTypes.sort((a, b) =>
-    a.type > b.type ? 1 : a.type < b.type ? -1 : 0,
-  );
+  state.settings.supportedFileTypes;
 export const getExtensionsFound = (state: any) =>
   state.settings.extensionsFound;
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;

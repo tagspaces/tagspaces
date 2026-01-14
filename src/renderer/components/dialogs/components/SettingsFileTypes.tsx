@@ -59,14 +59,21 @@ function SettingsFileTypes() {
   const { extensions } = useExtensionsContext();
   const { openConfirmDialog } = useNotificationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
-  const items = useRef<Array<TS.FileTypes>>([...supportedFileTypes]);
+
+  // Helper function to create deep copies of file types to break refs to frozen Redux objects
+  const deepCopyFileTypes = (fileTypes: Array<TS.FileTypes>) =>
+    fileTypes.map((ft) => ({ ...ft }));
+  const items = useRef<Array<TS.FileTypes>>(
+    deepCopyFileTypes(supportedFileTypes),
+  );
   const selectedItem = useRef<TS.FileTypes>(undefined);
   const isValidationInProgress = useRef<boolean>(false);
+  const dataGridRef = useRef(null);
   const [isColorPickerVisible, setColorPickerVisible] =
     useState<boolean>(false);
-  const [rows, setRows] = useState<Array<TS.FileTypes>>([
-    ...supportedFileTypes,
-  ]);
+  const [rows, setRows] = useState<Array<TS.FileTypes>>(
+    deepCopyFileTypes(supportedFileTypes),
+  );
   const [filterValue, setFilterValue] = useState<string>('');
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -78,8 +85,8 @@ function SettingsFileTypes() {
 
   useEffect(() => {
     if (!firstRender) {
-      items.current = [...supportedFileTypes];
-      setRows([...supportedFileTypes]);
+      items.current = deepCopyFileTypes(supportedFileTypes);
+      setRows(deepCopyFileTypes(supportedFileTypes));
       isValidationInProgress.current = false;
     }
   }, [supportedFileTypes, firstRender]);
@@ -211,6 +218,24 @@ function SettingsFileTypes() {
       sortable: false,
       filterable: false,
     },
+    {
+      field: 'actions',
+      headerName: '',
+      width: 80,
+      renderCell: (params) => (
+        <TsIconButton
+          tooltip={t('removeFileType', { itemType: params.row.type })}
+          sx={{ marginTop: '-10px' }}
+          data-tid="settingsFileTypes_remove_"
+          onClick={() => onRemoveItem(params.row)}
+          size="small"
+        >
+          <RemoveIcon />
+        </TsIconButton>
+      ),
+      sortable: false,
+      filterable: false,
+    },
   ];
 
   const onAddFileType = () => {
@@ -223,6 +248,17 @@ function SettingsFileTypes() {
     };
     items.current = [defaultFileTypeObject, ...items.current];
     setRows([...items.current]);
+    // Scroll to top after adding
+    setTimeout(() => {
+      if (dataGridRef.current) {
+        const virtualScroller = dataGridRef.current.querySelector(
+          '.MuiDataGrid-virtualScroller',
+        );
+        if (virtualScroller) {
+          virtualScroller.scrollTop = 0;
+        }
+      }
+    }, 0);
   };
 
   const onRemoveItem = (item) => {
@@ -298,17 +334,6 @@ function SettingsFileTypes() {
                       <div />
                     </TsButton>
                   </TransparentBackground>
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <TsIconButton
-                    tooltip={t('removeFileType', { itemType: item.type })}
-                    data-tid="settingsFileTypes_remove_"
-                    onClick={() => onRemoveItem(item)}
-                  >
-                    <RemoveIcon />
-                  </TsIconButton>
                 </InputAdornment>
               ),
             },
@@ -468,6 +493,7 @@ function SettingsFileTypes() {
       </Box>
       <div style={{ height: 'calc(100% - 50px)', width: '100%' }}>
         <DataGrid
+          ref={dataGridRef}
           rows={getFilteredRows()}
           columns={dataGridColumns}
           getRowId={(row) => row.id || row.type}
