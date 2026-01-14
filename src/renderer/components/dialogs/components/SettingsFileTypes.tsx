@@ -45,32 +45,25 @@ import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  TableComponents,
-  TableVirtuoso,
-  TableVirtuosoHandle,
-} from 'react-virtuoso';
 
 function SettingsFileTypes() {
   const { t } = useTranslation();
   const { extensions } = useExtensionsContext();
   const { openConfirmDialog } = useNotificationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
-  const items = useRef<Array<TS.FileTypes>>(supportedFileTypes);
+  const items = useRef<Array<TS.FileTypes>>([...supportedFileTypes]);
   const selectedItem = useRef<TS.FileTypes>(undefined);
   const isValidationInProgress = useRef<boolean>(false);
   const [isColorPickerVisible, setColorPickerVisible] =
     useState<boolean>(false);
-  const settingsFileTypeRef = useRef<TableVirtuosoHandle>(null);
+  const [rows, setRows] = useState<Array<TS.FileTypes>>([
+    ...supportedFileTypes,
+  ]);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
@@ -81,46 +74,11 @@ function SettingsFileTypes() {
 
   useEffect(() => {
     if (!firstRender) {
-      items.current = supportedFileTypes;
+      items.current = [...supportedFileTypes];
+      setRows([...supportedFileTypes]);
       isValidationInProgress.current = false;
-      if (selectedItem.current !== undefined) {
-        const timer = scrollToItem(selectedItem.current);
-        return () => {
-          if (timer) {
-            clearTimeout(timer);
-          }
-        };
-      }
     }
-  }, [supportedFileTypes]);
-
-  type ScrollToIndexArgs = {
-    index: number;
-    align?: 'start' | 'center' | 'end';
-  };
-
-  function scrollToItem(item: TS.FileTypes) {
-    if (item) {
-      const index = items.current.findIndex(
-        (element) => element.type === item.type,
-      );
-      if (index > -1) {
-        return setTimeout(function () {
-          scrollToIndex({ index: index });
-        }, 50);
-      }
-    }
-    return undefined;
-  }
-
-  function scrollToIndex({ index, align = 'start' }: ScrollToIndexArgs) {
-    if (settingsFileTypeRef.current) {
-      settingsFileTypeRef.current.scrollToIndex({
-        index,
-        align,
-      });
-    }
-  }
+  }, [supportedFileTypes, firstRender]);
 
   const updateItems = (
     fileType: TS.FileTypes,
@@ -154,6 +112,7 @@ function SettingsFileTypes() {
       return item;
     });
     items.current = modifiedItems;
+    setRows([...modifiedItems]);
     if (
       (targetKey !== 'type' && isSaveable && !disableSave) ||
       (targetKey === 'type' && hasViewer && isSaveable && !disableSave)
@@ -161,7 +120,6 @@ function SettingsFileTypes() {
       saveFileTypes(modifiedItems);
     } else {
       isValidationInProgress.current = true;
-      forceUpdate();
     }
   };
 
@@ -171,7 +129,7 @@ function SettingsFileTypes() {
     const isValid = validateSelectedFileTypes(newItems);
 
     if (!isValid) {
-      forceUpdate();
+      setRows([...newItems]);
       return false;
     }
     dispatch(SettingsActions.setSupportedFileTypes(newItems));
@@ -200,7 +158,6 @@ function SettingsFileTypes() {
   const openColorPicker = (selected) => {
     setColorPickerVisible(true);
     selectedItem.current = selected;
-    scrollToItem(selected);
   };
 
   const closeColorPicker = () => {
@@ -215,46 +172,32 @@ function SettingsFileTypes() {
   const sanitizeFileTypeInput = (fileTypeInput) =>
     fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
 
-  interface ColumnData {
-    dataKey: keyof TS.FileTypes;
-    label: string;
-    width?: number | string;
-  }
-
-  const columns: ColumnData[] = [
+  const dataGridColumns: GridColDef[] = [
     {
-      width: '130px',
-      label: t('core:fileExtension'),
-      dataKey: 'type',
+      field: 'type',
+      headerName: t('core:fileExtension'),
+      width: 150,
+      renderCell: (params) => renderTypeCell(params.row),
+      sortable: false,
+      filterable: false,
     },
     {
-      width: '170px',
-      label: t('core:fileOpener'),
-      dataKey: 'viewer',
+      field: 'viewer',
+      headerName: t('core:fileOpener'),
+      width: 200,
+      renderCell: (params) => renderViewerCell(params.row),
+      sortable: false,
+      filterable: false,
     },
     {
-      width: '170px',
-      label: t('core:fileEditor'),
-      dataKey: 'editor',
+      field: 'editor',
+      headerName: t('core:fileEditor'),
+      width: 200,
+      renderCell: (params) => renderEditorCell(params.row),
+      sortable: false,
+      filterable: false,
     },
   ];
-
-  const VirtuosoTableComponents: TableComponents<TS.FileTypes> = {
-    Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
-      <TableContainer component={Paper} {...props} ref={ref} />
-    )),
-    Table: (props) => (
-      <Table
-        {...props}
-        sx={{ borderCollapse: 'separate', tableLayout: 'fixed' }}
-      />
-    ),
-    //TableHead: CustomTableHead,
-    TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
-    TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-      <TableBody {...props} ref={ref} />
-    )),
-  };
 
   const onAddFileType = () => {
     const defaultFileTypeObject = {
@@ -265,7 +208,7 @@ function SettingsFileTypes() {
       color: '#2196f3',
     };
     items.current = [defaultFileTypeObject, ...items.current];
-    forceUpdate();
+    setRows([...items.current]);
   };
 
   const onRemoveItem = (item) => {
@@ -289,182 +232,154 @@ function SettingsFileTypes() {
       (item) => item.type !== itemForRemoval.type,
     );
     items.current = filteredItems;
+    setRows([...filteredItems]);
     saveFileTypes(filteredItems);
   };
 
-  function fixedHeaderContent() {
+  function renderTypeCell(item: TS.FileTypes) {
     return (
-      <TableRow>
-        {columns.map((column) => (
-          <TableCell
-            key={column.dataKey}
-            variant="head"
-            align={'center'}
-            sx={{
-              width: column.width,
-              padding: 0,
-              paddingLeft: 2,
-              backgroundColor: 'background.paper',
-            }}
-          >
-            {column.label}
-          </TableCell>
-        ))}
-      </TableRow>
+      <FormControl
+        error={
+          (isValidationInProgress.current && item.type === '') ||
+          items.current.filter((targetItem) => targetItem.type === item.type)
+            .length > 1
+        }
+        sx={{ width: '100%' }}
+      >
+        <TsTextField
+          data-tid={'typeTID' + item.type}
+          defaultValue={item.type}
+          sx={{
+            width: '100%',
+            marginTop: 0,
+          }}
+          error={
+            (isValidationInProgress.current && item.type === '') ||
+            items.current.filter((targetItem) => targetItem.type === item.type)
+              .length > 1
+          }
+          onBlur={(event) => {
+            const nextValue = event.target.value;
+            const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
+            updateItems(item, 'type', withoutSpecialChars);
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <TransparentBackground>
+                    <TsButton
+                      tooltip={t('core:colorPickerDialogTitle')}
+                      data-tid="settingsFileTypes_openColorPicker_"
+                      sx={{
+                        border: '1px solid lightgray',
+                        backgroundColor: `${item.color}`,
+                        minWidth: '40px',
+                      }}
+                      onClick={() => {
+                        openColorPicker(item);
+                      }}
+                    >
+                      &nbsp;
+                      <div />
+                    </TsButton>
+                  </TransparentBackground>
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <TsIconButton
+                    tooltip={t('removeFileType', { itemType: item.type })}
+                    data-tid="settingsFileTypes_remove_"
+                    onClick={() => onRemoveItem(item)}
+                  >
+                    <RemoveIcon />
+                  </TsIconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </FormControl>
     );
   }
 
-  function rowContent(_index: number, item: TS.FileTypes) {
+  function renderViewerCell(item: TS.FileTypes) {
     return (
-      <React.Fragment>
-        <TableCell
-          align={'left'}
-          sx={{ maxWidth: 160, padding: '0 5px 0px 5px' }}
-        >
-          <FormControl
-            error={
-              (isValidationInProgress.current && item.type === '') ||
-              items.current.filter(
-                (targetItem) => targetItem.type === item.type,
-              ).length > 1
-            }
-          >
-            <TsTextField
-              data-tid={'typeTID' + item.type}
-              defaultValue={item.type}
-              sx={{
-                width: '160px',
-                marginTop: 0,
-              }}
-              error={
-                (isValidationInProgress.current && item.type === '') ||
-                items.current.filter(
-                  (targetItem) => targetItem.type === item.type,
-                ).length > 1
-              }
-              onBlur={(event) => {
-                const nextValue = event.target.value;
-                const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
-                updateItems(item, 'type', withoutSpecialChars);
-              }}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <TransparentBackground>
-                        <TsButton
-                          tooltip={t('core:colorPickerDialogTitle')}
-                          data-tid="settingsFileTypes_openColorPicker_"
-                          sx={{
-                            border: '1px solid lightgray',
-                            backgroundColor: `${item.color}`,
-                            minWidth: '40px',
-                          }}
-                          onClick={() => {
-                            openColorPicker(item);
-                          }}
-                        >
-                          &nbsp;
-                          <div />
-                        </TsButton>
-                      </TransparentBackground>
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <TsIconButton
-                        tooltip={t('removeFileType', { itemType: item.type })}
-                        data-tid="settingsFileTypes_remove_"
-                        onClick={() => onRemoveItem(item)}
-                      >
-                        <RemoveIcon />
-                      </TsIconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </FormControl>
-        </TableCell>
-        <TableCell
-          align={'center'}
-          sx={{ minWith: 150, padding: '0 5px 0px 25px' }}
-        >
-          <FormControl
-            fullWidth
-            error={isValidationInProgress.current && item.viewer === ''}
-          >
-            <TsSelect
-              data-tid={'viewerTID' + item.type}
-              error={isValidationInProgress.current && item.viewer === ''}
-              value={item.viewer}
-              sx={{ minWidth: '150px', marginTop: 0 }}
-              onChange={(event) => {
-                const extension: TS.Extension = extensions.find(
-                  (ext) => ext.extensionId === event.target.value,
+      <FormControl
+        fullWidth
+        error={isValidationInProgress.current && item.viewer === ''}
+      >
+        <TsSelect
+          data-tid={'viewerTID' + item.type}
+          error={isValidationInProgress.current && item.viewer === ''}
+          value={item.viewer}
+          sx={{ minWidth: '150px', marginTop: 0 }}
+          onChange={(event) => {
+            const extension: TS.Extension = extensions.find(
+              (ext) => ext.extensionId === event.target.value,
+            );
+            if (extension.extensionExternal) {
+              getUserDataDir().then((dataDir) => {
+                const externalExtensionPath =
+                  dataDir + AppConfig.dirSeparator + 'tsplugins';
+                updateItems(
+                  item,
+                  'extensionExternalPath',
+                  externalExtensionPath,
                 );
-                if (extension.extensionExternal) {
-                  getUserDataDir().then((dataDir) => {
-                    const externalExtensionPath =
-                      dataDir + AppConfig.dirSeparator + 'tsplugins';
-                    updateItems(
-                      item,
-                      'extensionExternalPath',
-                      externalExtensionPath,
-                    );
-                  });
-                }
-                updateItems(item, 'viewer', extension.extensionId);
-              }}
-            >
-              {extensions.map(
-                (extension) =>
-                  (extension.extensionTypes.includes('viewer') ||
-                    extension.extensionTypes.includes('editor')) && (
-                    <MenuItem
-                      data-tid={dataTidFormat(
-                        extension.extensionName + 'viewerTID' + item.type,
-                      )}
-                      key={extension.extensionName}
-                      value={extension.extensionId}
-                      title={'v' + extension.version}
-                    >
-                      {extension.extensionName}
-                    </MenuItem>
-                  ),
-              )}
-            </TsSelect>
-          </FormControl>
-        </TableCell>
-        <TableCell align={'center'} sx={{ padding: '0 5px 0px 0' }}>
-          <FormControl fullWidth error={isValidationInProgress.current}>
-            <TsSelect
-              value={item.editor}
-              sx={{ minWidth: '150px', marginTop: 0 }}
-              onChange={(event) =>
-                updateItems(item, 'editor', event.target.value)
-              }
-            >
-              <MenuItem value="">{t('clearEditor')}</MenuItem>
-              {extensions
-                .filter(
-                  (extension) =>
-                    extension.extensionTypes &&
-                    extension.extensionTypes.includes('editor'),
-                )
-                .map((extension) => (
-                  <MenuItem
-                    key={extension.extensionName}
-                    value={extension.extensionId}
-                    title={'v' + extension.version}
-                  >
-                    {extension.extensionName}
-                  </MenuItem>
-                ))}
-            </TsSelect>
-          </FormControl>
-        </TableCell>
-      </React.Fragment>
+              });
+            }
+            updateItems(item, 'viewer', extension.extensionId);
+          }}
+        >
+          {extensions.map(
+            (extension) =>
+              (extension.extensionTypes.includes('viewer') ||
+                extension.extensionTypes.includes('editor')) && (
+                <MenuItem
+                  data-tid={dataTidFormat(
+                    extension.extensionName + 'viewerTID' + item.type,
+                  )}
+                  key={extension.extensionName}
+                  value={extension.extensionId}
+                  title={'v' + extension.version}
+                >
+                  {extension.extensionName}
+                </MenuItem>
+              ),
+          )}
+        </TsSelect>
+      </FormControl>
+    );
+  }
+
+  function renderEditorCell(item: TS.FileTypes) {
+    return (
+      <FormControl fullWidth error={isValidationInProgress.current}>
+        <TsSelect
+          value={item.editor}
+          sx={{ minWidth: '150px', marginTop: 0 }}
+          onChange={(event) => updateItems(item, 'editor', event.target.value)}
+        >
+          <MenuItem value="">{t('clearEditor')}</MenuItem>
+          {extensions
+            .filter(
+              (extension) =>
+                extension.extensionTypes &&
+                extension.extensionTypes.includes('editor'),
+            )
+            .map((extension) => (
+              <MenuItem
+                key={extension.extensionName}
+                value={extension.extensionId}
+                title={'v' + extension.version}
+              >
+                {extension.extensionName}
+              </MenuItem>
+            ))}
+        </TsSelect>
+      </FormControl>
     );
   }
 
@@ -472,7 +387,7 @@ function SettingsFileTypes() {
     <Paper
       data-tid="settingsFileTypesTID"
       sx={{
-        height: '500px',
+        height: '100%',
         width: '100%',
         minWidth: '350px',
         overflow: 'hidden',
@@ -509,19 +424,22 @@ function SettingsFileTypes() {
           {t('core:resetFileType')}
         </TsButton>
       )}
-      <TableVirtuoso
-        style={{
-          overflowX: 'auto',
-          height: 'calc(100% - 50px)',
-          minWidth: 350,
-          overflowY: 'auto',
-          background: 'transparent',
+      <DataGrid
+        rows={rows}
+        columns={dataGridColumns}
+        getRowId={(row) => row.id || row.type}
+        disableColumnMenu
+        // pageSizeOptions={[100]}
+        disableRowSelectionOnClick
+        // hideFooter
+        sx={{
+          '& .MuiDataGrid-cell': {
+            padding: '4px',
+          },
+          '& .MuiDataGrid-columnHeader': {
+            padding: '8px',
+          },
         }}
-        data={items.current}
-        components={VirtuosoTableComponents}
-        fixedHeaderContent={fixedHeaderContent}
-        itemContent={rowContent}
-        ref={settingsFileTypeRef}
       />
       <ColorPickerDialog
         open={isColorPickerVisible}
