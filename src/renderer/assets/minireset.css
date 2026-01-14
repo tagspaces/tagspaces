@@ -34,10 +34,6 @@ img { border: 0; pointer-events: none; }
     cursor: default;
 } 
 
-.milkdown * {
-  user-select: text;
-}
-
 input, button, textarea, :focus {
     outline: none; 
 }

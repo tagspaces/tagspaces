@@ -1,3 +1,10 @@
+@import "~@milkdown/crepe/theme/common/style.css";
+@import "~@milkdown/crepe/theme/frame.css";
+
+.milkdown * {
+  user-select: text;
+}
+
 .milkdown {
   --crepe-font-title: 'Open Sans', Arial, Helvetica, sans-serif !important;
 }

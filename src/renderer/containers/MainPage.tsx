@@ -344,6 +344,10 @@ function MainPage() {
                 flex-direction: column;
                 overflow: clip;
               }
+
+              .react-split > .split-container.vertical > .splitter {
+               z-index: 1;
+              }
           `}
           </style>
           {isDesktopMode || (AppConfig.isAmplify && !isLoggedIn()) ? (

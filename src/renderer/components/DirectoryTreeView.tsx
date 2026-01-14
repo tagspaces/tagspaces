@@ -32,6 +32,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import Table from 'rc-table';
+import 'rc-table/assets/index.css';
 import {
   Ref,
   forwardRef,
@@ -442,34 +443,78 @@ const DirectoryTreeView = forwardRef(
 
     if (isExpanded && data !== undefined) {
       return (
-        <Table
-          key={location.locationID}
-          style={{
-            borderRadius: AppConfig.defaultCSSRadius,
-            backgroundColor: alpha(theme.palette.grey.A400, 0.2),
-            marginTop: 0,
-            marginBottom: 5,
-          }}
-          components={{
-            // header: { cell: this.renderHeaderRow },
-            body: { row: renderBodyRow },
-          }}
-          showHeader={false}
-          // className="table"
-          rowKey="path"
-          data={data[location.locationID]}
-          columns={columns}
-          indentSize={20}
-          expandable={{ onExpand }}
-          // expandIcon={this.CustomExpandIcon}
-          // expandIconAsCell
-          // @ts-ignore
-          onRow={(record, index) => ({
-            index,
-            location: record,
-            handleFileMoveDrop: handleFileMoveDrop,
-          })}
-        />
+        <>
+          <style>
+            {`
+              .rc-table-row {
+                display: block !important;
+              }
+
+              .rc-table-content {
+                border: none;
+              }
+
+              .rc-table-cell {
+                border: none;
+                display: block !important;
+              }
+
+              .rc-table-cell:hover {
+                border-radius: 5px;
+                background-color: #dcf3ec88 !important;
+              }
+
+              .rc-table td {
+                border: none;
+                padding: 8px;
+                background: transparent !important;
+                white-space: nowrap;
+              }
+
+              .rc-table tr.dropzone td {
+                background-color: #1dd19f40 !important;
+                border: 3px dashed white;
+                padding: 5px;
+              }
+
+              .rc-table-row-expand-icon {
+                width: 13px !important;
+                height: 13px !important;
+                line-height: 13px !important;
+                margin: 5px;
+                cursor: pointer;
+              }
+           `}
+          </style>
+          <Table
+            key={location.locationID}
+            style={{
+              borderRadius: AppConfig.defaultCSSRadius,
+              backgroundColor: alpha(theme.palette.grey.A400, 0.2),
+              marginTop: 0,
+              marginBottom: 5,
+            }}
+            components={{
+              // header: { cell: this.renderHeaderRow },
+              body: { row: renderBodyRow },
+            }}
+            showHeader={false}
+            // className="table"
+            rowKey="path"
+            data={data[location.locationID]}
+            columns={columns}
+            indentSize={20}
+            expandable={{ onExpand }}
+            // expandIcon={this.CustomExpandIcon}
+            // expandIconAsCell
+            // @ts-ignore
+            onRow={(record, index) => ({
+              index,
+              location: record,
+              handleFileMoveDrop: handleFileMoveDrop,
+            })}
+          />
+        </>
       );
     }
     return null;
