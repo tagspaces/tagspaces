@@ -417,15 +417,15 @@ function SettingsAdvanced(props: Props) {
               'confirmResetSettingsDialogContentTID',
             )
           }
-          sx={{ color: 'red' }}
+          color="error"
         >
           {t('core:resetSettings')}
         </TsButton>
         {devMode && (
           <TsButton
             data-tid="reloadAppTID"
+            color="error"
             sx={{
-              color: 'red',
               marginLeft: AppConfig.defaultSpaceBetweenButtons,
             }}
             onClick={() => {
