@@ -32,8 +32,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import 'swiper/css';
-import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
