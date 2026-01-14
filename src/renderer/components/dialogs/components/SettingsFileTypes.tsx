@@ -50,9 +50,216 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { useEffect, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+
+// Memoized cell components to prevent unnecessary re-renders
+interface TypeCellProps {
+  item: TS.FileTypes;
+  onUpdateItems: (fileType: TS.FileTypes, key: string, value: any) => void;
+  onOpenColorPicker: (item: TS.FileTypes) => void;
+  isValidationInProgress: boolean;
+  allItems: TS.FileTypes[];
+  sanitizeInput: (input: string) => string;
+  t: any;
+}
+
+const TypeCell = React.memo(
+  ({
+    item,
+    onUpdateItems,
+    onOpenColorPicker,
+    isValidationInProgress,
+    allItems,
+    sanitizeInput,
+    t,
+  }: TypeCellProps) => {
+    const hasDuplicates =
+      allItems.filter((targetItem) => targetItem.type === item.type).length > 1;
+    const isError =
+      (isValidationInProgress && item.type === '') || hasDuplicates;
+
+    return (
+      <FormControl error={isError} sx={{ width: '100%' }}>
+        <TsTextField
+          data-tid={'typeTID' + item.type}
+          defaultValue={item.type}
+          sx={{
+            width: '100%',
+            marginTop: 0,
+          }}
+          error={isError}
+          onBlur={(event) => {
+            const nextValue = event.target.value;
+            const withoutSpecialChars = sanitizeInput(nextValue);
+            onUpdateItems(item, 'type', withoutSpecialChars);
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <TransparentBackground>
+                    <TsButton
+                      tooltip={t('core:colorPickerDialogTitle')}
+                      data-tid="settingsFileTypes_openColorPicker_"
+                      sx={{
+                        border: '1px solid lightgray',
+                        backgroundColor: `${item.color}`,
+                        minWidth: '40px',
+                      }}
+                      onClick={() => {
+                        onOpenColorPicker(item);
+                      }}
+                    >
+                      &nbsp;
+                      <div />
+                    </TsButton>
+                  </TransparentBackground>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </FormControl>
+    );
+  },
+);
+TypeCell.displayName = 'TypeCell';
+
+interface ViewerCellProps {
+  item: TS.FileTypes;
+  extensions: TS.Extension[];
+  onUpdateItems: (fileType: TS.FileTypes, key: string, value: any) => void;
+  isValidationInProgress: boolean;
+  t: any;
+}
+
+const ViewerCell = React.memo(
+  ({
+    item,
+    extensions,
+    onUpdateItems,
+    isValidationInProgress,
+    t,
+  }: ViewerCellProps) => {
+    const viewerExtensions = extensions.filter(
+      (ext) =>
+        ext.extensionTypes.includes('viewer') ||
+        ext.extensionTypes.includes('editor'),
+    );
+
+    return (
+      <FormControl
+        fullWidth
+        error={isValidationInProgress && item.viewer === ''}
+      >
+        <TsSelect
+          data-tid={'viewerTID' + item.type}
+          error={isValidationInProgress && item.viewer === ''}
+          value={item.viewer}
+          sx={{ minWidth: '150px', marginTop: 0 }}
+          onChange={(event) => {
+            const extension = extensions.find(
+              (ext) => ext.extensionId === event.target.value,
+            );
+            if (extension?.extensionExternal) {
+              getUserDataDir().then((dataDir) => {
+                const externalExtensionPath =
+                  dataDir + AppConfig.dirSeparator + 'tsplugins';
+                onUpdateItems(
+                  item,
+                  'extensionExternalPath',
+                  externalExtensionPath,
+                );
+              });
+            }
+            onUpdateItems(item, 'viewer', extension.extensionId);
+          }}
+        >
+          {viewerExtensions.map((extension) => (
+            <MenuItem
+              data-tid={dataTidFormat(
+                extension.extensionName + 'viewerTID' + item.type,
+              )}
+              key={extension.extensionName}
+              value={extension.extensionId}
+              title={'v' + extension.version}
+            >
+              {extension.extensionName}
+            </MenuItem>
+          ))}
+        </TsSelect>
+      </FormControl>
+    );
+  },
+);
+ViewerCell.displayName = 'ViewerCell';
+
+interface EditorCellProps {
+  item: TS.FileTypes;
+  extensions: TS.Extension[];
+  onUpdateItems: (fileType: TS.FileTypes, key: string, value: any) => void;
+  isValidationInProgress: boolean;
+  t: any;
+}
+
+const EditorCell = React.memo(
+  ({
+    item,
+    extensions,
+    onUpdateItems,
+    isValidationInProgress,
+    t,
+  }: EditorCellProps) => {
+    const editorExtensions = extensions.filter((ext) =>
+      ext.extensionTypes.includes('editor'),
+    );
+
+    return (
+      <FormControl fullWidth error={isValidationInProgress}>
+        <TsSelect
+          value={item.editor}
+          sx={{ minWidth: '150px', marginTop: 0 }}
+          onChange={(event) =>
+            onUpdateItems(item, 'editor', event.target.value)
+          }
+        >
+          <MenuItem value="">{t('clearEditor')}</MenuItem>
+          {editorExtensions.map((extension) => (
+            <MenuItem
+              key={extension.extensionName}
+              value={extension.extensionId}
+              title={'v' + extension.version}
+            >
+              {extension.extensionName}
+            </MenuItem>
+          ))}
+        </TsSelect>
+      </FormControl>
+    );
+  },
+);
+EditorCell.displayName = 'EditorCell';
+
+interface ActionCellProps {
+  item: TS.FileTypes;
+  onRemoveItem: (item: TS.FileTypes) => void;
+  t: any;
+}
+
+const ActionCell = React.memo(({ item, onRemoveItem, t }: ActionCellProps) => (
+  <TsIconButton
+    sx={{ marginTop: '-10px' }}
+    tooltip={t('removeFileType', { itemType: item.type })}
+    data-tid="settingsFileTypes_remove_"
+    onClick={() => onRemoveItem(item)}
+    size="small"
+  >
+    <RemoveIcon />
+  </TsIconButton>
+));
+ActionCell.displayName = 'ActionCell';
 
 function SettingsFileTypes() {
   const { t } = useTranslation();
@@ -63,8 +270,15 @@ function SettingsFileTypes() {
   // Helper function to create deep copies of file types to break refs to frozen Redux objects
   const deepCopyFileTypes = (fileTypes: Array<TS.FileTypes>) =>
     fileTypes.map((ft) => ({ ...ft }));
+
+  // Helper function to sort file types by type name
+  const sortFileTypes = (fileTypes: Array<TS.FileTypes>) =>
+    [...fileTypes].sort((a, b) =>
+      a.type.toLowerCase().localeCompare(b.type.toLowerCase()),
+    );
+
   const items = useRef<Array<TS.FileTypes>>(
-    deepCopyFileTypes(supportedFileTypes),
+    sortFileTypes(deepCopyFileTypes(supportedFileTypes)),
   );
   const selectedItem = useRef<TS.FileTypes>(undefined);
   const isValidationInProgress = useRef<boolean>(false);
@@ -72,7 +286,7 @@ function SettingsFileTypes() {
   const [isColorPickerVisible, setColorPickerVisible] =
     useState<boolean>(false);
   const [rows, setRows] = useState<Array<TS.FileTypes>>(
-    deepCopyFileTypes(supportedFileTypes),
+    sortFileTypes(deepCopyFileTypes(supportedFileTypes)),
   );
   const [filterValue, setFilterValue] = useState<string>('');
 
@@ -85,8 +299,9 @@ function SettingsFileTypes() {
 
   useEffect(() => {
     if (!firstRender) {
-      items.current = deepCopyFileTypes(supportedFileTypes);
-      setRows(deepCopyFileTypes(supportedFileTypes));
+      const sortedTypes = sortFileTypes(deepCopyFileTypes(supportedFileTypes));
+      items.current = sortedTypes;
+      setRows(sortedTypes);
       isValidationInProgress.current = false;
     }
   }, [supportedFileTypes, firstRender]);
@@ -198,7 +413,17 @@ function SettingsFileTypes() {
       field: 'type',
       headerName: t('core:fileExtension'),
       width: 150,
-      renderCell: (params) => renderTypeCell(params.row),
+      renderCell: (params) => (
+        <TypeCell
+          item={params.row}
+          onUpdateItems={updateItems}
+          onOpenColorPicker={openColorPicker}
+          isValidationInProgress={isValidationInProgress.current}
+          allItems={items.current}
+          sanitizeInput={sanitizeFileTypeInput}
+          t={t}
+        />
+      ),
       sortable: false,
       filterable: false,
     },
@@ -206,7 +431,15 @@ function SettingsFileTypes() {
       field: 'viewer',
       headerName: t('core:fileOpener'),
       width: 200,
-      renderCell: (params) => renderViewerCell(params.row),
+      renderCell: (params) => (
+        <ViewerCell
+          item={params.row}
+          extensions={extensions}
+          onUpdateItems={updateItems}
+          isValidationInProgress={isValidationInProgress.current}
+          t={t}
+        />
+      ),
       sortable: false,
       filterable: false,
     },
@@ -214,7 +447,15 @@ function SettingsFileTypes() {
       field: 'editor',
       headerName: t('core:fileEditor'),
       width: 200,
-      renderCell: (params) => renderEditorCell(params.row),
+      renderCell: (params) => (
+        <EditorCell
+          item={params.row}
+          extensions={extensions}
+          onUpdateItems={updateItems}
+          isValidationInProgress={isValidationInProgress.current}
+          t={t}
+        />
+      ),
       sortable: false,
       filterable: false,
     },
@@ -223,15 +464,7 @@ function SettingsFileTypes() {
       headerName: '',
       width: 80,
       renderCell: (params) => (
-        <TsIconButton
-          tooltip={t('removeFileType', { itemType: params.row.type })}
-          sx={{ marginTop: '-10px' }}
-          data-tid="settingsFileTypes_remove_"
-          onClick={() => onRemoveItem(params.row)}
-          size="small"
-        >
-          <RemoveIcon />
-        </TsIconButton>
+        <ActionCell item={params.row} onRemoveItem={onRemoveItem} t={t} />
       ),
       sortable: false,
       filterable: false,
@@ -285,142 +518,6 @@ function SettingsFileTypes() {
     setRows([...filteredItems]);
     saveFileTypes(filteredItems);
   };
-
-  function renderTypeCell(item: TS.FileTypes) {
-    return (
-      <FormControl
-        error={
-          (isValidationInProgress.current && item.type === '') ||
-          items.current.filter((targetItem) => targetItem.type === item.type)
-            .length > 1
-        }
-        sx={{ width: '100%' }}
-      >
-        <TsTextField
-          data-tid={'typeTID' + item.type}
-          defaultValue={item.type}
-          sx={{
-            width: '100%',
-            marginTop: 0,
-          }}
-          error={
-            (isValidationInProgress.current && item.type === '') ||
-            items.current.filter((targetItem) => targetItem.type === item.type)
-              .length > 1
-          }
-          onBlur={(event) => {
-            const nextValue = event.target.value;
-            const withoutSpecialChars = sanitizeFileTypeInput(nextValue);
-            updateItems(item, 'type', withoutSpecialChars);
-          }}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <TransparentBackground>
-                    <TsButton
-                      tooltip={t('core:colorPickerDialogTitle')}
-                      data-tid="settingsFileTypes_openColorPicker_"
-                      sx={{
-                        border: '1px solid lightgray',
-                        backgroundColor: `${item.color}`,
-                        minWidth: '40px',
-                      }}
-                      onClick={() => {
-                        openColorPicker(item);
-                      }}
-                    >
-                      &nbsp;
-                      <div />
-                    </TsButton>
-                  </TransparentBackground>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-      </FormControl>
-    );
-  }
-
-  function renderViewerCell(item: TS.FileTypes) {
-    return (
-      <FormControl
-        fullWidth
-        error={isValidationInProgress.current && item.viewer === ''}
-      >
-        <TsSelect
-          data-tid={'viewerTID' + item.type}
-          error={isValidationInProgress.current && item.viewer === ''}
-          value={item.viewer}
-          sx={{ minWidth: '150px', marginTop: 0 }}
-          onChange={(event) => {
-            const extension: TS.Extension = extensions.find(
-              (ext) => ext.extensionId === event.target.value,
-            );
-            if (extension.extensionExternal) {
-              getUserDataDir().then((dataDir) => {
-                const externalExtensionPath =
-                  dataDir + AppConfig.dirSeparator + 'tsplugins';
-                updateItems(
-                  item,
-                  'extensionExternalPath',
-                  externalExtensionPath,
-                );
-              });
-            }
-            updateItems(item, 'viewer', extension.extensionId);
-          }}
-        >
-          {extensions.map(
-            (extension) =>
-              (extension.extensionTypes.includes('viewer') ||
-                extension.extensionTypes.includes('editor')) && (
-                <MenuItem
-                  data-tid={dataTidFormat(
-                    extension.extensionName + 'viewerTID' + item.type,
-                  )}
-                  key={extension.extensionName}
-                  value={extension.extensionId}
-                  title={'v' + extension.version}
-                >
-                  {extension.extensionName}
-                </MenuItem>
-              ),
-          )}
-        </TsSelect>
-      </FormControl>
-    );
-  }
-
-  function renderEditorCell(item: TS.FileTypes) {
-    return (
-      <FormControl fullWidth error={isValidationInProgress.current}>
-        <TsSelect
-          value={item.editor}
-          sx={{ minWidth: '150px', marginTop: 0 }}
-          onChange={(event) => updateItems(item, 'editor', event.target.value)}
-        >
-          <MenuItem value="">{t('clearEditor')}</MenuItem>
-          {extensions
-            .filter(
-              (extension) =>
-                extension.extensionTypes &&
-                extension.extensionTypes.includes('editor'),
-            )
-            .map((extension) => (
-              <MenuItem
-                key={extension.extensionName}
-                value={extension.extensionId}
-                title={'v' + extension.version}
-              >
-                {extension.extensionName}
-              </MenuItem>
-            ))}
-        </TsSelect>
-      </FormControl>
-    );
-  }
 
   return (
     <Paper
