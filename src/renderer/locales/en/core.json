@@ -1148,5 +1148,7 @@
   "descriptionAvailable": "Description available",
   "aiChatAvailable": "AI Chat available",
   "filesPerMonth": "Files per month",
+  "confirmResetFileTypes": "Are you sure you want to reset all custom file type settings to default?",
+  "filterByFileExtension": "Filter by extension...",
   "-": "-"
 }

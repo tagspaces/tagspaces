@@ -411,13 +411,13 @@ function SettingsFileTypes() {
     >
       <Box
         sx={{
-          display: 'inline-flex',
+          display: 'flex',
           alignItems: 'center',
           paddingTop: AppConfig.defaultSpaceBetweenButtons,
         }}
       >
         <TsTextField
-          placeholder={t('Filter by extension...')}
+          placeholder={t('filterByFileExtension')}
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}
           sx={{
@@ -439,10 +439,24 @@ function SettingsFileTypes() {
           <TsButton
             data-tid="resetFileTypesTID"
             onClick={() => {
-              selectedItem.current = undefined;
-              items.current = defaultSettings.supportedFileTypes;
-              dispatch(
-                SettingsActions.setSupportedFileTypes(supportedFileTypes),
+              openConfirmDialog(
+                t('core:confirm'),
+                t('core:confirmResetFileTypes'),
+                (result) => {
+                  if (result) {
+                    selectedItem.current = undefined;
+                    items.current = [...defaultSettings.supportedFileTypes];
+                    setRows([...defaultSettings.supportedFileTypes]);
+                    dispatch(
+                      SettingsActions.setSupportedFileTypes(
+                        defaultSettings.supportedFileTypes,
+                      ),
+                    );
+                  }
+                },
+                'cancelResetFileTypesDialog',
+                'confirmResetFileTypesDialog',
+                'confirmResetFileTypesDialogContent',
               );
             }}
             color="error"

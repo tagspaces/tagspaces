@@ -833,7 +833,7 @@ export const actions = {
     extensionId,
     enabled,
   }),*/
-  setSupportedFileTypes: (supportedFileTypes: []) => ({
+  setSupportedFileTypes: (supportedFileTypes: Array<TS.FileTypes>) => ({
     type: types.SET_SUPPORTED_FILE_TYPES,
     supportedFileTypes,
   }),
