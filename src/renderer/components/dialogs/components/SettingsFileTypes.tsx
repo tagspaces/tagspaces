@@ -41,10 +41,13 @@ import { dataTidFormat } from '-/services/test';
 import { getUserDataDir } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
-import FormControl from '@mui/material/FormControl';
-import InputAdornment from '@mui/material/InputAdornment';
-import MenuItem from '@mui/material/MenuItem';
-import Paper from '@mui/material/Paper';
+import {
+  Box,
+  FormControl,
+  InputAdornment,
+  MenuItem,
+  Paper,
+} from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { useEffect, useReducer, useRef, useState } from 'react';
@@ -64,6 +67,7 @@ function SettingsFileTypes() {
   const [rows, setRows] = useState<Array<TS.FileTypes>>([
     ...supportedFileTypes,
   ]);
+  const [filterValue, setFilterValue] = useState<string>('');
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
@@ -171,6 +175,16 @@ function SettingsFileTypes() {
 
   const sanitizeFileTypeInput = (fileTypeInput) =>
     fileTypeInput.replace(/[^a-zA-Z0-9 ]/g, '');
+
+  const getFilteredRows = () => {
+    if (!filterValue.trim()) {
+      return items.current;
+    }
+    const lowerFilter = filterValue.toLowerCase();
+    return items.current.filter((item) =>
+      item.type.toLowerCase().includes(lowerFilter),
+    );
+  };
 
   const dataGridColumns: GridColDef[] = [
     {
@@ -395,52 +409,68 @@ function SettingsFileTypes() {
         paddingLeft: '10px',
       }}
     >
-      <TsButton
-        data-tid="addNewFileTypeTID"
-        onClick={onAddFileType}
+      <Box
         sx={{
-          marginTop: AppConfig.defaultSpaceBetweenButtons,
-          marginBottom: AppConfig.defaultSpaceBetweenButtons,
+          display: 'inline-flex',
+          alignItems: 'center',
+          paddingTop: AppConfig.defaultSpaceBetweenButtons,
         }}
-        startIcon={<CreateFileIcon />}
       >
-        {t('core:addNewFileType')}
-      </TsButton>
-      {devMode && (
-        <TsButton
-          data-tid="resetFileTypesTID"
-          onClick={() => {
-            selectedItem.current = undefined;
-            items.current = defaultSettings.supportedFileTypes;
-            dispatch(SettingsActions.setSupportedFileTypes(supportedFileTypes));
-          }}
-          variant="text"
-          startIcon={<ReloadIcon />}
+        <TsTextField
+          placeholder={t('Filter by extension...')}
+          value={filterValue}
+          onChange={(e) => setFilterValue(e.target.value)}
           sx={{
-            // color: 'red',
-            margin: AppConfig.defaultSpaceBetweenButtons,
+            maxWidth: '200px',
+            marginRight: AppConfig.defaultSpaceBetweenButtons,
           }}
+        />
+        <TsButton
+          data-tid="addNewFileTypeTID"
+          onClick={onAddFileType}
+          sx={{
+            marginRight: AppConfig.defaultSpaceBetweenButtons,
+          }}
+          startIcon={<CreateFileIcon />}
         >
-          {t('core:resetFileType')}
+          {t('core:addNewFileType')}
         </TsButton>
-      )}
-      <DataGrid
-        rows={rows}
-        columns={dataGridColumns}
-        getRowId={(row) => row.id || row.type}
-        disableColumnMenu
-        // pageSizeOptions={[100]}
-        disableRowSelectionOnClick
-        // hideFooter
-        sx={{
-          '& .MuiDataGrid-cell': {
-            padding: '4px',
-          },
-          '& .MuiDataGrid-columnHeader': {
-            padding: '8px',
-          },
-        }}
-      />
+        {devMode && (
+          <TsButton
+            data-tid="resetFileTypesTID"
+            onClick={() => {
+              selectedItem.current = undefined;
+              items.current = defaultSettings.supportedFileTypes;
+              dispatch(
+                SettingsActions.setSupportedFileTypes(supportedFileTypes),
+              );
+            }}
+            color="error"
+            startIcon={<ReloadIcon />}
+          >
+            {t('core:resetFileType')}
+          </TsButton>
+        )}
+      </Box>
+      <div style={{ height: 'calc(100% - 50px)', width: '100%' }}>
+        <DataGrid
+          rows={getFilteredRows()}
+          columns={dataGridColumns}
+          getRowId={(row) => row.id || row.type}
+          disableColumnMenu
+          // pageSizeOptions={[100]}
+          disableRowSelectionOnClick
+          // hideFooter
+          sx={{
+            '& .MuiDataGrid-cell': {
+              padding: '4px',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              padding: '8px',
+            },
+          }}
+        />
+      </div>
       <ColorPickerDialog
         open={isColorPickerVisible}
         setColor={handleChangeColor}
