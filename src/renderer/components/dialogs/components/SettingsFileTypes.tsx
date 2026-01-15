@@ -404,7 +404,7 @@ function SettingsFileTypes() {
     {
       field: 'type',
       headerName: t('core:fileExtension'),
-      width: 130,
+      width: 140,
       renderCell: (params) => (
         <TypeCell
           item={params.row}
@@ -599,6 +599,17 @@ function SettingsFileTypes() {
           disableColumnSelector
           rowHeight={60}
           // hideFooter
+          sx={{
+            '& .MuiDataGrid-row:hover': {
+              backgroundColor: 'transparent',
+            },
+            '& .MuiDataGrid-cell:focus': {
+              outline: 'none',
+            },
+            '& .MuiDataGrid-cell:focus-within': {
+              outline: 'none',
+            },
+          }}
         />
       </div>
       <ColorPickerDialog
