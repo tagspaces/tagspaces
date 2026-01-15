@@ -1151,5 +1151,17 @@
   "filesPerMonth": "Files per month",
   "confirmResetFileTypes": "Are you sure you want to reset all custom file type settings to default?",
   "filterByFileExtension": "Filter by extension...",
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December",
   "-": "-"
 }
