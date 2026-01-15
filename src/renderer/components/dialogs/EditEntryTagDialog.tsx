@@ -125,7 +125,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
     return (
       <DialogContent
         data-tid="editEntryTagDialog"
-        sx={{ overflow: 'auto', minWidth: '545px' }}
+        sx={{ overflow: 'auto', minWidth: '300px' }}
       >
         <FormControl fullWidth error={haveError('tag')}>
           <TsTextField

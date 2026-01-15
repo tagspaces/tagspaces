@@ -98,7 +98,10 @@ function TagsSelect(props: Props) {
     tags = [],
     tagMode,
     handleNewTags,
+    handleChange,
     generateButton,
+    tagSearchType,
+    dataTid,
   } = props;
 
   useEffect(() => {
@@ -122,7 +125,7 @@ function TagsSelect(props: Props) {
           handleNewTags([]);
         }
         if (reason === 'selectOption') {
-          props.handleChange(props.tagSearchType, selectedTags, reason);
+          handleChange(tagSearchType, selectedTags, reason);
         } else if (reason === 'createOption') {
           if (selectedTags && selectedTags.length) {
             const newTags = parseTagsInput(
@@ -130,12 +133,12 @@ function TagsSelect(props: Props) {
             );
             selectedTags.pop();
             const allNewTags = [...selectedTags, ...newTags];
-            props.handleChange(props.tagSearchType, allNewTags, reason);
+            handleChange(tagSearchType, allNewTags, reason);
           }
         } else if (reason === 'remove-value') {
-          props.handleChange(props.tagSearchType, selectedTags, reason);
+          handleChange(tagSearchType, selectedTags, reason);
         } else if (reason === 'clear') {
-          props.handleChange(props.tagSearchType, [], reason);
+          handleChange(tagSearchType, [], reason);
         }
       }
     } else {
@@ -202,7 +205,7 @@ function TagsSelect(props: Props) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Autocomplete
-        data-tid={props.dataTid}
+        data-tid={dataTid}
         disabled={currentLocation?.isReadOnly}
         multiple
         options={!currentLocation?.isReadOnly ? allTags.current : []}
