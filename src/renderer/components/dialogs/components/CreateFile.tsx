@@ -105,17 +105,19 @@ function CreateFile(props: Props) {
   }
 
   const onInputFocus = (event) => {
-    if (fileName) {
-      event.preventDefault();
-      const { target } = event;
-      target.focus();
-      const indexOfBracket = fileName.indexOf(AppConfig.beginTagContainer);
-      let endRange = fileName.length;
-      if (indexOfBracket > 0) {
-        endRange = indexOfBracket;
+    setTimeout(() => {
+      if (fileName) {
+        event.preventDefault();
+        const { target } = event;
+        const indexOfBracket = fileName.indexOf(AppConfig.beginTagContainer);
+        let endRange = fileName.length;
+        if (indexOfBracket > 0) {
+          endRange = indexOfBracket;
+        }
+        target.setSelectionRange(0, endRange);
       }
-      target.setSelectionRange(0, endRange);
-    }
+      // event?.target.setSelectionRange(0, 0);
+    }, 100);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
