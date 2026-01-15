@@ -632,7 +632,7 @@ function EntryProperties({ tileServer }: Props) {
               keyboard={false}
               dragging={true}
               center={geoLocation}
-              zoom={13}
+              zoom={10}
               scrollWheelZoom={false}
               zoomControl={true}
               attributionControl={false}
@@ -651,57 +651,44 @@ function EntryProperties({ tileServer }: Props) {
                   position={[geoLocation.lat, geoLocation.lng]}
                 >
                   <Popup>
-                    <Typography
-                      sx={{ margin: 0, color: theme.palette.text.primary }}
+                    <Box
+                      sx={{
+                        marginBottom: '-15px',
+                        marginTop: '-22px',
+                        marginLeft: '-22px',
+                        marginRight: '-25px',
+                        padding: '10px',
+                        backgroundColor: 'background.default',
+                        borderRadius: AppConfig.defaultCSSRadius,
+                      }}
                     >
-                      {t('core:lat') + ' : ' + geoLocation.lat}
-                      <br />
-                      {t('core:lat') + ' : ' + geoLocation.lng}
-                    </Typography>
-                    <br />
-                    <p>
-                      <TsButton
-                        onClick={() => {
-                          openUrl(
-                            'https://www.openstreetmap.org/?mlat=' +
-                              geoLocation.lat +
-                              '&mlon=' +
-                              geoLocation.lng +
-                              '#map=14/' +
-                              geoLocation.lat +
-                              '/' +
-                              geoLocation.lng,
-                          );
-                        }}
-                        title="Open in OpenStreetMap"
-                      >
-                        Open in
-                        <br />
-                        OpenStreetMap
-                      </TsButton>
-                      <TsButton
-                        sx={{
-                          marginLeft: AppConfig.defaultSpaceBetweenButtons,
-                        }}
-                        onClick={() => {
-                          openUrl(
-                            'https://maps.google.com/?q=' +
-                              geoLocation.lat +
-                              ',' +
-                              geoLocation.lng +
-                              '&ll=' +
-                              geoLocation.lat +
-                              ',' +
-                              geoLocation.lng +
-                              '&z=15',
-                          );
-                        }}
-                      >
-                        Open in
-                        <br />
-                        Google Maps
-                      </TsButton>
-                    </p>
+                      <Typography sx={{ color: 'text.primary' }}>
+                        {`${t('core:lat')}: ${geoLocation.lat}, ${t('core:lng')}: ${geoLocation.lng}`}
+                      </Typography>
+                      <Box sx={{ display: 'inline-flex' }}>
+                        <TsButton
+                          onClick={() => {
+                            openUrl(
+                              `https://www.openstreetmap.org/?mlat=${geoLocation.lat}&mlon=${geoLocation.lng}#map=10/${geoLocation.lat}/${geoLocation.lng}`,
+                            );
+                          }}
+                        >
+                          {t('core:openInApp', { appName: 'OpenStreetMap' })}
+                        </TsButton>
+                        <TsButton
+                          sx={{
+                            marginLeft: AppConfig.defaultSpaceBetweenButtons,
+                          }}
+                          onClick={() => {
+                            openUrl(
+                              `https://maps.google.com/?q=${geoLocation.lat},${geoLocation.lng}&ll=${geoLocation.lat},${geoLocation.lng}&z=10`,
+                            );
+                          }}
+                        >
+                          {t('core:openInApp', { appName: 'Google Maps' })}
+                        </TsButton>
+                      </Box>
+                    </Box>
                   </Popup>
                 </Marker>
               </LayerGroup>

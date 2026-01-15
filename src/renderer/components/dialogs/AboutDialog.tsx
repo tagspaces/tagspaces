@@ -176,6 +176,7 @@ function AboutDialog(props: Props) {
           </strong>
           is made possible by the TagSpaces project and other open source
           software listed in the:
+          <br />
           <TsButton
             sx={{ marginTop: '5px' }}
             onClick={() => openThirdPartyLibsDialog()}
