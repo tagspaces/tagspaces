@@ -59,7 +59,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
   const { t } = useTranslation();
   const { addTagsToFsEntries, editTagForEntry } = useTaggingActionsContext();
   const [showAdvancedMode, setShowAdvancedMode] = useState(false);
-  const [editDisabled, setEditDisabled] = useState(false);
+  const [manualEditing, setManualEditing] = useState(false);
   const { setError, haveError } = useValidation();
   const titleRef = useRef<string>(tag?.title || '');
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -120,16 +120,17 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
 
   const renderContent = () => {
     const showGeoEditor = GeoTagEditor && isGeoTag(tag?.title);
+    const advancedEditing = showGeoEditor || isShowDatePeriodEditor;
 
     return (
       <DialogContent
         data-tid="editEntryTagDialog"
-        sx={{ overflow: 'auto', minWidth: '545px', minHeight: '190px' }}
+        sx={{ overflow: 'auto', minWidth: '545px' }}
       >
         <FormControl fullWidth error={haveError('tag')}>
           <TsTextField
             error={haveError('tag')}
-            disabled={editDisabled}
+            disabled={advancedEditing && !manualEditing}
             name="title"
             autoFocus
             updateValue={setTitle}
@@ -144,8 +145,11 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
             data-tid="editTagEntryDialog_input"
             slotProps={{
               input: {
-                endAdornment: (
-                  <EditIcon onClick={() => setEditDisabled(!editDisabled)} />
+                endAdornment: advancedEditing && (
+                  <EditIcon
+                    color="action"
+                    onClick={() => setManualEditing(!manualEditing)}
+                  />
                 ),
               },
             }}
@@ -154,7 +158,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
             <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>
           )}
         </FormControl>
-        {showGeoEditor && (
+        {!manualEditing && showGeoEditor && (
           <GeoTagEditor
             geoTag={tag?.title}
             onChange={setTitle}
@@ -164,7 +168,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
             setError={setError}
           />
         )}
-        {isShowDatePeriodEditor && tag && (
+        {!manualEditing && isShowDatePeriodEditor && tag && (
           <DateTagEditor
             datePeriodTag={titleRef.current || tag?.title}
             onChange={setTitle}
@@ -192,38 +196,24 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
       aria-labelledby="draggable-dialog-title"
     >
       <TsDialogTitle
-        dialogTitle={t('core:tagProperties')}
+        dialogTitle={t('core:editTagTitle')}
         closeButtonTestId="closeEditEntryTagTID"
         onClose={closeDialog}
       />
       {renderContent()}
-      <TsDialogActions style={{ justifyContent: 'space-between' }}>
-        {GeoTagEditor && isGeoTag(tag?.title) ? (
-          <TsButton
-            data-tid="switchAdvancedModeTID"
-            onClick={() => setShowAdvancedMode(!showAdvancedMode)}
-          >
-            {showAdvancedMode
-              ? t('core:switchSimpleMode')
-              : t('core:switchAdvancedMode')}
-          </TsButton>
-        ) : (
-          <div />
-        )}
-        <div>
-          <TsButton data-tid="closeEditTagEntryDialog" onClick={closeDialog}>
-            {t('core:cancel')}
-          </TsButton>
-          <TsButton
-            disabled={haveError() && !isTagChanged}
-            sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
-            onClick={onConfirm}
-            data-tid="confirmEditTagEntryDialog"
-            variant="contained"
-          >
-            {t('core:ok')}
-          </TsButton>
-        </div>
+      <TsDialogActions>
+        <TsButton data-tid="closeEditTagEntryDialog" onClick={closeDialog}>
+          {t('core:cancel')}
+        </TsButton>
+        <TsButton
+          disabled={haveError() && !isTagChanged}
+          sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+          onClick={onConfirm}
+          data-tid="confirmEditTagEntryDialog"
+          variant="contained"
+        >
+          {t('core:ok')}
+        </TsButton>
       </TsDialogActions>
     </Dialog>
   );
