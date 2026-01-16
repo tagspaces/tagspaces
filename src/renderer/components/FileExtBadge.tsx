@@ -23,6 +23,8 @@ import { styled } from '@mui/material/styles';
 const FileExtBadge = styled(Typography)(({ theme }) => ({
   fontSize: '12px',
   minWidth: 40,
+  width: 'fit-content',
+  maxWidth: '100px',
   color: 'white',
   borderRadius: AppConfig.defaultCSSRadius,
   textAlign: 'center',
