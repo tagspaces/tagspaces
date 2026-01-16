@@ -619,3 +619,92 @@ export function splitValue(value: string, index: number) {
 
   return parseFloat(currentLat) + ',' + parseFloat(currentLng);
 }
+
+// Date object to '2025-12-23T04:34:23.641' without taking the timezone into consideration
+export function getLocalISOString(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const ms = String(date.getMilliseconds()).padStart(3, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${ms}`;
+}
+
+// Date object to '2025-12-23'
+export function formatDateForEchart(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function extractDate(value: string): Date | null {
+  let parsingValue = value;
+  // handling for split tags like booked-20251224
+  const values = parsingValue.split('-');
+  if (values.length > 0) {
+    parsingValue = values[1];
+  }
+
+  let parsedDate = parseYearMonthDayString(parsingValue);
+  let date;
+  if (parsedDate) {
+    date = parsedDate;
+  } else {
+    parsedDate = parseYearMonthString(parsingValue);
+    if (parsedDate) {
+      date = parsedDate;
+    } else {
+      parsedDate = parseYearString(parsingValue);
+      date = parsedDate;
+    }
+  }
+  return date;
+}
+
+export function parseYearMonthDayString(value: string): Date | null {
+  if (!/^\d{8}$/.test(value)) {
+    return null; // Invalid format
+  }
+
+  const year = parseInt(value.slice(0, 4), 10);
+  const month = parseInt(value.slice(4, 6), 10);
+  const day = parseInt(value.slice(6, 8), 10);
+
+  if (month < 1 || month > 12) {
+    return null; // Invalid month
+  }
+
+  if (day < 1 || day > 31) {
+    return null; // Invalid day
+  }
+  const parsedDate = new Date(year, month - 1, day); // JS months are 0-based
+  return parsedDate;
+}
+
+export function parseYearMonthString(value: string): Date | null {
+  if (!/^\d{6}$/.test(value)) {
+    return null; // Invalid format
+  }
+
+  const year = parseInt(value.slice(0, 4), 10);
+  const month = parseInt(value.slice(4, 6), 10);
+
+  if (month < 1 || month > 12) {
+    return null; // Invalid month
+  }
+
+  return new Date(year, month - 1, 1); // JS months are 0-based
+}
+
+export function parseYearString(value: string): Date | null {
+  if (!/^\d{4}$/.test(value)) {
+    return null; // Invalid format
+  }
+
+  const year = parseInt(value.slice(0, 4), 10);
+
+  return new Date('' + year);
+}
