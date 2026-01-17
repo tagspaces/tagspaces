@@ -15,12 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React from 'react';
-import { Milkdown, useEditor } from '@milkdown/react';
 import { createCrepeEditor } from '-/components/md/utils';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { Crepe } from '@milkdown/crepe';
+import { Milkdown, useEditor } from '@milkdown/react';
 
 interface LightMdEditorProps {
   defaultContent: string;
@@ -29,7 +28,7 @@ interface LightMdEditorProps {
 function LightMdEditor(props: LightMdEditorProps) {
   const { defaultContent, placeholder } = props;
 
-  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { currentDirectory } = useDirectoryContentContext();
   const { openLink } = useOpenedEntryContext();
   useEditor(
     (root) => {
@@ -44,7 +43,7 @@ function LightMdEditor(props: LightMdEditorProps) {
           [Crepe.Feature.Cursor]: false,
         },
         placeholder,
-        currentDirectoryPath,
+        currentDirectory?.path,
         openLink,
       );
     },

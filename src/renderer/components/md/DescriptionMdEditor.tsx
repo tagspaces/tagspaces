@@ -15,22 +15,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-import React, { useRef, forwardRef, useEffect } from 'react';
-import { Milkdown, useEditor } from '@milkdown/react';
-import { EditorStatus, commandsCtx } from '@milkdown/kit/core';
-import { getMarkdown, $useKeymap, $command } from '@milkdown/kit/utils';
-import { replaceAll } from '@milkdown/utils';
 import { Crepe } from '@milkdown/crepe';
+import { EditorStatus, commandsCtx } from '@milkdown/kit/core';
+import { $command, $useKeymap, getMarkdown } from '@milkdown/kit/utils';
+import { Milkdown, useEditor } from '@milkdown/react';
+import { replaceAll } from '@milkdown/utils';
+import { forwardRef, useEffect, useRef } from 'react';
 
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { createCrepeEditor } from '-/components/md/utils';
 import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
+import { createCrepeEditor } from '-/components/md/utils';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
+import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
-import { Pro } from '-/pro';
 
 interface CrepeMdEditorProps {
   //onChange?: (markdown: string, prevMarkdown: string) => void;
@@ -41,7 +41,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
   (props, ref) => {
     const { onFocus } = props;
     const { t } = useTranslation();
-    const { currentDirectoryPath } = useDirectoryContentContext();
+    const { currentDirectory } = useDirectoryContentContext();
     const { metaActions } = useEditedEntryMetaContext();
     const {
       saveDescription,
@@ -72,7 +72,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
           isEditDescriptionMode,
           {},
           placeholder,
-          currentDirectoryPath,
+          currentDirectory.path,
           openLink,
           (newMd: string) => {
             setDescription(newMd);
@@ -111,7 +111,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
 
         return crepe;
       },
-      [currentDirectoryPath], //, isEditDescriptionMode],
+      [currentDirectory?.path], //, isEditDescriptionMode],
     );
 
     // Whenever openedEntry changes and the user hasn’t manually edited,
