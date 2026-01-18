@@ -9,6 +9,12 @@
   --crepe-font-title: 'Open Sans', Arial, Helvetica, sans-serif !important;
 }
 
+.milkdown .ProseMirror { padding: 10px; }
+
+.milkdown .ProseMirror img { max-width: 99%; }
+
+.milkdown .ProseMirror a:hover { cursor: pointer; }
+
 .milkdown .ProseMirror a[href^="http://"]:after, 
 .milkdown .ProseMirror a[href^="https://"]:after {
   content: ' ⧉';

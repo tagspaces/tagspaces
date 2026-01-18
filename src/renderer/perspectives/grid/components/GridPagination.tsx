@@ -344,9 +344,7 @@ function GridPagination(props: Props) {
           {`
             .gridPagination .milkdown .ProseMirror h1 { margin-top: 10px; }
             .gridPagination .milkdown { border-radius: ${AppConfig.defaultCSSRadius}; }
-            .gridPagination .milkdown .ProseMirror { padding: 10px; }
             .gridPagination .milkdown .ProseMirror a { color: ${theme.palette.primary.main}; }
-            .gridPagination .milkdown .ProseMirror img { max-width: 99%; }
           `}
         </style>
         <MilkdownProvider>

@@ -274,9 +274,7 @@ function ChatView() {
           ref={milkdownDivRef}
         >
           <style>{`
-            #chatMD .milkdown .ProseMirror { padding: 10px; }
             #chatMD .milkdown .ProseMirror a { color: ${theme.palette.primary.main}; }
-            #chatMD .milkdown .ProseMirror img { max-width: 99%; }
           `}</style>
           <MilkdownProvider>
             <ChatMdEditor

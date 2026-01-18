@@ -81,7 +81,6 @@ function EditDescription() {
         <style>{`
           .descriptionEditor .milkdown .ProseMirror { padding: 10px 30px 10px 80px; }
           .descriptionEditor .milkdown .ProseMirror a { color: ${theme.palette.primary.main}; }
-          .descriptionEditor .milkdown .ProseMirror img { max-width: 99%; }
         `}</style>
         <MilkdownProvider>
           <DescriptionMdEditor ref={fileDescriptionRef} />
