@@ -28,10 +28,19 @@ body {
   margin: 0;
 }
 
+/* needed for crepe */ 
 .full-height {
   height: 100%;
 }
+
+/* needed for crepe */
 .mx-auto{
   margin-left: auto;
   margin-right: auto;
+}
+
+@media print {
+  html, body {
+    height: auto;
+  }
 }
