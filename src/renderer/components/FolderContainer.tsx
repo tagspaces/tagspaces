@@ -151,55 +151,73 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   // Memoized toggle buttons for perspectives
   const perspectiveToggleButtons = useMemo(
     () =>
-      AvailablePerspectives.map((perspective) => (
-        <TsToggleButton
-          value={perspective.id}
-          aria-label={perspective.id}
-          key={perspective.id}
-          data-tid={perspective.key}
-          onClick={() => switchPerspective(perspective.id)}
-          sx={{
-            opacity: 0.9,
-            backgroundColor: theme.palette.background.default,
-            border: `1px solid ${theme.palette.divider}`,
-          }}
-        >
-          <Tooltip
-            title={
-              perspective.title +
-              (perspective.beta ? ' ' + t('core:betaStatus').toUpperCase() : '')
-            }
-          >
-            <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>
-          </Tooltip>
-        </TsToggleButton>
-      )),
+      AvailablePerspectives.map((perspective) => {
+        let includePerspective = true;
+        if (AppConfig.hideProFeatures && !Pro && perspective.pro === true) {
+          includePerspective = false;
+        }
+        return (
+          includePerspective && (
+            <TsToggleButton
+              value={perspective.id}
+              aria-label={perspective.id}
+              key={perspective.id}
+              data-tid={perspective.key}
+              onClick={() => switchPerspective(perspective.id)}
+              sx={{
+                opacity: 0.9,
+                backgroundColor: theme.palette.background.default,
+                border: `1px solid ${theme.palette.divider}`,
+              }}
+            >
+              <Tooltip
+                title={
+                  perspective.title +
+                  (perspective.beta
+                    ? ' ' + t('core:betaStatus').toUpperCase()
+                    : '')
+                }
+              >
+                <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>
+              </Tooltip>
+            </TsToggleButton>
+          )
+        );
+      }),
     [theme.palette.background.default, theme.palette.divider, t],
   );
 
   // Memoized menu items for perspectives
   const perspectiveMenuItems = useMemo(
     () =>
-      AvailablePerspectives.map((perspective) => (
-        <MenuItem
-          key={perspective.key}
-          data-tid={perspective.key}
-          onClick={() => {
-            handlePerspectiveMenuClose();
-            switchPerspective(perspective.id);
-          }}
-        >
-          <ListItemIcon>{perspective.icon}</ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                {perspective.title}
-                {perspective.beta && <BetaLabel />}
-              </>
-            }
-          />
-        </MenuItem>
-      )),
+      AvailablePerspectives.map((perspective) => {
+        let includePerspective = true;
+        if (AppConfig.hideProFeatures && !Pro && perspective.pro === true) {
+          includePerspective = false;
+        }
+        return (
+          includePerspective && (
+            <MenuItem
+              key={perspective.key}
+              data-tid={perspective.key}
+              onClick={() => {
+                handlePerspectiveMenuClose();
+                switchPerspective(perspective.id);
+              }}
+            >
+              <ListItemIcon>{perspective.icon}</ListItemIcon>
+              <ListItemText
+                primary={
+                  <>
+                    {perspective.title}
+                    {perspective.beta && <BetaLabel />}
+                  </>
+                }
+              />
+            </MenuItem>
+          )
+        );
+      }),
     [handlePerspectiveMenuClose],
   );
 

@@ -167,7 +167,7 @@ const fuseOptions = {
 };
 
 // Constructs the string for the JMESPath search query.  We first filter for all ORTags, then continuously pipe the result in to the
-// filters for all AND and NOT tags. The Pro version can pipe the result into an additional filter for extension instead of tags.title.
+// filters for all AND and NOT tags. Both versions can pipe the result into an additional filter for extension instead of tags.title.
 // The final string for the tag search should look like this:
 // index[? tags[? title=='ORTag1' || title=='ORTag2']] | [? tags[? title=='ANDTag1']] | [? tags[? title=='ANDTag2']] | [?!(tags[? title=='NOTTag1'])] | [?!(tags[? title=='NOTTag2'])] | extensionFilter
 function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
@@ -510,7 +510,6 @@ function filterIndex(
   data: TS.SearchIndex[],
   searchQuery: TS.SearchQuery,
 ): TS.SearchIndex[] {
-  console.log('Pro filter ' + JSON.stringify(searchQuery));
   let results: TS.SearchIndex[] = data;
 
   results = filterByDatePeriod(

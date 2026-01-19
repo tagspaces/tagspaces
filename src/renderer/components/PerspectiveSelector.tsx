@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import { BetaLabel } from '-/components/HelperComponents';
 import TsSelect from '-/components/TsSelect';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
@@ -45,12 +46,11 @@ function PerspectiveSelector(props: Props) {
   const perspectiveSelectorMenuItems = [];
   perspectiveSelectorMenuItems.push(
     <MenuItem
-      sx={{ display: 'flex' }}
       key={PerspectiveIDs.UNSPECIFIED}
       value={PerspectiveIDs.UNSPECIFIED}
     >
-      <div style={{ display: 'flex' }}>
-        <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <ListItemIcon>
           <LayersClearIcon />
         </ListItemIcon>
         <ListItemText>{t('core:unspecified')}</ListItemText>
@@ -59,20 +59,15 @@ function PerspectiveSelector(props: Props) {
   );
 
   AvailablePerspectives.forEach((perspective) => {
-    if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
-      return;
-    }
     let includePerspective = true;
-    if (!Pro && perspective.pro === true) {
+    if (AppConfig.hideProFeatures && !Pro && perspective.pro === true) {
       includePerspective = false;
     }
     if (includePerspective) {
       perspectiveSelectorMenuItems.push(
         <MenuItem key={perspective.key} value={perspective.id}>
-          <div style={{ display: 'flex' }}>
-            <ListItemIcon style={{ paddingLeft: 3, paddingTop: 3 }}>
-              {perspective.icon}
-            </ListItemIcon>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <ListItemIcon>{perspective.icon}</ListItemIcon>
             <ListItemText>
               {perspective.title}&nbsp;
               {perspective.beta && <BetaLabel />}

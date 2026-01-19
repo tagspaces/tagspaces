@@ -1,3 +1,4 @@
+import AppConfig from '-/AppConfig';
 import {
   CloseIcon,
   EntryBookmarkAddIcon,
@@ -65,29 +66,31 @@ function EntryContainerNav(props: Props) {
         alignItems: 'center',
       }}
     >
-      <ProTooltip tooltip={t('core:toggleBookmark')}>
-        <TsIconButton
-          data-tid="toggleBookmarkTID"
-          aria-label="bookmark"
-          onClick={bookmarkClick}
-          sx={
-            {
-              WebkitAppRegion: 'no-drag',
-            } as React.CSSProperties & { WebkitAppRegion?: string }
-          }
-        >
-          {bookmarksContext &&
-          bookmarksContext.haveBookmark(openedEntry.path) ? (
-            <EntryBookmarkIcon
-              sx={{
-                color: 'primary.main',
-              }}
-            />
-          ) : (
-            <EntryBookmarkAddIcon />
-          )}
-        </TsIconButton>
-      </ProTooltip>
+      {!AppConfig.hideProFeatures && (
+        <ProTooltip tooltip={t('core:toggleBookmark')}>
+          <TsIconButton
+            data-tid="toggleBookmarkTID"
+            aria-label="bookmark"
+            onClick={bookmarkClick}
+            sx={
+              {
+                WebkitAppRegion: 'no-drag',
+              } as React.CSSProperties & { WebkitAppRegion?: string }
+            }
+          >
+            {bookmarksContext &&
+            bookmarksContext.haveBookmark(openedEntry.path) ? (
+              <EntryBookmarkIcon
+                sx={{
+                  color: 'primary.main',
+                }}
+              />
+            ) : (
+              <EntryBookmarkAddIcon />
+            )}
+          </TsIconButton>
+        </ProTooltip>
+      )}
       {isFile && (
         <>
           <TsIconButton

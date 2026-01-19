@@ -252,18 +252,20 @@ function MainToolbar(props: Props) {
             <DeleteIcon />
           </TsToolbarButton>
         )}
-        {Pro && currentLocation?.haveObjectStoreSupport() && (
-          <TsToolbarButton
-            tooltip={t('core:shareFiles')}
-            title={t('core:shareFiles')}
-            aria-label={t('core:shareFiles')}
-            data-tid={prefixDataTID + 'PerspectiveShareFiles'}
-            onClick={() => openShareFilesDialog()}
-            disabled={selectedEntries.length < 1}
-          >
-            <ShareIcon />
-          </TsToolbarButton>
-        )}
+        {!AppConfig.hideProFeatures &&
+          Pro &&
+          currentLocation?.haveObjectStoreSupport() && (
+            <TsToolbarButton
+              tooltip={t('core:shareFiles')}
+              title={t('core:shareFiles')}
+              aria-label={t('core:shareFiles')}
+              data-tid={prefixDataTID + 'PerspectiveShareFiles'}
+              onClick={() => openShareFilesDialog()}
+              disabled={selectedEntries.length < 1}
+            >
+              <ShareIcon />
+            </TsToolbarButton>
+          )}
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
       </Box>
       <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
@@ -280,7 +282,8 @@ function MainToolbar(props: Props) {
           <DownloadIcon />
         </TsToolbarButton>
       )}
-      {Pro &&
+      {!AppConfig.hideProFeatures &&
+        Pro &&
         !AppConfig.isCordovaAndroid && ( // SaveAs do not work on Android
           <TsToolbarButton
             tooltip={t('core:exportCsv')}

@@ -202,4 +202,8 @@ AppConfig.defaultTemplate =
         fileNameTmpl: 'note[{timestamp}]',
       };
 
+AppConfig.hideProFeatures =
+  typeof window !== 'undefined' &&
+  (window.ExtHideProFeatures !== undefined ? window.ExtHideProFeatures : false);
+
 export default AppConfig;

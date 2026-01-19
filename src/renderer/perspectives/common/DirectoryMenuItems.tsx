@@ -283,31 +283,33 @@ export function getDirectoryMenuItems(
           <ListItemText primary={t('core:createLinkFile')} />
         </MenuItem>,
       );
-      menuItems.push(
-        <MenuItem
-          key="createNewFromTemplate"
-          data-tid="createNewFromTemplateTID"
-          disabled={!Pro}
-          onClick={() => {
-            onClose();
-            createNewFile();
-          }}
-        >
-          <ListItemIcon>
-            <TemplateFileIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                {t('core:createNewFromTemplate')}
-                {!Pro && <ProLabel />}
-              </>
-            }
-          />
-        </MenuItem>,
-      );
+      if (!AppConfig.hideProFeatures) {
+        menuItems.push(
+          <MenuItem
+            key="createNewFromTemplate"
+            data-tid="createNewFromTemplateTID"
+            disabled={!Pro}
+            onClick={() => {
+              onClose();
+              createNewFile();
+            }}
+          >
+            <ListItemIcon>
+              <TemplateFileIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <>
+                  {t('core:createNewFromTemplate')}
+                  {!Pro && <ProLabel />}
+                </>
+              }
+            />
+          </MenuItem>,
+        );
+      }
     }
-    if (createNewAudio) {
+    if (createNewAudio && !AppConfig.hideProFeatures) {
       menuItems.push(
         <MenuItem
           key="createNewAudio"
@@ -368,13 +370,20 @@ export function getDirectoryMenuItems(
       );
     }
   }
-  if (Pro && !isReadOnlyMode && selectedEntries.length < 2) {
+  if (selectedEntries.length < 2) {
     menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
-    if (setFolderThumbnail && perspectiveMode) {
+    if (
+      !AppConfig.hideProFeatures &&
+      Pro &&
+      !isReadOnlyMode &&
+      setFolderThumbnail &&
+      perspectiveMode
+    ) {
       menuItems.push(
         <MenuItem
           key="setAsThumb"
           data-tid="setAsThumbTID"
+          disabled={!Pro}
           onClick={() => {
             onClose();
             setFolderThumbnail();
@@ -382,16 +391,23 @@ export function getDirectoryMenuItems(
         >
           <ListItemIcon>
             <CopyPictureIcon />
+            {!Pro && <ProLabel />}
           </ListItemIcon>
           <ListItemText primary={t('core:setAsParentFolderThumbnail')} />
         </MenuItem>,
       );
     }
-    if (changeFolderThumbnail) {
+    if (
+      !AppConfig.hideProFeatures &&
+      Pro &&
+      !isReadOnlyMode &&
+      changeFolderThumbnail
+    ) {
       menuItems.push(
         <MenuItem
           key="changeThumb"
           data-tid="changeThumbTID"
+          disabled={!Pro}
           onClick={() => {
             onClose();
             changeFolderThumbnail();
@@ -399,16 +415,23 @@ export function getDirectoryMenuItems(
         >
           <ListItemIcon>
             <PictureIcon />
+            {!Pro && <ProLabel />}
           </ListItemIcon>
           <ListItemText primary={t('core:changeThumbnail')} />
         </MenuItem>,
       );
     }
-    if (changeFolderBackground) {
+    if (
+      !AppConfig.hideProFeatures &&
+      Pro &&
+      !isReadOnlyMode &&
+      changeFolderBackground
+    ) {
       menuItems.push(
         <MenuItem
           key="changeBackground"
           data-tid="changeBackgroundTID"
+          disabled={!Pro}
           onClick={() => {
             onClose();
             changeFolderBackground();
@@ -416,6 +439,7 @@ export function getDirectoryMenuItems(
         >
           <ListItemIcon>
             <ChangeBackgroundIcon />
+            {!Pro && <ProLabel />}
           </ListItemIcon>
           <ListItemText primary={t('core:changeBackgroundColor')} />
         </MenuItem>,
@@ -460,7 +484,7 @@ export function getDirectoryMenuItems(
   }
 
   if (
-    selectedEntries.length < 2 &&
+    !AppConfig.hideProFeatures &&
     AppConfig.isElectron &&
     AppConfig.isMacLike &&
     !perspectiveMode &&
@@ -492,7 +516,6 @@ export function getDirectoryMenuItems(
   }
 
   if (AppConfig.isCordova && cameraTakePicture) {
-    // .isCordovaAndroid) {
     menuItems.push(
       <MenuItem
         key="takePicture"
@@ -509,41 +532,6 @@ export function getDirectoryMenuItems(
       </MenuItem>,
     );
   }
-  // if (!perspectiveMode && switchPerspective) {
-  //   menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
-  //   AvailablePerspectives.forEach((perspective) => {
-  //     let badge = <></>;
-  //     // if (!Pro && perspective.pro) {
-  //     //   badge = <ProLabel />;
-  //     // }
-  //     if (perspective.beta) {
-  //       badge = <BetaLabel />;
-  //     }
-  //     if (!devMode && perspective.id === PerspectiveIDs.CALENDAR) {
-  //       return;
-  //     }
-  //     menuItems.push(
-  //       <MenuItem
-  //         key={perspective.key}
-  //         data-tid={perspective.key}
-  //         onClick={() => {
-  //           onClose();
-  //           switchPerspective(perspective.id);
-  //         }}
-  //       >
-  //         <ListItemIcon>{perspective.icon}</ListItemIcon>
-  //         <ListItemText
-  //           primary={
-  //             <>
-  //               {perspective.title}
-  //               {badge}
-  //             </>
-  //           }
-  //         />
-  //       </MenuItem>,
-  //     );
-  //   });
-  // }
 
   if (selectedEntries.length < 2 && showProperties) {
     menuItems.push(<Divider key={`divider-${menuItems.length}`} />);

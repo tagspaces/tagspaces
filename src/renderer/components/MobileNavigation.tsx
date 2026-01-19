@@ -120,7 +120,7 @@ function MobileNavigation(props: Props) {
   const { currentUser } = useUserContext();
   const [showTeaserBanner, setShowTeaserBanner] = useState(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
-  const showProTeaser = !Pro && showTeaserBanner;
+  const showProTeaser = !AppConfig.hideProFeatures && !Pro && showTeaserBanner;
   const { hideDrawer, width } = props;
   const switchTheme = useCallback(
     () => dispatch(SettingsActions.switchTheme()),

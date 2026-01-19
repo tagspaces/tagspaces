@@ -91,6 +91,7 @@ declare interface Window {
   ExtDefaultFileTemplate?: any;
   ExtWorkSpaces?: Array<any>;
   ExtAuthor?: string;
+  ExtHideProFeatures?: boolean;
 }
 
 declare interface NodeModule {
