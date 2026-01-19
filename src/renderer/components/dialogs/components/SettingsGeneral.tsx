@@ -991,7 +991,9 @@ function SettingsGeneral() {
           height: 'calc( 100% - 80px )',
         }}
       >
-        {filteredSettings.map((item) => item.jsx)}
+        {filteredSettings.map((item, i) => (
+          <div key={'settings' + i}>{item.jsx}</div>
+        ))}
         {displayColorPicker && (
           <ColorPickerDialog
             open={displayColorPicker}
