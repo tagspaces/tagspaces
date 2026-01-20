@@ -1106,8 +1106,9 @@ export const isFirstRun = (state: any) => {
   return window.ExtIsFirstRun;
 };
 
+const kbObject: any = {};
 function generateKeyBindingObject(keyBindings: Array<Object>) {
-  const kbObject: any = {};
+  Object.keys(kbObject).forEach((k) => delete kbObject[k]);
   keyBindings.map((kb: any) => {
     kbObject[kb.name] = kb.command;
     return true;
