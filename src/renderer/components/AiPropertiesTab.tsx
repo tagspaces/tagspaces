@@ -16,13 +16,9 @@
  *
  */
 
-import AppConfig from '-/AppConfig';
-import AiGenDescButton from '-/components/chat/AiGenDescButton';
-import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
 import ChatView from '-/components/chat/ChatView';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { isDevMode } from '-/reducers/settings';
-import { Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 
 interface Props {}
@@ -31,9 +27,7 @@ function AiPropertiesTab(props: Props) {
   const { openedEntry } = useOpenedEntryContext();
   const devMode: boolean = useSelector(isDevMode);
 
-  if (!devMode || !openedEntry.isFile) {
-    return <ChatView />;
-  }
+  return <ChatView />;
 
   // const iframe = document.getElementsByTagName('iframe')[0];
 
@@ -52,17 +46,17 @@ function AiPropertiesTab(props: Props) {
   // }
   // alert(getIframeSelection());
 
-  return (
-    <Box position="relative" display="inline-flex">
-      <AiGenDescButton />
-      {openedEntry.meta?.description && (
-        <AiGenTagsButton
-          fromDescription={true}
-          sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
-        />
-      )}
-    </Box>
-  );
+  // return (
+  //   <Box position="relative" display="inline-flex">
+  //     <AiGenDescButton />
+  //     {openedEntry.meta?.description && (
+  //       <AiGenTagsButton
+  //         fromDescription={true}
+  //         sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+  //       />
+  //     )}
+  //   </Box>
+  // );
 }
 
 export default AiPropertiesTab;

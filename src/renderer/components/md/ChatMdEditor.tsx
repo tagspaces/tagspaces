@@ -99,7 +99,7 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
     }, [formattedChatContent]);
 
     function formatChatItems(chatItems: ChatItem[] = []): string {
-      if (!chatItems.length) return '';
+      if (!chatItems.length || !chatItems[0]) return '';
       const user = author || 'You';
       return [...chatItems]
         .reverse()
