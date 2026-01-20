@@ -108,6 +108,11 @@ export default function buildDesktopMenu(props: any, i18n) {
           role: 'paste',
         },
         {
+          label: i18n.t('pasteAndMatchStyle'),
+          accelerator: 'CmdOrCtrl+Shift+v',
+          role: 'pasteAndMatchStyle',
+        },
+        {
           label: i18n.t('selectAll'),
           accelerator: 'CmdOrCtrl+a',
           role: 'selectall',

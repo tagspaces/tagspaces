@@ -225,6 +225,7 @@
   "cut": "Cut",
   "copy": "Copy",
   "paste": "Paste",
+  "pasteAndMatchStyle": "Past & Match Style",
   "selectAll": "Select All",
   "view": "View",
   "help": "Help",
