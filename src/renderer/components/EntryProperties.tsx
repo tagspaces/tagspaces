@@ -119,41 +119,6 @@ interface Props {
   tileServer: TS.MapTileServer;
 }
 
-const defaultBackgrounds = [
-  'transparent',
-  '#00000044',
-  '#ac725e44',
-  '#f83a2244',
-  '#ff753744',
-  '#ffad4644',
-  '#42d69244',
-  '#00800044',
-  '#7bd14844',
-  '#fad16544',
-  '#92e1c044',
-  '#9fe1e744',
-  '#9fc6e744',
-  '#4986e744',
-  '#9a9cff44',
-  '#c2c2c244',
-  '#cca6ac44',
-  '#f691b244',
-  '#cd74e644',
-  '#a47ae244',
-  '#845EC260',
-  '#D65DB160',
-  '#FF6F9160',
-  '#FF967160',
-  '#FFC75F60',
-  '#F9F87160',
-  '#008E9B60',
-  '#008F7A60',
-  'linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 190) 45%, rgb(255, 204, 112) 100%)',
-  'linear-gradient( 102deg,  rgba(253,189,85,1) 8%, rgba(249,131,255,1) 100% )',
-  'radial-gradient( circle farthest-corner at 1.4% 2.8%,  rgba(240,249,249,1) 0%, rgba(182,199,226,1) 100% )',
-  'linear-gradient( 110deg,  rgba(48,207,208,1) 11.2%, rgba(51,8,103,1) 90% )',
-];
-
 function EntryProperties({ tileServer }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -971,32 +936,35 @@ function EntryProperties({ tileServer }: Props) {
                           }}
                         >
                           <Box sx={{ padding: '10px' }}>
-                            {defaultBackgrounds.map((background, cnt) => (
-                              <>
-                                <TsIconButton
-                                  key={cnt}
-                                  data-tid={'backgroundTID' + cnt}
-                                  aria-label="changeFolderBackround"
-                                  onClick={() => {
-                                    handleChangeColor(background);
-                                    handlePopoverClose();
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      width: '35px',
-                                      paddingTop: '5px',
-                                      borderRadius: AppConfig.defaultCSSRadius,
-                                      backgroundColor: background,
-                                      backgroundImage: background,
+                            {AppConfig.backgroundColors.map(
+                              (background, cnt) => (
+                                <>
+                                  <TsIconButton
+                                    key={cnt}
+                                    data-tid={'backgroundTID' + cnt}
+                                    aria-label="changeFolderBackround"
+                                    onClick={() => {
+                                      handleChangeColor(background);
+                                      handlePopoverClose();
                                     }}
                                   >
-                                    <SetColorIcon />
-                                  </Box>
-                                </TsIconButton>
-                                {cnt % 4 === 3 && <br />}
-                              </>
-                            ))}
+                                    <Box
+                                      sx={{
+                                        width: '35px',
+                                        paddingTop: '5px',
+                                        borderRadius:
+                                          AppConfig.defaultCSSRadius,
+                                        backgroundColor: background,
+                                        backgroundImage: background,
+                                      }}
+                                    >
+                                      <SetColorIcon />
+                                    </Box>
+                                  </TsIconButton>
+                                  {cnt % 4 === 3 && <br />}
+                                </>
+                              ),
+                            )}
                           </Box>
                         </Popover>
                       </Box>
