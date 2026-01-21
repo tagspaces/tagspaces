@@ -492,7 +492,7 @@ function EntryProperties({ tileServer }: Props) {
 
   // --- RENDER ---
   return (
-    <div>
+    <>
       <Grid container>
         <Grid size={12}>
           <TsTextField
@@ -1176,8 +1176,8 @@ function EntryProperties({ tileServer }: Props) {
           currentDirectoryPath={openedEntry.path}
         />
       )}
-    </div>
+    </>
   );
 }
 
-export default React.memo(EntryProperties);
+export default EntryProperties;
