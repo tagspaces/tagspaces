@@ -291,6 +291,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           chatHistoryItems.current = historyItems;
           forceUpdate();
         });
+      } else {
+        chatHistoryItems.current = [];
+        forceUpdate();
       }
     }
   }
