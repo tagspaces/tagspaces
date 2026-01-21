@@ -92,11 +92,9 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 };*/
 
 type ChatData = {
-  //timelineItems: TimelineItem[];
   models: ModelResponse[];
   images: ChatImage[];
   currentModel: ModelResponse;
-  //openedEntryModel: ModelResponse;
   chatHistoryItems: ChatItem[];
   isTyping: boolean;
   checkOllamaModels: () => Promise<boolean>;
@@ -220,12 +218,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const generationSettings = useRef<GenerationSettings>(
     getGenerationSettings(),
   );
-  /*const openedEntryModel = useRef<ModelResponse>(
-    getOpenedEntryModel(openedEntry?.name, defaultAiProvider),
-  );*/
   const images = useRef<ChatImage[]>([]);
-  //const defaultAiProviderId: string = useSelector(getDefaultAIProviderId);
-  //const aiProviders: AIProvider[] = useSelector(getAIProviders);getDefaultAIProvider(defaultAiProviderId,aiProviders);
   const chatHistoryItems = useRef<ChatItem[]>([]);
   const aiTemplatesContext = Pro?.contextProviders?.AiTemplatesContext
     ? useContext<TS.AiTemplatesContextData>(
@@ -233,41 +226,11 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       )
     : undefined;
   const isTyping = useRef<boolean>(false);
-  //const timelineItems = useRef<TimelineItem[]>([]);
   const ollamaClient = useRef<Ollama>(undefined);
   const dispatch: AppDispatch = useDispatch();
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
   const firstRender = useFirstRender();
-
-  /*
-  useEffect(() => {
-      //refreshOllamaModels();
-      window.electronIO.ipcRenderer.on(
-        'PullModel',
-        (message: PullModelResponse) => {
-          //console.log('ChatMessage:' + message);
-          if (message.status) {
-            dispatch(
-              AppActions.onUploadProgress(
-                {
-                  key: message.model || message.status,
-                  loaded: message.completed,
-                  total: message.total,
-                },
-                undefined,
-                message.model,
-              ),
-            );
-          }
-        },
-      );
-
-      return () => {
-        window.electronIO.ipcRenderer.removeAllListeners('ChatMessage');
-        unloadCurrentModel();
-      };
-  }, []);*/
 
   useEffect(() => {
     images.current = [];
@@ -275,19 +238,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       !firstRender &&
       defaultAiProvider &&
       openedEntry &&
-      !openedEntry.isFile &&
+      // !openedEntry.isFile &&
       selectedTabName === TabNames.aiTab
     ) {
       checkOllamaModels().then(() => initHistory());
     }
   }, [defaultAiProvider, openedEntry]);
-
-  /*useEffect(() => {
-    //setOpenedEntryModel();
-    if (selectedTabName === TabNames.aiTab && models.current.length===0) {
-      refreshOllamaModels().then(() => initHistory());
-    }
-  }, [selectedTabName]);*/
 
   function getGenerationSettings(
     option: generateOptionType = 'tags',
@@ -338,20 +294,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       }
     }
   }
-
-  /* function setOpenedEntryModel() {
-    if (openedEntry) {
-      const newModel = getOpenedEntryModel(openedEntry.name, defaultAiProvider);
-      if (
-        !newModel ||
-        !openedEntryModel.current ||
-        newModel.name !== openedEntryModel.current.name
-      ) {
-        openedEntryModel.current = newModel;
-        forceUpdate();
-      }
-    }
-  }*/
 
   function getEntryModel(
     fileName: string,
@@ -474,14 +416,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       forceUpdate();
       //load model
       return newChatMessage().then(() => {
-        /*const newItem: ChatItem = {
-          request: 'Model ' + model.name + ' loaded',
-          timestamp: new Date().getTime(),
-          role: 'system',
-          modelName: currentModel.current?.name,
-          engine: 'ollama',
-        };*/
-        //saveHistoryItems([newItem, ...chatHistoryItems.current]);
         showNotification(
           format(new Date().getTime(), 'dd.MM.yyyy HH:mm:ss') +
             ' Model ' +
@@ -558,19 +492,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             refreshOllamaModels();
           }
         });
-        /*window.electronIO.ipcRenderer
-          .invoke('deleteOllamaModel', defaultAiProvider.url, {
-            name: model.name,
-          })
-          .then((response) => {
-            console.log('deleteOllamaModel response:' + response);
-            if (response) {
-              if (model.name === currentModel.current?.name) {
-                currentModel.current = undefined;
-              }
-              refreshOllamaModels();
-            }
-          });*/
       }
     }
   }
@@ -687,16 +608,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     }
   }
 
-  /*function getImages() {
-    if (images.current.length > 0) {
-      const img = images.current.map(
-        (i) => '![chat image](data:image/!*;base64,' + i.base64 + ')',
-      );
-      return img.join(' ');
-    }
-    return '';
-  }*/
-
   function getHistoryFilePath(name?: string) {
     const dirSeparator = currentLocation
       ? currentLocation.getDirSeparator()
@@ -726,6 +637,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         lastModelName: currentModel.current?.name,
         engine: defaultAiProvider?.engine,
       };
+      if (openedEntry.isFile) return;
       saveFilePromise(
         { path: getHistoryFilePath() },
         JSON.stringify(model, null, 2),
@@ -1045,8 +957,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             if (apiResponse) {
               tags = apiResponse.split(' ');
             }
-            //const zodTags = getZodTags(generationSettings.current.maxTags);
-            //response = zodTags.parse(JSON.parse(apiResponse));
           }
 
           return tags.slice(0, generationSettings.current.maxTags);
@@ -1121,14 +1031,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       }
       return stream ? true : apiResponse;
     });
-    /*return window.electronIO.ipcRenderer
-      .invoke('newOllamaMessage', defaultAiProvider.url, {
-        model,
-        messages,
-        stream: stream,
-        ...(unload && { keep_alive: 0 }),
-      })
-      */
   }
 
   function cancelMessage() {
@@ -1266,22 +1168,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
     });
   }
 
-  /* function descriptionGenerateAll(
-    generateEntries: TS.FileSystemEntry[],
-  ): Promise<TS.FileSystemEntry[]> {
-    return checkOllamaModels().then((success) => {
-      if (success) {
-        const promises = generateEntries.map((entry) => descriptionGenerate(entry));
-        return Promise.all(promises);
-      } else {
-        showNotification(
-          'Ollama Models not loaded. Check if Ollama service is alive.',
-        );
-        return undefined;
-      }
-    });
-  }*/
-
   function handleGenDescResults(
     entry: TS.FileSystemEntry,
     response: string,
@@ -1379,14 +1265,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             tag && // Exclude undefined or null tags
             index === self.findIndex((t) => t?.title === tag.title),
         );
-        /* const regex = /\{([^}]+)\}/g;
-        const tags: TS.Tag[] = [...response.matchAll(regex)].map((match) => {
-          const tagTitle = match[1].trim().replace(/^,|,$/g, '').toLowerCase();
-          return {
-            title: tagTitle,
-            ...getTagColors(tagTitle, defaultTextColor, defaultBackgroundColor),
-          };
-        });*/
         return addTagsToFsEntry(entry, uniqueTags).then(() => {
           dispatch(
             SettingsActions.setEntryContainerTab(TabNames.propertiesTab),
@@ -1422,7 +1300,6 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       models: models.current,
       images: images.current,
       currentModel: currentModel.current,
-      //openedEntryModel: openedEntryModel.current,
       chatHistoryItems: chatHistoryItems.current,
       generationSettings: generationSettings.current,
       checkOllamaModels,

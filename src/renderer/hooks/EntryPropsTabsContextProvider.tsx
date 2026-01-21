@@ -142,12 +142,12 @@ export const EntryPropsTabsContextProvider = ({
       tabsArray.push(tab3);
     }
 
-    if ((oEntry && !oEntry.isFile) || (devMode && Pro)) {
+    if (!oEntry?.isFile || (devMode && oEntry?.isFile && Pro)) {
       const aiChatAvailable = await haveAIChat(oEntry);
       const tab4: TabItem = {
         showBadge: aiChatAvailable,
         icon: <AIIcon />,
-        title: oEntry.isFile ? t('core:aiSettingsTab') : t('core:aiChatTab'),
+        title: t('core:aiChatTab'),
         badgeTooltip: t('core:aiChatAvailable'),
         name: TabNames.aiTab,
       };
