@@ -121,7 +121,7 @@ function AiGenTagsButton(props: Props) {
         data-tid="generateTagsAITID"
         onClick={handleGeneration}
         variant={variant}
-        style={{
+        sx={{
           borderTopRightRadius: 0,
           borderBottomRightRadius: 0,
         }}
@@ -139,7 +139,7 @@ function AiGenTagsButton(props: Props) {
         onClick={() => {
           openAiGenerationDialog('tags');
         }}
-        style={{
+        sx={{
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
         }}

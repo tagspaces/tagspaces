@@ -112,7 +112,7 @@ function AddTagToTagGroupDialog(props: Props) {
         onClose={onClose}
         actionSlot={okButton}
       />
-      <DialogContent style={{ paddingTop: 10, minWidth: 350 }}>
+      <DialogContent sx={{ paddingTop: '10px', minWidth: '350px' }}>
         <FormControl fullWidth={true}>
           <TsSelect
             label={t('core:chooseTagGroup')}

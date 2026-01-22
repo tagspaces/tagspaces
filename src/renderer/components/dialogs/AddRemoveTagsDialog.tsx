@@ -151,9 +151,9 @@ function AddRemoveTagsDialog(props: Props) {
         onClose={onCloseDialog}
       />
       <DialogContent
-        style={{
-          minHeight: 330,
-          paddingTop: 10,
+        sx={{
+          minHeight: '330px',
+          paddingTop: '10px',
           overflowY: 'auto',
           overflowX: 'hidden',
         }}

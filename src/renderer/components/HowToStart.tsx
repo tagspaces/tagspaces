@@ -267,7 +267,7 @@ function HowToStart() {
   // 70%  { box-shadow: 0 0 7px 6px #da15d8;  }
   // 100% { box-shadow: 0 0 0 transparent; }
   return (
-    <Box style={{ maxWidth: 480, paddingLeft: 10, paddingRight: 10 }}>
+    <Box sx={{ maxWidth: '480px', paddingLeft: '10px', paddingRight: '10px' }}>
       <style>
         {`
         .highlighterOn {

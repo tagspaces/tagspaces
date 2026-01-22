@@ -72,7 +72,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
           isEditDescriptionMode,
           {},
           placeholder,
-          currentDirectory.path,
+          currentDirectory?.path,
           openLink,
           (newMd: string) => {
             setDescription(newMd);

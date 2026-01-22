@@ -651,17 +651,17 @@ function CreateEditLocationDialog(props: Props) {
         actionSlot={okButton}
       ></TsDialogTitle>
       <DialogContent
-        style={{
+        sx={{
           overflowY: 'auto',
           overflowX: 'hidden',
-          minHeight: 200,
-          padding: 8,
+          minHeight: '200px',
+          padding: '8px',
         }}
       >
         {selectedLocation && (
           <>
             <Typography
-              style={{ display: 'block', marginTop: -5, marginLeft: 15 }}
+              sx={{ display: 'block', marginTop: '-5px', marginLeft: '15px' }}
               variant="overline"
             >
               {t('core:locationType') + ': ' + locationTypeName}

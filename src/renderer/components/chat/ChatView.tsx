@@ -335,6 +335,13 @@ function ChatView() {
                   minRows={1}
                   maxRows={6}
                   value={chatMsg.current}
+                  // updateValue={(message) => {
+                  //   chatMsg.current = chatMsg.current + message;
+                  //   forceUpdate();
+                  // }}
+                  sx={{
+                    '& .MuiInputBase-root': { padding: '1px 5px' },
+                  }}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.code === 'Enter') {
                       event.preventDefault();

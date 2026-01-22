@@ -109,11 +109,11 @@ function LocationManager(props: Props) {
 
   return (
     <Box
-      style={{
+      sx={{
         display: show ? 'flex' : 'none',
         flexDirection: 'column',
         height: '100%',
-        paddingLeft: 5,
+        paddingLeft: '5px',
         paddingRight: 0,
       }}
     >

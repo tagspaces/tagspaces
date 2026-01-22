@@ -119,7 +119,7 @@ function ColorPickerDialog(props: Props) {
       />
       <DialogContent
         data-tid="colorPickerDialogContent"
-        style={{
+        sx={{
           marginLeft: 'auto',
           marginRight: 'auto',
           overflowX: 'hidden',
