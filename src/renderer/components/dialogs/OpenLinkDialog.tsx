@@ -124,7 +124,7 @@ function OpenLinkDialog(props: Props) {
         onClose={onClose}
         actionSlot={okButton}
       />
-      <DialogContent style={{ minWidth: smallScreen ? 100 : 400 }}>
+      <DialogContent sx={{ minWidth: smallScreen ? '100px' : '400px' }}>
         <FormControl fullWidth={true}>
           <TsTextField
             autoFocus

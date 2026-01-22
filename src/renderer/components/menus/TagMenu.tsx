@@ -30,6 +30,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { getMaxSearchResults } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
+import { Box } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -111,7 +112,7 @@ function TagMenu(props: Props) {
     selectedTag.functionality && selectedTag.functionality.length > 0;
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
+    <Box sx={{ overflowY: 'hidden' }}>
       <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
         <TsMenuList>
           {!isSmartTag && (
@@ -154,7 +155,7 @@ function TagMenu(props: Props) {
           )}
         </TsMenuList>
       </Menu>
-    </div>
+    </Box>
   );
 }
 

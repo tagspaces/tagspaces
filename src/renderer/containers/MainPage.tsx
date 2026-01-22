@@ -25,7 +25,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
 import useEventListener from '-/utils/useEventListener';
-import { useMediaQuery } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { styled, useTheme } from '@mui/material/styles';
@@ -311,8 +311,8 @@ function MainPage() {
     <Root>
       <GlobalHotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
         <PageNotification />
-        <div
-          style={{
+        <Box
+          sx={{
             backgroundColor: theme.palette.background.default,
             height: '100%',
           }}
@@ -353,7 +353,7 @@ function MainPage() {
           {isDesktopMode || (AppConfig.isAmplify && !isLoggedIn()) ? (
             <>
               <Drawer
-                style={{ backgroundColor: 'unset' }}
+                sx={{ backgroundColor: 'unset' }}
                 variant="persistent"
                 anchor="left"
                 open={drawerOpened}
@@ -386,7 +386,7 @@ function MainPage() {
               {renderContainers()}
             </>
           )}
-        </div>
+        </Box>
       </GlobalHotKeys>
     </Root>
   );

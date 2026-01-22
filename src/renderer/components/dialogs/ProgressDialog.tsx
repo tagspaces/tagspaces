@@ -39,7 +39,7 @@ function ProgressDialog(props: Props) {
       PaperComponent={DraggablePaper}
       open={open}
       onClose={onClose}
-      style={{ minHeight: 200 }}
+      sx={{ minHeight: '200px' }}
     >
       <DialogTitle
         sx={{ cursor: 'move', minHeight: '20px' }}
@@ -50,8 +50,8 @@ function ProgressDialog(props: Props) {
         <DialogCloseButton testId="closeProgressTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
-        style={{
-          minWidth: 300,
+        sx={{
+          minWidth: '300px',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',

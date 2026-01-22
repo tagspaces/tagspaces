@@ -18,6 +18,7 @@
 
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 import { getSearches } from '-/reducers/searches';
+import { Box } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useTranslation } from 'react-i18next';
@@ -52,7 +53,7 @@ function SavedSearchesMenu(props: Props) {
   );
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
+    <Box sx={{ overflowY: 'hidden' }}>
       <Menu
         anchorEl={anchorEl}
         open={open}
@@ -93,7 +94,7 @@ function SavedSearchesMenu(props: Props) {
       >
         {menuItems}
       </Menu>
-    </div>
+    </Box>
   );
 }
 export default SavedSearchesMenu;

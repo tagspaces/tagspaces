@@ -456,7 +456,7 @@ function SearchAutocomplete(props: Props) {
     return (
       <Tooltip
         title={
-          <span style={{ fontSize: 14 }}>
+          <Box sx={{ fontSize: '14px' }}>
             The search query consists of a tag part and a search term. This term
             is optional and can be a single word. The tag part can have one or
             more tags preceded by the following symbols:
@@ -484,7 +484,7 @@ function SearchAutocomplete(props: Props) {
                 tags beach or sunset
               </li>
             </ul>
-          </span>
+          </Box>
         }
       >
         <TsIconButton edge="end">
@@ -1390,18 +1390,18 @@ function SearchAutocomplete(props: Props) {
               return (
                 <Box
                   key={'button_' + index}
-                  style={{
+                  sx={{
                     border: '1px solid gray',
-                    minHeight: 0,
-                    minWidth: 0,
-                    margin: 2,
-                    marginLeft: 1,
-                    marginTop: 3,
-                    paddingTop: 0,
-                    paddingBottom: 0,
-                    paddingRight: 0,
-                    paddingLeft: 4,
-                    borderRadius: 5,
+                    minHeight: '0',
+                    minWidth: '0',
+                    margin: '2px',
+                    marginLeft: '1px',
+                    marginTop: '3px',
+                    paddingTop: '0px',
+                    paddingBottom: '0px',
+                    paddingRight: '0px',
+                    paddingLeft: '4px',
+                    borderRadius: '5px',
                     ...(action &&
                       action.color && {
                         color: action.textcolor,
@@ -1414,8 +1414,8 @@ function SearchAutocomplete(props: Props) {
                   isAction(action.action, SearchQueryComposition.TAG_OR) ||
                   isAction(action.action, SearchQueryComposition.TAG_NOT) ? (
                     <Box
-                      style={{
-                        fontSize: 13,
+                      sx={{
+                        fontSize: '13px',
                         fontWeight: 'bold',
                         display: 'inline',
                       }}

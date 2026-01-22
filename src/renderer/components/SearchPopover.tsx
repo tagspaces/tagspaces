@@ -30,6 +30,7 @@ import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import { isDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import { Box } from '@mui/material';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -99,7 +100,7 @@ function SearchPopover(props: Props) {
         } as React.CSSProperties & { WebkitAppRegion?: string }
       }
     >
-      <div style={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex' }}>
         <Typography variant="button" sx={{ margin: '12px 0 10px 10px' }}>
           {t('core:advancedSearch')}
         </Typography>
@@ -116,13 +117,13 @@ function SearchPopover(props: Props) {
         >
           <CloseIcon />
         </TsIconButton>
-      </div>
-      <div
-        style={{
-          paddingTop: 0,
-          paddingLeft: 10,
-          paddingRight: 10,
-          marginTop: 0,
+      </Box>
+      <Box
+        sx={{
+          paddingTop: '0px',
+          paddingLeft: '10px',
+          paddingRight: '10px',
+          marginTop: '0px',
           height: 'calc(100% - 90px)',
           maxHeight: 'calc(100% - 90px)',
           overflowX: 'hidden',
@@ -134,7 +135,7 @@ function SearchPopover(props: Props) {
         <Grid
           container
           spacing={2}
-          style={{ marginBottom: 15 }}
+          sx={{ marginBottom: '15px' }}
           direction="row"
           justifyContent="center"
           alignItems="flex-end"
@@ -159,8 +160,12 @@ function SearchPopover(props: Props) {
                     <MenuItem>{t('noSavedSearches')}</MenuItem>
                   )}
                   {searches.map((search) => (
-                    <MenuItem key={search.uuid} value={search.uuid}>
-                      <span style={{ width: '100%' }}>{search.title}</span>
+                    <MenuItem
+                      sx={{ width: '100%' }}
+                      key={search.uuid}
+                      value={search.uuid}
+                    >
+                      {search.title}
                     </MenuItem>
                   ))}
                 </TsSelect>
@@ -169,7 +174,7 @@ function SearchPopover(props: Props) {
           </Grid>
           <Grid
             size={3}
-            style={{ display: 'flex', alignSelf: 'center', paddingTop: 25 }}
+            sx={{ display: 'flex', alignSelf: 'center', paddingTop: '25px' }}
           >
             <ButtonGroup
               sx={{
@@ -199,9 +204,9 @@ function SearchPopover(props: Props) {
             <EditSearchQuery />
           </Grid>
         </Grid>
-      </div>
-      <div
-        style={{
+      </Box>
+      <Box
+        sx={{
           display: 'flex',
           justifyContent: 'space-between',
           padding: AppConfig.defaultSpaceBetweenButtons,
@@ -235,7 +240,7 @@ function SearchPopover(props: Props) {
               : t('searchTitle')}
           </TsButton>
         </div>
-      </div>
+      </Box>
     </div>
   );
 }

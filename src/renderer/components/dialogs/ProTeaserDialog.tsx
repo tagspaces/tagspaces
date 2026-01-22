@@ -70,10 +70,10 @@ function Slide(props: SlideProps) {
   const { t } = useTranslation();
 
   return (
-    <div
-      style={{
-        padding: 40,
-        marginTop: -40,
+    <Box
+      sx={{
+        padding: '40px',
+        marginTop: '-40px',
       }}
     >
       <Typography
@@ -91,7 +91,7 @@ function Slide(props: SlideProps) {
             &#x2605;&nbsp;{item}
           </Typography>
         ))}
-      <div style={{ textAlign: 'center', paddingTop: 10 }}>
+      <Box sx={{ textAlign: 'center', paddingTop: '10px' }}>
         {pictureURL && (
           <a
             href="#"
@@ -130,7 +130,7 @@ function Slide(props: SlideProps) {
           />
         )}
         <br />
-        <Box style={{ whiteSpace: 'nowrap' }}>
+        <Box sx={{ whiteSpace: 'nowrap' }}>
           <TsButton
             onClick={() => {
               openURLExternally(Links.links.productsOverview, true);
@@ -149,8 +149,8 @@ function Slide(props: SlideProps) {
             </TsButton>
           )}
         </Box>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
@@ -183,7 +183,7 @@ function ProTeaserDialog(props: Props) {
         dialogTitle={''}
       />
       <DialogContent
-        style={{
+        sx={{
           padding: 0,
         }}
       >

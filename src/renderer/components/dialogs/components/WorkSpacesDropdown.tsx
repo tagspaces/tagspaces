@@ -78,7 +78,7 @@ const WorkSpacesDropdown: React.FC<WorkSpacesDropdownProps> = ({
           startAdornment: (
             <InputAdornment position="start">
               <TsIconButton
-                style={{ marginLeft: -10 }}
+                sx={{ marginLeft: '-10px' }}
                 aria-label="add-workspace"
                 onClick={() => onOpenNewWorkspace && onOpenNewWorkspace()}
                 data-tid="wSpaceAddTID"
@@ -95,7 +95,7 @@ const WorkSpacesDropdown: React.FC<WorkSpacesDropdownProps> = ({
                 aria-label="delete-workspace"
                 onClick={() => setWorkSpaceId('')}
                 data-tid="wSpaceResetTID"
-                style={{ marginRight: 15 }}
+                sx={{ marginRight: '15px' }}
                 tooltip={t('removeWorkspace')}
                 disabled={disabled}
               >

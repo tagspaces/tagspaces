@@ -26,7 +26,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { Pro } from '-/pro';
 import { readMacOSTags } from '-/services/utils-io';
-import { Switch } from '@mui/material';
+import { Box, Switch } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -128,7 +128,7 @@ Do you want to continue?`)
         <DialogCloseButton testId="closeImportMacTagTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent>
-        <div style={{ margin: 20 }}>{t('core:importMacTagsHelp')}</div>
+        <Box sx={{ margin: '20px' }}>{t('core:importMacTagsHelp')}</Box>
         <FormControlLabel
           labelPlacement="start"
           control={

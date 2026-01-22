@@ -204,7 +204,7 @@ function CreateTagGroupDialog(props: Props) {
         actionSlot={okButton}
       />
       <DialogContent
-        style={{ overflowY: 'visible', overflowX: 'hidden', minWidth: 300 }}
+        sx={{ overflowY: 'visible', overflowX: 'hidden', minWidth: '300px' }}
       >
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
@@ -221,7 +221,7 @@ function CreateTagGroupDialog(props: Props) {
           )}
         </FormControl>
         {saveTagsInLocation && (
-          <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
             <TsSelect
               data-tid="tagGroupLocationTID"
               disabled={!Pro}
@@ -258,7 +258,7 @@ function CreateTagGroupDialog(props: Props) {
             </TsSelect>
           </ListItem>
         )}
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
           <WorkSpacesDropdown
             disabled={!Pro}
             dataTid="createTgWorkspaceTID"
@@ -276,14 +276,14 @@ function CreateTagGroupDialog(props: Props) {
             }
           />
         </ListItem>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagBackgroundColor')} />
           <TransparentBackground>
             <TsButton
               onClick={toggleDefaultTagBackgroundColorPicker}
               data-tid="createTagGroupBackgroundColor"
-              style={{
-                height: 30,
+              sx={{
+                height: '30px',
                 borderRadius: AppConfig.defaultCSSRadius,
                 borderWidth: 1,
                 borderStyle: 'solid',
@@ -305,14 +305,14 @@ function CreateTagGroupDialog(props: Props) {
             />
           )}
         </ListItem>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagForegroundColor')} />
           <TransparentBackground>
             <TsButton
               onClick={toggleDefaultTagTextColorPicker}
               data-tid="createTagGroupForegroundColor"
-              style={{
-                height: 30,
+              sx={{
+                height: '30px',
                 borderRadius: AppConfig.defaultCSSRadius,
                 borderWidth: 1,
                 borderStyle: 'solid',
@@ -334,7 +334,7 @@ function CreateTagGroupDialog(props: Props) {
             />
           )}
         </ListItem>
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
           <ListItemText primary={t('core:tagPreview')} />
           <Tag
             backgroundColor={color.current}

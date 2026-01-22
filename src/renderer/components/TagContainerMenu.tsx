@@ -18,6 +18,7 @@
 
 import { MoreMenuIcon, RemoveTagIcon } from '-/components/CommonIcons';
 import { TS } from '-/tagspaces.namespace';
+import { Box } from '@mui/material';
 
 interface Props {
   tag: TS.Tag;
@@ -27,13 +28,9 @@ interface Props {
 }
 
 function TagContainerMenu(props: Props) {
-  //const { readOnlyMode } = useCurrentLocationContext();
   const { deleteIcon, tag, handleRemoveTag, tagMode } = props;
-  /*if (readOnlyMode) {
-    return <div style={{ width: 10 }} />;
-  }*/
   if (tagMode === 'display') {
-    return <div style={{ width: 10 }} />;
+    return <Box sx={{ width: '10px' }} />;
   }
   return tagMode === 'remove' ? (
     deleteIcon || (

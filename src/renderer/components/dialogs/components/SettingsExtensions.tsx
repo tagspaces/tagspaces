@@ -127,12 +127,12 @@ function SettingsExtensions() {
   };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         overflowX: 'hidden',
         overflowY: 'auto',
         height: '100%',
-        padding: 10,
+        padding: '10px',
       }}
     >
       <Accordion defaultExpanded>
@@ -233,7 +233,7 @@ function SettingsExtensions() {
           )}
         </AccordionDetails>
       </Accordion>
-    </div>
+    </Box>
   );
 }
 

@@ -38,6 +38,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Typography,
 } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -130,12 +131,12 @@ function SettingsTemplates(props: Props) {
   }
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         overflowX: 'hidden',
         overflowY: 'auto',
         height: '100%',
-        padding: 10,
+        padding: '10px',
       }}
     >
       <Accordion defaultExpanded>
@@ -333,7 +334,7 @@ function SettingsTemplates(props: Props) {
               <ToggleButtonGroup
                 value={currentTemplate(template).type}
                 exclusive
-                style={{ marginTop: 10, marginBottom: 10 }}
+                sx={{ marginTop: '10px', marginBottom: '10px' }}
                 title="Template type"
               >
                 <TsToggleButton
@@ -425,7 +426,7 @@ function SettingsTemplates(props: Props) {
             </AccordionDetails>
           </Accordion>
         ))}
-    </div>
+    </Box>
   );
 }
 

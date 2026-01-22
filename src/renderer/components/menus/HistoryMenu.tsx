@@ -18,6 +18,7 @@
 
 import { DeleteIcon, ReloadIcon } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
+import { Box } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -69,11 +70,11 @@ function HistoryMenu(props: Props) {
   );
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
+    <Box sx={{ overflowY: 'hidden' }}>
       <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
         <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
-    </div>
+    </Box>
   );
 }
 

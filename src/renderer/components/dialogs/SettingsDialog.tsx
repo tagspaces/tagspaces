@@ -97,7 +97,7 @@ function SettingsDialog(props: Props) {
 
   const renderContent = (
     <DialogContent
-      style={{
+      sx={{
         overflowY: 'hidden',
         overflowX: 'hidden',
         display: smallScreen ? 'block' : 'flex',
@@ -226,12 +226,8 @@ function SettingsDialog(props: Props) {
     <Dialog
       sx={{
         '& .MuiDialog-paper': {
-          maxWidth: 'unset',
           height: '100%',
-          // background: props.fullScreen
-          //   ? theme.palette.background.default
-          //   : alpha(theme.palette.background.default, 0.85),
-          // backdropFilter: props.fullScreen ? 'unset' : 'blur(5px)',
+          maxWidth: 'unset',
         },
       }}
       fullScreen={smallScreen}
@@ -240,7 +236,6 @@ function SettingsDialog(props: Props) {
       keepMounted
       scroll="paper"
       onClose={onClose}
-      style={{ maxWidth: 'auto' }}
     >
       <TsDialogTitle
         dialogTitle={t('core:settings')}
@@ -251,7 +246,7 @@ function SettingsDialog(props: Props) {
       {renderContent}
       {!smallScreen && (
         <TsDialogActions
-          style={{
+          sx={{
             justifyContent: 'space-between',
           }}
         >

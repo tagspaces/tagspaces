@@ -41,7 +41,7 @@ function ProTeaser(props: Props) {
 
   const { t } = useTranslation();
   return (
-    <Box style={{ display: 'block', marginBottom: 0 }}>
+    <Box sx={{ display: 'block', marginBottom: 0 }}>
       <CardContent
         sx={{
           paddingLeft: '5px',
@@ -76,7 +76,6 @@ function ProTeaser(props: Props) {
           }}
         >
           <b>TagSpaces Pro</b>
-          {/* <img style={{ height: 35 }} src={ProTextLogo} alt="" /> */}
           <br />
           <ViewKanbanTwoToneIcon
             sx={{
@@ -86,14 +85,13 @@ function ProTeaser(props: Props) {
           />
           <CameraTwoToneIcon sx={{ fontSize: '50px', color: '#f7901e' }} />
           <MapTwoToneIcon sx={{ fontSize: '50px', color: '#33b5be' }} />
-          {/* <img style={{ maxHeight: 60 }} src={ProTeaserImage} alt="" /> */}
         </div>
       </CardContent>
       <CardActions
-        style={{
+        sx={{
           flexDirection: 'row',
           justifyContent: 'center',
-          marginTop: -10,
+          marginTop: '-10px',
         }}
       >
         <ButtonGroup>

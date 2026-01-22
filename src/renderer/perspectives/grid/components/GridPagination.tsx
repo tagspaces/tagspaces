@@ -290,9 +290,9 @@ function GridPagination(props: Props) {
       </Box>
       <TooltipTS title={t('core:changeThumbnail')} placement="bottom">
         <Box
-          style={{ backgroundImage: thumbImage.current }}
           sx={{
             ':hover': { border: '1px dashed gray !important' },
+            backgroundImage: thumbImage.current,
             borderRadius: AppConfig.defaultCSSRadius,
             border: '1px solid transparent',
             height: 100,
@@ -389,10 +389,8 @@ function GridPagination(props: Props) {
           openDirectoryMenu(event, currentDirectoryPath)
         }
         onClick={onClick}
-        style={{
-          backgroundImage: backgroundImage.current,
-        }}
         sx={{
+          backgroundImage: backgroundImage.current,
           height: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',

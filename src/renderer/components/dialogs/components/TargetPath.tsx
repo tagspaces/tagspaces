@@ -31,7 +31,7 @@ function TargetPath() {
   const currentLocation = findLocation();
 
   return (
-    <Grid container style={{ marginTop: '20px' }}>
+    <Grid container sx={{ marginTop: '20px' }}>
       {targetDirectoryPath ? (
         <Typography
           sx={{ display: 'flex', alignItems: 'center' }}

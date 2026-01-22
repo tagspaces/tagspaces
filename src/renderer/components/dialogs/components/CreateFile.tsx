@@ -203,26 +203,26 @@ function CreateFile(props: Props) {
                 <Card variant="outlined">
                   <CardContent>
                     <Box
-                      style={{
+                      sx={{
                         display: 'flex',
                         flexWrap: 'nowrap',
                         alignItems: 'anchor-center',
                       }}
                     >
                       <Typography variant="h6">{template.name}</Typography>
-                      <span
-                        style={{
-                          marginLeft: 5,
-                          padding: 2,
-                          fontSize: 12,
+                      <Box
+                        sx={{
+                          marginLeft: '5px',
+                          padding: '2px',
+                          fontSize: '12px',
                           textTransform: 'uppercase',
                           border: '1px solid gray',
                           borderRadius: '3px',
-                          height: 13,
+                          height: '13px',
                         }}
                       >
                         {template.type}
-                      </span>
+                      </Box>
                     </Box>
                     <Typography
                       variant="body2"

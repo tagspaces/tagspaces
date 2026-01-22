@@ -239,7 +239,7 @@ function AboutDialog(props: Props) {
           </TsButton>
         </Typography>
       </DialogContent>
-      <TsDialogActions style={{ justifyContent: 'space-between' }}>
+      <TsDialogActions sx={{ justifyContent: 'space-between' }}>
         <span>
           {!Pro && (
             <TsButton

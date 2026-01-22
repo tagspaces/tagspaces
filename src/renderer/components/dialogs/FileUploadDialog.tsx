@@ -188,7 +188,7 @@ function FileUploadDialog(props: Props) {
         onClose={onClose}
       />
       <DialogContent
-        style={{
+        sx={{
           marginLeft: 'auto',
           marginRight: 'auto',
           width: '90%',
@@ -223,7 +223,7 @@ function FileUploadDialog(props: Props) {
                 >
                   <Grid
                     size={{ xs: 10 }}
-                    style={{
+                    sx={{
                       display: 'flex',
                       alignItems: 'center',
                       wordBreak: 'break-word',

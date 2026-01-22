@@ -32,6 +32,7 @@ import { TS } from '-/tagspaces.namespace';
 import ShowEntriesWithTagIcon from '@mui/icons-material/SearchOutlined';
 import SortTagGroupIcon from '@mui/icons-material/SortByAlpha';
 import CollectTagsIcon from '@mui/icons-material/Voicemail';
+import { Box } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -117,7 +118,7 @@ function TagGroupMenu(props: Props) {
   }
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
+    <Box sx={{ overflowY: 'hidden' }}>
       <Menu anchorEl={anchorEl} open={open} onClose={handleCloseTagGroupMenu}>
         <TsMenuList>
           <MenuItem data-tid="createTags" onClick={showCreateTagsDialog}>
@@ -178,7 +179,7 @@ function TagGroupMenu(props: Props) {
           </MenuItem>
         </TsMenuList>
       </Menu>
-    </div>
+    </Box>
   );
 }
 

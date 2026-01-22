@@ -17,22 +17,23 @@
  */
 
 import {
+  CreateFileIcon,
   ExportIcon,
   HelpIcon,
   ImportIcon,
-  CreateFileIcon,
 } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import TsMenuList from '-/components/TsMenuList';
+import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
+import { Box } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
-import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 
 interface Props {
   classes?: any;
@@ -125,11 +126,11 @@ function SearchMenu(props: Props) {
   );
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
+    <Box sx={{ overflowY: 'hidden' }}>
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <TsMenuList>{menuItems}</TsMenuList>
       </Menu>
-    </div>
+    </Box>
   );
 }
 

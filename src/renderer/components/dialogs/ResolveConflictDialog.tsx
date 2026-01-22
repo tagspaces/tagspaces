@@ -73,9 +73,9 @@ function ResolveConflictDialog(props: Props) {
         <DialogCloseButton testId="closeResolveConflictTID" onClose={onClose} />
       </DialogTitle>
       <DialogContent
-        style={{
+        sx={{
           overflow: 'auto',
-          minWidth: 400,
+          minWidth: '400px',
         }}
       >
         {isSaveAs ? (

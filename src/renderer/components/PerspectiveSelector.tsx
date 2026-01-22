@@ -23,6 +23,7 @@ import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
 import { isDesktopMode, isDevMode } from '-/reducers/settings';
 import LayersClearIcon from '@mui/icons-material/LayersClear';
+import { Box } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
@@ -49,12 +50,12 @@ function PerspectiveSelector(props: Props) {
       key={PerspectiveIDs.UNSPECIFIED}
       value={PerspectiveIDs.UNSPECIFIED}
     >
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <ListItemIcon>
           <LayersClearIcon />
         </ListItemIcon>
         <ListItemText>{t('core:unspecified')}</ListItemText>
-      </div>
+      </Box>
     </MenuItem>,
   );
 
@@ -66,13 +67,13 @@ function PerspectiveSelector(props: Props) {
     if (includePerspective) {
       perspectiveSelectorMenuItems.push(
         <MenuItem key={perspective.key} value={perspective.id}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <ListItemIcon>{perspective.icon}</ListItemIcon>
             <ListItemText>
               {perspective.title}&nbsp;
               {perspective.beta && <BetaLabel />}
             </ListItemText>
-          </div>
+          </Box>
         </MenuItem>,
       );
     }

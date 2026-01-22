@@ -31,6 +31,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
+import { Box } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
@@ -104,7 +105,7 @@ function TagLibraryMenu(props: Props) {
   }
 
   return (
-    <div style={{ overflowY: 'hidden' }}>
+    <Box sx={{ overflowY: 'hidden' }}>
       {isImportExportTagGroupDialogOpened && (
         <ImportExportTagGroupsDialog
           open={isImportExportTagGroupDialogOpened}
@@ -187,7 +188,7 @@ function TagLibraryMenu(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-    </div>
+    </Box>
   );
 }
 

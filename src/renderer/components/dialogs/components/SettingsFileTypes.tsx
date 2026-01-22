@@ -582,8 +582,8 @@ function SettingsFileTypes() {
           </TsButton>
         )}
       </Box>
-      <div
-        style={{
+      <Box
+        sx={{
           height: smallScreen ? 'calc(100% - 80px)' : 'calc(100% - 50px)',
           width: '100%',
         }}
@@ -611,7 +611,7 @@ function SettingsFileTypes() {
             },
           }}
         />
-      </div>
+      </Box>
       <ColorPickerDialog
         open={isColorPickerVisible}
         setColor={handleChangeColor}

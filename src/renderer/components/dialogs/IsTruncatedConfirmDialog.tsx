@@ -93,7 +93,7 @@ function IsTruncatedConfirmDialog(props: Props) {
         <DialogContentText component="span">
           <FormControlLabel
             labelPlacement="start"
-            style={{ justifyContent: 'space-between' }}
+            sx={{ justifyContent: 'space-between' }}
             control={
               <MaxLoopsSelect
                 maxLoops={defaultMaxLoops}

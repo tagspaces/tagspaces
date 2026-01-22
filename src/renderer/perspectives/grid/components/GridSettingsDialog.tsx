@@ -163,7 +163,7 @@ function GridSettingsDialog(props: Props) {
             </TsButton>
           </>
         )}
-        <Box style={{ display: 'flex', marginTop: 8 }}>
+        <Box sx={{ display: 'flex', marginTop: '8px' }}>
           <Typography
             sx={{ color: theme.palette.text.primary, alignSelf: 'center' }}
             variant="body1"
@@ -279,7 +279,7 @@ function GridSettingsDialog(props: Props) {
           }}
         >
           <ListItemText
-            style={{ display: 'flex' }}
+            sx={{ display: 'flex' }}
             primary={
               <>
                 {t('core:sort') + ': ' + t(sortBy) + '  '}
@@ -360,7 +360,7 @@ function GridSettingsDialog(props: Props) {
           {/* <FormHelperText>{t('core:pageLimitHelp')}</FormHelperText> */}
         </FormControl>
       </DialogContent>
-      <TsDialogActions style={{ justifyContent: 'space-between' }}>
+      <TsDialogActions sx={{ justifyContent: 'space-between' }}>
         {smallScreen ? (
           <div style={{ width: 1 }} />
         ) : (

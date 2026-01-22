@@ -167,7 +167,7 @@ function SaveSearchDialog(props: Props) {
         onClose={onClose}
         actionSlot={okButton}
       />
-      <DialogContent style={{ minWidth: smallScreen ? 'unset' : 300 }}>
+      <DialogContent sx={{ minWidth: smallScreen ? 'unset' : '300px' }}>
         <FormControl fullWidth={true}>
           <TsTextField
             error={!!inputError.current}
@@ -194,7 +194,7 @@ function SaveSearchDialog(props: Props) {
         <EditSearchQuery />
       </DialogContent>
       {!smallScreen && (
-        <TsDialogActions style={{ justifyContent: 'space-between' }}>
+        <TsDialogActions sx={{ justifyContent: 'space-between' }}>
           <div>
             {tempSearchQuery?.uuid !== undefined && (
               <TsButton onClick={onDelete} data-tid="deleteSavedSearchTID">

@@ -25,7 +25,7 @@ import { useSelector } from 'react-redux';
 export type TSDialogActions = DialogActionsProps & {};
 
 function TSDialogActions(props: TSDialogActions) {
-  const { children, style } = props;
+  const { children, sx } = props;
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -33,10 +33,9 @@ function TSDialogActions(props: TSDialogActions) {
   return (
     <DialogActions
       {...props}
-      style={{
+      sx={{
         padding: '10px 20px 20px 20px',
-        // padding: smallScreen ? '10px 20px 20px 30px' : 'inherited',
-        ...style,
+        ...sx,
       }}
     >
       {children}
