@@ -125,7 +125,7 @@ function CreateTagsDialog(props: Props) {
         onClose={onClose}
         actionSlot={okButton}
       />
-      <DialogContent style={{ minWidth: 300, paddingTop: 10 }}>
+      <DialogContent sx={{ minWidth: '300px', paddingTop: '10px' }}>
         <FormControl fullWidth={true} error={inputError}>
           <TsTextField
             error={inputError}

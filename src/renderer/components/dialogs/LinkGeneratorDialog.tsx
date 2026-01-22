@@ -91,7 +91,7 @@ function LinkGeneratorDialog(props: Props) {
         closeButtonTestId="closeLinkGeneratorTID"
         onClose={onClose}
       />
-      <DialogContent style={{ overflow: 'auto', minHeight: 510 }}>
+      <DialogContent sx={{ overflow: 'auto', minHeight: '510px' }}>
         <TsSelect
           label={
             <>
@@ -171,7 +171,7 @@ function LinkGeneratorDialog(props: Props) {
         />
       </DialogContent>
       <TsDialogActions
-        style={{
+        sx={{
           justifyContent: 'space-between',
         }}
       >

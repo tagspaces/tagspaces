@@ -179,9 +179,9 @@ function DownloadUrlDialog(props: Props) {
           actionSlot={okButton}
         />
         <DialogContent
-          style={{
-            minWidth: 200,
-            marginBottom: 20,
+          sx={{
+            minWidth: '200px',
+            marginBottom: '20px',
             overflow: 'overlay',
           }}
           data-tid="downloadUrlDialogTID"

@@ -117,7 +117,7 @@ Do you want to continue?`)
       PaperComponent={DraggablePaper}
       open={open}
       onClose={onClose}
-      style={{ minHeight: 200 }}
+      sx={{ minHeight: '200px' }}
     >
       <DialogTitle
         sx={{ cursor: 'move', minHeight: '20px' }}
@@ -143,7 +143,7 @@ Do you want to continue?`)
           label={t('core:importTagsRecursive')}
         />
       </DialogContent>
-      <TsDialogActions style={{ justifyContent: 'space-between' }}>
+      <TsDialogActions sx={{ justifyContent: 'space-between' }}>
         <TsButton
           data-tid="cancelImportTagsTID"
           onClick={() => {

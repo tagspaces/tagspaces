@@ -91,8 +91,8 @@ function KeyboardDialog(props: Props) {
       />
       <DialogContent
         data-tid="keyboardShortCutsDialog"
-        style={{
-          minWidth: 350,
+        sx={{
+          minWidth: '350px',
           overflow: 'auto',
         }}
       >
@@ -119,7 +119,7 @@ function KeyboardDialog(props: Props) {
       </DialogContent>
       {!smallScreen && (
         <TsDialogActions
-          style={{
+          sx={{
             justifyContent: 'space-between',
           }}
         >

@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
@@ -34,7 +35,7 @@ import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { Paper, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Paper, useMediaQuery, useTheme } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
@@ -189,11 +190,11 @@ function EditTagGroupDialog(props: Props) {
   );
 
   const renderContent = (
-    <DialogContent style={{ overflowY: 'visible', overflowX: 'hidden' }}>
+    <DialogContent sx={{ overflowY: 'visible', overflowX: 'hidden' }}>
       <FormControl
         fullWidth={true}
         error={inputError}
-        style={{ overflow: 'visible' }}
+        sx={{ overflow: 'visible' }}
       >
         <TsTextField
           error={inputError}
@@ -209,7 +210,7 @@ function EditTagGroupDialog(props: Props) {
         )}
       </FormControl>
       {saveTagInLocation && (
-        <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
           <TsSelect
             fullWidth
             disabled={!Pro}
@@ -241,7 +242,7 @@ function EditTagGroupDialog(props: Props) {
           </TsSelect>
         </ListItem>
       )}
-      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
         <WorkSpacesDropdown
           disabled={!Pro}
           dataTid="taggroupWorkspaceTID"
@@ -257,16 +258,16 @@ function EditTagGroupDialog(props: Props) {
           onOpenNewWorkspace={() => workSpacesContext.openNewWorkspaceDialog()}
         />
       </ListItem>
-      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('tagBackgroundColor')} />
         <TransparentBackground>
           <TsButton
             onClick={() => setDisplayColorPicker(!displayColorPicker)}
             data-tid="editTagGroupBackgroundColor"
-            style={{
-              height: 30,
-              borderRadius: 2,
-              borderWidth: 1,
+            sx={{
+              height: '30px',
+              borderRadius: AppConfig.defaultCSSRadius,
+              borderWidth: '1px',
               borderStyle: 'solid',
               borderColor: 'gray',
               padding: '5px',
@@ -285,16 +286,16 @@ function EditTagGroupDialog(props: Props) {
           />
         )}
       </ListItem>
-      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('core:tagForegroundColor')} />
         <TransparentBackground>
           <TsButton
             onClick={() => setDisplayTextColorPicker(!displayTextColorPicker)}
             data-tid="editTagGroupForegroundColor"
-            style={{
-              height: 30,
-              borderRadius: 2,
-              borderWidth: 1,
+            sx={{
+              height: '30px',
+              borderRadius: AppConfig.defaultCSSRadius,
+              borderWidth: '1px',
               borderStyle: 'solid',
               borderColor: 'gray',
               padding: '5px',
@@ -314,16 +315,15 @@ function EditTagGroupDialog(props: Props) {
           />
         )}
       </ListItem>
-      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('core:tagPreview')} />
         <Tag backgroundColor={color} textColor={textcolor} isDragging={false}>
-          <span style={{ textTransform: 'lowercase' }}>
+          <Box sx={{ textTransform: 'lowercase', marginRight: '4px' }}>
             {t('core:tagPreview')}
-          </span>
-          <span style={{ margin: 3 }} />
+          </Box>
         </Tag>
       </ListItem>
-      <ListItem style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('core:colorChangesToAllTags')} />
         <Switch
           data-tid="editTagGroupSwitch"

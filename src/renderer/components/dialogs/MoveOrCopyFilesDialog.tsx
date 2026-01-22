@@ -138,7 +138,7 @@ function MoveOrCopyFilesDialog(props: Props) {
         onClose={onClose}
       />
       <DialogContent
-        style={{
+        sx={{
           overflowX: 'hidden',
           overflowY: 'auto',
         }}

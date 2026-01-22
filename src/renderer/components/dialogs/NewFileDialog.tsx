@@ -249,10 +249,9 @@ function NewFileDialog(props: Props) {
         actionSlot={okButton}
       ></TsDialogTitle>
       <DialogContent
-        style={{
-          paddingTop: 10,
-          minWidth: 200,
-          // minHeight: 200,
+        sx={{
+          paddingTop: '10px',
+          minWidth: '200px',
           overflow: 'overlay',
         }}
         data-tid="newFileDialog"

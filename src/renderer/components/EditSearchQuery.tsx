@@ -302,7 +302,7 @@ function EditSearchQuery(props: Props) {
           onChange={switchSearchType}
           size="small"
           exclusive
-          style={{ marginBottom: 0, alignSelf: 'center' }}
+          sx={{ marginBottom: 0, alignSelf: 'center' }}
           value={tempSearchQuery.searchType}
         >
           <TsToggleButton
@@ -348,7 +348,7 @@ function EditSearchQuery(props: Props) {
           }}
           size="small"
           exclusive
-          style={{ marginBottom: 0, alignSelf: 'center' }}
+          sx={{ marginBottom: 0, alignSelf: 'center' }}
           value={tempSearchQuery.forceIndexing}
         >
           <TsToggleButton

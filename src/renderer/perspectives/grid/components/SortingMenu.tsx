@@ -50,7 +50,7 @@ function SortingMenu(props: Props) {
               handleSortBy('byRelevance');
             }}
           >
-            <ListItemIcon style={{ minWidth: 25 }}>
+            <ListItemIcon sx={{ minWidth: '25px' }}>
               {sortBy === 'byRelevance' &&
                 (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
             </ListItemIcon>
@@ -63,7 +63,7 @@ function SortingMenu(props: Props) {
             handleSortBy('byName');
           }}
         >
-          <ListItemIcon style={{ minWidth: 25 }}>
+          <ListItemIcon sx={{ minWidth: '25px' }}>
             {sortBy === 'byName' &&
               (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
           </ListItemIcon>
@@ -75,7 +75,7 @@ function SortingMenu(props: Props) {
             handleSortBy('byFileSize');
           }}
         >
-          <ListItemIcon style={{ minWidth: 25 }}>
+          <ListItemIcon sx={{ minWidth: '25px' }}>
             {sortBy === 'byFileSize' &&
               (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
           </ListItemIcon>
@@ -87,7 +87,7 @@ function SortingMenu(props: Props) {
             handleSortBy('byDateModified');
           }}
         >
-          <ListItemIcon style={{ minWidth: 25 }}>
+          <ListItemIcon sx={{ minWidth: '25px' }}>
             {sortBy === 'byDateModified' &&
               (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
           </ListItemIcon>
@@ -99,7 +99,7 @@ function SortingMenu(props: Props) {
             handleSortBy('byFirstTag');
           }}
         >
-          <ListItemIcon style={{ minWidth: 25 }}>
+          <ListItemIcon sx={{ minWidth: '25px' }}>
             {sortBy === 'byFirstTag' &&
               (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
           </ListItemIcon>
@@ -111,7 +111,7 @@ function SortingMenu(props: Props) {
             handleSortBy('byExtension');
           }}
         >
-          <ListItemIcon style={{ minWidth: 25 }}>
+          <ListItemIcon sx={{ minWidth: '25px' }}>
             {sortBy === 'byExtension' &&
               (orderBy ? <ArrowDownIcon /> : <ArrowUpIcon />)}
           </ListItemIcon>
@@ -123,7 +123,7 @@ function SortingMenu(props: Props) {
             handleSortBy('random');
           }}
         >
-          <ListItemIcon style={{ minWidth: 25 }}>
+          <ListItemIcon sx={{ minWidth: '25px' }}>
             {sortBy === 'random' && <ArrowDownIcon />}
           </ListItemIcon>
           <ListItemText primary={t('core:random')} />

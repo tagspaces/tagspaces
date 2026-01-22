@@ -91,12 +91,12 @@ function OnboardingDialog(props: Props) {
     >
       <TsDialogTitle
         dialogTitle={''}
-        style={{ height: 25 }}
+        sx={{ height: '25px' }}
         onClose={onClose}
         closeButtonTestId={'closeOnboardingDialog'}
       />
       <DialogContent
-        style={{
+        sx={{
           overflowY: 'auto',
           overflowX: 'hidden',
         }}
@@ -154,7 +154,7 @@ function OnboardingDialog(props: Props) {
                   }}
                 >
                   <TsToggleButton
-                    style={{
+                    sx={{
                       borderTopRightRadius: 0,
                       borderBottomRightRadius: 0,
                     }}
@@ -163,7 +163,7 @@ function OnboardingDialog(props: Props) {
                     {t('light')}
                   </TsToggleButton>
                   <TsToggleButton
-                    style={{
+                    sx={{
                       borderTopLeftRadius: 0,
                       borderBottomLeftRadius: 0,
                     }}
@@ -179,7 +179,7 @@ function OnboardingDialog(props: Props) {
                 </Typography>
                 <Typography variant="h5">&nbsp;</Typography>
                 <FormControl
-                  style={{ marginTop: 20, marginBottom: 20 }}
+                  sx={{ marginTop: '20px', marginBottom: '20px' }}
                   component="fieldset"
                 >
                   <RadioGroup
@@ -193,20 +193,20 @@ function OnboardingDialog(props: Props) {
                       label={
                         <Typography
                           variant="subtitle1"
-                          style={{ textAlign: 'left' }}
+                          sx={{ textAlign: 'left' }}
                         >
                           {t('obChooseTaggingFilename')}
                         </Typography>
                       }
                     />
                     <FormControlLabel
-                      style={{ marginTop: 20 }}
+                      sx={{ marginTop: '20px' }}
                       value="true"
                       control={<Radio checked={isPersistTagsInSidecar} />}
                       label={
                         <Typography
                           variant="subtitle1"
-                          style={{ textAlign: 'left' }}
+                          sx={{ textAlign: 'left' }}
                         >
                           {t('obChooseTaggingSidecar')}
                         </Typography>
@@ -224,7 +224,7 @@ function OnboardingDialog(props: Props) {
                 </Typography>
               </SwiperSlide>
               <SwiperSlide>
-                <Typography variant="h5" style={{ marginBottom: 20 }}>
+                <Typography variant="h5" sx={{ marginBottom: '20px' }}>
                   {t('obWebClipperTitle')}
                 </Typography>
                 <Typography variant="body1">{t('obWebClipperMain')}</Typography>
@@ -243,11 +243,11 @@ function OnboardingDialog(props: Props) {
                   {t('obWebClipperClarification')}
                 </Typography>
                 <TsButton
-                  style={{
-                    marginTop: 20,
+                  sx={{
+                    marginTop: '20px',
                     marginLeft: 'auto',
                     marginRight: 'auto',
-                    marginBottom: 20,
+                    marginBottom: '20px',
                     display: 'block',
                   }}
                   onClick={() => {
@@ -258,7 +258,7 @@ function OnboardingDialog(props: Props) {
                 </TsButton>
               </SwiperSlide>
               <SwiperSlide>
-                <Typography variant="h5" style={{ marginBottom: 20 }}>
+                <Typography variant="h5" sx={{ marginBottom: '20px' }}>
                   {t('obExplanationsTitle')}
                 </Typography>
                 <Typography variant="body1">
@@ -280,11 +280,11 @@ function OnboardingDialog(props: Props) {
                   {t('obExplanationsMain2')}
                 </Typography>
                 <TsButton
-                  style={{
-                    marginTop: 20,
+                  sx={{
+                    marginTop: '20px',
                     marginLeft: 'auto',
                     marginRight: 'auto',
-                    marginBottom: 20,
+                    marginBottom: '20px',
                     display: 'block',
                   }}
                   onClick={() => {
@@ -311,11 +311,11 @@ function OnboardingDialog(props: Props) {
                   {t('obFinalExplanation')}
                 </Typography>
                 <TsButton
-                  style={{
-                    marginTop: 20,
+                  sx={{
+                    marginTop: '20px',
                     marginLeft: 'auto',
                     marginRight: 'auto',
-                    marginBottom: 20,
+                    marginBottom: '20px',
                     display: 'block',
                   }}
                   onClick={() => {

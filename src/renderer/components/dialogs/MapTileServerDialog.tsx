@@ -181,7 +181,7 @@ function MapTileServerDialog(props: Props) {
       />
       {renderContent()}
       <TsDialogActions
-        style={{
+        sx={{
           justifyContent: props.tileServer.uuid ? 'space-between' : 'flex-end',
         }}
       >
