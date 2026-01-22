@@ -331,6 +331,9 @@ function ChatView() {
                   name="entryName"
                   placeholder={t('core:yourMessageForAI')}
                   onChange={handleInputChange}
+                  multiline
+                  minRows={1}
+                  maxRows={6}
                   value={chatMsg.current}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.code === 'Enter') {
@@ -342,7 +345,7 @@ function ChatView() {
                   slotProps={{
                     input: {
                       startAdornment: (
-                        <InputAdornment position="start" sx={{ height: 32 }}>
+                        <InputAdornment position="start">
                           <TooltipTS
                             title={
                               aiDefaultProvider?.name +
@@ -350,7 +353,9 @@ function ChatView() {
                               aiDefaultProvider?.url
                             }
                           >
-                            <Box>
+                            <Box
+                              sx={{ display: 'flex', alignContent: 'center' }}
+                            >
                               <OllamaIcon />
                             </Box>
                           </TooltipTS>
@@ -383,7 +388,7 @@ function ChatView() {
                     },
                   }}
                 />
-                <FormHelperText>
+                <FormHelperText sx={{ margin: 0 }}>
                   {t('core:aiHelp', {
                     chatModel: currentModel && '(' + currentModel.name + ')',
                   })}

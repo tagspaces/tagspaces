@@ -189,73 +189,67 @@ function SelectChatModel(props: Props) {
   }
 
   return (
-    <>
-      <TsSelect
-        disabled={disabled}
-        value={chosenModel ? chosenModel : 'init'}
-        onChange={changeModel}
-        label={label ? label : ''}
-        id={id ? id : 'selectChatModelId'}
-        slotProps={{
-          input: {
-            endAdornment: chosenModel && (
-              <InputAdornment position="end" sx={{ ml: -12 }}>
-                <TsIconButton
-                  aria-label={t('core:deleteModel')}
-                  onClick={handleRemoveModel}
-                  data-tid="deleteModelTID"
-                >
-                  <RemoveIcon />
-                </TsIconButton>
-              </InputAdornment>
-            ),
-          },
-        }}
-      >
-        <MenuItem value="init" disabled>
-          {t('core:chooseModel')}
-        </MenuItem>
-        <ListSubheader>{t('core:installedAIModels')}</ListSubheader>
-        {installedModels && installedModels.length > 0 ? (
-          installedModels.map((model) => (
-            <MenuItem
-              key={model.name}
-              value={model.name}
-              title={getTitle(model)}
-            >
-              <ListItemIcon>
-                <AIIcon fontSize="small" />
-              </ListItemIcon>
-              {model.name} {(model.size / (1024 * 1024 * 1024)).toFixed(2)} GB
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem value="" disabled>
-            {t('core:noAIModelsInstaller')}
-          </MenuItem>
-        )}
-        <ListSubheader>{t('core:exampleInstallableModels')}</ListSubheader>
-        {ollamaAvailableModels.map((model) => (
-          <MenuItem
-            key={model.name}
-            value={model.name}
-            title={model.details.format}
-          >
+    <TsSelect
+      disabled={disabled}
+      value={chosenModel ? chosenModel : 'init'}
+      onChange={changeModel}
+      label={label ? label : ''}
+      id={id ? id : 'selectChatModelId'}
+      slotProps={{
+        input: {
+          endAdornment: chosenModel && (
+            <InputAdornment position="end" sx={{ ml: -12 }}>
+              <TsIconButton
+                aria-label={t('core:deleteModel')}
+                onClick={handleRemoveModel}
+                data-tid="deleteModelTID"
+              >
+                <RemoveIcon />
+              </TsIconButton>
+            </InputAdornment>
+          ),
+        },
+      }}
+    >
+      <MenuItem value="init" disabled>
+        {t('core:chooseModel')}
+      </MenuItem>
+      <ListSubheader>{t('core:installedAIModels')}</ListSubheader>
+      {installedModels && installedModels.length > 0 ? (
+        installedModels.map((model) => (
+          <MenuItem key={model.name} value={model.name} title={getTitle(model)}>
             <ListItemIcon>
-              <DownloadIcon fontSize="small" />
+              <AIIcon fontSize="small" />
             </ListItemIcon>
-            {model.name}
+            {model.name} {(model.size / (1024 * 1024 * 1024)).toFixed(2)} GB
           </MenuItem>
-        ))}
-        <ListSubheader>{t('core:moreActions')}</ListSubheader>
-        <MenuItem value="customModel">
+        ))
+      ) : (
+        <MenuItem value="" disabled>
+          {t('core:noAIModelsInstaller')}
+        </MenuItem>
+      )}
+      <ListSubheader>{t('core:exampleInstallableModels')}</ListSubheader>
+      {ollamaAvailableModels.map((model) => (
+        <MenuItem
+          key={model.name}
+          value={model.name}
+          title={model.details.format}
+        >
           <ListItemIcon>
             <DownloadIcon fontSize="small" />
           </ListItemIcon>
-          {t('core:installCustomModel')}
+          {model.name}
         </MenuItem>
-      </TsSelect>
-    </>
+      ))}
+      <ListSubheader>{t('core:moreActions')}</ListSubheader>
+      <MenuItem value="customModel">
+        <ListItemIcon>
+          <DownloadIcon fontSize="small" />
+        </ListItemIcon>
+        {t('core:installCustomModel')}
+      </MenuItem>
+    </TsSelect>
   );
 }
 
