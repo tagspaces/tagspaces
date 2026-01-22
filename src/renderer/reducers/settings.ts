@@ -40,7 +40,6 @@ export const types = {
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   SET_ENTRY_CONTAINER_TAB: 'SETTINGS/SET_ENTRY_CONTAINER_TAB',
-  SET_ENTRY_PROPERTIES_HEIGHT: 'SETTINGS/SET_ENTRY_PROPERTIES_HEIGHT',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
   SET_USEONLYTAGSFROMTAGLIBRARY: 'SETTINGS/SET_USEONLYTAGSFROMTAGLIBRARY',
   SET_DEVMODE: 'SETTINGS/SET_DEVMODE',
@@ -94,7 +93,6 @@ export const types = {
   SET_SUPPORTED_FILE_TYPES: 'SETTINGS/SET_SUPPORTED_FILE_TYPES',
   ADD_SUPPORTED_FILE_TYPES: 'SETTINGS/ADD_SUPPORTED_FILE_TYPES',
   REMOVE_SUPPORTED_FILE_TYPES: 'SETTINGS/REMOVE_SUPPORTED_FILE_TYPES',
-  //ENABLE_EXTENSION: 'SETTINGS/ENABLE_EXTENSION',
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
@@ -176,9 +174,6 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_ENTRY_CONTAINER_TAB: {
       return { ...state, entryContainerTab: action.entryContainerTab };
-    }
-    case types.SET_ENTRY_PROPERTIES_HEIGHT: {
-      return { ...state, entryPropertiesHeight: action.entryPropertiesHeight };
     }
     case types.SET_TAG_DELIMITER: {
       return { ...state, tagDelimiter: action.delimiter };
@@ -655,14 +650,6 @@ export const actions = {
     type: types.SET_ENTRY_CONTAINER_TAB,
     entryContainerTab: tabName,
   }),
-  setEntryPropertiesHeight: (height: number) => ({
-    type: types.SET_ENTRY_PROPERTIES_HEIGHT,
-    entryPropertiesHeight: height,
-  }),
-  /*  setShowDetails: (showDetails: boolean) => ({
-    type: types.SET_SHOW_DETAILS,
-    showDetails: showDetails,
-  }),*/
   setCheckForUpdates: (checkForUpdates: boolean) => ({
     type: types.SET_CHECKFORUPDATES,
     checkForUpdates,
@@ -671,11 +658,6 @@ export const actions = {
     type: types.SET_REORDER_TAGS,
     reorderTags,
   }),
-  /*setLanguage: (language: string) => (dispatch: (action) => void) => {
-    return i18n.changeLanguage(language).then(() => {
-      dispatch(actions.setLanguageInt(language));
-    });
-  },*/
   setLanguage: (language: string) => ({
     type: types.SET_LANGUAGE,
     language,
@@ -828,11 +810,6 @@ export const actions = {
     type: types.REMOVE_SUPPORTED_FILE_TYPES,
     extensionId,
   }),
-  /*enableExtension: (extensionId: string, enabled: boolean) => ({
-    type: types.ENABLE_EXTENSION,
-    extensionId,
-    enabled,
-  }),*/
   setSupportedFileTypes: (supportedFileTypes: Array<TS.FileTypes>) => ({
     type: types.SET_SUPPORTED_FILE_TYPES,
     supportedFileTypes,
@@ -987,8 +964,6 @@ export const isDevMode = (state: any) =>
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;
-/*export const getDefaultAIProviderId = (state: any) =>
-  state.settings.aiProviderId;*/
 export const getDefaultAIProvider = (state: any) => {
   if (typeof window.ExtAI === 'undefined') {
     return getDefaultAI(
@@ -1108,7 +1083,7 @@ export const isFirstRun = (state: any) => {
 
 const kbObject: any = {};
 function generateKeyBindingObject(keyBindings: Array<Object>) {
-  Object.keys(kbObject).forEach((k) => delete kbObject[k]);
+  // Object.keys(kbObject).forEach((k) => delete kbObject[k]);
   keyBindings.map((kb: any) => {
     kbObject[kb.name] = kb.command;
     return true;
