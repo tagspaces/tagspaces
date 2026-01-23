@@ -31,6 +31,14 @@ export const TagLibraryIcon = (props) => (
   <TagsIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
 );
 
+import ArrowDownIcon from '@mui/icons-material/ArrowDropDown';
+
+export const ArrowDropDownIcon = (props) => <ArrowDownIcon {...props} />;
+
+export const ArrowDropUpIcon = (props) => (
+  <ArrowDownIcon sx={{ transform: 'rotate(180deg)' }} {...props} />
+);
+
 export const ParentFolderIcon = (props) => (
   <KeyboardReturnIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
 );
@@ -342,10 +350,8 @@ export { default as VisibilityOffIcon } from '@mui/icons-material/VisibilityOff'
 
 export { default as PasswordIcon } from '@mui/icons-material/Password';
 
-export { default as ArrowDropDownIcon } from '@mui/icons-material/ArrowDropDown';
-
 export const MastodonIcon = (props) => (
-  <SvgIcon>
+  <SvgIcon {...props}>
     <svg
       width="24"
       height="24"
@@ -364,7 +370,7 @@ export const MastodonIcon = (props) => (
 );
 
 export const MainMenuIcon = (props) => (
-  <SvgIcon>
+  <SvgIcon {...props}>
     <svg
       width="24"
       height="24"
@@ -378,7 +384,7 @@ export const MainMenuIcon = (props) => (
 );
 
 export const OllamaIcon = (props) => (
-  <SvgIcon>
+  <SvgIcon {...props}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"

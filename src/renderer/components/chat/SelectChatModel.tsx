@@ -16,7 +16,7 @@
  *
  */
 
-import { AIIcon, DownloadIcon, RemoveIcon } from '-/components/CommonIcons';
+import { DownloadIcon, OllamaIcon, RemoveIcon } from '-/components/CommonIcons';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import { AIProvider } from '-/components/chat/ChatTypes';
@@ -24,7 +24,12 @@ import { getOllamaModels } from '-/components/chat/OllamaClient';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
-import { ListItemIcon, ListSubheader, MenuItem } from '@mui/material';
+import {
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  MenuItem,
+} from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
 import { format, parseISO } from 'date-fns';
 import { ModelResponse } from 'ollama';
@@ -193,6 +198,7 @@ function SelectChatModel(props: Props) {
       disabled={disabled}
       value={chosenModel ? chosenModel : 'init'}
       onChange={changeModel}
+      sx={{ '& .MuiSelect-select': { padding: '4px' } }}
       label={label ? label : ''}
       id={id ? id : 'selectChatModelId'}
       slotProps={{
@@ -221,10 +227,25 @@ function SelectChatModel(props: Props) {
       {installedModels && installedModels.length > 0 ? (
         installedModels.map((model) => (
           <MenuItem key={model.name} value={model.name} title={getTitle(model)}>
-            <ListItemIcon>
-              <AIIcon fontSize="small" />
+            <ListItemIcon
+              sx={{
+                display: 'inline-block',
+                minWidth: '30px',
+                paddingLeft: '3px',
+              }}
+            >
+              <OllamaIcon
+                sx={{ width: '24px', height: '24px', verticalAlign: 'middle' }}
+              />
             </ListItemIcon>
-            {model.name} {(model.size / (1024 * 1024 * 1024)).toFixed(2)} GB
+            <ListItemText
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              {model.name} {(model.size / (1024 * 1024 * 1024)).toFixed(2)} GB
+            </ListItemText>
           </MenuItem>
         ))
       ) : (
@@ -240,7 +261,7 @@ function SelectChatModel(props: Props) {
           title={model.details.format}
         >
           <ListItemIcon>
-            <DownloadIcon fontSize="small" />
+            <DownloadIcon />
           </ListItemIcon>
           {model.name}
         </MenuItem>
@@ -248,7 +269,7 @@ function SelectChatModel(props: Props) {
       <ListSubheader>{t('core:moreActions')}</ListSubheader>
       <MenuItem value="customModel">
         <ListItemIcon>
-          <DownloadIcon fontSize="small" />
+          <DownloadIcon />
         </ListItemIcon>
         {t('core:installCustomModel')}
       </MenuItem>

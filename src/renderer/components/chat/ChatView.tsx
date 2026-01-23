@@ -18,14 +18,14 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  AIIcon,
+  ArrowDropUpIcon,
   CancelIcon,
   CloseIcon,
   MoreMenuIcon,
-  OllamaIcon,
   SendIcon,
 } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
-import TooltipTS from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import ChatDndTargetFile from '-/components/chat/ChatDndTargetFile';
@@ -36,6 +36,7 @@ import ChatMdEditor from '-/components/md/ChatMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import {
   convertMarkDownToHtml,
@@ -43,11 +44,13 @@ import {
   saveAsTextFile,
 } from '-/services/utils-io';
 import { MilkdownProvider } from '@milkdown/react';
-import { Box, Grid } from '@mui/material';
+import { Box, Divider, Grid } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@mui/material/styles';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
@@ -55,6 +58,20 @@ import React, { ChangeEvent, useCallback, useReducer, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import TsMenuList from '../TsMenuList';
+
+const aiPrompts = [
+  {
+    title: 'Translate into German',
+    prompt:
+      'You are a professional {sourceLang} to {targeLang} translator. Your goal is to accurately convey the meaning and nuances of the original {sourceLang} text while adhering to {targeLang} grammar, vocabulary, and cultural sensitivities. Produce only the {targeLang} translation, without any additional explanations or commentary. Please translate the following {sourceLang} text into {targeLang}:',
+  },
+  {
+    title: 'Correct German spelling ',
+    prompt:
+      'You are a professional text corrector. Improve the text grammatically in German.',
+  },
+];
 
 function ChatView() {
   const { t } = useTranslation();
@@ -71,13 +88,17 @@ function ChatView() {
   } = useChatContext();
   const { showNotification } = useNotificationContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
+  const { openedEntry } = useOpenedEntryContext();
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
   const editorRef = useRef<CrepeRef>(null);
   const milkdownDivRef = useRef<HTMLDivElement>(null);
   const chatMsg = useRef<string>('');
+  const textInputRef = useRef<HTMLInputElement>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [promptAnchorEl, setPromptAnchorEl] =
+    React.useState<null | HTMLElement>(null);
 
   // Input change handler
   const handleInputChange = useCallback(
@@ -135,6 +156,38 @@ function ChatView() {
         }
       });
   }, [newChatMessage]);
+
+  // Prompt menu handlers
+  const handlePromptClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setPromptAnchorEl(event.currentTarget);
+    },
+    [],
+  );
+
+  const handlePromptClose = useCallback(() => {
+    setPromptAnchorEl(null);
+  }, []);
+
+  const handlePromptSelect = useCallback((prompt: string) => {
+    setPromptAnchorEl(null);
+    if (textInputRef.current) {
+      const cursorPos =
+        textInputRef.current.selectionStart || chatMsg.current.length;
+      const before = chatMsg.current.substring(0, cursorPos);
+      const after = chatMsg.current.substring(cursorPos);
+      chatMsg.current = before + prompt + after;
+      forceUpdate();
+      // Restore cursor position after prompt insertion
+      setTimeout(() => {
+        if (textInputRef.current) {
+          textInputRef.current.selectionStart = cursorPos + prompt.length;
+          textInputRef.current.selectionEnd = cursorPos + prompt.length;
+          textInputRef.current.focus();
+        }
+      }, 0);
+    }
+  }, []);
 
   // Menu handlers
   const handleMoreClick = useCallback(
@@ -228,7 +281,7 @@ function ChatView() {
 
   const appendSelectionToPrompt = () => {
     const selectedText = getSelectedIFrameContent();
-    chatMsg.current = chatMsg.current + selectedText;
+    chatMsg.current = chatMsg.current + '\n\n' + selectedText;
     forceUpdate();
   };
 
@@ -277,7 +330,6 @@ function ChatView() {
               handleCopy={handleCopy}
               saveAsHtml={saveAsHtml}
               saveAsMarkdown={saveAsMarkdown}
-              appendSelectionToPrompt={appendSelectionToPrompt}
             />
           </Grid>
         </Grid>
@@ -355,12 +407,9 @@ function ChatView() {
                   minRows={1}
                   maxRows={6}
                   value={chatMsg.current}
-                  // updateValue={(message) => {
-                  //   chatMsg.current = chatMsg.current + message;
-                  //   forceUpdate();
-                  // }}
+                  inputRef={textInputRef}
                   sx={{
-                    '& .MuiInputBase-root': { padding: '2px 5px' },
+                    '& .MuiInputBase-root': { padding: '4px' },
                   }}
                   onKeyDown={(event) => {
                     if (
@@ -376,19 +425,59 @@ function ChatView() {
                     input: {
                       startAdornment: (
                         <InputAdornment position="start">
-                          <TooltipTS
-                            title={
-                              aiDefaultProvider?.name +
-                              ' - ' +
-                              aiDefaultProvider?.url
+                          <TsIconButton
+                            size="small"
+                            onClick={handlePromptClick}
+                            aria-label={t('core:aiPrompts')}
+                            aria-controls={
+                              Boolean(promptAnchorEl)
+                                ? 'prompt-menu'
+                                : undefined
+                            }
+                            tooltip={t('core:aiPrompts')}
+                            aria-haspopup="true"
+                            aria-expanded={
+                              Boolean(promptAnchorEl) ? 'true' : undefined
                             }
                           >
-                            <Box
-                              sx={{ display: 'flex', alignContent: 'center' }}
-                            >
-                              <OllamaIcon />
-                            </Box>
-                          </TooltipTS>
+                            <AIIcon fontSize="small" />
+                            <ArrowDropUpIcon />
+                          </TsIconButton>
+                          <Menu
+                            id="prompt-menu"
+                            anchorEl={promptAnchorEl}
+                            open={Boolean(promptAnchorEl)}
+                            onClose={handlePromptClose}
+                            anchorOrigin={{
+                              vertical: 'top',
+                              horizontal: 'left',
+                            }}
+                            transformOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                            }}
+                          >
+                            <TsMenuList>
+                              {aiPrompts.map((aiPrompt, index) => (
+                                <MenuItem
+                                  key={index}
+                                  onClick={() => {
+                                    handlePromptSelect(aiPrompt.prompt);
+                                  }}
+                                >
+                                  {aiPrompt.title}
+                                </MenuItem>
+                              ))}
+                              {openedEntry?.isFile && (
+                                <>
+                                  <Divider />
+                                  <MenuItem onClick={appendSelectionToPrompt}>
+                                    {t('core:appendSelectionToPrompt')}
+                                  </MenuItem>
+                                </>
+                              )}
+                            </TsMenuList>
+                          </Menu>
                         </InputAdornment>
                       ),
                       endAdornment: (
@@ -408,7 +497,13 @@ function ChatView() {
                             </TsIconButton>
                           )}
                           <TsIconButton
-                            tooltip={t('core:send')}
+                            tooltip={
+                              t('core:send') +
+                              ' -> ' +
+                              aiDefaultProvider?.name +
+                              ' - ' +
+                              aiDefaultProvider?.url
+                            }
                             onClick={handleChatMessage}
                           >
                             <SendIcon />
