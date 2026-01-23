@@ -21,7 +21,6 @@ import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
 import FileView from '-/components/FileView';
-import Tooltip from '-/components/Tooltip';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -34,16 +33,14 @@ import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsConte
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { AppDispatch } from '-/reducers/app';
 import {
-  actions as SettingsActions,
   getEntryContainerTab,
-  getEntryPropertiesHeight,
   getKeyBindingObject,
   isDesktopMode,
 } from '-/reducers/settings';
 import { getResizedImageThumbnail } from '-/services/thumbsgenerator';
 import { TS } from '-/tagspaces.namespace';
 import { base64ToBlob } from '-/utils/dom';
-import { useMediaQuery } from '@mui/material';
+import { Tooltip, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
@@ -81,11 +78,18 @@ function EntryContainer() {
 
   const { showNotification, openConfirmDialog } = useNotificationContext();
   const tabIndex = useSelector(getEntryContainerTab);
-  const entryPropertiesHeight = useSelector(getEntryPropertiesHeight);
   const keyBindings = useSelector(getKeyBindingObject);
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const timer = useRef<NodeJS.Timeout>(null);
+  const isDraggingRef = useRef<boolean>(false);
+  const startYRef = useRef<number>(0);
+  const startHeightRef = useRef<number>(0);
+  const storageBufferRef = useRef<number | null>(null);
+  const storageTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [entryPropertiesHeight, setEntryPropertiesHeight] = useState<number>(
+    parseFloat(localStorage.getItem('tsEntryPropertiesHeight') || '200'),
+  );
 
   const openedPanelStyle: React.CSSProperties = {
     display: 'flex',
@@ -507,17 +511,79 @@ function EntryContainer() {
   };
 
   const toggleEntryPropertiesHeight = () => {
+    if (desktopMode) return;
+    let newHeight: number;
     if (entryPropertiesHeight === 100) {
-      dispatch(SettingsActions.setEntryPropertiesHeight(200));
+      newHeight = 200;
     } else if (entryPropertiesHeight === 200) {
-      dispatch(SettingsActions.setEntryPropertiesHeight(350));
+      newHeight = 350;
     } else if (entryPropertiesHeight === 350) {
-      dispatch(SettingsActions.setEntryPropertiesHeight(50));
+      newHeight = 50;
     } else if (entryPropertiesHeight === 50) {
-      dispatch(SettingsActions.setEntryPropertiesHeight(100));
+      newHeight = 100;
     } else {
-      dispatch(SettingsActions.setEntryPropertiesHeight(200));
+      newHeight = 200;
     }
+    setEntryPropertiesHeight(newHeight);
+    localStorage.setItem('tsEntryPropertiesHeight', newHeight.toString());
+  };
+
+  const handleSeparatorMouseDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!desktopMode) return;
+    const target = e.currentTarget as HTMLDivElement;
+    isDraggingRef.current = true;
+    startYRef.current = e.clientY;
+    startHeightRef.current = entryPropertiesHeight;
+    target.setPointerCapture(e.pointerId);
+  };
+
+  const flushStorageBuffer = () => {
+    if (storageBufferRef.current !== null) {
+      localStorage.setItem(
+        'tsEntryPropertiesHeight',
+        storageBufferRef.current.toString(),
+      );
+      storageBufferRef.current = null;
+    }
+  };
+
+  const handleSeparatorMouseMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!desktopMode) return;
+    if (!isDraggingRef.current) return;
+
+    const delta = e.clientY - startYRef.current;
+    const containerHeight =
+      fileViewerContainer.current?.parentElement?.clientHeight ||
+      window.innerHeight;
+    const newHeightPercent = Math.max(
+      10,
+      Math.min(200, startHeightRef.current + (delta / containerHeight) * 100),
+    );
+    const roundedHeight = Math.round(newHeightPercent * 10) / 10;
+    setEntryPropertiesHeight(roundedHeight);
+
+    // Buffer the localStorage write
+    storageBufferRef.current = roundedHeight;
+
+    // Clear existing timer
+    if (storageTimerRef.current) {
+      clearTimeout(storageTimerRef.current);
+    }
+
+    // Debounce localStorage write by 100ms
+    storageTimerRef.current = setTimeout(flushStorageBuffer, 100);
+  };
+
+  const handleSeparatorMouseUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingRef.current = false;
+    const target = e.currentTarget as HTMLDivElement;
+    target.releasePointerCapture(e.pointerId);
+
+    // Flush any pending buffer on mouse up
+    if (storageTimerRef.current) {
+      clearTimeout(storageTimerRef.current);
+    }
+    flushStorageBuffer();
   };
 
   const tabsElement = useMemo(
@@ -606,7 +672,7 @@ function EntryContainer() {
           </Box>
           {tabsElement}
           {openedEntry.isFile && isPanelOpened && (
-            <Tooltip title={t('core:togglePreviewSize')}>
+            <Tooltip title={desktopMode ? '' : t('core:togglePreviewSize')}>
               <Box
                 sx={{
                   textAlign: 'center',
@@ -614,15 +680,24 @@ function EntryContainer() {
                   paddingTop: '2px',
                   backgroundColor: 'background.default',
                   borderBottom: '1px solid ' + theme.palette.divider,
-                  cursor: 's-resize',
+                  cursor: 'ns-resize',
+                  userSelect: 'none',
+                  '&:hover': {
+                    backgroundColor: theme.palette.action.hover,
+                  },
                 }}
                 onClick={toggleEntryPropertiesHeight}
+                onPointerDown={handleSeparatorMouseDown}
+                onPointerMove={handleSeparatorMouseMove}
+                onPointerUp={handleSeparatorMouseUp}
+                onPointerCancel={handleSeparatorMouseUp}
               >
                 <Box
                   sx={{
                     width: '10%',
                     border: '1px dashed ' + theme.palette.text.secondary,
                     margin: '2px auto',
+                    pointerEvents: 'none',
                   }}
                 ></Box>
               </Box>
