@@ -363,7 +363,10 @@ function ChatView() {
                     '& .MuiInputBase-root': { padding: '2px 5px' },
                   }}
                   onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.code === 'Enter') {
+                    if (
+                      (event.key === 'Enter' || event.code === 'Enter') &&
+                      !event.shiftKey
+                    ) {
                       event.preventDefault();
                       event.stopPropagation();
                       handleChatMessage();
