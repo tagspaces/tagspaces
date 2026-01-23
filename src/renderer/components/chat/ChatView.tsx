@@ -36,7 +36,6 @@ import ChatMdEditor from '-/components/md/ChatMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useChatContext } from '-/hooks/useChatContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { getDefaultAIProvider } from '-/reducers/settings';
 import {
   convertMarkDownToHtml,
@@ -71,7 +70,6 @@ function ChatView() {
     cancelMessage,
   } = useChatContext();
   const { showNotification } = useNotificationContext();
-  const { openedEntry } = useOpenedEntryContext();
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const isLoading = useRef<boolean>(false);
   const currentMode = useRef<ChatMode>(undefined);
@@ -213,6 +211,27 @@ function ChatView() {
     }
   }, []);
 
+  const getSelectedIFrameContent = () => {
+    const iframe = document.getElementsByTagName('iframe')[0];
+    const iframeWindow = iframe.contentWindow;
+    const selection = iframeWindow.getSelection();
+    const selectionText = selection.toString();
+    if (selectionText) {
+      return selectionText;
+    } else {
+      const childIframe =
+        iframeWindow.document.getElementsByTagName('iframe')[0];
+      const subselection = childIframe.contentWindow.getSelection();
+      return subselection.toString();
+    }
+  };
+
+  const appendSelectionToPrompt = () => {
+    const selectedText = getSelectedIFrameContent();
+    chatMsg.current = chatMsg.current + selectedText;
+    forceUpdate();
+  };
+
   const { FILE } = NativeTypes;
 
   return (
@@ -258,6 +277,7 @@ function ChatView() {
               handleCopy={handleCopy}
               saveAsHtml={saveAsHtml}
               saveAsMarkdown={saveAsMarkdown}
+              appendSelectionToPrompt={appendSelectionToPrompt}
             />
           </Grid>
         </Grid>
@@ -280,7 +300,7 @@ function ChatView() {
             <ChatMdEditor
               showCurrent={isLoading.current}
               ref={editorRef}
-              currentFolder={openedEntry.path}
+              placeholder="Test"
             />
           </MilkdownProvider>
         </Grid>

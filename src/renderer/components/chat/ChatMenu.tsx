@@ -46,6 +46,7 @@ interface ChatMenuProps {
   handleCopy: () => void;
   saveAsHtml: () => void;
   saveAsMarkdown: () => void;
+  appendSelectionToPrompt: () => void;
 }
 
 function ChatMenu(props: ChatMenuProps) {
@@ -58,6 +59,7 @@ function ChatMenu(props: ChatMenuProps) {
     handleCopy,
     saveAsHtml,
     saveAsMarkdown,
+    appendSelectionToPrompt,
   } = props;
 
   const { deleteHistory } = useChatContext();
@@ -112,6 +114,12 @@ function ChatMenu(props: ChatMenuProps) {
             <DeleteIcon />
           </ListItemIcon>
           <ListItemText primary={t('core:clearHistory')} />
+        </MenuItem>
+        <MenuItem onClick={appendSelectionToPrompt}>
+          <ListItemIcon>
+            <DeleteIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:appendSelectionToPrompt')} />
         </MenuItem>
         <Divider />
         <MenuItem onClick={saveAsHtml}>

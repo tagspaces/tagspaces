@@ -46,7 +46,7 @@ const TabRevisions = React.lazy(
   () => import(/* webpackChunkName: "Revisions" */ './Revisions'),
 );
 const TabAI = React.lazy(
-  () => import(/* webpackChunkName: "AiPropertiesTab" */ './AiPropertiesTab'),
+  () => import(/* webpackChunkName: "ChatView" */ './chat/ChatView'),
 );
 const TabLinks = React.lazy(
   () => import(/* webpackChunkName: "LinksTab" */ './LinksTab'),

@@ -30,15 +30,14 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 interface ChatMdEditorProps {
-  currentFolder?: string;
   placeholder?: string;
   showCurrent?: boolean;
 }
 
 const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
   (props, ref) => {
-    const { currentFolder, placeholder, showCurrent } = props;
-    const { openLink } = useOpenedEntryContext();
+    const { placeholder, showCurrent } = props;
+    const { openedEntry, openLink } = useOpenedEntryContext();
     const { chatHistoryItems } = useChatContext();
     const crepeInstanceRef = useRef<Crepe | null>(null);
     const author = useSelector(getAuthor);
@@ -70,7 +69,7 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
             [Crepe.Feature.Cursor]: false,
           },
           placeholder,
-          currentFolder,
+          openedEntry?.path,
           openLink,
         );
         crepe.editor.onStatusChange((status: EditorStatus) => {
@@ -80,7 +79,7 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
         });
         return crepe;
       },
-      [currentFolder, chatHistoryItems],
+      [openedEntry?.path, chatHistoryItems],
     );
 
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);
