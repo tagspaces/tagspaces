@@ -198,13 +198,16 @@ function SelectChatModel(props: Props) {
       slotProps={{
         input: {
           endAdornment: chosenModel && (
-            <InputAdornment position="end" sx={{ ml: -12 }}>
+            <InputAdornment
+              position="end"
+              sx={{ marginLeft: '-30px', marginRight: '10px' }}
+            >
               <TsIconButton
                 aria-label={t('core:deleteModel')}
                 onClick={handleRemoveModel}
                 data-tid="deleteModelTID"
               >
-                <RemoveIcon />
+                <RemoveIcon fontSize="small" />
               </TsIconButton>
             </InputAdornment>
           ),
