@@ -114,7 +114,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       }
       dispatch(SettingsActions.setEntryContainerTab(tab.name));
       openPanel();
-      console.log('tab changed to:' + newValue);
+      // console.log('tab changed to:' + newValue);
     }
   };
 

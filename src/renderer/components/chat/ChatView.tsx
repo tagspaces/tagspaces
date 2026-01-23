@@ -99,6 +99,8 @@ function ChatView() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [promptAnchorEl, setPromptAnchorEl] =
     React.useState<null | HTMLElement>(null);
+  const [promptHistory, setPromptHistory] = React.useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = React.useState<number>(-1);
 
   // Input change handler
   const handleInputChange = useCallback(
@@ -134,6 +136,11 @@ function ChatView() {
   const handleChatMessage = useCallback(() => {
     isLoading.current = true;
     forceUpdate();
+    // Save prompt to history (keep last 1)
+    if (chatMsg.current.trim()) {
+      const updated = [chatMsg.current, ...promptHistory].slice(0, 1);
+      setPromptHistory(updated);
+    }
     newChatMessage(
       chatMsg.current,
       false,
@@ -155,7 +162,7 @@ function ChatView() {
           console.error('An error occurred:', error);
         }
       });
-  }, [newChatMessage]);
+  }, [newChatMessage, promptHistory]);
 
   // Prompt menu handlers
   const handlePromptClick = useCallback(
@@ -178,6 +185,7 @@ function ChatView() {
       const after = chatMsg.current.substring(cursorPos);
       chatMsg.current = before + prompt + after;
       forceUpdate();
+      setHistoryIndex(-1);
       // Restore cursor position after prompt insertion
       setTimeout(() => {
         if (textInputRef.current) {
@@ -419,6 +427,33 @@ function ChatView() {
                       event.preventDefault();
                       event.stopPropagation();
                       handleChatMessage();
+                    } else if (event.key === 'ArrowUp') {
+                      if (chatMsg.current.trim() === '') {
+                        event.preventDefault();
+                        const newIndex = Math.min(
+                          historyIndex + 1,
+                          promptHistory.length - 1,
+                        );
+                        if (newIndex >= 0 && newIndex < promptHistory.length) {
+                          setHistoryIndex(newIndex);
+                          chatMsg.current = promptHistory[newIndex];
+                          forceUpdate();
+                        }
+                      }
+                    } else if (event.key === 'ArrowDown') {
+                      if (chatMsg.current.trim() === '') {
+                        event.preventDefault();
+                        if (historyIndex > 0) {
+                          const newIndex = historyIndex - 1;
+                          setHistoryIndex(newIndex);
+                          chatMsg.current = promptHistory[newIndex];
+                          forceUpdate();
+                        } else if (historyIndex === 0) {
+                          setHistoryIndex(-1);
+                          chatMsg.current = '';
+                          forceUpdate();
+                        }
+                      }
                     }
                   }}
                   slotProps={{
