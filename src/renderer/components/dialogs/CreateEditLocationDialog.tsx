@@ -798,7 +798,7 @@ function CreateEditLocationDialog(props: Props) {
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <Switch
-                    disabled={!Pro}
+                    // disabled={!Pro}
                     data-tid="reloadOnFocusTID"
                     name="reloadOnFocus"
                     checked={reloadOnFocus}
@@ -854,31 +854,33 @@ function CreateEditLocationDialog(props: Props) {
                   </>
                 }
               />
-              <FormControlLabel
-                disabled={
-                  !Pro ||
-                  type === locationType.TYPE_CLOUD ||
-                  AppConfig.isCordova
-                }
-                labelPlacement="start"
-                sx={{ justifyContent: 'space-between', marginLeft: 0 }}
-                control={
-                  <Switch
-                    data-tid="changeWatchForChanges"
-                    name="watchForChanges"
-                    checked={watchForChanges}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                      setWatchForChanges(event.target.checked)
-                    }
-                  />
-                }
-                label={
-                  <>
-                    {t('core:watchForChangesInLocation')}
-                    {!Pro && <ProLabel />}
-                  </>
-                }
-              />
+              {devMode && (
+                <FormControlLabel
+                  disabled={
+                    !Pro ||
+                    type === locationType.TYPE_CLOUD ||
+                    AppConfig.isCordova
+                  }
+                  labelPlacement="start"
+                  sx={{ justifyContent: 'space-between', marginLeft: 0 }}
+                  control={
+                    <Switch
+                      data-tid="changeWatchForChanges"
+                      name="watchForChanges"
+                      checked={watchForChanges}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                        setWatchForChanges(event.target.checked)
+                      }
+                    />
+                  }
+                  label={
+                    <>
+                      {t('core:watchForChangesInLocation')}
+                      {!Pro && <ProLabel />}
+                    </>
+                  }
+                />
+              )}
               <FormControlLabel
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
