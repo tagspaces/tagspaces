@@ -309,18 +309,17 @@ function ChatView() {
       >
         {/* Model selection and menu */}
         <Grid container spacing={0} direction="row" sx={{ flexFlow: 'nowrap' }}>
-          <Grid sx={{ flexGrow: 1 }}>
+          <Grid sx={{ flexGrow: 1, alignContent: 'center' }}>
             <SelectChatModel
               id="chatModelId"
               handleChangeModel={handleChangeModel}
               aiProvider={aiDefaultProvider}
               chosenModel={currentModel?.name}
-              label={t('core:selectedAIModel')}
+              // label={t('core:selectedAIModel')}
             />
           </Grid>
           <Grid>
             <TsIconButton
-              sx={{ marginTop: '20px' }}
               tooltip={t('core:moreActions')}
               onClick={handleMoreClick}
               data-tid="moreActionsTID"

@@ -124,7 +124,7 @@ function EntryContainerTitle(props: Props) {
           flex: '1 1',
           overflowX: 'auto',
           overflowY: 'hidden',
-          marginLeft: addMacMargin ? '60px' : 0,
+          marginLeft: addMacMargin ? '66px' : 0,
           WebkitAppRegion: 'drag',
         } as React.CSSProperties
       }
