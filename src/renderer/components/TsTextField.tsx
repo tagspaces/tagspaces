@@ -42,7 +42,9 @@ function TsTextField(props: TSTextFieldProps) {
   const theme = useTheme();
   const { t } = useTranslation();
   const desktopMode = useSelector(isDesktopMode);
-  //const textFieldRef = useRef(null);
+  const textFieldRef = React.useRef<HTMLInputElement | HTMLTextAreaElement>(
+    null,
+  );
 
   const [contextMenu, setContextMenu] = React.useState<{
     mouseX: number;
@@ -86,14 +88,31 @@ function TsTextField(props: TSTextFieldProps) {
     if (updateValue) {
       navigator.clipboard.readText().then((clipText) => {
         const value = retrieveValue ? retrieveValue() : '';
-        const selection = document.getSelection()?.toString();
-        let result = '';
-        if (selection && value?.includes(selection)) {
-          result = value.replace(selection, clipText);
+        const inputElement = textFieldRef.current;
+        if (inputElement) {
+          const selectionStart = inputElement.selectionStart || 0;
+          const selectionEnd = inputElement.selectionEnd || 0;
+
+          // Insert clipboard text at cursor position, replacing any selected text
+          const result =
+            value.substring(0, selectionStart) +
+            clipText +
+            value.substring(selectionEnd);
+          const newCursorPosition = selectionStart + clipText.length;
+
+          updateValue(result);
+
+          // Move cursor to after the pasted text after the DOM has updated
+          setTimeout(() => {
+            if (textFieldRef.current) {
+              textFieldRef.current.selectionStart =
+                textFieldRef.current.selectionEnd = newCursorPosition;
+            }
+          }, 0);
         } else {
-          result = value + clipText;
+          // Fallback if ref is not available
+          updateValue(value + clipText);
         }
-        updateValue(result);
         handleClose();
       });
     }
@@ -107,6 +126,7 @@ function TsTextField(props: TSTextFieldProps) {
         </FormHelperText>
       )}
       <TextField
+        inputRef={textFieldRef}
         onContextMenu={handleContextMenu}
         margin="dense"
         size={desktopMode ? 'small' : 'medium'}

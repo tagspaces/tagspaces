@@ -548,6 +548,11 @@ function ChatView() {
                   minRows={1}
                   maxRows={6}
                   value={chatMsg.current}
+                  retrieveValue={() => chatMsg.current}
+                  updateValue={(value) => {
+                    chatMsg.current = value;
+                    forceUpdate();
+                  }}
                   inputRef={textInputRef}
                   sx={{
                     '& .MuiInputBase-root': { padding: '4px' },

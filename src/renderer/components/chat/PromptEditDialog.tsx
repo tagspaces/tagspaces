@@ -83,6 +83,10 @@ function PromptEditDialog(props: PromptEditDialogProps) {
           label={t('core:promptTitle')}
           value={dialogTitle}
           onChange={(e) => onTitleChange(e.target.value)}
+          retrieveValue={() => dialogTitle}
+          updateValue={(value) => {
+            onTitleChange(value);
+          }}
           fullWidth
           placeholder={t('core:promptTitlePlaceholder')}
         />
@@ -90,6 +94,10 @@ function PromptEditDialog(props: PromptEditDialogProps) {
           label={t('core:promptContent')}
           value={dialogContent}
           onChange={(e) => onContentChange(e.target.value)}
+          retrieveValue={() => dialogContent}
+          updateValue={(value) => {
+            onContentChange(value);
+          }}
           fullWidth
           multiline
           minRows={6}
