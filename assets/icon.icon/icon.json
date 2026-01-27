@@ -1,0 +1,32 @@
+{
+  "fill": {
+    "solid": "srgb:0.97288,0.97288,0.97288,1.00000"
+  },
+  "groups": [
+    {
+      "layers": [
+        {
+          "glass": false,
+          "image-name": "Image 2.png",
+          "name": "Image 2",
+          "position": {
+            "scale": 1.15,
+            "translation-in-points": [-57.20156250000002, 44.779687500000136]
+          }
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
+      }
+    }
+  ],
+  "supported-platforms": {
+    "circles": ["watchOS"],
+    "squares": "shared"
+  }
+}
