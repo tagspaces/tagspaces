@@ -18,7 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import LogoIcon from '-/assets/icons/icon.png';
-import TextLogoIcon from '-/assets/images/text-logo.svg';
+// import TextLogoIcon from '-/assets/images/text-logo.svg';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
@@ -39,13 +39,13 @@ function CustomLogo() {
     versionMeta.name + ' ' + tsType + ' ' + versionMeta.version;
 
   const logo = useMemo(() => {
-    let customLogo = TextLogoIcon;
+    // 1x1 px transparent PNG dataulr
+    let customLogo =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+XGqkAAAAASUVORK5CYII=';
+    // let customLogo = TextLogoIcon;
     if (AppConfig.customLogo) {
       customLogo = AppConfig.customLogo;
     }
-    // 1x1 px transparent PNG dataulr
-    // customLogo =
-    //  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+XGqkAAAAASUVORK5CYII=';
     return customLogo;
   }, []);
 
