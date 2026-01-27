@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -75,37 +76,6 @@ function CreateDirectoryDialog(props: Props) {
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const { open, onClose, selectedDirectoryPath, skipSelection } = props;
-
-  const defaultBackgrounds = [
-    'transparent',
-    // '#00000044',
-    '#ac725e44',
-    '#f83a2244',
-    // '#ff753744',
-    '#ffad4644',
-    '#42d69244',
-    // '#00800044',
-    '#7bd14844',
-    '#fad16544',
-    '#92e1c044',
-    '#9fe1e744',
-    '#9fc6e744',
-    '#4986e744',
-    '#9a9cff44',
-    '#c2c2c244',
-    '#cca6ac44',
-    '#f691b244',
-    // '#cd74e644',
-    // '#a47ae244',
-    // '#845EC260',
-    // '#D65DB160',
-    // '#FF6F9160',
-    // '#FF967160',
-    // '#FFC75F60',
-    // '#F9F87160',
-    // '#008E9B60',
-    // '#008F7A60',
-  ];
 
   function handleValidation(dirName) {
     if (!dirNameValidation(dirName)) {
@@ -247,8 +217,15 @@ function CreateDirectoryDialog(props: Props) {
                 readOnly: true,
                 endAdornment: (
                   <InputAdornment position="end" sx={{ height: '300px' }}>
-                    <Box sx={{ padding: '10px', width: '300px' }}>
-                      {defaultBackgrounds.map((background, cnt) => (
+                    <Box
+                      sx={{
+                        margin: '10px',
+                        width: '400px',
+                        height: '200px',
+                        overflow: 'auto',
+                      }}
+                    >
+                      {AppConfig.backgroundColors.map((background, cnt) => (
                         <React.Fragment key={cnt}>
                           <TsIconButton
                             tooltip={background}

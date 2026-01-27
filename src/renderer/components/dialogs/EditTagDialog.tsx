@@ -16,14 +16,18 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
+import DraggablePaper from '-/components/DraggablePaper';
 import Tag from '-/components/Tag';
+import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
+import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { TS } from '-/tagspaces.namespace';
-import { useTheme } from '@mui/material';
+import { Paper, useTheme } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import FormControl from '@mui/material/FormControl';
@@ -34,8 +38,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TransparentBackground from '../TransparentBackground';
-import ColorPickerDialog from './ColorPickerDialog';
 
 interface Props {
   open: boolean;
@@ -134,6 +136,7 @@ function EditTagDialog(props: Props) {
     <Dialog
       open={open}
       fullScreen={smallScreen}
+      PaperComponent={smallScreen ? Paper : DraggablePaper}
       onClose={onClose}
       keepMounted
       scroll="paper"
@@ -210,7 +213,7 @@ function EditTagDialog(props: Props) {
               data-tid="tagBackgroundColorEditTagDialog"
               sx={{
                 height: '30px',
-                borderRadius: '2px',
+                borderRadius: AppConfig.defaultCSSRadius,
                 borderWidth: '1px',
                 borderStyle: 'solid',
                 borderColor: 'gray',
@@ -239,7 +242,7 @@ function EditTagDialog(props: Props) {
               data-tid="tagForegroundColorEditTagDialog"
               sx={{
                 height: '30px',
-                borderRadius: '2px',
+                borderRadius: AppConfig.defaultCSSRadius,
                 borderWidth: '1px',
                 borderStyle: 'solid',
                 borderColor: 'gray',
