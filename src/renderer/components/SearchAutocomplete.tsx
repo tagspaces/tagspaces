@@ -17,7 +17,11 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { ArrowDropDownIcon, CloseIcon } from '-/components/CommonIcons';
+import {
+  ArrowDropDownIcon,
+  CloseIcon,
+  RemoveTagIcon,
+} from '-/components/CommonIcons';
 import {
   ActionType,
   ExecActions,
@@ -1270,14 +1274,12 @@ function SearchAutocomplete(props: Props) {
         tooltip={t('core:advancedSearch')}
         id="advancedButton"
         data-tid="advancedSearch"
-        sx={{ maxHeight: '34px' }}
         size={desktopMode ? 'small' : 'medium'}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
           setAnchorSearch(event.currentTarget);
         }}
       >
         <AdvancedSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
-        {/* <DropDownIcon /> */}
       </TsIconButton>
       <TsIconButton
         tooltip={t('clearSearch') + ' (ESC)'}
@@ -1285,7 +1287,6 @@ function SearchAutocomplete(props: Props) {
         onClick={() => {
           clearSearch();
         }}
-        sx={{ maxHeight: '34px' }}
         size={desktopMode ? 'small' : 'medium'}
         edge="end"
       >
@@ -1401,7 +1402,7 @@ function SearchAutocomplete(props: Props) {
                     paddingBottom: '0px',
                     paddingRight: '0px',
                     paddingLeft: '4px',
-                    borderRadius: '5px',
+                    borderRadius: AppConfig.defaultCSSRadius,
                     ...(action &&
                       action.color && {
                         color: action.textcolor,
@@ -1416,7 +1417,6 @@ function SearchAutocomplete(props: Props) {
                     <Box
                       sx={{
                         fontSize: '13px',
-                        fontWeight: 'bold',
                         display: 'inline',
                       }}
                     >
@@ -1428,6 +1428,7 @@ function SearchAutocomplete(props: Props) {
                       onClick={() => {
                         changeOptions(action.action, false);
                       }}
+                      color="inherit"
                       data-tid={dataTidFormat('menu' + option)}
                       variant="text"
                       sx={{
@@ -1437,10 +1438,7 @@ function SearchAutocomplete(props: Props) {
                         margin: 0,
                       }}
                       endIcon={
-                        <ArrowDropDownIcon
-                          sx={{ marginLeft: '-10px' }}
-                          fontSize="small"
-                        />
+                        <ArrowDropDownIcon sx={{ marginLeft: '-10px' }} />
                       }
                     >
                       {removePrefix(option, action.action)}
@@ -1457,13 +1455,12 @@ function SearchAutocomplete(props: Props) {
                           handleChange(null, [option], 'remove-value');
                         }}
                         sx={{
-                          padding: 0,
-                          margin: 0,
+                          padding: '0 3px 0 0',
                           textTransform: 'lowercase',
                         }}
                         data-tid={dataTidFormat('close' + option)}
                       >
-                        <CloseIcon fontSize="small" />
+                        <RemoveTagIcon fontSize="small" />
                       </TsIconButton>
                     )}
                 </Box>
