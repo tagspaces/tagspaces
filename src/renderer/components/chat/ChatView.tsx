@@ -696,13 +696,7 @@ function ChatView() {
                             </TsIconButton>
                           )}
                           <TsIconButton
-                            tooltip={
-                              t('core:send') +
-                              ' -> ' +
-                              aiDefaultProvider?.name +
-                              ' - ' +
-                              aiDefaultProvider?.url
-                            }
+                            tooltip={`${t('core:send')} -> ${aiDefaultProvider?.name} - ${aiDefaultProvider?.url}`}
                             onClick={handleChatMessage}
                           >
                             <SendIcon />
@@ -712,9 +706,9 @@ function ChatView() {
                     },
                   }}
                 />
-                <FormHelperText sx={{ margin: 0 }}>
+                <FormHelperText sx={{ margin: '0 auto' }}>
                   {t('core:aiHelp', {
-                    chatModel: currentModel && '(' + currentModel.name + ')',
+                    chatModel: currentModel && `(${currentModel.name})`,
                   })}
                 </FormHelperText>
               </FormControl>
