@@ -282,6 +282,7 @@
   "addFilesTitle": "Add or upload files from your computer.",
   "exitApp": "Exit",
   "closeWin": "Close Window",
+  "window": "Window",
   "openNewInstance": "Opens new application window or tab",
   "documentation": "Documentation",
   "selectFile": "Please select a file first.",

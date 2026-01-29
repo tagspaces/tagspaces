@@ -201,6 +201,7 @@ export default function buildDesktopMenu(props: any, i18n) {
         },
       ],
     },
+    { label: i18n.t('window'), role: 'windowMenu' },
     {
       label: '&' + i18n.t('help'),
       submenu: [
