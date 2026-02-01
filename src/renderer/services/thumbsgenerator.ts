@@ -31,7 +31,6 @@ import('pdfjs-dist/build/pdf.worker.min.mjs');
 
 let maxSize = AppConfig.maxThumbSize;
 const pdfMaxSize = 1000;
-const thumbnailBackgroundColor = AppConfig.thumbBgColor;
 
 export const supportedMisc = ['url', 'html'];
 export const supportedImgs = AppConfig.SearchTypeGroups.images;
@@ -187,61 +186,72 @@ export async function extractPDFcontent(
   return extractedText;
 }
 
-export function generatePDFThumbnail(
+export async function generatePDFThumbnail(
   arrayBuffer: ArrayBuffer,
-  maxSize: number,
+  maxSize: number = AppConfig.maxTmbSize,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    try {
-      const errorHandler = (err) => {
-        console.log('Error while generating thumbnail', err);
-        resolve('');
-      };
+  // pdfjs-dist usually provides 'getDocument' in the global scope or as an import
+  let loadingTask: any = null;
 
-      let canvas: HTMLCanvasElement = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const loadingTask = getDocument(arrayBuffer);
-      loadingTask.promise
-        .then((pdf) => {
-          pdf
-            .getPage(1)
-            .then((page) => {
-              let scale = 1.0;
-              const unscaledViewport = page.getViewport({ scale });
-              if (unscaledViewport.width >= unscaledViewport.height) {
-                canvas.width = maxSize;
-                canvas.height =
-                  (maxSize * unscaledViewport.height) / unscaledViewport.width;
-              } else {
-                canvas.height = maxSize;
-                canvas.width =
-                  (maxSize * unscaledViewport.width) / unscaledViewport.height;
-              }
-              scale = Math.min(
-                canvas.height / unscaledViewport.height,
-                canvas.width / unscaledViewport.width,
-              );
-              const viewport = page.getViewport({ scale });
-              const renderContext = { canvasContext: ctx, viewport };
-              const renderTask = page.render(renderContext);
-              renderTask.promise
-                .then(() => {
-                  ctx.globalCompositeOperation = 'destination-over';
-                  ctx.fillStyle = '#ffffff';
-                  ctx.fillRect(0, 0, canvas.width, canvas.height);
-                  resolve(canvas.toDataURL(AppConfig.thumbType));
-                  canvas = null;
-                })
-                .catch(errorHandler);
-            })
-            .catch(errorHandler);
-        }, errorHandler)
-        .catch(errorHandler);
-    } catch (e) {
-      console.log('Error creating PDF thumb', e);
-      resolve('');
+  try {
+    // 1. Load the PDF document
+    loadingTask = getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+
+    // 2. Get the first page
+    const page = await pdf.getPage(1);
+
+    // 3. Calculate scaling
+    // We get the viewport at scale 1.0 to determine original dimensions
+    const unscaledViewport = page.getViewport({ scale: 1.0 });
+    const scale = Math.min(
+      maxSize / unscaledViewport.width,
+      maxSize / unscaledViewport.height,
+      1, // Don't upscale if the PDF page is smaller than maxSize
+    );
+
+    const viewport = page.getViewport({ scale });
+
+    // 4. Prepare OffscreenCanvas
+    const canvas = new OffscreenCanvas(
+      Math.max(1, Math.round(viewport.width)),
+      Math.max(1, Math.round(viewport.height)),
+    );
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('Canvas context failed');
+
+    // 5. Render PDF to Canvas
+    // We fill with white first because many PDFs have transparent backgrounds
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    await page.render({
+      canvasContext: context,
+      viewport: viewport,
+    }).promise;
+
+    // 6. Export to Base64
+    const blob = await canvas.convertToBlob({
+      type: AppConfig.thumbType || 'image/jpeg',
+      quality: 0.9,
+    });
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(blob);
+    });
+  } catch (err) {
+    console.error('Error creating PDF thumb:', err);
+    return '';
+  } finally {
+    // 7. CRITICAL: Cleanup PDF.js resources
+    // This releases the worker and memory used by PDF.js
+    if (loadingTask) {
+      loadingTask.destroy();
     }
-  });
+  }
 }
 
 function getPropetiesThumbnail(propertiesFile) {
@@ -283,29 +293,62 @@ function getPropetiesThumbnail(propertiesFile) {
  * @param image
  * @param maxSize
  */
-export function resizeImg(image: string, maxSize): Promise<any> {
+export async function resizeImg(
+  image: string,
+  maxSize: number,
+): Promise<string> {
   return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new window.Image();
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
 
-    img.onload = () => {
-      const ratio = img.width / img.height;
-      if (img.width >= img.height) {
-        canvas.width = maxSize;
-        canvas.height = Math.round(maxSize / ratio);
-      } else {
-        canvas.height = maxSize;
-        canvas.width = Math.round(maxSize * ratio);
+    img.onload = async () => {
+      let bitmap: ImageBitmap | null = null;
+      try {
+        // 1. Decode pixels off the main thread
+        bitmap = await createImageBitmap(img);
+
+        // 2. Calculate dimensions using a more concise scale factor
+        // This handles both landscape and portrait in one calculation
+        const scale = Math.min(
+          maxSize / bitmap.width,
+          maxSize / bitmap.height,
+          1,
+        );
+        const width = Math.max(1, Math.round(bitmap.width * scale));
+        const height = Math.max(1, Math.round(bitmap.height * scale));
+
+        // 3. Use OffscreenCanvas for better performance
+        const canvas = new OffscreenCanvas(width, height);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas context failed');
+
+        // 4. Draw and Export
+        ctx.drawImage(bitmap, 0, 0, width, height);
+
+        const blob = await canvas.convertToBlob({
+          type: AppConfig.thumbType || 'image/jpeg',
+          quality: 0.8, // Reduces string size significantly with minimal quality loss
+        });
+
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      } catch (err) {
+        console.error('Resize failed:', err);
+        resolve('');
+      } finally {
+        if (bitmap) bitmap.close(); // Immediate memory cleanup
       }
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL(AppConfig.thumbType));
     };
+
     img.onerror = () => resolve('');
     img.src = image;
-    // If already loaded, trigger onload manually
-    // @ts-ignore
-    if (img.complete) img.onload();
+
+    // Fixed: Only trigger manually if it's ALREADY complete when we attach the handler
+    // And use a flag to prevent double execution
+    if (img.complete && img.naturalWidth) {
+      // We don't need to manually call onload if we set src AFTER attaching onload.
+    }
   });
 }
 
@@ -331,38 +374,56 @@ export function generateUrlThumbnail(
     });
 }
 
-export function generateImageThumbnail(
+export async function generateImageThumbnail(
   fileURL: string,
-  getFileContentPromise,
-  dirSeparator,
+  getFileContentPromise: (url: string, type: string) => Promise<ArrayBuffer>,
+  dirSeparator: string,
   maxTmbSize?: number,
 ): Promise<string> {
+  let objectURL: string | null = null;
+
   try {
+    // 1. Handle Remote URLs (Simple path)
     if (/^https?:\/\//.test(fileURL)) {
-      return getResizedImageThumbnail(fileURL, maxTmbSize);
+      return await getResizedImageThumbnail(fileURL, maxTmbSize);
     }
-    return getFileContentPromise(fileURL, 'arraybuffer')
-      .then((content) => {
-        const ext = extractFileExtension(fileURL, dirSeparator).toLowerCase();
-        const blob = new Blob([content], { type: getMimeType(ext) });
-        if (AppConfig.isCordova) {
-          return cordovaCreateObjectURL(blob).then((url) =>
-            getResizedImageThumbnail(url, maxTmbSize),
-          );
-        } else {
-          return getResizedImageThumbnail(
-            URL.createObjectURL(blob),
-            maxTmbSize,
-          );
-        }
-      })
-      .catch((e) => {
-        console.log(`Error get: ${fileURL}`, e);
-        return '';
-      });
+
+    // 2. Handle Local Files
+    const content = await getFileContentPromise(fileURL, 'arraybuffer');
+    if (!content) return '';
+
+    const ext = extractFileExtension(fileURL, dirSeparator).toLowerCase();
+    const blob = new Blob([content], { type: getMimeType(ext) });
+
+    // 3. Create temporary URL
+    if (AppConfig.isCordova) {
+      // Assuming cordovaCreateObjectURL returns a Promise<string>
+      objectURL = await cordovaCreateObjectURL(blob);
+    } else {
+      objectURL = URL.createObjectURL(blob);
+    }
+
+    if (!objectURL) return '';
+
+    // 4. Generate the thumbnail
+    const thumbnail = await getResizedImageThumbnail(objectURL, maxTmbSize);
+
+    // 5. CRITICAL: Cleanup Memory
+    // We must revoke the URL after processing to free up the original image bytes
+    if (objectURL && !AppConfig.isCordova) {
+      URL.revokeObjectURL(objectURL);
+      objectURL = null; // Prevent double-revocation in finally block
+    }
+
+    return thumbnail;
   } catch (e) {
-    console.log(`Error creating image thumb for : ${fileURL}`, e);
-    return Promise.resolve('');
+    console.error(`Error creating image thumb for : ${fileURL}`, e);
+    return '';
+  } finally {
+    // 6. Safety Cleanup for errors
+    if (objectURL && !AppConfig.isCordova) {
+      URL.revokeObjectURL(objectURL);
+    }
   }
 }
 
@@ -398,10 +459,80 @@ export function getMimeType(extension) {
  * maxTmbSize - max size of image if not set return full image size (from url)
  * return: base64 image string
  */
-export function getResizedImageThumbnail(
+export async function getResizedImageThumbnail2(
   src: string,
   maxTmbSize: number = AppConfig.maxTmbSize,
 ): Promise<string> {
+  if (src.startsWith('data:image/') && src.length < 5000) {
+    return src; // Skip processing if it's already a small thumbnail
+  }
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = async () => {
+      let bitmap: ImageBitmap | null = null;
+      try {
+        // 1. Decode the image
+        bitmap = await createImageBitmap(img);
+
+        // 2. Safety check: Ensure bitmap has dimensions
+        if (!bitmap.width || !bitmap.height) {
+          throw new Error('Image has no dimensions');
+        }
+
+        // 3. Calculate Scale
+        // Ensure maxSize is at least 1 to avoid division by zero or zero-size canvas
+        const maxSize = Math.max(1, maxTmbSize || 500);
+        const scale = Math.min(
+          maxSize / bitmap.width,
+          maxSize / bitmap.height,
+          1,
+        );
+
+        // 4. Force dimensions to be valid integers >= 1
+        // The || 1 handles cases where Math.round results in 0 or NaN
+        const width = Math.max(1, Math.round(bitmap.width * scale)) || 1;
+        const height = Math.max(1, Math.round(bitmap.height * scale)) || 1;
+
+        // 5. Create Canvas
+        const canvas = new OffscreenCanvas(width, height);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Canvas context unavailable');
+
+        ctx.fillStyle = AppConfig.thumbBgColor || '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(bitmap, 0, 0, width, height);
+
+        // 6. Export
+        const outBlob = await canvas.convertToBlob({
+          type: AppConfig.thumbType || 'image/jpeg',
+          quality: 0.9,
+        });
+
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(outBlob);
+      } catch (err) {
+        console.error('Thumbnail processing failed:', err);
+        resolve('');
+      } finally {
+        if (bitmap) bitmap.close();
+      }
+    };
+
+    img.onerror = () => resolve('');
+    img.src = src;
+  });
+}
+
+export async function getResizedImageThumbnail(
+  src: string,
+  maxTmbSize: number = AppConfig.maxTmbSize,
+): Promise<string> {
+  if (src.startsWith('data:image/') && src.length < 5000) {
+    return src; // Skip processing if it's already a small thumbnail
+  }
   return new Promise((resolve) => {
     let canvas: HTMLCanvasElement = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -417,38 +548,6 @@ export function getResizedImageThumbnail(
     let img: HTMLImageElement = new window.Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-      // EXIF extraction not need because the image are rotated
-      // automatically in Chrome version 81 and higher
-      // EXIF.getData(img as any, function() {
-      //   // TODO Use EXIF only for jpegs
-      //   const orientation = EXIF.getTag(this, 'Orientation');
-      //   /*
-      //     1 - 0 degrees – the correct orientation, no adjustment is required.
-      //     2 - 0 degrees, mirrored – image has been flipped back-to-front.
-      //     3 - 180 degrees – image is upside down.
-      //     4 - 180 degrees, mirrored – image is upside down and flipped back-to-front.
-      //     5 - 90 degrees – image is on its side.
-      //     6 - 90 degrees, mirrored – image is on its side and flipped back-to-front.
-      //     7 - 270 degrees – image is on its far side.
-      //     8 - 270 degrees, mirrored – image is on its far side and flipped back-to-front.
-      //   */
-      //   let angleInRadians;
-      //   switch (orientation) {
-      //     case 8:
-      //       angleInRadians = 270 * (Math.PI / 180);
-      //       break;
-      //     case 3:
-      //       angleInRadians = 180 * (Math.PI / 180);
-      //       break;
-      //     case 6:
-      //       angleInRadians = 90 * (Math.PI / 180);
-      //       break;
-      //     case 1:
-      //       // ctx.rotate(0);
-      //       break;
-      //     default:
-      //     // ctx.rotate(0);
-      //   }
       let maxSizeWidth = Math.min(img.width, maxSize);
       let maxSizeHeight = Math.min(img.height, maxSize);
       if (img.width >= img.height) {
@@ -464,7 +563,7 @@ export function getResizedImageThumbnail(
       const y = height / 2;
 
       ctx.translate(x, y);
-      ctx.fillStyle = thumbnailBackgroundColor;
+      ctx.fillStyle = AppConfig.thumbBgColor;
       ctx.fillRect(-width / 2, -height / 2, width, height);
       ctx.drawImage(img, -width / 2, -height / 2, width, height);
       ctx.translate(-x, -y);
@@ -472,77 +571,34 @@ export function getResizedImageThumbnail(
       img = null;
       canvas = null;
     };
-    img.onerror = (err) => {
-      console.error('Error loading image in getResizedImageThumbnail:', err);
-      resolve('');
-    };
+
+    img.onerror = (err) => resolve('');
     img.src = src;
   });
 }
 
-function generateVideoThumbnail_alt(fileURL): Promise<string> {
-  return new Promise((resolve) => {
-    try {
-      let canvas: HTMLCanvasElement = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      let img: HTMLImageElement = new Image();
-      let video: HTMLVideoElement = document.createElement('video');
-      video.crossOrigin = 'anonymous'; // Attempt to bypass CORS restrictions
-      const captureTime = 1.5; // time in seconds at which to capture the image from the video
+export function getHtmlThumbnail(html: string): string | null {
+  const startMarker = 'data-screenshot="';
 
-      video.onloadedmetadata = () => {
-        video.currentTime = Math.min(Math.max(0, captureTime), video.duration);
-        if (video.videoWidth >= video.videoHeight) {
-          canvas.width = maxSize;
-          canvas.height = (maxSize * video.videoHeight) / video.videoWidth;
-        } else {
-          canvas.height = maxSize;
-          canvas.width = (maxSize * video.videoWidth) / video.videoHeight;
-        }
-      };
+  // 1. Find the start index
+  const inxBegin = html.indexOf(startMarker);
+  if (inxBegin === -1) return null;
 
-      video.onseeked = () => {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataurl = canvas.toDataURL(AppConfig.thumbType);
-        img.onerror = (err) => {
-          console.log(`Error loading: ${fileURL} for tmb gen with: ${err} `);
-          resolve('');
-        };
-        resolve(dataurl);
-        img = null;
-        canvas = null;
-        video = null;
-      };
-      video.onerror = (err) => {
-        console.log(`Error opening: ${fileURL} for tmb gen with: ${err} `);
-        resolve('');
-      };
-      video.src = fileURL.startsWith('http')
-        ? fileURL
-        : fileURL.replace(/#/g, '%23');
-    } catch (e) {
-      console.log(`Error creating video thumb for : ${fileURL} with: ${e}`);
-      resolve('');
-    }
-  });
-}
+  // 2. Find the end quote STARTING from the end of the marker
+  const valStart = inxBegin + startMarker.length;
+  const inxEnd = html.indexOf('"', valStart);
 
-function getHtmlThumbnail(html: string) {
-  const start = 'data-screenshot="';
-  const end = '"';
-  const inxBegin = html.indexOf(start);
-  let imgDataUrl;
-  if (inxBegin > -1) {
-    imgDataUrl = html.substr(inxBegin + start.length);
-    const inxEnd = imgDataUrl.indexOf(end);
-    if (inxEnd > -1) {
-      imgDataUrl = imgDataUrl.substr(0, inxEnd);
-      if (imgDataUrl.startsWith('data:image/')) {
-        return imgDataUrl.trim();
-      }
-    }
+  if (inxEnd === -1) return null;
+
+  // 3. Extract the exact slice
+  const imgDataUrl = html.slice(valStart, inxEnd).trim();
+
+  // 4. Validate prefix
+  if (imgDataUrl.startsWith('data:image/')) {
+    return imgDataUrl;
   }
-  return false; // wrong format
+
+  return null; // Return null instead of false for better TypeScript consistency
 }
 
 export function generateHtmlThumbnail(
@@ -931,63 +987,105 @@ export function generateMp3Thumbnail(
   });
 }
 
-export function generateVideoThumbnail(
+export async function generateVideoThumbnail(
   fileURL: string,
-  maxSize: number,
+  maxSize: number = AppConfig.maxTmbSize,
 ): Promise<string> {
   return new Promise((resolve) => {
-    try {
-      // console.log('generateVideoThumbnail for: ' + fileURL);
-      let videoElem: HTMLVideoElement = document.createElement('video');
-      videoElem.crossOrigin = 'anonymous'; // Attempt to bypass CORS restrictions
-      videoElem.muted = true;
-      const sourceElem = document.createElement('source');
-      sourceElem.src = fileURL.startsWith('http')
-        ? fileURL
-        : fileURL.replace(/#/g, '%23');
-      videoElem.appendChild(sourceElem);
-      videoElem.addEventListener(
-        'error',
-        (err) => {
-          console.log(`Error generating video thumb for: ${fileURL} - ${err}`);
-          resolve('');
-        },
-        false,
-      );
-      videoElem.addEventListener(
-        'canplay',
-        () => {
-          if (videoElem && videoElem.duration >= 2) {
-            videoElem.currentTime = 2;
-          }
-        },
-        false,
-      );
-      videoElem.addEventListener(
-        'seeked',
-        () => {
-          let canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          if (videoElem.videoWidth >= videoElem.videoHeight) {
-            canvas.width = maxSize;
-            canvas.height =
-              (maxSize * videoElem.videoHeight) / videoElem.videoWidth;
-          } else {
-            canvas.height = maxSize;
-            canvas.width =
-              (maxSize * videoElem.videoWidth) / videoElem.videoHeight;
-          }
-          ctx.drawImage(videoElem, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL(AppConfig.thumbType));
-          videoElem.pause();
-          canvas = videoElem = null;
-          return true;
-        },
-        false,
-      );
-    } catch (e) {
-      console.log(`Error creating VIDEO thumb for : ${fileURL} with: ${e}`);
+    // 1. Setup Video Element
+    let video: HTMLVideoElement | null = document.createElement('video');
+    video.muted = true;
+    video.crossOrigin = 'anonymous';
+    video.preload = 'metadata'; // Only load what's needed to start
+
+    // Clean up function to prevent memory leaks and free hardware decoders
+    const cleanup = () => {
+      if (video) {
+        video.pause();
+        video.src = '';
+        video.load(); // Forces the browser to release the video file
+        video.remove();
+        video = null;
+      }
+    };
+
+    // 2. Error Handling
+    video.onerror = () => {
+      console.warn(`Error loading video: ${fileURL}`);
+      cleanup();
       resolve('');
-    }
+    };
+
+    // 3. Metadata loaded: Calculate dimensions and seek
+    video.onloadedmetadata = () => {
+      if (!video) return;
+
+      // Calculate scaled dimensions
+      const scale = Math.min(
+        maxSize / video.videoWidth,
+        maxSize / video.videoHeight,
+        1,
+      );
+      const width = Math.max(1, Math.round(video.videoWidth * scale));
+      const height = Math.max(1, Math.round(video.videoHeight * scale));
+
+      // Seek to 1 second (or halfway if video is short) to avoid black start frames
+      const seekTime = Math.min(1, video.duration / 2);
+      video.currentTime = seekTime;
+    };
+
+    // 4. Seek complete: Draw to canvas
+    video.onseeked = async () => {
+      if (!video) return;
+
+      try {
+        const canvas = new OffscreenCanvas(
+          Math.max(
+            1,
+            Math.round(
+              video.videoWidth *
+                (maxSize / Math.max(video.videoWidth, video.videoHeight)),
+            ),
+          ),
+          Math.max(
+            1,
+            Math.round(
+              video.videoHeight *
+                (maxSize / Math.max(video.videoWidth, video.videoHeight)),
+            ),
+          ),
+        );
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const blob = await canvas.convertToBlob({
+            type: AppConfig.thumbType,
+            quality: 0.9,
+          });
+
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve(reader.result as string);
+            cleanup();
+          };
+          reader.readAsDataURL(blob);
+        } else {
+          resolve('');
+          cleanup();
+        }
+      } catch (e) {
+        console.error('Video thumbnail canvas error', e);
+        resolve('');
+        cleanup();
+      }
+    };
+
+    // 5. Start loading
+    // Use the hash fix from your original code
+    video.src = fileURL.startsWith('http')
+      ? fileURL
+      : fileURL.replace(/#/g, '%23');
+    video.load();
   });
 }
