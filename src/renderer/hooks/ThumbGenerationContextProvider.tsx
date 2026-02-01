@@ -30,6 +30,7 @@ import {
 } from '-/reducers/settings';
 import {
   generateThumbnailPromise,
+  supportedAudio,
   supportedContainers,
   supportedImgs,
   supportedMisc,
@@ -162,6 +163,7 @@ export const ThumbGenerationContextProvider = ({
                   'pdf',
                   'html',
                   ...supportedVideos,
+                  ...supportedAudio,
                   ...supportedText,
                   'url',
                 ],
@@ -279,6 +281,7 @@ export const ThumbGenerationContextProvider = ({
         extension.toLowerCase() === 'pdf' ||
         supportedText.includes(extension) ||
         supportedMisc.includes(extension) ||
+        supportedAudio.includes(extension) ||
         supportedVideos.includes(extension)
       ) {
         mainEntries.push(entry.path);

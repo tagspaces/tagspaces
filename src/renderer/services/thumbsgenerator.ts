@@ -18,12 +18,12 @@
 
 import AppConfig from '-/AppConfig';
 import {
-  baseName,
   encodeFileName,
   extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
 import DOMPurify from 'dompurify';
 import JSZip from 'jszip';
+import * as mm from 'music-metadata';
 import { getDocument } from 'pdfjs-dist/build/pdf.min.mjs';
 import TgaLoader from 'tga-js';
 import UTIF from 'utif';
@@ -32,7 +32,7 @@ import('pdfjs-dist/build/pdf.worker.min.mjs');
 let maxSize = AppConfig.maxThumbSize;
 const pdfMaxSize = 1000;
 
-export const supportedMisc = ['url', 'html'];
+export const supportedMisc = ['url', 'html', 'htm'];
 export const supportedImgs = AppConfig.SearchTypeGroups.images;
 export const supportedContainers = [
   'zip',
@@ -94,6 +94,20 @@ export const supportedVideos = [
   '3gp',
   'mov',
 ];
+export const supportedAudio = [
+  'mp3',
+  'flac',
+  'wav',
+  'aiff',
+  'afc',
+  'ogg',
+  'opus',
+  'speex',
+  'wma',
+  'm4a',
+  'm4b',
+  'm4p',
+];
 const maxFileSize = 30 * 1024 * 1024; // 30 MB
 
 /**
@@ -139,9 +153,13 @@ export function generateThumbnailPromise(
     return generateHtmlThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
   } else if (ext === 'url') {
     return generateUrlThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
-  } else if (ext === 'mp3') {
+  } else if (supportedAudio.includes(ext)) {
     if (fileSize && fileSize < maxFileSize) {
-      // return generateMp3Thumbnail(fileURL, maxSize);
+      return generateAudioThumbnail(
+        fileURLEscaped,
+        maxSize,
+        getFileContentPromise,
+      );
     }
   } else if (supportedText.includes(ext)) {
     return generateTextThumbnail(fileURLEscaped, maxSize, loadTextFilePromise);
@@ -254,34 +272,34 @@ export async function generatePDFThumbnail(
   }
 }
 
-function getPropetiesThumbnail(propertiesFile) {
-  if (propertiesFile) {
-    let currentSection;
-    const propetiesLines = propertiesFile.split('\n');
-    for (let i = 0; i < propetiesLines.length; i += 1) {
-      const propertyLine = propetiesLines[i].trim();
-      if (propertyLine) {
-        const section = /^\[([^=]+)\]$/.exec(propertyLine);
-        let property;
-        if (section) {
-          if (currentSection !== section) {
-            currentSection = section[1];
-          }
-        } else {
-          property = /^([^#=]+)(={0,1})(.*)$/.exec(propertyLine);
-        }
+function getPropertiesThumbnail(propertiesFile: string): string | null {
+  if (!propertiesFile) return null;
 
-        if (currentSection === 'InternetShortcut') {
-          if (property && property[1] === 'COMMENT') {
-            if (property[3].startsWith('data:image/')) {
-              return property[3];
-            }
-          }
-        }
-      }
-    }
-  }
-  return undefined;
+  const sectionHeader = '[InternetShortcut]';
+  const startInx = propertiesFile.indexOf(sectionHeader);
+
+  // 1. If the section doesn't exist, exit immediately
+  if (startInx === -1) return null;
+
+  // 2. Isolate the section body to avoid searching the whole file
+  // Find the start of the next section or the end of the string
+  let endInx = propertiesFile.indexOf('[', startInx + sectionHeader.length);
+  const sectionBody =
+    endInx === -1
+      ? propertiesFile.slice(startInx)
+      : propertiesFile.slice(startInx, endInx);
+
+  /**
+   * 3. Targeted extraction
+   * Match 'COMMENT' key followed by '=' and 'data:image/'
+   * [ \t]* matches optional spaces/tabs around the equals sign
+   * ([^ \n\r\t]+) captures the URI until the first whitespace or newline
+   */
+  const match = sectionBody.match(
+    /COMMENT[ \t]*=[ \t]*(data:image\/[^ \n\r\t]+)/i,
+  );
+
+  return match ? match[1].trim() : null;
 }
 
 /**
@@ -360,7 +378,7 @@ export function generateUrlThumbnail(
   return loadTextFilePromise(fileURL)
     .then((content) => {
       if (!content || content.length < 1) return '';
-      const thumb = getPropetiesThumbnail(content);
+      const thumb = getPropertiesThumbnail(content);
       if (thumb !== undefined) {
         return resizeImg(thumb, maxSize);
       } else {
@@ -459,7 +477,7 @@ export function getMimeType(extension) {
  * maxTmbSize - max size of image if not set return full image size (from url)
  * return: base64 image string
  */
-export async function getResizedImageThumbnail2(
+export async function getResizedImageThumbnailOptimized(
   src: string,
   maxTmbSize: number = AppConfig.maxTmbSize,
 ): Promise<string> {
@@ -601,191 +619,155 @@ export function getHtmlThumbnail(html: string): string | null {
   return null; // Return null instead of false for better TypeScript consistency
 }
 
-export function generateHtmlThumbnail(
+export async function generateHtmlThumbnail(
   fileURL: string,
   maxSize: number,
-  loadTextFilePromise,
+  loadTextFilePromise: (url: string) => Promise<string>,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    loadTextFilePromise(fileURL)
-      .then((contentHtml) => {
-        if (!contentHtml || contentHtml.length < 1) {
-          resolve('');
-        }
+  try {
+    const html = await loadTextFilePromise(fileURL);
+    if (!html) return '';
 
-        const thumb = getHtmlThumbnail(contentHtml);
-        if (thumb) {
-          // console.log(thumb);
-          // resolve(thumb);
-          resizeImg(thumb, maxSize)
-            .then((img) => {
-              resolve(img);
-              return true;
-            })
-            .catch((err) => {
-              console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
-              resolve('');
-            });
-        } else {
-          const sanitizedHtml = DOMPurify.sanitize(contentHtml, {});
-          const iframe = document.createElement('iframe');
-          iframe.onload = () => {
-            const iframedoc =
-              iframe.contentDocument || iframe.contentWindow.document;
-            iframedoc.body.innerHTML = sanitizedHtml;
-            // iframedoc.src = 'data:text/html;charset=utf-8,' + contentHtml;
+    // Fast path check
+    const existing = getHtmlThumbnail(html);
+    if (existing) return await resizeImg(existing, maxSize);
 
-            import(/* webpackChunkName: "html2canvas" */ 'html2canvas')
-              .then(({ default: html2canvas }) => {
-                html2canvas(iframedoc.body, {
-                  // @ts-ignore
-                  dpi: 144,
-                  letterRendering: true,
-                  width: maxSize,
-                  height: maxSize,
-                })
-                  .then((canvas) => {
-                    // document.body.appendChild(canvas);
-                    document.body.removeChild(iframe);
-                    resolve(canvas.toDataURL(AppConfig.thumbType));
-                    return true;
-                  })
-                  .catch((err) => {
-                    console.log(
-                      'Error html2canvas tmb for: ' + fileURL + ' - ' + err,
-                    );
-                    resolve('');
-                  });
-                return true;
-              })
-              .catch((error) => {
-                console.log(
-                  'An error occurred while loading the html2canvas: ' + error,
-                );
-                resolve('');
-              });
-          };
-          document.body.appendChild(iframe);
-        }
+    const sanitized = DOMPurify.sanitize(html, { WHOLE_DOCUMENT: true });
 
-        return true;
-      })
-      .catch((err) => {
-        console.log('Error generating tmb for: ' + fileURL + ' - ' + err);
-        resolve('');
+    return new Promise((resolve) => {
+      const iframe = document.createElement('iframe');
+
+      // Sandbox for security
+      iframe.setAttribute('sandbox', 'allow-same-origin');
+
+      Object.assign(iframe.style, {
+        position: 'fixed',
+        left: '-5000px',
+        width: '1024px',
+        height: '768px',
       });
-  });
+
+      document.body.appendChild(iframe);
+
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!doc) {
+        document.body.removeChild(iframe);
+        resolve('');
+        return;
+      }
+
+      doc.open();
+      doc.write(sanitized);
+      doc.close();
+
+      // Give the browser a moment to render styles
+      setTimeout(async () => {
+        try {
+          const { default: html2canvas } = await import('html2canvas');
+          const canvas = await html2canvas(doc.body, {
+            width: maxSize,
+            height: maxSize,
+            scale: maxSize / 1024,
+          });
+
+          resolve(canvas.toDataURL(AppConfig.thumbType || 'image/jpeg'));
+        } catch (e) {
+          resolve('');
+        } finally {
+          if (iframe.parentNode) document.body.removeChild(iframe);
+        }
+      }, 500);
+    });
+  } catch (e) {
+    return '';
+  }
 }
 
-export function generateZipContainerImageThumbnail(
+export async function generateZipContainerImageThumbnail(
   fileURL: string,
   maxSize: number,
-  supportedImgs: Array<string>,
-  getFileContentPromise,
+  supportedImgs: string[],
+  getFileContentPromise: (url: string) => Promise<ArrayBuffer>,
   dirSeparator: string,
 ): Promise<string> {
-  const parts = ['cover', 'thumbnail', 'preview'];
-  // console.log(JSON.stringify(JSZip));
-  let decodedFileURL = fileURL;
+  let objectURL: string | null = null;
+
   try {
-    decodedFileURL = decodeURIComponent(fileURL);
-  } catch (ex) {}
-  return getFileContentPromise(decodedFileURL)
-    .then((content) =>
-      JSZip.loadAsync(content)
-        .then((zipFile) => {
-          // console.log(JSON.stringify(zipFile));
-          let max = 0;
-          let maxImgFile = null;
-          let ext;
+    // 1. Decode URL
+    let decodedFileURL = fileURL;
+    try {
+      decodedFileURL = decodeURIComponent(fileURL);
+    } catch (e) {
+      /* ignore */
+    }
 
-          for (const fileName in zipFile.files) {
-            if (zipFile.files[fileName].dir === true) {
-              continue;
-            }
+    // 2. Load Zip
+    const content = await getFileContentPromise(decodedFileURL);
+    const zipFile = await JSZip.loadAsync(content);
 
-            ext = extractFileExtension(fileName, dirSeparator).toLowerCase();
-            if (supportedImgs.indexOf(ext) >= 0) {
-              let partName = baseName(fileName, dirSeparator);
-              partName = partName.split('.').reverse()[1].toLowerCase();
+    const keywords = ['cover', 'thumbnail', 'preview'];
+    let bestMatch: { name: string; size: number; isKeyword: boolean } | null =
+      null;
 
-              const containFile = zipFile.files[fileName];
+    // 3. Find the best candidate file
+    // We want: A keyword match first, otherwise the largest image file found.
+    for (const [fileName, fileObj] of Object.entries(zipFile.files)) {
+      if (fileObj.dir) continue;
 
-              // console.log("partName " + partName);
-              let tmbFound = false;
-              parts.forEach((part) => {
-                if (partName.includes(part)) {
-                  maxImgFile = fileName;
-                  tmbFound = true;
-                }
-              });
-              if (tmbFound) {
-                break;
-              }
+      const ext = fileName.split('.').pop()?.toLowerCase() || '';
+      if (!supportedImgs.includes(ext)) continue;
 
-              // @ts-ignore
-              if (containFile._data.uncompressedSize > max) {
-                // @ts-ignore
-                max = containFile._data.uncompressedSize;
-                maxImgFile = fileName;
-              }
-            }
-          }
+      const lowerName = fileName.toLowerCase();
+      const isKeyword = keywords.some((key) => lowerName.includes(key));
 
-          if (maxImgFile) {
-            return zipFile
-              .file(maxImgFile)
-              .async('base64' /* 'uint8array' */)
-              .then((thumb) => {
-                // console.log(dataURL);
-                const imgExt = extractFileExtension(
-                  maxImgFile,
-                  dirSeparator,
-                ).toLowerCase();
-                return resizeImg(
-                  'data:image/' +
-                    (imgExt === 'svg' ? 'svg+xml' : imgExt) +
-                    ';base64,' +
-                    thumb,
-                  maxSize,
-                )
-                  .then((img) => img)
-                  .catch((err) => {
-                    console.log(
-                      'Error resizeImg tmb for: ' + fileURL + ' - ' + err,
-                    );
-                  });
-                // const buf = zipFile.files[maxImgFile].asArrayBuffer();
-                // const dataURL = arrayBufferToDataURL(buf, null);
-                // generateImageThumbnail(dataURL).then(resolve).catch(errorHandler);
-              })
-              .catch((err) => {
-                console.log(
-                  'Error while generating thumbnail for: ' +
-                    fileURL +
-                    ' - ' +
-                    JSON.stringify(err),
-                );
-              });
-          } else {
-            console.log('maxImgFile not found');
-          }
-          return '';
-        })
-        .catch((err) => {
-          console.log('Failed to load jszip', err);
-          return '';
-        }),
-    )
-    .catch((err) => {
-      console.log(
-        'Error while generating thumbnail for: ' +
-          fileURL +
-          ' - ' +
-          JSON.stringify(err),
-      );
+      // JSZip exposes 'uncompressedSize' in newer versions.
+      // Fallback to 0 if accessing private _data is required in very old versions.
+      const size =
+        (fileObj as any).uncompressedSize ||
+        (fileObj as any)._data?.uncompressedSize ||
+        0;
+
+      // Logic:
+      // - If we find a keyword match and current best isn't a keyword -> take it.
+      // - If both are same priority (both keywords or both not) -> take the larger one.
+      if (
+        !bestMatch ||
+        (isKeyword && !bestMatch.isKeyword) ||
+        (isKeyword === bestMatch.isKeyword && size > bestMatch.size)
+      ) {
+        bestMatch = { name: fileName, size, isKeyword };
+      }
+    }
+
+    if (!bestMatch) {
+      console.warn('No suitable image found in ZIP');
       return '';
-    });
+    }
+
+    // 4. Extract as Uint8Array (Memory efficient)
+    const imgData = await zipFile.file(bestMatch.name)!.async('uint8array');
+
+    // 5. Determine MIME type
+    const imgExt = bestMatch.name.split('.').pop()?.toLowerCase() || 'jpeg';
+    const mime = imgExt === 'svg' ? 'image/svg+xml' : `image/${imgExt}`;
+
+    // 6. Create Blob URL
+    const blob = new Blob([imgData as BlobPart], { type: mime });
+    objectURL = URL.createObjectURL(blob);
+
+    // 7. Resize (Using our optimized resizeImg from before)
+    const result = await resizeImg(objectURL, maxSize);
+
+    return result;
+  } catch (err) {
+    console.error(`Error generating ZIP thumbnail for: ${fileURL}`, err);
+    return '';
+  } finally {
+    // 8. Cleanup memory
+    if (objectURL) {
+      URL.revokeObjectURL(objectURL);
+    }
+  }
 }
 
 export function generatePSDThumbnail(fileURL, maxSize): Promise<string> {
@@ -887,104 +869,147 @@ export function generateTGAThumbnail(
   });
 }
 
-export function generateTextThumbnail(
+export async function generateTextThumbnail(
   fileURL: string,
-  maxSize: number,
-  loadTextFilePromise,
+  maxSize: number = AppConfig.maxTmbSize,
+  loadTextFilePromise: (url: string, asText: boolean) => Promise<string>,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
-    loadTextFilePromise(fileURL, true)
-      .then((content) => {
-        if (!content || content.length < 1) {
-          resolve('');
-          return true;
-        }
-        const lines = content.split('\n');
-        const previewLineCount = lines.length > 10 ? 10 : lines.length;
-        const ctx = canvas.getContext('2d');
-        canvas.width = maxSize;
-        canvas.height = maxSize;
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'black';
-        ctx.font = '22px sans-serif';
-        for (let i = 0; i < previewLineCount; i += 1) {
-          const line = lines[i];
-          if (line && line.length > 0) {
-            ctx.fillText(line, 2, 22 * (i + 1) + 10);
-          }
-        }
-        const dataURL = canvas.toDataURL(AppConfig.thumbType);
-        // console.log('DATAURL: ' + AppConfig.thumbType + dataURL);
-        resolve(dataURL);
-        return true;
-      })
-      .catch((error) => {
-        console.log('Error getting the content: ' + fileURL + ' - ' + error);
-        resolve('');
+  try {
+    // 1. Load content
+    const rawContent = await loadTextFilePromise(fileURL, true);
+    if (!rawContent) return '';
+
+    // 2. PERFORMANCE: Only process the start of the file
+    // Splitting a 10MB file into lines would crash the app
+    const previewText = rawContent.substring(0, 2500);
+    const lines = previewText.split('\n').slice(0, 15);
+
+    // 3. Initialize Canvas (with Fallback)
+    let canvas: any;
+    let isOffscreen = false;
+
+    if (typeof OffscreenCanvas !== 'undefined') {
+      canvas = new OffscreenCanvas(maxSize, maxSize);
+      isOffscreen = true;
+    } else {
+      canvas = document.createElement('canvas');
+      canvas.width = maxSize;
+      canvas.height = maxSize;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+
+    // 4. Background and Typography Setup
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, maxSize, maxSize);
+
+    const fontSize = Math.max(12, Math.floor(maxSize / 16));
+    const lineHeight = fontSize * 1.4;
+    const padding = maxSize * 0.08;
+
+    ctx.fillStyle = '#222222';
+    ctx.font = `${fontSize}px sans-serif`;
+
+    // 5. Draw Lines
+    for (let i = 0; i < lines.length; i++) {
+      const y = padding + (i + 1) * lineHeight;
+      if (y > maxSize - padding) break; // Stop if we go off canvas
+
+      const line = lines[i].trim();
+      if (line.length > 0) {
+        // Canvas clips text automatically if it's wider than the canvas
+        ctx.fillText(line, padding, y, maxSize - padding * 2);
+      }
+    }
+
+    // 6. Export to DataURL
+    if (isOffscreen) {
+      // OffscreenCanvas uses asynchronous blob conversion
+      const blob = await (canvas as OffscreenCanvas).convertToBlob({
+        type: AppConfig.thumbType || 'image/jpeg',
+        quality: 0.8,
       });
-  });
+
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+    } else {
+      // Standard canvas uses synchronous DataURL conversion
+      return canvas.toDataURL(AppConfig.thumbType || 'image/jpeg', 0.8);
+    }
+  } catch (error) {
+    console.error('Text thumbnail error:', error);
+    return '';
+  }
 }
 
-export function generateMp3Thumbnail(
-  fileURL: string,
-  maxSize: number,
+/* Supported formats in music-metadata for tmb extraction 
+1. Most Common Formats
+    MP3: Extracts from ID3v2 tags (specifically the APIC frame). It supports ID3v2.2, v2.3, and v2.4.
+    M4A / MP4 / M4B / M4P (AAC): Extracts from the iTunes/Apple covr atom.
+    FLAC: Extracts from the Vorbis Comment METADATA_BLOCK_PICTURE block.
+2. Lossless & High-Fidelity Formats
+    WAV: Extracts from ID3v2 chunks embedded in the RIFF file.
+    AIFF / AFC: Extracts from ID3v2 tags or Native AIFF metadata.
+    DSF / DSD: Extracts from ID3v2 tags.
+    APE (Monkey's Audio): Extracts from APE v2 tags.
+    WV (WavPack): Extracts from APE v2 tags.
+3. Open Source & Alternative Formats
+    OGG / OPUS / SPEEX: Extracts from Vorbis Comments (METADATA_BLOCK_PICTURE).
+    WMA (Windows Media Audio): Extracts from ASF metadata (specifically the WM/Picture attribute).
+    WebM / Matroska: Extracts from EBML tags (though this is less common for audio-only files).
+*/
+export async function generateAudioThumbnail(
+  src: string,
+  maxSize: number = AppConfig.maxTmbSize,
+  getFileContentPromise: (url: string) => Promise<ArrayBuffer>,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    // import('id3-reader').then(() => {
-    // const errorHandler = err => {
-    //   console.log(
-    //     'Error while generating thumbnail for: ' +
-    //     fileURL +
-    //     ' - ' +
-    //     JSON.stringify(err)
-    //   );
-    //   resolve('');
-    // };
-    // PlatformIO.getFileContentPromise(fileURL)
-    //   .then(content => {
-    //     const fileBlob = new Blob([content]);
-    //     ID3.loadTags(
-    //       fileURL,
-    //       () => {
-    //         const image = ID3.getAllTags(fileURL).picture;
-    //         let dataUrl = '';
-    //         if (image) {
-    //           let base64String = '';
-    //           for (let i = 0; i < image.data.length; i++) {
-    //             base64String += String.fromCharCode(image.data[i]);
-    //           }
-    //           const img = new Image();
-    //           img.src =
-    //             'data:' + image.format + ';base64,' + window.btoa(base64String);
-    //           const canvas = document.createElement('canvas');
-    //           const ctx = canvas.getContext('2d');
-    //           if (img.width >= img.height) {
-    //             canvas.width = maxSize;
-    //             canvas.height = (maxSize * img.height) / img.width;
-    //           } else {
-    //             canvas.height = maxSize;
-    //             canvas.width = (maxSize * img.width) / img.height;
-    //           }
-    //           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    //           dataUrl = canvas.toDataURL(AppConfig.thumbType);
-    //         }
-    //         resolve(dataUrl);
-    //       },
-    //       {
-    //         tags: ['picture'],
-    //         onError: errorHandler,
-    //         dataReader: new FileAPIReader(fileBlob)
-    //       }
-    //     );
-    //     return true;
-    //   }, errorHandler)
-    //   .catch(errorHandler);
-    // }).catch((err) => {
-    //  console.log('Failed to load id3-minimized', err);
-    // });
-  });
+  let objectURL: string | null = null;
+
+  try {
+    // 1. Get binary data using XHR helper
+    const content = await getFileContentPromise(src);
+
+    // 2. Parse Metadata
+    const metadata = await mm.parseBuffer(new Uint8Array(content));
+
+    // 3. Locate the "Front Cover"
+    const picture = mm.selectCover(metadata.common.picture);
+
+    if (!picture) {
+      return '';
+    }
+
+    // 4. Convert embedded image binary to a temporary Blob URL
+    if (picture && picture.data) {
+      // 1. Wrap picture.data in a new Uint8Array to ensure it matches 'BlobPart'
+      // 2. Provide a fallback for 'type' in case format is missing
+      const imageBlob = new Blob([new Uint8Array(picture.data)], {
+        type: picture.format || 'image/jpeg',
+      });
+
+      objectURL = URL.createObjectURL(imageBlob);
+    }
+
+    // 5. Use your optimized resize function
+    const thumbnail = await getResizedImageThumbnail(objectURL, maxSize);
+
+    // 6. Cleanup
+    if (objectURL) {
+      URL.revokeObjectURL(objectURL);
+      objectURL = null;
+    }
+
+    return thumbnail;
+  } catch (err) {
+    console.error('Audio thumbnail extraction failed:', err);
+    return '';
+  } finally {
+    if (objectURL) URL.revokeObjectURL(objectURL);
+  }
 }
 
 export async function generateVideoThumbnail(
@@ -1039,29 +1064,41 @@ export async function generateVideoThumbnail(
       if (!video) return;
 
       try {
-        const canvas = new OffscreenCanvas(
-          Math.max(
-            1,
-            Math.round(
-              video.videoWidth *
-                (maxSize / Math.max(video.videoWidth, video.videoHeight)),
-            ),
-          ),
-          Math.max(
-            1,
-            Math.round(
-              video.videoHeight *
-                (maxSize / Math.max(video.videoWidth, video.videoHeight)),
-            ),
-          ),
+        // 1. Capture current dimensions
+        const vWidth = video.videoWidth;
+        const vHeight = video.videoHeight;
+
+        // 2. Safety check: If video dimensions are 0, we can't divide
+        if (!vWidth || !vHeight) {
+          console.warn('Video dimensions not available yet.');
+          resolve('');
+          cleanup();
+          return;
+        }
+
+        // 3. Calculate Scale Factor safely
+        // Ensure maxSize is a valid number, fallback to 200 if missing
+        const targetMaxSize = Number(maxSize) || 200;
+        const scale = Math.min(
+          targetMaxSize / vWidth,
+          targetMaxSize / vHeight,
+          1,
         );
 
+        // 4. Force dimensions to be valid "unsigned long" (Integers >= 1)
+        // Use Math.max(1, ...) to ensure we never pass 0 to the constructor
+        const canvasWidth = Math.max(1, Math.round(vWidth * scale));
+        const canvasHeight = Math.max(1, Math.round(vHeight * scale));
+
+        // 5. Construct Canvas
+        const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
         const ctx = canvas.getContext('2d');
+
         if (ctx) {
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          ctx.drawImage(video, 0, 0, canvasWidth, canvasHeight);
           const blob = await canvas.convertToBlob({
-            type: AppConfig.thumbType,
-            quality: 0.9,
+            type: AppConfig.thumbType || 'image/jpeg',
+            quality: 0.8,
           });
 
           const reader = new FileReader();
@@ -1071,11 +1108,10 @@ export async function generateVideoThumbnail(
           };
           reader.readAsDataURL(blob);
         } else {
-          resolve('');
-          cleanup();
+          throw new Error('Could not get 2D context');
         }
       } catch (e) {
-        console.error('Video thumbnail canvas error', e);
+        console.error('Video thumbnail canvas error:', e);
         resolve('');
         cleanup();
       }
