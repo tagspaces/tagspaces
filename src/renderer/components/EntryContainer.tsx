@@ -39,7 +39,7 @@ import {
 } from '-/reducers/settings';
 import { getResizedImageThumbnail } from '-/services/thumbsgenerator';
 import { TS } from '-/tagspaces.namespace';
-import { base64ToBlob } from '-/utils/dom';
+import { base64ToUint8Array } from '-/utils/dom';
 import { Tooltip, useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
@@ -220,7 +220,7 @@ function EntryContainer() {
         if (data.content) {
           getResizedImageThumbnail(data.content)
             .then((base64Image) => {
-              const data = base64ToBlob(base64Image.split(',').pop());
+              const data = base64ToUint8Array(base64Image.split(',').pop());
 
               const thumbPath = cLocation.getThumbEntryPath(openedEntry);
               saveBinaryFilePromise(

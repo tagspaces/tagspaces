@@ -130,33 +130,16 @@ export function arrayBufferToDataURL(
 export function dataURLtoBlob(dataURI) {
   const arr = dataURI.split(',');
   const mime = arr[0].match(/:(.*?);/)[1];
-  const arrBuff = base64ToBlob(arr[1]).buffer;
+  const arrBuff = base64ToUint8Array(arr[1]).buffer;
   return new window.Blob([arrBuff], { type: mime });
 }
 
 /**
- * @deprecated use base64ToBlob instead
  * @param base64
  */
-/*export function base64ToArrayBuffer(base64) {
-  const bstr = window.atob(base64);
-  const bytes = new Uint8Array(bstr.length);
-  for (let i = 0; i < bstr.length; i += 1) {
-    bytes[i] = bstr.charCodeAt(i);
-  }
-  return bytes.buffer;
-}*/
-
-/**
- * @param base64
- */
-export function base64ToBlob(base64) {
-  const bstr = window.atob(base64);
-  const bytes = new Uint8Array(bstr.length);
-  for (let i = 0; i < bstr.length; i += 1) {
-    bytes[i] = bstr.charCodeAt(i);
-  }
-  return bytes;
+export function base64ToUint8Array(base64) {
+  const binaryString = window.atob(base64);
+  return Uint8Array.from(binaryString, (char) => char.charCodeAt(0));
 }
 
 export function generateClipboardLink(url, name?) {

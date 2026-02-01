@@ -50,7 +50,7 @@ import {
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { base64ToBlob } from '-/utils/dom';
+import { base64ToUint8Array } from '-/utils/dom';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import {
   cleanTrailingDirSeparator,
@@ -942,7 +942,7 @@ export const IOActionsContextProvider = ({
         ).then((dataURL) => {
           if (dataURL && dataURL.length > 6) {
             const baseString = dataURL.split(',').pop();
-            const fileContent = base64ToBlob(baseString);
+            const fileContent = base64ToUint8Array(baseString);
             return saveBinaryFilePromise(
               {
                 path: getThumbFileLocationForFile(
@@ -1108,7 +1108,7 @@ export const IOActionsContextProvider = ({
                 .then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
                     const baseString = dataURL.split(',').pop();
-                    const fileContent = base64ToBlob(baseString);
+                    const fileContent = base64ToUint8Array(baseString);
                     const thumbPath = getThumbFileLocationForFile(
                       fileTargetPath,
                       currentLocation?.getDirSeparator(),
@@ -1440,7 +1440,7 @@ export const IOActionsContextProvider = ({
                   ).then((dataURL) => {
                     if (dataURL && dataURL.length > 6) {
                       const baseString = dataURL.split(',').pop();
-                      const fileContent = base64ToBlob(baseString);
+                      const fileContent = base64ToUint8Array(baseString);
                       return uploadFile(
                         filePath,
                         fileType,
@@ -2269,7 +2269,7 @@ export const IOActionsContextProvider = ({
     ) // 4K -> 3840, 2K -> 2560
       .then((base64Image) => {
         if (base64Image) {
-          const data = base64ToBlob(base64Image.split(',').pop());
+          const data = base64ToUint8Array(base64Image.split(',').pop());
           return saveBinaryFilePromise({ path: folderBgndPath }, data, true)
             .then(() => {
               // props.setLastBackgroundImageChange(new Date().getTime());

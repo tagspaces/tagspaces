@@ -42,7 +42,7 @@ import {
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { base64ToBlob } from '-/utils/dom';
+import { base64ToUint8Array } from '-/utils/dom';
 import useFirstRender from '-/utils/useFirstRender';
 import {
   cleanTrailingDirSeparator,
@@ -518,7 +518,7 @@ export const ThumbGenerationContextProvider = ({
       return Promise.reject(new Error('Invalid dataURL'));
     }
     const baseString = dataURL.split(',').pop();
-    const content = base64ToBlob(baseString);
+    const content = base64ToUint8Array(baseString);
     return saveBinaryFilePromise(
       { path: filePath, locationID },
       content,
