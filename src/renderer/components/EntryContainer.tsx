@@ -535,6 +535,40 @@ function EntryContainer() {
     startYRef.current = e.clientY;
     startHeightRef.current = entryPropertiesHeight;
     target.setPointerCapture(e.pointerId);
+
+    const handleGlobalPointerMove = (moveEvent: PointerEvent) => {
+      if (!isDraggingRef.current) return;
+
+      const delta = moveEvent.clientY - startYRef.current;
+      const containerHeight =
+        fileViewerContainer.current?.parentElement?.clientHeight ||
+        window.innerHeight;
+      const newHeightPercent = Math.max(
+        10,
+        Math.min(200, startHeightRef.current + (delta / containerHeight) * 100),
+      );
+      setEntryPropertiesHeight(newHeightPercent);
+
+      // Buffer the localStorage write
+      storageBufferRef.current = newHeightPercent;
+
+      // Clear existing timer
+      if (storageTimerRef.current) {
+        clearTimeout(storageTimerRef.current);
+      }
+
+      // Debounce localStorage write by 100ms
+      storageTimerRef.current = setTimeout(flushStorageBuffer, 100);
+    };
+
+    document.addEventListener('pointermove', handleGlobalPointerMove);
+
+    const handlePointerUp = () => {
+      document.removeEventListener('pointermove', handleGlobalPointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    document.addEventListener('pointerup', handlePointerUp);
   };
 
   const flushStorageBuffer = () => {
@@ -545,33 +579,6 @@ function EntryContainer() {
       );
       storageBufferRef.current = null;
     }
-  };
-
-  const handleSeparatorMouseMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!desktopMode) return;
-    if (!isDraggingRef.current) return;
-
-    const delta = e.clientY - startYRef.current;
-    const containerHeight =
-      fileViewerContainer.current?.parentElement?.clientHeight ||
-      window.innerHeight;
-    const newHeightPercent = Math.max(
-      10,
-      Math.min(200, startHeightRef.current + (delta / containerHeight) * 100),
-    );
-    const roundedHeight = Math.round(newHeightPercent * 10) / 10;
-    setEntryPropertiesHeight(roundedHeight);
-
-    // Buffer the localStorage write
-    storageBufferRef.current = roundedHeight;
-
-    // Clear existing timer
-    if (storageTimerRef.current) {
-      clearTimeout(storageTimerRef.current);
-    }
-
-    // Debounce localStorage write by 100ms
-    storageTimerRef.current = setTimeout(flushStorageBuffer, 100);
   };
 
   const handleSeparatorMouseUp = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -680,7 +687,7 @@ function EntryContainer() {
                   paddingTop: '2px',
                   backgroundColor: 'background.default',
                   borderBottom: '1px solid ' + theme.palette.divider,
-                  cursor: 'ns-resize',
+                  cursor: 'row-resize',
                   userSelect: 'none',
                   '&:hover': {
                     backgroundColor: theme.palette.action.hover,
@@ -688,7 +695,6 @@ function EntryContainer() {
                 }}
                 onClick={toggleEntryPropertiesHeight}
                 onPointerDown={handleSeparatorMouseDown}
-                onPointerMove={handleSeparatorMouseMove}
                 onPointerUp={handleSeparatorMouseUp}
                 onPointerCancel={handleSeparatorMouseUp}
               >
