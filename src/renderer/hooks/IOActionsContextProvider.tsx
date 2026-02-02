@@ -941,8 +941,7 @@ export const IOActionsContextProvider = ({
           location?.getDirSeparator(),
         ).then((dataURL) => {
           if (dataURL && dataURL.length > 6) {
-            const baseString = dataURL.split(',').pop();
-            const fileContent = base64ToUint8Array(baseString);
+            const fileContent = base64ToUint8Array(dataURL);
             return saveBinaryFilePromise(
               {
                 path: getThumbFileLocationForFile(
@@ -1107,8 +1106,7 @@ export const IOActionsContextProvider = ({
               )
                 .then((dataURL) => {
                   if (dataURL && dataURL.length > 6) {
-                    const baseString = dataURL.split(',').pop();
-                    const fileContent = base64ToUint8Array(baseString);
+                    const fileContent = base64ToUint8Array(dataURL);
                     const thumbPath = getThumbFileLocationForFile(
                       fileTargetPath,
                       currentLocation?.getDirSeparator(),
@@ -1439,8 +1437,7 @@ export const IOActionsContextProvider = ({
                     currentLocation.getDirSeparator(),
                   ).then((dataURL) => {
                     if (dataURL && dataURL.length > 6) {
-                      const baseString = dataURL.split(',').pop();
-                      const fileContent = base64ToUint8Array(baseString);
+                      const fileContent = base64ToUint8Array(dataURL);
                       return uploadFile(
                         filePath,
                         fileType,
@@ -2269,7 +2266,7 @@ export const IOActionsContextProvider = ({
     ) // 4K -> 3840, 2K -> 2560
       .then((base64Image) => {
         if (base64Image) {
-          const data = base64ToUint8Array(base64Image.split(',').pop());
+          const data = base64ToUint8Array(base64Image);
           return saveBinaryFilePromise({ path: folderBgndPath }, data, true)
             .then(() => {
               // props.setLastBackgroundImageChange(new Date().getTime());

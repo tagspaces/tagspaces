@@ -220,7 +220,7 @@ function EntryContainer() {
         if (data.content) {
           getResizedImageThumbnail(data.content)
             .then((base64Image) => {
-              const data = base64ToUint8Array(base64Image.split(',').pop());
+              const data = base64ToUint8Array(base64Image);
 
               const thumbPath = cLocation.getThumbEntryPath(openedEntry);
               saveBinaryFilePromise(

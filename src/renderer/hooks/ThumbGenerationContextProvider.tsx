@@ -520,8 +520,7 @@ export const ThumbGenerationContextProvider = ({
       // data:,
       return Promise.reject(new Error('Invalid dataURL'));
     }
-    const baseString = dataURL.split(',').pop();
-    const content = base64ToUint8Array(baseString);
+    const content = base64ToUint8Array(dataURL);
     return saveBinaryFilePromise(
       { path: filePath, locationID },
       content,

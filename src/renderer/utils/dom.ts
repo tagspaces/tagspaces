@@ -138,8 +138,23 @@ export function dataURLtoBlob(dataURI) {
  * @param base64
  */
 export function base64ToUint8Array(base64) {
-  const binaryString = window.atob(base64);
-  return Uint8Array.from(binaryString, (char) => char.charCodeAt(0));
+  // Find where the actual data starts (after the comma)
+  // If no comma is found, assume the string is raw base64
+  const commaIndex = base64.indexOf(',');
+  const startOffset = commaIndex !== -1 ? commaIndex + 1 : 0;
+
+  // atob can take a portion of a string via substring/slice
+  // Most modern engines optimize slice() to be more memory-efficient than split()
+  const binaryString = window.atob(base64.slice(startOffset));
+
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  return bytes;
 }
 
 export function generateClipboardLink(url, name?) {
