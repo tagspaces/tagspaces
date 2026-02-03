@@ -279,10 +279,10 @@ function getPropertiesThumbnail(propertiesFile: string): string | null {
   const sectionHeader = '[InternetShortcut]';
   const startInx = propertiesFile.indexOf(sectionHeader);
 
-  // 1. If the section doesn't exist, exit immediately
+  // If the section doesn't exist, exit immediately
   if (startInx === -1) return null;
 
-  // 2. Isolate the section body to avoid searching the whole file
+  // Isolate the section body to avoid searching the whole file
   // Find the start of the next section or the end of the string
   let endInx = propertiesFile.indexOf('[', startInx + sectionHeader.length);
   const sectionBody =
@@ -291,7 +291,7 @@ function getPropertiesThumbnail(propertiesFile: string): string | null {
       : propertiesFile.slice(startInx, endInx);
 
   /**
-   * 3. Targeted extraction
+   * Targeted extraction
    * Match 'COMMENT' key followed by '=' and 'data:image/'
    * [ \t]* matches optional spaces/tabs around the equals sign
    * ([^ \n\r\t]+) captures the URI until the first whitespace or newline
@@ -323,10 +323,10 @@ export async function resizeImg(
     img.onload = async () => {
       let bitmap: ImageBitmap | null = null;
       try {
-        // 1. Decode pixels off the main thread
+        // Decode pixels off the main thread
         bitmap = await createImageBitmap(img);
 
-        // 2. Calculate dimensions using a more concise scale factor
+        // Calculate dimensions using a more concise scale factor
         // This handles both landscape and portrait in one calculation
         const scale = Math.min(
           maxSize / bitmap.width,
@@ -336,12 +336,12 @@ export async function resizeImg(
         const width = Math.max(1, Math.round(bitmap.width * scale));
         const height = Math.max(1, Math.round(bitmap.height * scale));
 
-        // 3. Use OffscreenCanvas for better performance
+        // Use OffscreenCanvas for better performance
         const canvas = new OffscreenCanvas(width, height);
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error('Canvas context failed');
 
-        // 4. Draw and Export
+        // Draw and Export
         ctx.drawImage(bitmap, 0, 0, width, height);
 
         const blob = await canvas.convertToBlob({
@@ -402,19 +402,19 @@ export async function generateImageThumbnail(
   let objectURL: string | null = null;
 
   try {
-    // 1. Handle Remote URLs (Simple path)
+    // Handle Remote URLs (Simple path)
     if (/^https?:\/\//.test(fileURL)) {
       return await getResizedImageThumbnail(fileURL, maxTmbSize);
     }
 
-    // 2. Handle Local Files
+    // Handle Local Files
     const content = await getFileContentPromise(fileURL, 'arraybuffer');
     if (!content) return '';
 
     const ext = extractFileExtension(fileURL, dirSeparator).toLowerCase();
     const blob = new Blob([content], { type: getMimeType(ext) });
 
-    // 3. Create temporary URL
+    // Create temporary URL
     if (AppConfig.isCordova) {
       // Assuming cordovaCreateObjectURL returns a Promise<string>
       objectURL = await cordovaCreateObjectURL(blob);
@@ -424,10 +424,10 @@ export async function generateImageThumbnail(
 
     if (!objectURL) return '';
 
-    // 4. Generate the thumbnail
+    // Generate the thumbnail
     const thumbnail = await getResizedImageThumbnail(objectURL, maxTmbSize);
 
-    // 5. CRITICAL: Cleanup Memory
+    // Cleanup Memory
     // We must revoke the URL after processing to free up the original image bytes
     if (objectURL && !AppConfig.isCordova) {
       URL.revokeObjectURL(objectURL);
@@ -439,7 +439,7 @@ export async function generateImageThumbnail(
     console.error(`Error creating image thumb for : ${fileURL}`, e);
     return '';
   } finally {
-    // 6. Safety Cleanup for errors
+    // Safety Cleanup for errors
     if (objectURL && !AppConfig.isCordova) {
       URL.revokeObjectURL(objectURL);
     }
@@ -492,15 +492,15 @@ export async function getResizedImageThumbnailOptimized(
     img.onload = async () => {
       let bitmap: ImageBitmap | null = null;
       try {
-        // 1. Decode the image
+        // Decode the image
         bitmap = await createImageBitmap(img);
 
-        // 2. Safety check: Ensure bitmap has dimensions
+        // Safety check: Ensure bitmap has dimensions
         if (!bitmap.width || !bitmap.height) {
           throw new Error('Image has no dimensions');
         }
 
-        // 3. Calculate Scale
+        // Calculate Scale
         // Ensure maxSize is at least 1 to avoid division by zero or zero-size canvas
         const maxSize = Math.max(1, maxTmbSize || 500);
         const scale = Math.min(
@@ -509,12 +509,12 @@ export async function getResizedImageThumbnailOptimized(
           1,
         );
 
-        // 4. Force dimensions to be valid integers >= 1
+        // Force dimensions to be valid integers >= 1
         // The || 1 handles cases where Math.round results in 0 or NaN
         const width = Math.max(1, Math.round(bitmap.width * scale)) || 1;
         const height = Math.max(1, Math.round(bitmap.height * scale)) || 1;
 
-        // 5. Create Canvas
+        // Create Canvas
         const canvas = new OffscreenCanvas(width, height);
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error('Canvas context unavailable');
@@ -599,20 +599,20 @@ export async function getResizedImageThumbnail(
 export function getHtmlThumbnail(html: string): string | null {
   const startMarker = 'data-screenshot="';
 
-  // 1. Find the start index
+  // Find the start index
   const inxBegin = html.indexOf(startMarker);
   if (inxBegin === -1) return null;
 
-  // 2. Find the end quote STARTING from the end of the marker
+  // Find the end quote STARTING from the end of the marker
   const valStart = inxBegin + startMarker.length;
   const inxEnd = html.indexOf('"', valStart);
 
   if (inxEnd === -1) return null;
 
-  // 3. Extract the exact slice
+  // Extract the exact slice
   const imgDataUrl = html.slice(valStart, inxEnd).trim();
 
-  // 4. Validate prefix
+  // Validate prefix
   if (imgDataUrl.startsWith('data:image/')) {
     return imgDataUrl;
   }
@@ -876,16 +876,16 @@ export async function generateTextThumbnail(
   loadTextFilePromise: (url: string, asText: boolean) => Promise<string>,
 ): Promise<string> {
   try {
-    // 1. Load content
+    // Load content
     const rawContent = await loadTextFilePromise(fileURL, true);
     if (!rawContent) return '';
 
-    // 2. PERFORMANCE: Only process the start of the file
+    // PERFORMANCE: Only process the start of the file
     // Splitting a 10MB file into lines would crash the app
     const previewText = rawContent.substring(0, 2500);
     const lines = previewText.split('\n').slice(0, 15);
 
-    // 3. Initialize Canvas (with Fallback)
+    // Initialize Canvas (with Fallback)
     let canvas: any;
     let isOffscreen = false;
 
@@ -901,7 +901,7 @@ export async function generateTextThumbnail(
     const ctx = canvas.getContext('2d');
     if (!ctx) return '';
 
-    // 4. Background and Typography Setup
+    // Background and Typography Setup
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, maxSize, maxSize);
 
@@ -912,7 +912,7 @@ export async function generateTextThumbnail(
     ctx.fillStyle = '#222222';
     ctx.font = `${fontSize}px sans-serif`;
 
-    // 5. Draw Lines
+    // Draw Lines
     for (let i = 0; i < lines.length; i++) {
       const y = padding + (i + 1) * lineHeight;
       if (y > maxSize - padding) break; // Stop if we go off canvas
@@ -924,7 +924,7 @@ export async function generateTextThumbnail(
       }
     }
 
-    // 6. Export to DataURL
+    // Export to DataURL
     if (isOffscreen) {
       // OffscreenCanvas uses asynchronous blob conversion
       const blob = await (canvas as OffscreenCanvas).convertToBlob({
