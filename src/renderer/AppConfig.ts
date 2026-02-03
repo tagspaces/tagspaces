@@ -120,7 +120,12 @@ AppConfig.SearchTypeGroups =
           'flac',
           'acc',
           'm4a',
+          'm4b',
+          'm4p',
           'opus',
+          'aiff',
+          'speex',
+          'wma',
         ],
         [AppConfig.SearchTypes.video]: [
           'ogv',

@@ -98,6 +98,7 @@ export const supportedAudio = [
   'mp3',
   'flac',
   'wav',
+  'wave',
   'aiff',
   'afc',
   'ogg',
