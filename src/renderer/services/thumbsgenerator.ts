@@ -21,12 +21,12 @@ import {
   encodeFileName,
   extractFileExtension,
 } from '@tagspaces/tagspaces-common/paths';
-import DOMPurify from 'dompurify';
 import JSZip from 'jszip';
 import * as mm from 'music-metadata';
 import { getDocument } from 'pdfjs-dist/build/pdf.min.mjs';
 import TgaLoader from 'tga-js';
 import UTIF from 'utif';
+import { loadFileContentPromise } from './utils-io';
 import('pdfjs-dist/build/pdf.worker.min.mjs');
 
 let maxSize = AppConfig.maxThumbSize;
@@ -135,8 +135,6 @@ export function generateThumbnailPromise(
       return generateUTIFThumbnail(fileURLEscaped, maxSize);
     } else if (ext === 'tga') {
       return generateTGAThumbnail(fileURLEscaped, maxSize);
-    } else if (ext === 'psd') {
-      return generatePSDThumbnail(fileURLEscaped, maxSize);
     } else if (ext.startsWith('tif')) {
       return generateUTIFThumbnail(fileURLEscaped, maxSize);
     } else if (fileSize && fileSize < maxFileSize) {
@@ -144,6 +142,7 @@ export function generateThumbnailPromise(
         fileURL,
         getFileContentPromise,
         dirSeparator,
+        maxSize,
       );
     }
   } else if (ext === 'pdf') {
@@ -207,20 +206,20 @@ export async function extractPDFcontent(
 
 export async function generatePDFThumbnail(
   arrayBuffer: ArrayBuffer,
-  maxSize: number = AppConfig.maxTmbSize,
+  maxSize: number = AppConfig.maxThumbSize,
 ): Promise<string> {
   // pdfjs-dist usually provides 'getDocument' in the global scope or as an import
   let loadingTask: any = null;
 
   try {
-    // 1. Load the PDF document
+    // Load the PDF document
     loadingTask = getDocument({ data: arrayBuffer });
     const pdf = await loadingTask.promise;
 
-    // 2. Get the first page
+    // Get the first page
     const page = await pdf.getPage(1);
 
-    // 3. Calculate scaling
+    // Calculate scaling
     // We get the viewport at scale 1.0 to determine original dimensions
     const unscaledViewport = page.getViewport({ scale: 1.0 });
     const scale = Math.min(
@@ -231,7 +230,7 @@ export async function generatePDFThumbnail(
 
     const viewport = page.getViewport({ scale });
 
-    // 4. Prepare OffscreenCanvas
+    // Prepare OffscreenCanvas
     const canvas = new OffscreenCanvas(
       Math.max(1, Math.round(viewport.width)),
       Math.max(1, Math.round(viewport.height)),
@@ -239,7 +238,7 @@ export async function generatePDFThumbnail(
     const context = canvas.getContext('2d');
     if (!context) throw new Error('Canvas context failed');
 
-    // 5. Render PDF to Canvas
+    // Render PDF to Canvas
     // We fill with white first because many PDFs have transparent backgrounds
     context.fillStyle = '#ffffff';
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -249,7 +248,7 @@ export async function generatePDFThumbnail(
       viewport: viewport,
     }).promise;
 
-    // 6. Export to Base64
+    // Export to Base64
     const blob = await canvas.convertToBlob({
       type: AppConfig.thumbType || 'image/jpeg',
       quality: 0.9,
@@ -265,7 +264,7 @@ export async function generatePDFThumbnail(
     console.error('Error creating PDF thumb:', err);
     return '';
   } finally {
-    // 7. CRITICAL: Cleanup PDF.js resources
+    // CRITICAL: Cleanup PDF.js resources
     // This releases the worker and memory used by PDF.js
     if (loadingTask) {
       loadingTask.destroy();
@@ -318,7 +317,9 @@ export async function resizeImg(
 ): Promise<string> {
   return new Promise((resolve) => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    if (image.startsWith('http')) {
+      img.crossOrigin = 'anonymous';
+    }
 
     img.onload = async () => {
       let bitmap: ImageBitmap | null = null;
@@ -397,26 +398,47 @@ export async function generateImageThumbnail(
   fileURL: string,
   getFileContentPromise: (url: string, type: string) => Promise<ArrayBuffer>,
   dirSeparator: string,
-  maxTmbSize?: number,
+  maxTmbSize: number = AppConfig.maxThumbSize,
 ): Promise<string> {
-  let objectURL: string | null = null;
+  let objectURL = null;
 
   try {
-    // Handle Remote URLs (Simple path)
     if (/^https?:\/\//.test(fileURL)) {
       return await getResizedImageThumbnail(fileURL, maxTmbSize);
     }
 
-    // Handle Local Files
     const content = await getFileContentPromise(fileURL, 'arraybuffer');
     if (!content) return '';
 
     const ext = extractFileExtension(fileURL, dirSeparator).toLowerCase();
-    const blob = new Blob([content], { type: getMimeType(ext) });
+    const isSvg = ext === 'svg';
 
-    // Create temporary URL
+    // FORCE correct MIME type for SVGs
+    const mimeType = isSvg ? 'image/svg+xml' : getMimeType(ext);
+    const blob = new Blob([content], { type: mimeType });
+
+    // --- SVG OPTIMIZATION ---
+    if (isSvg) {
+      // For SVGs, convert to Data URL immediately.
+      // This bypasses many Blob-URL security restrictions in the Image object.
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const dataUrl = reader.result;
+          // Send the Data URL to the resizer
+          const thumb = await getResizedImageThumbnail(
+            dataUrl as string,
+            maxTmbSize,
+          );
+          resolve(thumb);
+        };
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // --- STANDARD IMAGE LOGIC ---
     if (AppConfig.isCordova) {
-      // Assuming cordovaCreateObjectURL returns a Promise<string>
       objectURL = await cordovaCreateObjectURL(blob);
     } else {
       objectURL = URL.createObjectURL(blob);
@@ -431,7 +453,7 @@ export async function generateImageThumbnail(
     // We must revoke the URL after processing to free up the original image bytes
     if (objectURL && !AppConfig.isCordova) {
       URL.revokeObjectURL(objectURL);
-      objectURL = null; // Prevent double-revocation in finally block
+      objectURL = null;
     }
 
     return thumbnail;
@@ -473,125 +495,67 @@ export function getMimeType(extension) {
   return types[extension];
 }
 
-/**
- * src: image url or base64string
- * maxTmbSize - max size of image if not set return full image size (from url)
- * return: base64 image string
- */
-export async function getResizedImageThumbnailOptimized(
-  src: string,
-  maxTmbSize: number = AppConfig.maxTmbSize,
-): Promise<string> {
-  if (src.startsWith('data:image/') && src.length < 5000) {
-    return src; // Skip processing if it's already a small thumbnail
-  }
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-
-    img.onload = async () => {
-      let bitmap: ImageBitmap | null = null;
-      try {
-        // Decode the image
-        bitmap = await createImageBitmap(img);
-
-        // Safety check: Ensure bitmap has dimensions
-        if (!bitmap.width || !bitmap.height) {
-          throw new Error('Image has no dimensions');
-        }
-
-        // Calculate Scale
-        // Ensure maxSize is at least 1 to avoid division by zero or zero-size canvas
-        const maxSize = Math.max(1, maxTmbSize || 500);
-        const scale = Math.min(
-          maxSize / bitmap.width,
-          maxSize / bitmap.height,
-          1,
-        );
-
-        // Force dimensions to be valid integers >= 1
-        // The || 1 handles cases where Math.round results in 0 or NaN
-        const width = Math.max(1, Math.round(bitmap.width * scale)) || 1;
-        const height = Math.max(1, Math.round(bitmap.height * scale)) || 1;
-
-        // Create Canvas
-        const canvas = new OffscreenCanvas(width, height);
-        const ctx = canvas.getContext('2d');
-        if (!ctx) throw new Error('Canvas context unavailable');
-
-        ctx.fillStyle = AppConfig.thumbBgColor || '#ffffff';
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(bitmap, 0, 0, width, height);
-
-        // 6. Export
-        const outBlob = await canvas.convertToBlob({
-          type: AppConfig.thumbType || 'image/jpeg',
-          quality: 0.9,
-        });
-
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(outBlob);
-      } catch (err) {
-        console.error('Thumbnail processing failed:', err);
-        resolve('');
-      } finally {
-        if (bitmap) bitmap.close();
-      }
-    };
-
-    img.onerror = () => resolve('');
-    img.src = src;
-  });
-}
-
 export async function getResizedImageThumbnail(
   src: string,
-  maxTmbSize: number = AppConfig.maxTmbSize,
+  maxTmbSize: number = AppConfig.maxThumbSize,
 ): Promise<string> {
-  if (src.startsWith('data:image/') && src.length < 5000) {
-    return src; // Skip processing if it's already a small thumbnail
-  }
+  // return resizeImg(src, maxTmbSize);
   return new Promise((resolve) => {
-    let canvas: HTMLCanvasElement = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      console.log('Unable to get canvas context');
-      resolve('');
-      return;
-    }
-    if (maxTmbSize && maxTmbSize > maxSize) {
-      maxSize = maxTmbSize;
+    const img = new Image();
+
+    // Security: Only use anonymous for remote URLs
+    if (src.startsWith('http')) {
+      img.crossOrigin = 'anonymous';
     }
 
-    let img: HTMLImageElement = new window.Image();
-    img.crossOrigin = 'anonymous';
     img.onload = () => {
-      let maxSizeWidth = Math.min(img.width, maxSize);
-      let maxSizeHeight = Math.min(img.height, maxSize);
-      if (img.width >= img.height) {
-        canvas.width = maxSizeWidth;
-        canvas.height = Math.round((maxSizeWidth * img.height) / img.width);
-      } else {
-        canvas.height = maxSizeHeight;
-        canvas.width = Math.round((maxSizeHeight * img.width) / img.height);
+      // Determine original dimensions (with SVG fallback)
+      const originW = img.naturalWidth || img.width || maxTmbSize;
+      const originH = img.naturalHeight || img.height || maxTmbSize;
+
+      // Calculate Scale:
+      // Math.min(targetSize/W, targetSize/H, 1) ensures we:
+      // - Scale down if image is larger than targetSize
+      // - Keep original size (scale 1) if image is smaller than targetSize
+      const scale = Math.min(maxTmbSize / originW, maxTmbSize / originH, 1);
+
+      const canvasW = Math.round(originW * scale);
+      const canvasH = Math.round(originH * scale);
+
+      // Setup Canvas to the EXACT size of the result (Not forced square)
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, canvasW);
+      canvas.height = Math.max(1, canvasH);
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Unable to get canvas context');
+        resolve('');
+        return;
       }
 
-      const { width, height } = canvas;
-      const x = width / 2;
-      const y = height / 2;
+      try {
+        // Draw Background
+        ctx.fillStyle = AppConfig.thumbBgColor || '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.translate(x, y);
-      ctx.fillStyle = AppConfig.thumbBgColor;
-      ctx.fillRect(-width / 2, -height / 2, width, height);
-      ctx.drawImage(img, -width / 2, -height / 2, width, height);
-      ctx.translate(-x, -y);
-      resolve(canvas.toDataURL(AppConfig.thumbType));
-      img = null;
-      canvas = null;
+        // Draw Image
+        // Since canvas size matches draw size, image is perfectly "centered"
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        resolve(canvas.toDataURL(AppConfig.thumbType, 0.9));
+      } catch (e) {
+        console.error(e);
+        resolve('');
+      }
     };
 
-    img.onerror = (err) => resolve('');
+    img.onerror = (err) => {
+      // Return original src for SVGs if they fail to load as an image (vector fallback)
+      console.error(err);
+      resolve('');
+    };
+
     img.src = src;
   });
 }
@@ -631,54 +595,60 @@ export async function generateHtmlThumbnail(
 
     // Fast path check
     const existing = getHtmlThumbnail(html);
-    if (existing) return await resizeImg(existing, maxSize);
-
-    const sanitized = DOMPurify.sanitize(html, { WHOLE_DOCUMENT: true });
-
-    return new Promise((resolve) => {
-      const iframe = document.createElement('iframe');
-
-      // Sandbox for security
-      iframe.setAttribute('sandbox', 'allow-same-origin');
-
-      Object.assign(iframe.style, {
-        position: 'fixed',
-        left: '-5000px',
-        width: '1024px',
-        height: '768px',
-      });
-
-      document.body.appendChild(iframe);
-
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (!doc) {
-        document.body.removeChild(iframe);
+    if (existing) {
+      return await resizeImg(existing, maxSize);
+    } else {
+      return new Promise((resolve) => {
         resolve('');
-        return;
-      }
+      });
+    }
 
-      doc.open();
-      doc.write(sanitized);
-      doc.close();
+    // const sanitized = DOMPurify.sanitize(html, { WHOLE_DOCUMENT: true });
 
-      // Give the browser a moment to render styles
-      setTimeout(async () => {
-        try {
-          const { default: html2canvas } = await import('html2canvas');
-          const canvas = await html2canvas(doc.body, {
-            width: maxSize,
-            height: maxSize,
-            scale: maxSize / 1024,
-          });
+    // return new Promise((resolve) => {
+    //   const iframe = document.createElement('iframe');
 
-          resolve(canvas.toDataURL(AppConfig.thumbType || 'image/jpeg'));
-        } catch (e) {
-          resolve('');
-        } finally {
-          if (iframe.parentNode) document.body.removeChild(iframe);
-        }
-      }, 500);
-    });
+    //   // Sandbox for security
+    //   iframe.setAttribute('sandbox', 'allow-same-origin');
+
+    //   Object.assign(iframe.style, {
+    //     position: 'fixed',
+    //     left: '-5000px',
+    //     width: '1024px',
+    //     height: '768px',
+    //   });
+
+    //   document.body.appendChild(iframe);
+
+    //   const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    //   if (!doc) {
+    //     document.body.removeChild(iframe);
+    //     resolve('');
+    //     return;
+    //   }
+
+    //   doc.open();
+    //   doc.write(sanitized);
+    //   doc.close();
+
+    //   // Give the browser a moment to render styles
+    //   setTimeout(async () => {
+    //     try {
+    //       const { default: html2canvas } = await import('html2canvas');
+    //       const canvas = await html2canvas(doc.body, {
+    //         width: maxSize,
+    //         height: maxSize,
+    //         scale: maxSize / 1024,
+    //       });
+
+    //       resolve(canvas.toDataURL(AppConfig.thumbType || 'image/jpeg'));
+    //     } catch (e) {
+    //       resolve('');
+    //     } finally {
+    //       if (iframe.parentNode) document.body.removeChild(iframe);
+    //     }
+    //   }, 500);
+    // });
   } catch (e) {
     return '';
   }
@@ -694,7 +664,7 @@ export async function generateZipContainerImageThumbnail(
   let objectURL: string | null = null;
 
   try {
-    // 1. Decode URL
+    // Decode URL
     let decodedFileURL = fileURL;
     try {
       decodedFileURL = decodeURIComponent(fileURL);
@@ -702,7 +672,7 @@ export async function generateZipContainerImageThumbnail(
       /* ignore */
     }
 
-    // 2. Load Zip
+    // Load Zip
     const content = await getFileContentPromise(decodedFileURL);
     const zipFile = await JSZip.loadAsync(content);
 
@@ -710,7 +680,7 @@ export async function generateZipContainerImageThumbnail(
     let bestMatch: { name: string; size: number; isKeyword: boolean } | null =
       null;
 
-    // 3. Find the best candidate file
+    // Find the best candidate file
     // We want: A keyword match first, otherwise the largest image file found.
     for (const [fileName, fileObj] of Object.entries(zipFile.files)) {
       if (fileObj.dir) continue;
@@ -745,18 +715,18 @@ export async function generateZipContainerImageThumbnail(
       return '';
     }
 
-    // 4. Extract as Uint8Array (Memory efficient)
+    // Extract as Uint8Array (Memory efficient)
     const imgData = await zipFile.file(bestMatch.name)!.async('uint8array');
 
-    // 5. Determine MIME type
+    // Determine MIME type
     const imgExt = bestMatch.name.split('.').pop()?.toLowerCase() || 'jpeg';
     const mime = imgExt === 'svg' ? 'image/svg+xml' : `image/${imgExt}`;
 
-    // 6. Create Blob URL
+    // Create Blob URL
     const blob = new Blob([imgData as BlobPart], { type: mime });
     objectURL = URL.createObjectURL(blob);
 
-    // 7. Resize (Using our optimized resizeImg from before)
+    // Resize
     const result = await resizeImg(objectURL, maxSize);
 
     return result;
@@ -764,107 +734,134 @@ export async function generateZipContainerImageThumbnail(
     console.error(`Error generating ZIP thumbnail for: ${fileURL}`, err);
     return '';
   } finally {
-    // 8. Cleanup memory
+    // Cleanup memory
     if (objectURL) {
       URL.revokeObjectURL(objectURL);
     }
   }
 }
 
-export function generatePSDThumbnail(fileURL, maxSize): Promise<string> {
-  return new Promise((resolve) => {
-    try {
-      console.log(`Thumbnail generation for PSD not supported : ${fileURL}`);
-      // const PSD = require('../libs/psd/dist/psd');
-      // PSD.fromURL(fileURL).then((psd) => {
-      //   const pngDataURL = psd.image.toPng();
-      //   resizeImg(pngDataURL, maxSize)
-      //   .then(img => {
-      //     resolve(img);
-      //     return true;
-      //   })
-      //   .catch(err => {
-      //     console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
-      //     resolve('');
-      //   });
-      //   return true;
-      // }).catch((err) => {
-      //   console.log(`Error loading: ${fileURL} for PSD tmb generation: ${err}`)
-      //   resolve('');
-      // });
-      resolve('');
-      return true;
-    } catch (e) {
-      console.log(`Error creating PSD thumb for : ${fileURL} with: ${e}`);
-      resolve('');
-    }
-  });
-}
-
-export function generateUTIFThumbnail(
+/**
+ * Optimized TIFF thumbnail generation.
+ */
+export async function generateUTIFThumbnail(
   fileURL: string,
-  maxSize: number,
+  maxSize: number = AppConfig.maxThumbSize,
 ): Promise<string> {
-  return new Promise((resolve) => {
-    try {
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = 'arraybuffer';
-      xhr.open('GET', fileURL);
-      xhr.onload = () => {
-        const ifds = UTIF.decode(xhr.response);
-        if (ifds[0] && ifds[0].width && ifds[0].width > 0) {
-          const dataUrl = UTIF.bufferToURI(xhr.response, ifds[0]);
-          resizeImg(dataUrl, maxSize)
-            .then((img) => {
-              resolve(img);
-              return true;
-            })
-            .catch((err) => {
-              console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
-              resolve('');
-            });
-        } else {
-          resolve('');
-        }
-        return true;
-      };
-      xhr.onerror = (err) => {
-        console.log(`Error loading for tmb gen: ${fileURL} ${err} `);
-        resolve('');
-      };
-      xhr.send();
-    } catch (e) {
-      console.log(`Error creating UTIF thumb for : ${fileURL} with: ${e}`);
-      resolve('');
-    }
-  });
+  try {
+    // Get binary data
+    const buffer = await loadFileContentPromise(fileURL);
+
+    // Decode TIFF Metadata
+    const ifds = UTIF.decode(buffer);
+    if (!ifds || ifds.length === 0) return '';
+
+    const firstPage = ifds[0];
+
+    // Decompress the image data
+    UTIF.decodeImage(buffer, firstPage);
+
+    // Convert to standard RGBA pixels
+    const rgbaPixels = UTIF.toRGBA8(firstPage);
+    const originW = firstPage.width;
+    const originH = firstPage.height;
+
+    // Calculate Scaling (Never upscale, maintain aspect ratio)
+    const targetSize = maxSize || 200;
+    const scale = Math.min(targetSize / originW, targetSize / originH, 1);
+    const drawW = Math.max(1, Math.round(originW * scale));
+    const drawH = Math.max(1, Math.round(originH * scale));
+
+    // Use a temporary canvas for the full-size TIFF frame
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = originW;
+    tempCanvas.height = originH;
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return '';
+
+    // Put raw pixels directly into the temp canvas
+    const imageData = new ImageData(
+      new Uint8ClampedArray(rgbaPixels.buffer),
+      originW,
+      originH,
+    );
+    tempCtx.putImageData(imageData, 0, 0);
+
+    // Create the final thumbnail canvas
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = drawW;
+    finalCanvas.height = drawH;
+    const finalCtx = finalCanvas.getContext('2d');
+    if (!finalCtx) return '';
+
+    // Draw background
+    finalCtx.fillStyle = AppConfig.thumbBgColor || '#ffffff';
+    finalCtx.fillRect(0, 0, drawW, drawH);
+
+    // Scale the temp canvas down to the final canvas
+    finalCtx.drawImage(tempCanvas, 0, 0, drawW, drawH);
+
+    // Export to Raster
+    return finalCanvas.toDataURL(AppConfig.thumbType, 0.9);
+  } catch (e) {
+    console.error(`Error creating UTIF thumb for : ${fileURL}`, e);
+    return '';
+  }
 }
 
-export function generateTGAThumbnail(
+export async function generateTGAThumbnail(
   fileURL: string,
-  maxSize: number,
+  maxSize: number = AppConfig.maxThumbSize,
 ): Promise<string> {
   return new Promise((resolve) => {
     try {
       const tgaLoader = new TgaLoader();
+
+      // Open the TGA file
       tgaLoader.open(fileURL, () => {
-        const canvas = tgaLoader.getCanvas();
-        // const ctx = canvas.getContext('2d');
-        // ctx.fillStyle = thumbnailBackgroundColor;
-        const dataUrl = canvas.toDataURL(AppConfig.thumbType);
-        resizeImg(dataUrl, maxSize)
-          .then((img) => {
-            resolve(img);
-            return true;
-          })
-          .catch((err) => {
-            console.log('Error resizeImg tmb for: ' + fileURL + ' - ' + err);
-            resolve('');
-          });
-        return true;
+        // Get the full-size canvas from the loader
+        const srcCanvas = tgaLoader.getCanvas();
+        if (!srcCanvas || srcCanvas.width === 0 || srcCanvas.height === 0) {
+          console.warn('TGA Loader returned an empty canvas');
+          resolve('');
+          return;
+        }
+
+        const originW = srcCanvas.width;
+        const originH = srcCanvas.height;
+
+        // Calculate Scaling (Never upscale, maintain aspect ratio)
+        const targetSize = maxSize || 200;
+        const scale = Math.min(targetSize / originW, targetSize / originH, 1);
+        const drawW = Math.max(1, Math.round(originW * scale));
+        const drawH = Math.max(1, Math.round(originH * scale));
+
+        // Create the final thumbnail canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = drawW;
+        canvas.height = drawH;
+        const ctx = canvas.getContext('2d');
+
+        if (ctx) {
+          // Draw Background
+          ctx.fillStyle = AppConfig.thumbBgColor || '#ffffff';
+          ctx.fillRect(0, 0, drawW, drawH);
+
+          // Draw the source canvas DIRECTLY onto the thumbnail canvas
+          // This bypasses the expensive Base64 encoding/decoding step
+          ctx.drawImage(srcCanvas, 0, 0, drawW, drawH);
+
+          // Export to Raster string
+          resolve(canvas.toDataURL(AppConfig.thumbType || 'image/jpeg', 0.9));
+        } else {
+          resolve('');
+        }
+
+        // Cleanup local references
+        (srcCanvas as any) = null;
       });
     } catch (e) {
-      console.log(`Error creating TGA thumb for : ${fileURL} with: ${e}`);
+      console.error(`Error creating TGA thumb for : ${fileURL}`, e);
       resolve('');
     }
   });
@@ -872,7 +869,7 @@ export function generateTGAThumbnail(
 
 export async function generateTextThumbnail(
   fileURL: string,
-  maxSize: number = AppConfig.maxTmbSize,
+  maxSize: number = AppConfig.maxThumbSize,
   loadTextFilePromise: (url: string, asText: boolean) => Promise<string>,
 ): Promise<string> {
   try {
@@ -965,29 +962,29 @@ export async function generateTextThumbnail(
 */
 export async function generateAudioThumbnail(
   src: string,
-  maxSize: number = AppConfig.maxTmbSize,
+  maxSize: number = AppConfig.maxThumbSize,
   getFileContentPromise: (url: string) => Promise<ArrayBuffer>,
 ): Promise<string> {
   let objectURL: string | null = null;
 
   try {
-    // 1. Get binary data using XHR helper
+    // Get binary data using XHR helper
     const content = await getFileContentPromise(src);
 
-    // 2. Parse Metadata
+    // Parse Metadata
     const metadata = await mm.parseBuffer(new Uint8Array(content));
 
-    // 3. Locate the "Front Cover"
+    // Locate the "Front Cover"
     const picture = mm.selectCover(metadata.common.picture);
 
     if (!picture) {
       return '';
     }
 
-    // 4. Convert embedded image binary to a temporary Blob URL
+    // Convert embedded image binary to a temporary Blob URL
     if (picture && picture.data) {
-      // 1. Wrap picture.data in a new Uint8Array to ensure it matches 'BlobPart'
-      // 2. Provide a fallback for 'type' in case format is missing
+      // Wrap picture.data in a new Uint8Array to ensure it matches 'BlobPart'
+      // Provide a fallback for 'type' in case format is missing
       const imageBlob = new Blob([new Uint8Array(picture.data)], {
         type: picture.format || 'image/jpeg',
       });
@@ -995,10 +992,10 @@ export async function generateAudioThumbnail(
       objectURL = URL.createObjectURL(imageBlob);
     }
 
-    // 5. Use your optimized resize function
-    const thumbnail = await getResizedImageThumbnail(objectURL, maxSize);
+    // Use your optimized resize function
+    const thumbnail = await resizeImg(objectURL, maxSize);
 
-    // 6. Cleanup
+    // Cleanup
     if (objectURL) {
       URL.revokeObjectURL(objectURL);
       objectURL = null;
@@ -1015,10 +1012,10 @@ export async function generateAudioThumbnail(
 
 export async function generateVideoThumbnail(
   fileURL: string,
-  maxSize: number = AppConfig.maxTmbSize,
+  maxSize: number = AppConfig.maxThumbSize,
 ): Promise<string> {
   return new Promise((resolve) => {
-    // 1. Setup Video Element
+    // Setup Video Element
     let video: HTMLVideoElement | null = document.createElement('video');
     video.muted = true;
     video.crossOrigin = 'anonymous';
@@ -1035,41 +1032,41 @@ export async function generateVideoThumbnail(
       }
     };
 
-    // 2. Error Handling
+    // Error Handling
     video.onerror = () => {
       console.warn(`Error loading video: ${fileURL}`);
       cleanup();
       resolve('');
     };
 
-    // 3. Metadata loaded: Calculate dimensions and seek
+    // Metadata loaded: Calculate dimensions and seek
     video.onloadedmetadata = () => {
       if (!video) return;
 
-      // Calculate scaled dimensions
-      const scale = Math.min(
-        maxSize / video.videoWidth,
-        maxSize / video.videoHeight,
-        1,
-      );
-      const width = Math.max(1, Math.round(video.videoWidth * scale));
-      const height = Math.max(1, Math.round(video.videoHeight * scale));
+      // // Calculate scaled dimensions
+      // const scale = Math.min(
+      //   maxSize / video.videoWidth,
+      //   maxSize / video.videoHeight,
+      //   1,
+      // );
+      // const width = Math.max(1, Math.round(video.videoWidth * scale));
+      // const height = Math.max(1, Math.round(video.videoHeight * scale));
 
       // Seek to 1 second (or halfway if video is short) to avoid black start frames
       const seekTime = Math.min(1, video.duration / 2);
       video.currentTime = seekTime;
     };
 
-    // 4. Seek complete: Draw to canvas
+    // Seek complete: Draw to canvas
     video.onseeked = async () => {
       if (!video) return;
 
       try {
-        // 1. Capture current dimensions
+        // Capture current dimensions
         const vWidth = video.videoWidth;
         const vHeight = video.videoHeight;
 
-        // 2. Safety check: If video dimensions are 0, we can't divide
+        // Safety check: If video dimensions are 0, we can't divide
         if (!vWidth || !vHeight) {
           console.warn('Video dimensions not available yet.');
           resolve('');
@@ -1077,7 +1074,7 @@ export async function generateVideoThumbnail(
           return;
         }
 
-        // 3. Calculate Scale Factor safely
+        // Calculate Scale Factor safely
         // Ensure maxSize is a valid number, fallback to 200 if missing
         const targetMaxSize = Number(maxSize) || 200;
         const scale = Math.min(
@@ -1086,12 +1083,12 @@ export async function generateVideoThumbnail(
           1,
         );
 
-        // 4. Force dimensions to be valid "unsigned long" (Integers >= 1)
+        // Force dimensions to be valid "unsigned long" (Integers >= 1)
         // Use Math.max(1, ...) to ensure we never pass 0 to the constructor
         const canvasWidth = Math.max(1, Math.round(vWidth * scale));
         const canvasHeight = Math.max(1, Math.round(vHeight * scale));
 
-        // 5. Construct Canvas
+        // Construct Canvas
         const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
         const ctx = canvas.getContext('2d');
 
@@ -1118,7 +1115,7 @@ export async function generateVideoThumbnail(
       }
     };
 
-    // 5. Start loading
+    // Start loading
     // Use the hash fix from your original code
     video.src = fileURL.startsWith('http')
       ? fileURL
