@@ -247,6 +247,8 @@ export const ThumbGenerationContextProvider = ({
     const workerEntries: string[] = [];
     const mainEntries: string[] = [];
     const pdfEntries: string[] = [];
+    console.time('TMB_GENERATION_RENDERER');
+    console.time('TMB_GENERATION_WORKER');
     dirEntries.map((entry) => {
       if (!entry.isFile) {
         return true;
@@ -292,24 +294,28 @@ export const ThumbGenerationContextProvider = ({
     });
 
     if (pdfEntries.length > 0) {
-      createThumbnailsInWorker(pdfEntries, location.fullTextIndex).catch(
-        (e) => {
+      createThumbnailsInWorker(pdfEntries, location.fullTextIndex)
+        .then(() => {
+          console.timeEnd('TMB_GENERATION_WORKER');
+        })
+        .catch((e) => {
           console.log('createThumbnailsInWorker pdf', e);
-        },
-      );
+        });
     }
     if (workerEntries.length > 0) {
       setGenThumbs(true);
       return createThumbnailsInWorker(workerEntries, location.fullTextIndex)
         .then(() =>
           thumbnailMainGeneration(mainEntries, location).then(() => {
+            console.timeEnd('TMB_GENERATION_WORKER');
             setGenThumbs(false);
             return true;
           }),
         )
         .catch((e) => {
           // WS error handle let process thumbgeneration in Main process Generator
-          console.log('createThumbnailsInWorker', e);
+          console.log('createThumbnailsInWorker failed: ', e);
+          console.timeEnd('TMB_GENERATION_WORKER');
           return thumbnailMainGeneration(
             [...workerEntries, ...mainEntries],
             location,
@@ -321,10 +327,13 @@ export const ThumbGenerationContextProvider = ({
     } else if (mainEntries.length > 0) {
       setGenThumbs(true);
       return thumbnailMainGeneration(mainEntries, location).then(() => {
+        console.timeEnd('TMB_GENERATION_RENDERER');
         setGenThumbs(false);
         return true;
       });
     }
+
+    console.timeEnd('TMB_GENERATION_RENDERER');
 
     setGenThumbs(false);
     return Promise.resolve(false);
