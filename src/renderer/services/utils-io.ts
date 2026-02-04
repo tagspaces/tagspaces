@@ -509,16 +509,16 @@ export function findColorForFileExt(
 
 export function loadFileContentPromise(
   fullPath: string,
-  type: string,
+  type: string = 'arraybuffer',
 ): Promise<any> {
   return new Promise((resolve, reject) => {
     const xhr: any = new XMLHttpRequest();
     xhr.open('GET', fullPath, true);
-    xhr.responseType = type || 'arraybuffer';
+    xhr.responseType = type;
     xhr.onerror = reject;
     xhr.onload = () => {
-      const response = xhr.response || xhr.responseText;
-      if (response) {
+      if (xhr.status === 200 || xhr.status === 0) {
+        const response = xhr.response || xhr.responseText;
         resolve(response);
       } else {
         reject(new Error('loadFileContentPromise error'));
