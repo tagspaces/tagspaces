@@ -870,11 +870,11 @@ export async function generateTGAThumbnail(
 export async function generateTextThumbnail(
   fileURL: string,
   maxSize: number = AppConfig.maxThumbSize,
-  loadTextFilePromise: (url: string, asText: boolean) => Promise<string>,
+  loadTextFilePromise: (url: string) => Promise<string>,
 ): Promise<string> {
   try {
     // Load content
-    const rawContent = await loadTextFilePromise(fileURL, true);
+    const rawContent = await loadTextFilePromise(fileURL);
     if (!rawContent) return '';
 
     // PERFORMANCE: Only process the start of the file
