@@ -202,7 +202,7 @@ function RenameEntryDialog(props: Props) {
                 (isFile ? 'renameNewFileName' : 'createNewDirectoryTitleName'),
             )}
             onChange={handleInputChange}
-            onFocus={onInputFocus}
+            // onFocus={onInputFocus}
             defaultValue={name.current}
             data-tid="renameEntryDialogInput"
           />
