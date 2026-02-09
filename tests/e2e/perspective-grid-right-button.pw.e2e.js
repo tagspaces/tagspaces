@@ -105,21 +105,18 @@ test.describe('TST50** - Right button on a file', () => {
     const sampleFileName = 'sample';
 
     const oldName = await renameFileFromMenu(
-      newFileName,
+      newFileName+fileExtension,
       getGridFileSelector(sampleFileName + fileExtension),
     );
     expect(oldName).toBe(sampleFileName + fileExtension);
-
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     await expectElementExist(getGridFileSelector(newFileName + fileExtension));
-    await expectElementExist(getGridFileSelector(oldName), false);
 
-    /*const fileRenamedScreenshot = await getElementScreenshot(
-      '[data-tid=fsEntryName_'+dataTidFormat(newFileName + fileExtension)+'] img',
-    );*/
+    await expectElementExist(getGridFileSelector(oldName), false);
 
     // rename back to oldName
     const fileName = await renameFileFromMenu(
-      sampleFileName,
+      sampleFileName+fileExtension,
       getGridFileSelector(newFileName + fileExtension),
     );
     expect(fileName).toBe(newFileName + fileExtension);

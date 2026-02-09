@@ -1,16 +1,14 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import { expect } from '@playwright/test';
-import { delay } from './hook';
-import { firstFile, openContextEntryMenu } from './test-utils';
 import {
   clickOn,
-  getElementText,
   isDisplayed,
   selectorFile,
   setInputKeys,
-  takeScreenshot,
-  waitForNotification,
+  waitForNotification
 } from './general.helpers';
+import { delay } from './hook';
+import { openContextEntryMenu } from './test-utils';
 
 // export const defaultLocationPath = './tests/testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
@@ -217,12 +215,11 @@ export async function checkForIdExist(tid) {
  * @returns {Promise<oldFileName: string>}
  */
 export async function renameFileFromMenu(newFileName, selector = selectorFile) {
-  await openContextEntryMenu(selector, 'fileMenuRenameFile');
-  const fileName = await global.client.inputValue(
-    '[data-tid=renameEntryDialogInput] input',
-  );
-
-  await setInputKeys('renameEntryDialogInput', newFileName);
+  await openContextEntryMenu(selector, 'fileMenuRenameFile'); 
+  const input = await global.client.locator(`[data-tid='renameEntryDialogInput'] input`);
+  const fileName = input.inputValue();
+  await input.fill('');
+  await input.type(newFileName)
   await clickOn('[data-tid=confirmRenameEntry]');
   await waitForNotification();
   return fileName;
