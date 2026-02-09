@@ -396,7 +396,11 @@ test.describe('TST50** - Right button on a file', () => {
     const newDirName = 'new_dir_name';
     const folder = getGridFileSelector('empty_folder');
     await openContextEntryMenu(folder, 'renameDirectory');
-    const oldDirName = await setInputKeys('renameEntryDialogInput', newDirName);
+
+    const input = await global.client.locator(`[data-tid='renameEntryDialogInput'] input`);
+    const oldDirName = await input.inputValue();
+    await input.fill(newDirName)
+
     await clickOn('[data-tid=confirmRenameEntry]');
 
     // turn dir name back
@@ -404,7 +408,11 @@ test.describe('TST50** - Right button on a file', () => {
       getGridFileSelector(newDirName),
       'renameDirectory',
     );
-    const renamedDir = await setInputKeys('renameEntryDialogInput', oldDirName);
+
+    const input2 = await global.client.locator(`[data-tid='renameEntryDialogInput'] input`);
+    const renamedDir = await input2.inputValue();
+    await input2.fill(oldDirName)
+
     await clickOn('[data-tid=confirmRenameEntry]');
     expect(renamedDir).toBe(newDirName);
   });

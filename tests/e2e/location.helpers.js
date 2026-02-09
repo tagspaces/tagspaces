@@ -217,9 +217,8 @@ export async function checkForIdExist(tid) {
 export async function renameFileFromMenu(newFileName, selector = selectorFile) {
   await openContextEntryMenu(selector, 'fileMenuRenameFile'); 
   const input = await global.client.locator(`[data-tid='renameEntryDialogInput'] input`);
-  const fileName = input.inputValue();
-  await input.fill('');
-  await input.type(newFileName)
+  const fileName = await input.inputValue();
+  await input.fill(newFileName)
   await clickOn('[data-tid=confirmRenameEntry]');
   await waitForNotification();
   return fileName;
