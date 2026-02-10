@@ -41,6 +41,14 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
     const { chatHistoryItems } = useChatContext();
     const crepeInstanceRef = useRef<Crepe | null>(null);
     const author = useSelector(getAuthor);
+    const openedEntryPathRef = useRef<string | undefined>();
+    const openLinkRef = useRef(openLink);
+
+    // Update refs without triggering re-renders
+    useEffect(() => {
+      openedEntryPathRef.current = openedEntry?.path;
+      openLinkRef.current = openLink;
+    }, [openedEntry?.path, openLink]);
 
     // Memoize formatted chat content for performance
     const formattedChatContent = React.useMemo(
@@ -49,7 +57,7 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
       [chatHistoryItems, showCurrent],
     );
 
-    // Use Milkdown's useEditor, but only recreate the editor when currentFolder changes
+    // Use Milkdown's useEditor, but only recreate the editor when formatted content changes
     const { get, loading } = useEditor(
       (root) => {
         // Destroy previous instance if exists
@@ -69,8 +77,8 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
             [Crepe.Feature.Cursor]: false,
           },
           placeholder,
-          openedEntry?.path,
-          openLink,
+          openedEntryPathRef.current,
+          openLinkRef.current,
         );
         crepe.editor.onStatusChange((status: EditorStatus) => {
           if (status === EditorStatus.Created) {
@@ -79,7 +87,7 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
         });
         return crepe;
       },
-      [openedEntry?.path, chatHistoryItems],
+      [formattedChatContent],
     );
 
     useCrepeHandler(ref, () => crepeInstanceRef.current, get, loading);
@@ -126,4 +134,4 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
   },
 );
 
-export default ChatMdEditor;
+export default React.memo(ChatMdEditor);
