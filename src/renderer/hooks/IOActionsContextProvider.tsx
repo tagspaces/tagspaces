@@ -1905,8 +1905,8 @@ export const IOActionsContextProvider = ({
         }
       })
       .catch((e) => {
-        console.warn('Error getting metadata: ' + e);
-        return Promise.resolve({ id: id });
+        console.log('Error getting metadata for: ' + path + ' - ' + e);
+        return { id: id };
       });
   }
 
