@@ -880,7 +880,7 @@ export const IOActionsContextProvider = ({
     location
       .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        if (fsEntryMeta.id) {
+        if (fsEntryMeta?.id && !location?.isReadOnly) {
           return saveFsEntryMeta(location.toFsEntry(path, fsEntryMeta.isFile), {
             ...fsEntryMeta,
             id: fileId,
@@ -1850,7 +1850,12 @@ export const IOActionsContextProvider = ({
     id: string,
     location: CommonLocation,
   ): Promise<string> {
-    return getMetadata(path, id, location).then((metaData) => metaData.id);
+    return getMetadata(path, id, location)
+      .then((metaData) => metaData.id)
+      .catch((err) => {
+        console.log('Error getting metadata id: ' + err);
+        return '';
+      });
   }
 
   function getMetadata(
@@ -1861,61 +1866,49 @@ export const IOActionsContextProvider = ({
     return location
       .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        if (fsEntryMeta.id) {
+        if (!fsEntryMeta) {
+          if (
+            path.indexOf(location.getDirSeparator() + AppConfig.metaFolder) ===
+              -1 &&
+            path.indexOf(AppConfig.metaFolder + location.getDirSeparator()) ===
+              -1 &&
+            !location.isReadOnly
+          ) {
+            // create new meta id to not be changed -> next time listDirectory will get the same id for the file from meta
+            const metaData = { id: id };
+            const metaFilePath = path.endsWith(location.getDirSeparator())
+              ? getMetaFileLocationForDir(path, location.getDirSeparator())
+              : getMetaFileLocationForFile(path, location.getDirSeparator());
+
+            return saveTextFilePromise(
+              { path: metaFilePath, locationID: location.uuid },
+              JSON.stringify(metaData),
+              false,
+            )
+              .then(() => metaData)
+              .catch((e) => {
+                console.error(e);
+                return metaData;
+              });
+          } else {
+            return { id: id };
+          }
+        } else if (fsEntryMeta?.id) {
           return fsEntryMeta;
-        } else {
+        } else if (!fsEntryMeta?.id && !location.isReadOnly) {
           return saveFsEntryMeta(location.toFsEntry(path, fsEntryMeta.isFile), {
             ...fsEntryMeta,
             id: id,
           }).then((fsEntryMeta) => fsEntryMeta);
-        }
-      })
-      .catch(() => {
-        if (
-          path.indexOf(location.getDirSeparator() + AppConfig.metaFolder) ===
-            -1 &&
-          path.indexOf(AppConfig.metaFolder + location.getDirSeparator()) === -1
-        ) {
-          // create new meta id to not be changed -> next time listDirectory will get the same id for the file from meta
-          const mataData = { id: id };
-          const metaFilePath = path.endsWith(location.getDirSeparator())
-            ? getMetaFileLocationForDir(path, location.getDirSeparator())
-            : getMetaFileLocationForFile(path, location.getDirSeparator());
-
-          return saveTextFilePromise(
-            { path: metaFilePath, locationID: location.uuid },
-            JSON.stringify(mataData),
-            false,
-          )
-            .then(() => mataData)
-            .catch((e) => {
-              console.error(e);
-              return mataData;
-            });
         } else {
           return { id: id };
         }
+      })
+      .catch((e) => {
+        console.warn('Error getting metadata: ' + e);
+        return Promise.resolve({ id: id });
       });
   }
-
-  /*function createFsEntryMeta(
-    entry: TS.FileSystemEntry,
-    props: any = {},
-  ): Promise<string> {
-    const newFsEntryMeta: TS.FileSystemEntryMeta = mergeFsEntryMeta(props);
-    return saveMetaDataPromise(entry, newFsEntryMeta)
-      .then(() => newFsEntryMeta.id)
-      .catch((error) => {
-        console.log(
-          'Error saveMetaDataPromise for ' +
-            entry.path +
-            ' orphan id: ' +
-            newFsEntryMeta.id,
-          error,
-        );
-        return newFsEntryMeta.id;
-      });
-  }*/
 
   function saveFsEntryMeta(
     entry: TS.FileSystemEntry,
