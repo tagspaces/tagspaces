@@ -1,9 +1,9 @@
 import AppConfig from '-/AppConfig';
 import { Crepe } from '@milkdown/crepe';
 import { Ctx } from '@milkdown/ctx';
-import { editorViewOptionsCtx, editorViewCtx } from '@milkdown/kit/core';
-import { remarkPreserveEmptyLinePlugin } from '@milkdown/preset-commonmark';
+import { editorViewCtx, editorViewOptionsCtx } from '@milkdown/kit/core';
 import { trailing } from '@milkdown/kit/plugin/trailing';
+import { remarkPreserveEmptyLinePlugin } from '@milkdown/preset-commonmark';
 
 export function createCrepeEditor(
   root: HTMLElement,
@@ -70,7 +70,7 @@ export function createCrepeEditor(
             const target = event.target as HTMLElement;
             if (target.tagName === 'A') {
               const href = (target as HTMLAnchorElement).getAttribute('href');
-              if (href) {
+              if (href && !href.startsWith('#')) {
                 event.preventDefault();
                 openLink(href, { fullWidth: false });
                 return true;
