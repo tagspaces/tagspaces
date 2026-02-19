@@ -29,7 +29,6 @@ export type TSIconButtonProps = IconButtonProps & {
 };
 
 const TsIconButton: React.FC<TSIconButtonProps> = ({
-  children,
   sx,
   keyBinding,
   tooltip,
@@ -46,11 +45,9 @@ const TsIconButton: React.FC<TSIconButtonProps> = ({
         sx={{ borderRadius: AppConfig.defaultCSSRadius, ...sx }}
         disabled={disabled}
         {...restProps}
-      >
-        {children}
-      </IconButton>
+      />
     ),
-    [desktopMode, sx, disabled, restProps, children],
+    [desktopMode, sx, disabled, restProps],
   );
 
   if (tooltip && !disabled) {
@@ -63,4 +60,4 @@ const TsIconButton: React.FC<TSIconButtonProps> = ({
   return iconButton;
 };
 
-export default React.memo(TsIconButton);
+export default TsIconButton;
