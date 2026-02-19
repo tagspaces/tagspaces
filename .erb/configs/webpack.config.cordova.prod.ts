@@ -1,5 +1,5 @@
 /**
- * Build config for electron renderer process
+ * Build config for cordova production
  */
 
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
@@ -9,25 +9,17 @@ import path from 'path';
 import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import merge from 'webpack-merge';
-//import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
+import deleteSourceMaps from '../scripts/delete-source-maps';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
-// import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
-import deleteSourceMaps from '../scripts/delete-source-maps';
 
 deleteSourceMaps();
 
-// CheckNodeEnv('production');
 const configuration: webpack.Configuration = {
   devtool: 'source-map',
-
   mode: 'production',
-
   target: 'web',
-
-  //entry: path.join(__dirname, '..', 'app/index'),
   entry: path.join(webpackPaths.srcRendererPath, 'index.tsx'),
-  // entry: ['babel-polyfill', './app/index'],
 
   output: {
     libraryTarget: 'window', // 'window', // 'commonjs2',
@@ -36,49 +28,49 @@ const configuration: webpack.Configuration = {
     filename: 'bundle.js',
   },
 
-  /*node: {
-    fs: 'empty',
-    child_process: 'empty'
-  },*/
-
   module: {
     rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        exclude: /\.module\.s?(c|a)ss$/,
+      },
       // Extract all .global.css to style.css as is
-      {
-        test: /\.global\.css$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: './',
-            },
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-        ],
-      },
+      // {
+      //   test: /\.global\.css$/,
+      //   use: [
+      //     {
+      //       loader: MiniCssExtractPlugin.loader,
+      //       options: {
+      //         publicPath: './',
+      //       },
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         sourceMap: true,
+      //       },
+      //     },
+      //   ],
+      // },
       // Pipe other styles through css modules and append to style.css
-      {
-        test: /^((?!\.global).)*\.css$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              sourceMap: true,
-            },
-          },
-        ],
-      },
+      // {
+      //   test: /^((?!\.global).)*\.css$/,
+      //   use: [
+      //     {
+      //       loader: MiniCssExtractPlugin.loader,
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         modules: {
+      //           localIdentName: '[name]__[local]__[hash:base64:5]',
+      //         },
+      //         sourceMap: true,
+      //       },
+      //     },
+      //   ],
+      // },
       // WOFF Font
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
@@ -93,7 +85,6 @@ const configuration: webpack.Configuration = {
         type: 'asset/resource',
       },
       {
-        // https://github.com/microsoft/PowerBI-visuals-tools/issues/365#issuecomment-1099716186
         test: /\.m?js/,
         resolve: {
           fullySpecified: false,
@@ -134,33 +125,13 @@ const configuration: webpack.Configuration = {
           // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
           `...`,
           new CssMinimizerPlugin(),
-          /*new OptimizeCSSAssetsPlugin({
-            cssProcessorOptions: {
-              map: {
-                inline: false,
-                annotation: true
-              }
-            }
-          })*/
         ],
   },
 
   plugins: [
-    //new NodePolyfillPlugin(),
-
     new MiniCssExtractPlugin({
       filename: 'style.css',
     }),
-
-    /* new webpack.NormalModuleReplacementPlugin(
-      /(.*)_PLATFORMIO_(\.*)/,
-      resource => {
-        resource.request = resource.request.replace(
-          /_PLATFORMIO_/,
-          `${targetPlatform}`
-        );
-      }
-    ), */
 
     new HtmlWebpackPlugin({
       filename: path.join('index.html'),
@@ -178,15 +149,6 @@ const configuration: webpack.Configuration = {
       isDevelopment: process.env.NODE_ENV !== 'production',
       nodeModules: webpackPaths.appNodeModulesPath,
     }),
-    /* new webpack.NormalModuleReplacementPlugin(
-      /(.*)_PDFDISTLIB_(\.*)/,
-      resource => {
-        resource.request = resource.request.replace(
-          /_PDFDISTLIB_/,
-          `pdfjs-dist`
-        );
-      }
-    ), */
 
     new BundleAnalyzerPlugin({
       analyzerMode:

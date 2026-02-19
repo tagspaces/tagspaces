@@ -2,14 +2,13 @@
  * Base webpack config used across other specific configs
  */
 
+import path from 'path';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import webpack from 'webpack';
 import { TsMetaPlugin } from '../../plugins/TsMetaPlugin';
 import { dependencies as externals } from '../../release/app/package.json';
 import webpackPaths from './webpack.paths';
 const Dotenv = require('dotenv-webpack');
-//import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
-import path = require('path');
 
 const configuration: webpack.Configuration = {
   // packages that is not included in the bundle
@@ -74,7 +73,6 @@ const configuration: webpack.Configuration = {
         '@tagspaces/tagspaces-common/default.env',
       ),
     }),
-    //new NodePolyfillPlugin(),
     new TsMetaPlugin(),
   ],
 };
