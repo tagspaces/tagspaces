@@ -32,7 +32,6 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { cleanTrailingDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import Table from 'rc-table';
-import 'rc-table/assets/index.css';
 import {
   Ref,
   forwardRef,
