@@ -99,6 +99,7 @@
     "playwright-show-trace": "npx playwright show-trace \"test-results/folder.pw.e2e.js-TST01---Folder-management-TST0102---Reload-folder-web-minio-electron-/trace.zip\"",
     "prepare": "husky install",
     "prepare-cordova": "npm run install-ext-web-check && rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL release/app/node_modules cordova/www && shx cp LICENSE.txt cordova/www",
+    "prepare-cordova-pro": "npm run install-ext-web-check && rimraf cordova/www/dist && rimraf cordova/www/node_modules && shx cp -rL release/app/node_modules cordova/www && shx cp node_modules/@tagspacespro/tagspacespro/EULA.txt cordova/www",
     "prepare-node": "npm run install-ext-node-check",
     "copy-web": "npm run install-ext-web-check && rimraf web/modules && shx mkdir -p web/modules/@tagspaces/extensions && shx cp -rL release/app/node_modules/@tagspaces/extensions/* web/modules/@tagspaces/extensions/",
     "prepare-web": "npm run copy-web && shx cp LICENSE.txt web && npm run build:web && node scripts/genswconf.js && npm run clean-maps",
