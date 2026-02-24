@@ -1,6 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
 import { expect } from '@playwright/test';
-import { clickOn, expectElementExist, setInputKeys } from './general.helpers';
+import { clickOn, expectElementExist } from './general.helpers';
 
 const newDirectoryName = 'newDirectory';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -39,7 +39,9 @@ export async function renameFolder() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=renameDirectory]');
   // set new dir name
-  await setInputKeys('renameEntryDialogInput', newDirectoryName);
+  const input = await global.client.locator(`[data-tid='renameEntryDialogInput'] input`);
+  await input.fill(newDirectoryName)
+
   await clickOn('[data-tid=confirmRenameEntry]');
   await expectElementExist(
     '[data-tid=currentDir_' + newDirectoryName + ']',

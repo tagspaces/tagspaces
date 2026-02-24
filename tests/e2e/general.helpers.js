@@ -112,6 +112,48 @@ export async function waitUntilChanged(
   return await element.getAttribute(attribute);
 }
 
+/**
+ * Checks if a locator has a background-image property that resolves to a loadable URL.
+ * @param {string} locator
+ * @returns {Promise<boolean>}
+ */
+export async function isBackgroundImageLoaded(targetSelector) {
+  const locator = global.client.locator(targetSelector);
+  return await locator.evaluate((el) => {
+
+    const style = window.getComputedStyle(el);
+    const bgImage = style.backgroundImage;
+
+    // 1. Check if property exists and is not 'none'
+    if (!bgImage || bgImage === 'none') {
+      return false;
+    }
+
+    // 2. Extract URL (Handles quotes/no-quotes: url("...") or url(...))
+    // Note: This grabs the first URL if multiple backgrounds exist
+    const urlMatch = bgImage.match(/url\(["']?(.*?)["']?\)/);
+    
+    // If no URL found (e.g., it's a linear-gradient), return false
+    if (!urlMatch) return false;
+    
+    const url = urlMatch[1];
+
+    // 3. Verify image loads
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = url;
+      
+      // Check if already cached/complete
+      if (img.complete && img.naturalWidth > 0) return resolve(true);
+
+      img.onload = () => resolve(img.naturalWidth > 0);
+      img.onerror = () => resolve(false);
+    });
+  });
+}
+
+
+
 // Utility to get style attribute
 export async function getAttribute(selector, attribute = 'style') {
   return await global.client

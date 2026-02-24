@@ -141,7 +141,7 @@ export const ResolveConflictContextProvider = ({
     textContent: string,
   ): Promise<boolean> {
     const location = findLocation(fileOpen.locationID);
-    if (location) {
+    if (!location?.isReadOnly) {
       // write revisions
       if (Pro && revisionsEnabled && !isMeta(fileOpen.path)) {
         const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);

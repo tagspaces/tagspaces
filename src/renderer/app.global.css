@@ -8,6 +8,8 @@
 @import 'react-image-gallery/styles/css/image-gallery.css';
 @import 'swiper/css';
 @import 'swiper/css/navigation';
+@import 'rc-table/assets/index.css';
+@import 'react-leaflet-fullscreen/styles.css';
 
 /* Needed to disable border on focused HotKey element */
 div[tabindex='-1']:focus {
@@ -26,6 +28,10 @@ body {
   overflow: hidden;
   padding: 0;
   margin: 0;
+}
+
+#root {
+  height: 100%;
 }
 
 /* needed for crepe */ 

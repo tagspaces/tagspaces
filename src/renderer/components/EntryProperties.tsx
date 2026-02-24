@@ -358,7 +358,6 @@ function EntryProperties({ tileServer }: Props) {
 
   const handleChangeColor = useCallback(
     (color) => {
-      if (color === 'transparent0') color = 'transparent';
       setBackgroundColorChange(openedEntry, color).then((success) => {
         if (success && openedEntry) {
           openedEntry.meta = { ...openedEntry.meta, color };

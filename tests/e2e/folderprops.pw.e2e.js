@@ -18,10 +18,11 @@ import {
   getAttribute,
   getElementScreenshot,
   getGridFileSelector,
+  isBackgroundImageLoaded,
   openFolder,
   openFolderProp,
   setInputValue,
-  waitUntilChanged,
+  waitUntilChanged
 } from './general.helpers';
 import {
   createFileS3,
@@ -415,10 +416,8 @@ test.describe('TST02 - Folder properties', () => {
     await openFolder('empty_folder');
 
     const targetSelector = '[data-tid=backgroundTID]>div'; //'[data-tid=perspectiveGridFileTable]';
-    const screenshotSelector = '[data-tid=perspectiveGridFileTable]';
-    const initScreenshot = await getElementScreenshot(screenshotSelector);
-    const initStyle = await getAttribute(targetSelector, 'style');
 
+    // Set background
     await clickOn('[data-tid=changeBackgroundImageTID]');
     await clickOn('ul[data-tid=predefinedBackgroundsTID] > li');
 
@@ -428,19 +427,15 @@ test.describe('TST02 - Folder properties', () => {
       5000,
     );
     await clickOn('[data-tid=colorPickerConfirm]');
-    // Wait for background-image style change
-    await waitUntilChanged(targetSelector, initStyle, 'style', 8000);
 
-    const withBgnScreenshot = await getElementScreenshot(screenshotSelector);
-    expect(initScreenshot).not.toBe(withBgnScreenshot);
-    const bgStyle = await getAttribute(targetSelector, 'style');
+    const loaded = await isBackgroundImageLoaded(targetSelector);
+    expect(loaded).toBe(true);
 
     // Remove background
     await clickOn('[data-tid=changeBackgroundImageTID]');
     await clickOn('[data-tid=clearBackground]');
-    await waitUntilChanged(targetSelector, bgStyle, 'style', 8000);
+    const loaded2 = await isBackgroundImageLoaded(targetSelector);
+    expect(loaded2).toBe(false);
 
-    const bgnRemovedScreenshot = await getElementScreenshot(screenshotSelector);
-    expect(initScreenshot).toBe(bgnRemovedScreenshot);
   });
 });

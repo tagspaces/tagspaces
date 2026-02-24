@@ -198,7 +198,7 @@ export async function extractPDFcontent(
       }
       extractedText += '\r\n';
     } catch (error) {
-      console.error('Error extracting text from PDF:', error);
+      console.log('Error extracting text from PDF:', error);
     }
   }
   return extractedText;
@@ -261,7 +261,7 @@ export async function generatePDFThumbnail(
       reader.readAsDataURL(blob);
     });
   } catch (err) {
-    console.error('Error creating PDF thumb:', err);
+    console.log('Error creating PDF thumb:', err);
     return '';
   } finally {
     // CRITICAL: Cleanup PDF.js resources
@@ -354,7 +354,7 @@ export async function resizeImg(
         reader.onloadend = () => resolve(reader.result as string);
         reader.readAsDataURL(blob);
       } catch (err) {
-        console.error('Resize failed:', err);
+        console.log('Resize failed:', err);
         resolve('');
       } finally {
         if (bitmap) bitmap.close(); // Immediate memory cleanup
@@ -458,7 +458,7 @@ export async function generateImageThumbnail(
 
     return thumbnail;
   } catch (e) {
-    console.error(`Error creating image thumb for : ${fileURL}`, e);
+    console.log(`Error creating image thumb for : ${fileURL}`, e);
     return '';
   } finally {
     // Safety Cleanup for errors
@@ -529,7 +529,7 @@ export async function getResizedImageThumbnail(
 
       const ctx = canvas.getContext('2d');
       if (!ctx) {
-        console.error('Unable to get canvas context');
+        console.log('Unable to get canvas context');
         resolve('');
         return;
       }
@@ -545,14 +545,14 @@ export async function getResizedImageThumbnail(
 
         resolve(canvas.toDataURL(AppConfig.thumbType, 0.9));
       } catch (e) {
-        console.error(e);
+        console.log(e);
         resolve('');
       }
     };
 
     img.onerror = (err) => {
       // Return original src for SVGs if they fail to load as an image (vector fallback)
-      console.error(err);
+      console.log(err);
       resolve('');
     };
 
@@ -711,7 +711,7 @@ export async function generateZipContainerImageThumbnail(
     }
 
     if (!bestMatch) {
-      console.warn('No suitable image found in ZIP');
+      console.log('No suitable image found in ZIP');
       return '';
     }
 
@@ -731,7 +731,7 @@ export async function generateZipContainerImageThumbnail(
 
     return result;
   } catch (err) {
-    console.error(`Error generating ZIP thumbnail for: ${fileURL}`, err);
+    console.log(`Error generating ZIP thumbnail for: ${fileURL}`, err);
     return '';
   } finally {
     // Cleanup memory
@@ -804,7 +804,7 @@ export async function generateUTIFThumbnail(
     // Export to Raster
     return finalCanvas.toDataURL(AppConfig.thumbType, 0.9);
   } catch (e) {
-    console.error(`Error creating UTIF thumb for : ${fileURL}`, e);
+    console.log(`Error creating UTIF thumb for : ${fileURL}`, e);
     return '';
   }
 }
@@ -822,7 +822,7 @@ export async function generateTGAThumbnail(
         // Get the full-size canvas from the loader
         const srcCanvas = tgaLoader.getCanvas();
         if (!srcCanvas || srcCanvas.width === 0 || srcCanvas.height === 0) {
-          console.warn('TGA Loader returned an empty canvas');
+          console.log('TGA Loader returned an empty canvas');
           resolve('');
           return;
         }
@@ -861,7 +861,7 @@ export async function generateTGAThumbnail(
         (srcCanvas as any) = null;
       });
     } catch (e) {
-      console.error(`Error creating TGA thumb for : ${fileURL}`, e);
+      console.log(`Error creating TGA thumb for : ${fileURL}`, e);
       resolve('');
     }
   });
@@ -939,7 +939,7 @@ export async function generateTextThumbnail(
       return canvas.toDataURL(AppConfig.thumbType || 'image/jpeg', 0.8);
     }
   } catch (error) {
-    console.error('Text thumbnail error:', error);
+    console.log('Text thumbnail error:', error);
     return '';
   }
 }
@@ -1003,7 +1003,7 @@ export async function generateAudioThumbnail(
 
     return thumbnail;
   } catch (err) {
-    console.error('Audio thumbnail extraction failed:', err);
+    console.log('Audio thumbnail extraction failed:', err);
     return '';
   } finally {
     if (objectURL) URL.revokeObjectURL(objectURL);
@@ -1034,7 +1034,7 @@ export async function generateVideoThumbnail(
 
     // Error Handling
     video.onerror = () => {
-      console.warn(`Error loading video: ${fileURL}`);
+      console.log(`Error loading video: ${fileURL}`);
       cleanup();
       resolve('');
     };
@@ -1068,7 +1068,7 @@ export async function generateVideoThumbnail(
 
         // Safety check: If video dimensions are 0, we can't divide
         if (!vWidth || !vHeight) {
-          console.warn('Video dimensions not available yet.');
+          console.log('Video dimensions not available yet.');
           resolve('');
           cleanup();
           return;
@@ -1109,7 +1109,7 @@ export async function generateVideoThumbnail(
           throw new Error('Could not get 2D context');
         }
       } catch (e) {
-        console.error('Video thumbnail canvas error:', e);
+        console.log('Video thumbnail canvas error:', e);
         resolve('');
         cleanup();
       }

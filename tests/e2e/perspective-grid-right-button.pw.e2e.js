@@ -105,21 +105,18 @@ test.describe('TST50** - Right button on a file', () => {
     const sampleFileName = 'sample';
 
     const oldName = await renameFileFromMenu(
-      newFileName,
+      newFileName+fileExtension,
       getGridFileSelector(sampleFileName + fileExtension),
     );
     expect(oldName).toBe(sampleFileName + fileExtension);
-
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     await expectElementExist(getGridFileSelector(newFileName + fileExtension));
-    await expectElementExist(getGridFileSelector(oldName), false);
 
-    /*const fileRenamedScreenshot = await getElementScreenshot(
-      '[data-tid=fsEntryName_'+dataTidFormat(newFileName + fileExtension)+'] img',
-    );*/
+    await expectElementExist(getGridFileSelector(oldName), false);
 
     // rename back to oldName
     const fileName = await renameFileFromMenu(
-      sampleFileName,
+      sampleFileName+fileExtension,
       getGridFileSelector(newFileName + fileExtension),
     );
     expect(fileName).toBe(newFileName + fileExtension);
@@ -399,7 +396,11 @@ test.describe('TST50** - Right button on a file', () => {
     const newDirName = 'new_dir_name';
     const folder = getGridFileSelector('empty_folder');
     await openContextEntryMenu(folder, 'renameDirectory');
-    const oldDirName = await setInputKeys('renameEntryDialogInput', newDirName);
+
+    const input = await global.client.locator(`[data-tid='renameEntryDialogInput'] input`);
+    const oldDirName = await input.inputValue();
+    await input.fill(newDirName)
+
     await clickOn('[data-tid=confirmRenameEntry]');
 
     // turn dir name back
@@ -407,7 +408,11 @@ test.describe('TST50** - Right button on a file', () => {
       getGridFileSelector(newDirName),
       'renameDirectory',
     );
-    const renamedDir = await setInputKeys('renameEntryDialogInput', oldDirName);
+
+    const input2 = await global.client.locator(`[data-tid='renameEntryDialogInput'] input`);
+    const renamedDir = await input2.inputValue();
+    await input2.fill(oldDirName)
+
     await clickOn('[data-tid=confirmRenameEntry]');
     expect(renamedDir).toBe(newDirName);
   });
