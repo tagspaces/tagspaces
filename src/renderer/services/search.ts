@@ -138,24 +138,7 @@ const fuseOptions = {
     // },
     {
       name: 'tagsDescription',
-      getFn: (entry) => {
-        let descriptions = '';
-        if (entry.tags) {
-          for (const tag of entry.tags) {
-            if (tag.description) {
-              descriptions += ' ' + String(tag.description);
-            }
-          }
-        }
-        if (entry.meta?.tags) {
-          for (const tag of entry.meta.tags) {
-            if (tag.description) {
-              descriptions += ' ' + String(tag.description);
-            }
-          }
-        }
-        return descriptions;
-      },
+      getFn: (entry) => entry.tagsDescription,
       weight: 0.2,
     },
     {
@@ -171,69 +154,45 @@ const fuseOptions = {
 // The final string for the tag search should look like this:
 // index[? tags[? title=='ORTag1' || title=='ORTag2']] | [? tags[? title=='ANDTag1']] | [? tags[? title=='ANDTag2']] | [?!(tags[? title=='NOTTag1'])] | [?!(tags[? title=='NOTTag2'])] | extensionFilter
 function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
-  let jmespathQuery = '';
   const ANDtagsExist = searchQuery.tagsAND && searchQuery.tagsAND.length >= 1;
   const ORtagsExist = searchQuery.tagsOR && searchQuery.tagsOR.length >= 1;
   const NOTtagsExist = searchQuery.tagsNOT && searchQuery.tagsNOT.length >= 1;
-  if (ANDtagsExist || ORtagsExist || NOTtagsExist) {
-    jmespathQuery = '[?';
 
-    if (ORtagsExist) {
-      jmespathQuery += ' tags[? ';
-      searchQuery.tagsOR.forEach((tag) => {
-        const cleanedTagTitle = tag.title.trim().toLowerCase();
-        if (cleanedTagTitle.length > 0) {
-          jmespathQuery += "title=='" + cleanedTagTitle + "' || ";
-        }
-        return true;
-      });
-    }
-
-    if (ANDtagsExist) {
-      if (jmespathQuery.endsWith(' || ')) {
-        jmespathQuery =
-          jmespathQuery.substring(0, jmespathQuery.length - 4) +
-          ']] | [? tags[? ';
-      } else {
-        jmespathQuery += ' tags[? ';
-      }
-      searchQuery.tagsAND.forEach((tag) => {
-        const cleanedTagTitle = tag.title.trim().toLowerCase();
-        if (cleanedTagTitle.length > 0) {
-          jmespathQuery += "title=='" + cleanedTagTitle + "']] | [? tags[? ";
-        }
-      });
-    }
-
-    if (NOTtagsExist) {
-      if (jmespathQuery.endsWith(' || ')) {
-        jmespathQuery =
-          jmespathQuery.substring(0, jmespathQuery.length - 4) +
-          ']] | [?!(tags[? ';
-      } else if (jmespathQuery.endsWith('[? tags[? ')) {
-        jmespathQuery =
-          jmespathQuery.substring(0, jmespathQuery.length - 10) + '[?!(tags[? ';
-      } else {
-        jmespathQuery += '!(tags[? ';
-      }
-      searchQuery.tagsNOT.forEach((tag) => {
-        const cleanedTagTitle = tag.title.trim().toLowerCase();
-        if (cleanedTagTitle.length > 0) {
-          jmespathQuery += "title=='" + cleanedTagTitle + "'])] | [?!(tags[? ";
-        }
-        return true;
-      });
-    }
-
-    if (jmespathQuery.endsWith(' || ')) {
-      jmespathQuery =
-        jmespathQuery.substring(0, jmespathQuery.length - 4) + ']]';
-    } else if (jmespathQuery.endsWith(' | [? tags[? ')) {
-      jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 13);
-    } else if (jmespathQuery.endsWith(' | [?!(tags[? ')) {
-      jmespathQuery = jmespathQuery.substring(0, jmespathQuery.length - 14);
-    }
+  if (!ANDtagsExist && !ORtagsExist && !NOTtagsExist) {
+    const extensionQuery = constructFileTypeQuery(searchQuery);
+    return extensionQuery.length > 0 ? 'index' + extensionQuery : '';
   }
+
+  const queryParts: string[] = [];
+
+  if (ORtagsExist) {
+    const orTags = searchQuery.tagsOR
+      .map((tag) => tag.title.trim().toLowerCase())
+      .filter((title) => title.length > 0)
+      .map((title) => `title=='${title}'`)
+      .join(' || ');
+    queryParts.push(`[? tags[? ${orTags}]]`);
+  }
+
+  if (ANDtagsExist) {
+    searchQuery.tagsAND.forEach((tag) => {
+      const cleanedTagTitle = tag.title.trim().toLowerCase();
+      if (cleanedTagTitle.length > 0) {
+        queryParts.push(`[? tags[? title=='${cleanedTagTitle}']]`);
+      }
+    });
+  }
+
+  if (NOTtagsExist) {
+    searchQuery.tagsNOT.forEach((tag) => {
+      const cleanedTagTitle = tag.title.trim().toLowerCase();
+      if (cleanedTagTitle.length > 0) {
+        queryParts.push(`[?!(tags[? title=='${cleanedTagTitle}'])]`);
+      }
+    });
+  }
+
+  let jmespathQuery = queryParts.join(' | ');
 
   const extensionQuery = constructFileTypeQuery(searchQuery);
   if (extensionQuery.length > 0) {
@@ -243,10 +202,7 @@ function constructjmespathQuery(searchQuery: TS.SearchQuery): string {
         : extensionQuery;
   }
 
-  if (jmespathQuery.length > 0) {
-    return 'index' + jmespathQuery;
-  }
-  return jmespathQuery;
+  return jmespathQuery.length > 0 ? 'index' + jmespathQuery : '';
 }
 
 function prepareIndex(
@@ -269,7 +225,9 @@ function prepareIndex(
     let lon = null;
     let fromTime = null;
     let toTime = null;
+    let tagsDescription = '';
     let enhancedTags: Array<TS.Tag> = [];
+
     if (tags && tags.length) {
       enhancedTags = tags.map((tag) => {
         const enhancedTag: TS.Tag = {
@@ -285,6 +243,9 @@ function prepareIndex(
             fromTime = fromDateTime.getTime();
             toTime = toDateTime.getTime();
           }
+          if (tag.description) {
+            tagsDescription += ' ' + String(tag.description);
+          }
           if (tag.title.toLowerCase() !== tag.title) {
             enhancedTag.originTitle = tag.title;
             enhancedTag.title = tag.title.toLowerCase();
@@ -297,9 +258,19 @@ function prepareIndex(
         return enhancedTag;
       });
     }
+
+    if (entry.meta?.tags) {
+      for (const tag of entry.meta.tags) {
+        if (tag.description) {
+          tagsDescription += ' ' + String(tag.description);
+        }
+      }
+    }
+
     const enhancedEntry = {
       ...entry,
       tags: enhancedTags,
+      tagsDescription: tagsDescription.trim(),
     };
     if (lat) {
       enhancedEntry.lat = lat;
@@ -435,14 +406,13 @@ export default class Search {
           results = results.slice(0, searchQuery.maxSearchResults);
         }
         // Removing textContent as not needed for the search results
-        for (let i = 0, len = results.length; i < len; i += 1) {
-          if (results[i].item !== undefined) {
-            results[i] = results[i].item;
+        results = results.map((result) => {
+          const item = result.item !== undefined ? result.item : result;
+          if (item.textContent) {
+            item.textContent = undefined;
           }
-          if (results[i].textContent) {
-            results[i].textContent = undefined;
-          }
-        }
+          return item;
+        });
         console.log('Results send: ' + results.length);
         console.timeEnd('searchtime');
         resolve(setOriginTitle(results));
@@ -470,40 +440,39 @@ function filterByDatePeriod(
   ).getTime();
   const msInDay = 1000 * 60 * 60 * 24;
 
-  // convenience predicate helpers
-  const after = (ts: number) => (entry: TS.SearchIndex) => {
-    const t = getTimeValue(entry) ?? 0;
-    return t > ts;
-  };
-  const between = (fromTs: number, toTs: number) => (entry: TS.SearchIndex) => {
-    const t = getTimeValue(entry) ?? 0;
-    return t > fromTs && t < toTs;
-  };
-  const before = (ts: number) => (entry: TS.SearchIndex) => {
-    const t = getTimeValue(entry) ?? 0;
-    return t < ts;
-  };
-
-  let predicate: ((entry: TS.SearchIndex) => boolean) | null = null;
+  // Get the appropriate timestamp range
+  let fromTs: number | null = null;
+  let toTs: number | null = null;
 
   if (periodKey === AppConfig.SearchTimePeriods.today.key) {
-    predicate = after(startOfToday);
+    fromTs = startOfToday;
+    toTs = Number.MAX_VALUE;
   } else if (periodKey === AppConfig.SearchTimePeriods.yesterday.key) {
-    predicate = between(startOfToday - msInDay, startOfToday);
+    fromTs = startOfToday - msInDay;
+    toTs = startOfToday;
   } else if (periodKey === AppConfig.SearchTimePeriods.past7Days.key) {
-    predicate = between(startOfToday - msInDay * 7, startOfToday);
+    fromTs = startOfToday - msInDay * 7;
+    toTs = startOfToday;
   } else if (periodKey === AppConfig.SearchTimePeriods.past30Days.key) {
-    predicate = between(startOfToday - msInDay * 30, startOfToday);
+    fromTs = startOfToday - msInDay * 30;
+    toTs = startOfToday;
   } else if (periodKey === AppConfig.SearchTimePeriods.past6Months.key) {
-    predicate = between(startOfToday - msInDay * 30 * 6, startOfToday);
+    fromTs = startOfToday - msInDay * 30 * 6;
+    toTs = startOfToday;
   } else if (periodKey === AppConfig.SearchTimePeriods.pastYear.key) {
-    predicate = between(startOfToday - msInDay * 365, startOfToday);
+    fromTs = startOfToday - msInDay * 365;
+    toTs = startOfToday;
   } else if (periodKey === AppConfig.SearchTimePeriods.moreThanYear.key) {
-    predicate = before(startOfToday - msInDay * 365);
+    fromTs = 0;
+    toTs = startOfToday - msInDay * 365;
   }
 
-  if (!predicate) return items;
-  return items.filter(predicate);
+  if (fromTs === null || toTs === null) return items;
+
+  return items.filter((entry) => {
+    const t = getTimeValue(entry) ?? 0;
+    return t >= fromTs && t <= toTs;
+  });
 }
 
 function filterIndex(
@@ -523,52 +492,36 @@ function filterIndex(
     (entry) => entry.cdt,
   );
 
-  if (searchQuery.fileSize === AppConfig.SearchSizes.empty.key) {
-    results = results.filter(
-      (entry) =>
-        entry.size === AppConfig.SearchSizes.empty.thresholdBytes &&
-        entry.isFile,
-    );
-  } else if (searchQuery.fileSize === AppConfig.SearchSizes.tiny.key) {
-    results = results.filter(
-      (entry) =>
-        entry.size > AppConfig.SearchSizes.empty.thresholdBytes &&
-        entry.size <= AppConfig.SearchSizes.tiny.thresholdBytes &&
-        entry.isFile,
-    );
-  } else if (searchQuery.fileSize === AppConfig.SearchSizes.verySmall.key) {
-    results = results.filter(
-      (entry) =>
-        entry.size > AppConfig.SearchSizes.tiny.thresholdBytes &&
-        entry.size <= AppConfig.SearchSizes.verySmall.thresholdBytes &&
-        entry.isFile,
-    );
-  } else if (searchQuery.fileSize === AppConfig.SearchSizes.small.key) {
-    results = results.filter(
-      (entry) =>
-        entry.size > AppConfig.SearchSizes.verySmall.thresholdBytes &&
-        entry.size <= AppConfig.SearchSizes.small.thresholdBytes &&
-        entry.isFile,
-    );
-  } else if (searchQuery.fileSize === AppConfig.SearchSizes.medium.key) {
-    results = results.filter(
-      (entry) =>
-        entry.size > AppConfig.SearchSizes.small.thresholdBytes &&
-        entry.size <= AppConfig.SearchSizes.medium.thresholdBytes &&
-        entry.isFile,
-    );
-  } else if (searchQuery.fileSize === AppConfig.SearchSizes.large.key) {
-    results = results.filter(
-      (entry) =>
-        entry.size > AppConfig.SearchSizes.medium.thresholdBytes &&
-        entry.size <= AppConfig.SearchSizes.large.thresholdBytes &&
-        entry.isFile,
-    );
-  } else if (searchQuery.fileSize === AppConfig.SearchSizes.huge.key) {
-    results = results.filter(
-      (entry) =>
-        entry.size > AppConfig.SearchSizes.huge.thresholdBytes && entry.isFile,
-    );
+  // Build a mapping of file size keys to filter predicates
+  const fileSizeMap: { [key: string]: (entry: TS.SearchIndex) => boolean } = {
+    [AppConfig.SearchSizes.empty.key]: (entry) =>
+      entry.size === AppConfig.SearchSizes.empty.thresholdBytes && entry.isFile,
+    [AppConfig.SearchSizes.tiny.key]: (entry) =>
+      entry.size > AppConfig.SearchSizes.empty.thresholdBytes &&
+      entry.size <= AppConfig.SearchSizes.tiny.thresholdBytes &&
+      entry.isFile,
+    [AppConfig.SearchSizes.verySmall.key]: (entry) =>
+      entry.size > AppConfig.SearchSizes.tiny.thresholdBytes &&
+      entry.size <= AppConfig.SearchSizes.verySmall.thresholdBytes &&
+      entry.isFile,
+    [AppConfig.SearchSizes.small.key]: (entry) =>
+      entry.size > AppConfig.SearchSizes.verySmall.thresholdBytes &&
+      entry.size <= AppConfig.SearchSizes.small.thresholdBytes &&
+      entry.isFile,
+    [AppConfig.SearchSizes.medium.key]: (entry) =>
+      entry.size > AppConfig.SearchSizes.small.thresholdBytes &&
+      entry.size <= AppConfig.SearchSizes.medium.thresholdBytes &&
+      entry.isFile,
+    [AppConfig.SearchSizes.large.key]: (entry) =>
+      entry.size > AppConfig.SearchSizes.medium.thresholdBytes &&
+      entry.size <= AppConfig.SearchSizes.large.thresholdBytes &&
+      entry.isFile,
+    [AppConfig.SearchSizes.huge.key]: (entry) =>
+      entry.size > AppConfig.SearchSizes.huge.thresholdBytes && entry.isFile,
+  };
+
+  if (searchQuery.fileSize && fileSizeMap[searchQuery.fileSize]) {
+    results = results.filter(fileSizeMap[searchQuery.fileSize]);
   }
 
   if (searchQuery.tagTimePeriodFrom && searchQuery.tagTimePeriodTo) {
