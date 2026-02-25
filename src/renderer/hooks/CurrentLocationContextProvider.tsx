@@ -16,6 +16,26 @@
  *
  */
 
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { AppDispatch } from '-/reducers/app';
+import {
+  actions as LocationActions,
+  getDefaultLocationId,
+  getLocations,
+} from '-/reducers/locations';
+import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import {
+  getDevicePaths,
+  instanceId,
+  resolveRelativePath,
+  toTsLocation,
+} from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
+import { CommonLocation } from '-/utils/CommonLocation';
+import { clearAllURLParams, getURLParameter } from '-/utils/dom';
+import versionMeta from '-/version.json';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import React, {
   createContext,
   useEffect,
@@ -24,35 +44,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '-/reducers/app';
 import { useTranslation } from 'react-i18next';
-import {
-  actions as LocationActions,
-  getDefaultLocationId,
-  getLocations,
-} from '-/reducers/locations';
-import { clearAllURLParams, getURLParameter } from '-/utils/dom';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import { useDispatch, useSelector } from 'react-redux';
 import AppConfig from '../AppConfig';
-import versionMeta from '-/version.json';
-import { CommonLocation } from '-/utils/CommonLocation';
-import {
-  getDevicePaths,
-  instanceId,
-  resolveRelativePath,
-  toTsLocation,
-} from '-/services/utils-io';
-import { TS } from '-/tagspaces.namespace';
 
 type CurrentLocationContextData = {
   locations: CommonLocation[];
   currentLocation: CommonLocation;
   currentLocationId: string;
-  //readOnlyMode: boolean;
   skipInitialDirList: boolean;
   persistTagsInSidecarFile: boolean;
   getLocationPath: (location: CommonLocation) => Promise<string>;
@@ -95,7 +94,6 @@ export const CurrentLocationContext = createContext<CurrentLocationContextData>(
     locations: undefined,
     currentLocation: undefined,
     currentLocationId: undefined,
-    //readOnlyMode: false,
     skipInitialDirList: false,
     persistTagsInSidecarFile: true,
     getLocationPath: undefined,
@@ -214,18 +212,10 @@ export const CurrentLocationContextProvider = ({
           //closeLocation(currentLocation.current.uuid);
         }
       }
-      // if(!areLocationsEqual(allLocations.current,locations)){
       allLocations.current = locations.map((l) => new CommonLocation(l));
       forceUpdate();
-      //  }
     }
   }, [locations]); //allLocations.current]);
-
-  /*function areLocationsEqual(arr1: CommonLocation[], arr2: CommonLocation[]) {
-    if (arr1.length !== arr2.length) return false;
-
-    return arr1.every((obj, index) => obj.equal(arr2[index]));
-  }*/
 
   /**
    * @deprecated use resolveRelativePath instead
@@ -281,21 +271,6 @@ export const CurrentLocationContextProvider = ({
       (l) => l.uuid === currentLocationId.current,
     );
   }
-
-  /*async function findLocationFromPath(
-    path: string,
-  ): Promise<CommonLocation | undefined> {
-    if (!path) return undefined;
-
-    for (const loc of allLocations.current) {
-      const resolved = await resolveRelativePath(loc.path);
-      if (path.startsWith(resolved)) {
-        return loc;
-      }
-    }
-
-    return undefined;
-  }*/
 
   function getDirSeparator(locationID: string = undefined): string {
     const loc = findLocation(locationID);
@@ -377,14 +352,10 @@ export const CurrentLocationContextProvider = ({
   }
 
   function deleteLocationInt(locationId: string) {
-    /* allLocations.current = allLocations.current.filter(
-      (l) => l.uuid !== locationId,
-    );*/
     dispatch(LocationActions.deleteLocation(locationId));
     if (currentLocationId.current === locationId) {
       setCurrentLocation(undefined);
     }
-    //forceUpdate();
   }
 
   function moveLocationUp(locationUUID) {
@@ -402,15 +373,6 @@ export const CurrentLocationContextProvider = ({
       return;
     }
 
-    /* // Create a copy of the array
-    const newArray = [...allLocations.current];
-
-    // Swap the location with the one above it
-    const temp = newArray[currentIndex];
-    newArray[currentIndex] = newArray[currentIndex - 1];
-    newArray[currentIndex - 1] = temp;
-
-    allLocations.current = newArray;*/
     dispatch(LocationActions.moveLocationUp(locationUUID));
   }
 
@@ -431,16 +393,6 @@ export const CurrentLocationContextProvider = ({
     ) {
       return;
     }
-    /*
-        // Create a copy of the array
-        const newArray = [...allLocations.current];
-
-        // Swap the location with the one below it
-        const temp = newArray[currentIndex];
-        newArray[currentIndex] = newArray[currentIndex + 1];
-        newArray[currentIndex + 1] = temp;
-
-        allLocations.current = newArray;*/
     dispatch(LocationActions.moveLocationDown(locationUUID));
   }
 
@@ -463,13 +415,6 @@ export const CurrentLocationContextProvider = ({
     if (currentIndex === -1) {
       throw new Error('Location not found');
     }
-    /*
-        // Remove the location from its current position
-        const [location] = allLocations.current.splice(currentIndex, 1);
-
-        // Insert the location at the specified new index
-        allLocations.current.splice(newIndex, 0, location);
-        allLocations.current = [...allLocations.current];*/
     dispatch(LocationActions.moveLocation(locationUUID, newIndex));
   }
 
@@ -513,9 +458,7 @@ export const CurrentLocationContextProvider = ({
     dispatch(LocationActions.changeLocation(location));
     if (openAfterEdit) {
       currentLocationId.current = location.uuid;
-      /*
-       * check if location uuid is changed
-       */
+      // check if location uuid is changed
       if (
         location.newuuid !== undefined &&
         location.newuuid !== location.uuid
@@ -538,14 +481,6 @@ export const CurrentLocationContextProvider = ({
     }
     return foundLocation;
   }
-
-  /*const readOnlyMode: boolean = useMemo(() => {
-    if (currentLocationId.current) {
-      const location = findLocation();
-      return location?.isReadOnly;
-    }
-    return false;
-  }, [currentLocationId.current]);*/
 
   const persistTagsInSidecarFile: boolean = useMemo(() => {
     const location = findLocation();
@@ -634,16 +569,11 @@ export const CurrentLocationContextProvider = ({
     return locations.findIndex((location) => location.uuid === locationId);
   }
 
-  /*function isCurrentLocation(uuid: string) {
-    return currentLocation.current && currentLocation.current === uuid;
-  }*/
-
   const context = useMemo(() => {
     return {
       locations: allLocations.current,
       currentLocation,
       currentLocationId: currentLocationId.current,
-      //readOnlyMode,
       skipInitialDirList: skipInitialDirList.current,
       persistTagsInSidecarFile,
       getLocationPath,
