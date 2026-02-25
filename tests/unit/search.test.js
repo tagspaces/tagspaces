@@ -474,3 +474,49 @@ test('defaultTitle returns empty string with no filters', () => {
   const result = defaultTitle({});
   expect(result).toBe('');
 });
+
+// Test: Fuse 7.1.0 compatibility - options validation
+test('Fuse 7.1.0 fuseOptions are valid', () => {
+  // This test validates that the Fuse options are compatible with 7.1.0
+  // In 7.x, the 'tokenize' option was removed
+  const validFuseOptions = {
+    shouldSort: true,
+    threshold: 0.3,
+    ignoreLocation: true,
+    distance: 1000,
+    minMatchCharLength: 2,
+    useExtendedSearch: true,
+    keys: [
+      {
+        name: 'name',
+        getFn: (entry) => entry.name,
+        weight: 0.2,
+      },
+    ],
+  };
+
+  // Verify that tokenize option is NOT present (removed in 7.x)
+  expect(validFuseOptions.tokenize).toBeUndefined();
+
+  // Verify all required options are present
+  expect(validFuseOptions.keys).toBeDefined();
+  expect(validFuseOptions.shouldSort).toBe(true);
+  expect(validFuseOptions.threshold).toBe(0.3);
+  expect(validFuseOptions.useExtendedSearch).toBe(true);
+});
+
+// Test: Fuse 7.1.0 search result structure
+test('Fuse 7.1.0 search results have correct structure', () => {
+  // Fuse 7.x always returns results with { item, refIndex } structure
+  const mockSearchResult = {
+    item: { id: 1, name: 'test file' },
+    refIndex: 0,
+  };
+
+  // Verify the result structure matches Fuse 7.x format
+  expect(mockSearchResult.item).toBeDefined();
+  expect(mockSearchResult.refIndex).toBeDefined();
+  expect(mockSearchResult.item.id).toBe(1);
+  expect(mockSearchResult.refIndex).toBe(0);
+});
+

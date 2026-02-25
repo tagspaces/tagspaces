@@ -107,7 +107,6 @@ const fuseOptions = {
   threshold: 0.3,
   ignoreLocation: true,
   distance: 1000,
-  tokenize: true,
   minMatchCharLength: 2,
   useExtendedSearch: true,
   keys: [
