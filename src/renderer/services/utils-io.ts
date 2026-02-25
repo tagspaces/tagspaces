@@ -66,42 +66,6 @@ export function getAllTags(
   return tags;
 }
 
-/*export function enhanceOpenedEntry(
-  entry: TS.OpenedEntry,
-  tagDelimiter,
-): TS.OpenedEntry {
-  if (entry.isFile) {
-    const fineNameTags = extractTagsAsObjects(
-      entry.path,
-      tagDelimiter,
-      PlatformIO.getDirSeparator(),
-    );
-    if (fineNameTags.length > 0) {
-      if (entry.tags && entry.tags.length > 0) {
-        const uniqueTags = entry.tags.filter(
-          (tag) =>
-            fineNameTags.findIndex((obj) => obj.title === tag.title) === -1,
-        );
-        return {
-          ...entry,
-          tags: [...uniqueTags, ...fineNameTags],
-        };
-      }
-      return {
-        ...entry,
-        tags: fineNameTags,
-      };
-    }
-  } else {
-    // ignore wrong size from fs.stats for directories
-    return {
-      ...entry,
-      size: undefined,
-    };
-  }
-  return entry;
-}*/
-
 /**
  * sort in place
  * @param directories
@@ -264,17 +228,6 @@ export function saveAsTextFile(blob: any, filename: string) {
   saveAs(blob, filename);
 }
 
-/*function getCommonFolder(paths: Array<string>) {
-  const rootFolders = paths.map(p =>
-    extractContainingDirectoryPath(p, PlatformIO.getDirSeparator())
-  );
-  const firstRootFolder = rootFolders[0];
-  if (rootFolders.every(rf => rf === firstRootFolder)) {
-    return firstRootFolder;
-  }
-  return false;
-}*/
-
 export function isFulfilled<T>(
   result: PromiseSettledResult<T>,
 ): result is PromiseFulfilledResult<T> {
@@ -292,56 +245,6 @@ export function getFulfilledResults<T>(
 ) {
   return results.filter(isFulfilled).map((result) => result.value);
 }
-
-/*export async function loadSubFolders(path: string, loadHidden = false) {
-  const folderContent = await PlatformIO.listDirectoryPromise(path, []); // 'extractThumbPath']);
-  const subfolders = [];
-  let i = 0;
-  let isHidden = false;
-  if (folderContent !== undefined) {
-    folderContent.map((entry) => {
-      if (!entry.isFile) {
-        isHidden = entry.name.startsWith('.');
-        if (isHidden) {
-          if (loadHidden) {
-            subfolders.push({
-              key: '0-' + (i += 1),
-              isLeaf: false,
-              name: entry.name,
-              isFile: entry.isFile,
-              lmdt: entry.lmdt,
-              meta: entry.meta,
-              path: entry.path,
-              tags: entry.tags,
-            });
-          } else {
-            // do nothing
-          }
-        } else {
-          subfolders.push({
-            key: '0-' + (i += 1),
-            isLeaf: false,
-            name: entry.name,
-            isFile: entry.isFile,
-            lmdt: entry.lmdt,
-            meta: entry.meta,
-            path: entry.path,
-            tags: entry.tags,
-          });
-        }
-      }
-      return true;
-    });
-  }
-  return subfolders;
-}*/
-
-/*function cleanFileName(fileName, prefixTagContainer) {
-  if (prefixTagContainer && fileName.endsWith(prefixTagContainer)) {
-    return fileName.slice(0, -prefixTagContainer.length);
-  }
-  return fileName.trim();
-}*/
 
 export function parseNewTags(tagsInput: string, tagGroup: TS.TagGroup) {
   if (tagGroup) {
@@ -397,61 +300,6 @@ export function cleanMetaData(
   if (metaData.autoSave !== undefined) {
     cleanedMeta.autoSave = metaData.autoSave;
   }
-  /*if (metaData.perspectiveSettings) {  // clean perspectiveSettings !== defaultSettings
-    Object.keys(metaData.perspectiveSettings).forEach(perspective => {
-      if (!cleanedMeta.perspectiveSettings) {
-        cleanedMeta.perspectiveSettings = {};
-      }
-      cleanedMeta.perspectiveSettings[perspective] = {
-        ...(metaData.perspectiveSettings[perspective].showDirectories !=
-          defaultSettings.showDirectories && {
-          showDirectories:
-            metaData.perspectiveSettings[perspective].showDirectories
-        }),
-        ...(metaData.perspectiveSettings[perspective].showTags !=
-          defaultSettings.showTags && {
-          showTags: metaData.perspectiveSettings[perspective].showTags
-        }),
-        ...(metaData.perspectiveSettings[perspective].layoutType !=
-          defaultSettings.layoutType && {
-          layoutType: metaData.perspectiveSettings[perspective].layoutType
-        }),
-        ...(metaData.perspectiveSettings[perspective].orderBy !=
-          defaultSettings.orderBy && {
-          orderBy: metaData.perspectiveSettings[perspective].orderBy
-        }),
-        ...(metaData.perspectiveSettings[perspective].sortBy !=
-          defaultSettings.sortBy && {
-          sortBy: metaData.perspectiveSettings[perspective].sortBy
-        }),
-        ...(metaData.perspectiveSettings[perspective].singleClickAction !=
-          defaultSettings.singleClickAction && {
-          singleClickAction:
-            metaData.perspectiveSettings[perspective].singleClickAction
-        }),
-        ...(metaData.perspectiveSettings[perspective].entrySize !=
-          defaultSettings.entrySize && {
-          entrySize: metaData.perspectiveSettings[perspective].entrySize
-        }),
-        ...(metaData.perspectiveSettings[perspective].thumbnailMode !=
-          defaultSettings.thumbnailMode && {
-          thumbnailMode: metaData.perspectiveSettings[perspective].thumbnailMode
-        }),
-        ...(metaData.perspectiveSettings[perspective].gridPageLimit !=
-          defaultSettings.gridPageLimit && {
-          gridPageLimit: metaData.perspectiveSettings[perspective].gridPageLimit
-        })
-      };
-      if (
-        Object.keys(cleanedMeta.perspectiveSettings[perspective]).length === 0
-      ) {
-        delete cleanedMeta.perspectiveSettings[perspective];
-      }
-    });
-    if (Object.keys(cleanedMeta.perspectiveSettings).length === 0) {
-      delete cleanedMeta.perspectiveSettings;
-    }
-  } */
   if (metaData.tagGroups && metaData.tagGroups.length > 0) {
     cleanedMeta.tagGroups = metaData.tagGroups;
   }
@@ -534,21 +382,11 @@ export function loadFileContentPromise(
  */
 export function getDescriptionPreview(mdContent, maxLength = 200) {
   if (!mdContent) return '';
-  // let preview = mdContent
-  //   .replace(
-  //     /\[(.*?)\]\(.*?\)/g, // remove link href, also dataurls
-  //     // /\(data:([\w\/\+]+);(charset=[\w-]+|base64).*,([a-zA-Z0-9+/]+={0,2})\)/g,
-  //     '',
-  //   )
-  //   .replace(/<[^>]*>/g, '') // remove html
-  //   .replace(/\*|~|#|_/g, '');
   let preview = removeMd(mdContent);
   if (preview.length > maxLength) {
     preview = preview.substring(0, maxLength) + '...';
   }
   return preview.replaceAll('\n', ' ').replaceAll('|', '').replaceAll('\\', '');
-  // .replaceAll('\\\\', '');
-  // return preview.replace(/[#*!_\[\]()`]/g, '');
 }
 
 export function convertMarkDownToHtml(mdContent: string) {
@@ -569,58 +407,6 @@ ${sanitiezedHTML}
 
   return result;
 }
-
-// export function removeMarkDown(mdContent) {
-//   if (!mdContent) return '';
-//   let result = marked.parse(DOMPurify.sanitize(mdContent));
-//   const span = document.createElement('span');
-//   span.innerHTML = result;
-//   result = span.textContent || span.innerText;
-//   return result;
-// }
-
-// export function convertMarkDown(mdContent: string, directoryPath: string) {
-//   const customRenderer = new marked.Renderer();
-//   customRenderer.link = (href, title, text) => `
-//       <a href="#"
-//         title="${href}"
-//         onClick="event.preventDefault(); event.stopPropagation(); window.postMessage(JSON.stringify({ command: 'openLinkExternally', link: '${href}' }), '*'); return false;">
-//         ${text}
-//       </a>`;
-
-//   customRenderer.image = (href, title, text) => {
-//     let sourceUrl = href;
-//     const dirSep = PlatformIO.getDirSeparator();
-//     if (
-//       !sourceUrl.startsWith('http') &&
-//       directoryPath &&
-//       directoryPath !== dirSep
-//     ) {
-//       sourceUrl = directoryPath.endsWith(dirSep)
-//         ? directoryPath + sourceUrl
-//         : directoryPath + dirSep + sourceUrl;
-//     }
-//     if (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) {
-//       sourceUrl = PlatformIO.getURLforPath(sourceUrl);
-//     }
-//     return `<img src="${sourceUrl}" style="max-width: 100%">
-//         ${text}
-//     </img>`;
-//   };
-//
-//   marked.setOptions({
-//     renderer: customRenderer,
-//     pedantic: false,
-//     gfm: true,
-//     tables: true,
-//     breaks: false,
-//     smartLists: true,
-//     smartypants: false,
-//     xhtml: true,
-//   });
-
-//   return marked.parse(DOMPurify.sanitize(mdContent));
-// }
 
 /**
  * @param url
@@ -742,32 +528,12 @@ function mergeTags(oldTagsArray: Array<TS.Tag>, newTagsArray: Array<TS.Tag>) {
   return [...oldTagsArray, ...uniqueTags];
 }
 
-/*export function setLocationType(location: CommonLocation): Promise<boolean> {
-  if (location) {
-    if (location.type === locationType.TYPE_CLOUD) {
-      return PlatformIO.enableObjectStoreSupport(location);
-    } else if (location.type === locationType.TYPE_WEBDAV) {
-      PlatformIO.enableWebdavSupport(location);
-    } else if (location.type === locationType.TYPE_LOCAL) {
-      PlatformIO.disableObjectStoreSupport();
-      PlatformIO.disableWebdavSupport();
-    }
-    return Promise.resolve(true);
-  }
-  return Promise.resolve(false);
-}*/
-
 export function getRelativeEntryPath(
   currentLocationPath: string,
   entryPath: string,
 ): string {
   const entryPathCleaned = cleanTrailingDirSeparator(entryPath);
   const currentPathCleaned = cleanTrailingDirSeparator(currentLocationPath);
-  // const isCloudLocation = location.type === locationType.TYPE_CLOUD;
-  // const currentLocationPath = getCleanLocationPath(location);
-  // let relEntryPath = isCloudLocation
-  //   ? entryPathCleaned
-  //   : entryPathCleaned.replace(currentLocationPath, '');
   let relEntryPath = entryPathCleaned.replace(currentPathCleaned, '');
   relEntryPath = cleanFrontDirSeparator(relEntryPath);
   return relEntryPath;
@@ -807,25 +573,6 @@ export function mergeFsEntryMeta(props: any = {}): TS.FileSystemEntryMeta {
   };
 }
 
-/*export function openedToFsEntry(openedEntry: TS.OpenedEntry): TS.FileSystemEntry {
-  return {
-    uuid: getUuid(),
-    name: openedEntry.isFile
-      ? extractFileName(openedEntry.path, PlatformIO.getDirSeparator())
-      : extractDirectoryName(openedEntry.path, PlatformIO.getDirSeparator()),
-    isFile: openedEntry.isFile,
-    extension: extractFileExtension(
-      openedEntry.path,
-      PlatformIO.getDirSeparator(),
-    ),
-    description: openedEntry.meta?.description,
-    tags: openedEntry.tags,
-    size: openedEntry.size,
-    lmdt: openedEntry.lmdt,
-    path: openedEntry.path,
-  };
-}*/
-
 export function getDefaultViewer(fileType) {
   const type = defaultSettings.supportedFileTypes.find(
     (fType) => fType.type === fileType,
@@ -864,20 +611,26 @@ export function openURLExternally(url: string, skipConfirmation = false) {
   }
 }
 
-export function openUrlForWeb(url) {
+export function openUrlForWeb(url: string): void {
+  if (!url) {
+    console.warn('openUrlForWeb: URL is required');
+    return;
+  }
+
   const tmpLink = document.createElement('a');
   tmpLink.target = '_blank';
   tmpLink.href = url;
   tmpLink.rel = 'noopener noreferrer';
   document.body.appendChild(tmpLink);
   tmpLink.click();
-  tmpLink.parentNode.removeChild(tmpLink);
-  // window.open(url, '_blank').opener = null;
-  // Object.assign(anchor, {
-  //   target: '_blank',
-  //   href: url,
-  //   rel: 'noopener noreferrer'
-  // }).click();
+
+  // Delay removal to ensure click is fully processed
+  // Use requestAnimationFrame for better timing
+  requestAnimationFrame(() => {
+    if (tmpLink.parentNode) {
+      tmpLink.parentNode.removeChild(tmpLink);
+    }
+  });
 }
 
 export async function executePromisesInBatches<T>(
@@ -1059,14 +812,6 @@ export function unZip(filePath, targetPath): Promise<string> {
     console.log('UnZip is supported only on Electron.');
   }
 }
-
-/*export function removeExtension(extensionId: string) {
-  if (AppConfig.isElectron) {
-    window.electronIO.ipcRenderer.sendMessage('removeExtension', extensionId);
-  } else {
-    console.error('remove extensions is supported only on Electron.');
-  }
-}*/
 
 export function quitApp(): void {
   if (AppConfig.isElectron) {
