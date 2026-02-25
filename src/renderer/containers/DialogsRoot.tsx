@@ -43,52 +43,36 @@ export type DialogsRootProps = {
   children: React.ReactNode;
 };
 
+// Ordered list of providers - can be easily added/removed/reordered
+const providers = [
+  EntryExistDialogContextProvider,
+  DeleteMultipleEntriesDialogContextProvider,
+  CreateEditLocationDialogContextProvider,
+  MoveOrCopyFilesDialogContextProvider,
+  CreateDirectoryDialogContextProvider,
+  ProgressDialogContextProvider,
+  SettingsDialogContextProvider,
+  NewFileDialogContextProvider,
+  NewAudioDialogContextProvider,
+  LicenseDialogContextProvider,
+  ThirdPartyLibsDialogContextProvider,
+  AboutDialogContextProvider,
+  OnboardingDialogContextProvider,
+  KeyboardDialogContextProvider,
+  LinkDialogContextProvider,
+  ProTeaserDialogContextProvider,
+  AiGenerationDialogContextProvider,
+  ResolveConflictContextProvider,
+  DownloadUrlContextProvider,
+  ImportMacTagDialogContextProvider,
+  MenuContextProvider,
+];
+
 function DialogsRoot({ children }: DialogsRootProps) {
-  return (
-    <EntryExistDialogContextProvider>
-      <DeleteMultipleEntriesDialogContextProvider>
-        <CreateEditLocationDialogContextProvider>
-          <MoveOrCopyFilesDialogContextProvider>
-            <CreateDirectoryDialogContextProvider>
-              <ProgressDialogContextProvider>
-                <SettingsDialogContextProvider>
-                  <NewFileDialogContextProvider>
-                    <NewAudioDialogContextProvider>
-                      <LicenseDialogContextProvider>
-                        <ThirdPartyLibsDialogContextProvider>
-                          <AboutDialogContextProvider>
-                            <OnboardingDialogContextProvider>
-                              <KeyboardDialogContextProvider>
-                                <LinkDialogContextProvider>
-                                  <ProTeaserDialogContextProvider>
-                                    <AiGenerationDialogContextProvider>
-                                      <ResolveConflictContextProvider>
-                                        <DownloadUrlContextProvider>
-                                          <ImportMacTagDialogContextProvider>
-                                            <MenuContextProvider>
-                                              {children}
-                                            </MenuContextProvider>
-                                          </ImportMacTagDialogContextProvider>
-                                        </DownloadUrlContextProvider>
-                                      </ResolveConflictContextProvider>
-                                    </AiGenerationDialogContextProvider>
-                                  </ProTeaserDialogContextProvider>
-                                </LinkDialogContextProvider>
-                              </KeyboardDialogContextProvider>
-                            </OnboardingDialogContextProvider>
-                          </AboutDialogContextProvider>
-                        </ThirdPartyLibsDialogContextProvider>
-                      </LicenseDialogContextProvider>
-                    </NewAudioDialogContextProvider>
-                  </NewFileDialogContextProvider>
-                </SettingsDialogContextProvider>
-              </ProgressDialogContextProvider>
-            </CreateDirectoryDialogContextProvider>
-          </MoveOrCopyFilesDialogContextProvider>
-        </CreateEditLocationDialogContextProvider>
-      </DeleteMultipleEntriesDialogContextProvider>
-    </EntryExistDialogContextProvider>
-  );
+  return providers.reduceRight(
+    (acc, Provider) => <Provider>{acc}</Provider>,
+    children as any,
+  ) as JSX.Element;
 }
 
 export default DialogsRoot;
