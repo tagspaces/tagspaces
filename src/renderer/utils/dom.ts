@@ -18,7 +18,6 @@ export function getURLParameter(paramName: string, url?: string): string {
   let param = params.get(paramName);
   // todo: temporal fix due to issue in the milkdown editor
   if (param?.endsWith('\\')) {
-    // removing \ at the end of the param
     param = param.substring(0, param.length - 1);
   }
   return param;
@@ -26,7 +25,6 @@ export function getURLParameter(paramName: string, url?: string): string {
 
 export function clearAllURLParams() {
   window.history.pushState(null, null, window.location.pathname);
-  // console.log(window.location.href);
 }
 
 export function clearURLParam(paramName) {
@@ -36,7 +34,6 @@ export function clearURLParam(paramName) {
   // Delete the foo parameter.
   params.delete(paramName);
   window.history.pushState(null, null, window.location.pathname + '?' + params);
-  // console.log(window.location.href);
 }
 
 export function updateHistory(
@@ -47,7 +44,6 @@ export function updateHistory(
 ) {
   const currentHref = new URL(window.location.href);
   const params = new URLSearchParams(currentHref.search);
-  // console.log('>>> current href: ' + window.location.href);
   const currentLocationID = params.get('tslid');
   const currentFolderPath = params.get('tsdpath');
   const currentEntryPath = params.get('tsepath');
@@ -86,29 +82,9 @@ export function updateHistory(
 
     if (diffLocation || diffEntryPath || diffFolderPath) {
       window.history.pushState(null, null, urlParams);
-      // console.log('>>> new href: ' + window.location.href);
-      // console.log('>>> url param: ' + urlParams);
     }
   }
 }
-
-export function getBase64Image(imgURL: string) {
-  const canvas = document.createElement('canvas');
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.src = imgURL;
-  canvas.width = img.width;
-  canvas.height = img.height;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-  return canvas.toDataURL('image/png');
-}
-
-/*export function arrayBufferToDataURL(arrayBuffer: any, mime: string) {
-  const blob = new Blob([arrayBuffer], { type: mime });
-  const url = window.URL || window.webkitURL;
-  return url.createObjectURL(blob);
-}*/
 
 export function arrayBufferToDataURL(
   arrayBuffer: any,
