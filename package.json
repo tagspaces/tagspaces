@@ -238,7 +238,6 @@
     "@tagspacespro/tagspacespro": "5.0.217"
   },
   "devDependencies": {
-    "@electron/notarize": "^2.5.0",
     "@electron/rebuild": "^3.7.2",
     "@playwright/test": "^1.53.2",
     "@pmmmwh/react-refresh-webpack-plugin": "0.6.2",
@@ -267,7 +266,7 @@
     "css-minimizer-webpack-plugin": "7.0.4",
     "detect-port": "^1.5.1",
     "dotenv-webpack": "8.1.1",
-    "electron": "39.6.1",
+    "electron": "40.6.1",
     "electron-builder": "26.8.1",
     "electron-devtools-installer": "4.0.0",
     "electronmon": "2.0.4",
