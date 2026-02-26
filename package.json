@@ -195,7 +195,7 @@
     "i18next-http-backend": "^2.2.2",
     "leaflet": "1.9.4",
     "marked": "17.0.1",
-    "mgrs": "1.0.0",
+    "mgrs": "2.1.0",
     "music-metadata": "11.11.1",
     "ollama": "0.6.3",
     "open-location-code": "1.0.3",
