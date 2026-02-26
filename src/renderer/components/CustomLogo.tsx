@@ -39,9 +39,8 @@ function CustomLogo() {
     versionMeta.name + ' ' + tsType + ' ' + versionMeta.version;
 
   const logo = useMemo(() => {
-    // 1x1 px transparent PNG dataulr
     let customLogo =
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+XGqkAAAAASUVORK5CYII=';
+      'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>';
     // let customLogo = TextLogoIcon;
     if (AppConfig.customLogo) {
       customLogo = AppConfig.customLogo;
