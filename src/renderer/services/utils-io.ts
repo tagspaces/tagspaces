@@ -978,106 +978,109 @@ export function selectDirectoryDialog(): Promise<any> {
   return Promise.reject(new Error('selectDirectoryDialog: not implemented'));
 }
 
-export function removePrefix(str, prefix) {
+export function removePrefix(
+  str: string | null | undefined,
+  prefix: string | null | undefined,
+): string {
   if (str && prefix && str.length > prefix.length && str.startsWith(prefix)) {
     return str.slice(prefix.length);
   }
   return str.trim();
 }
 
+// Cached MIME type map for performance
+const MIME_TYPE_MAP: Readonly<Record<string, string>> = Object.freeze({
+  txt: 'text/plain',
+  md: 'text/markdown',
+  html: 'text/html',
+  htm: 'text/html',
+  css: 'text/css',
+  js: 'application/javascript',
+  json: 'application/json',
+  xml: 'application/xml',
+  pdf: 'application/pdf',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  bmp: 'image/bmp',
+  webp: 'image/webp',
+  mp3: 'audio/mpeg',
+  wav: 'audio/wav',
+  mp4: 'video/mp4',
+  avi: 'video/x-msvideo',
+  mov: 'video/quicktime',
+  zip: 'application/zip',
+  rar: 'application/x-rar-compressed',
+});
+
 export function getMimeType(extension: string): string | undefined {
-  const mimeTypes: { [key: string]: string } = {
-    txt: 'text/plain',
-    md: 'text/markdown',
-    html: 'text/html',
-    htm: 'text/html',
-    css: 'text/css',
-    js: 'application/javascript',
-    json: 'application/json',
-    xml: 'application/xml',
-    pdf: 'application/pdf',
-    png: 'image/png',
-    jpg: 'image/jpeg',
-    jpeg: 'image/jpeg',
-    gif: 'image/gif',
-    bmp: 'image/bmp',
-    webp: 'image/webp',
-    mp3: 'audio/mpeg',
-    wav: 'audio/wav',
-    mp4: 'video/mp4',
-    avi: 'video/x-msvideo',
-    mov: 'video/quicktime',
-    zip: 'application/zip',
-    rar: 'application/x-rar-compressed',
-  };
-  return mimeTypes[extension.toLowerCase()];
+  if (!extension) return undefined;
+  return MIME_TYPE_MAP[extension.toLowerCase()];
 }
 
 export function toTsLocation(location: CommonLocation): TS.S3Location {
-  return {
+  // Build result with required fields first
+  const result: any = {
     uuid: location.uuid || getUuid(),
     name: location.name,
     type: location.type,
-    ...(location.workSpaceId && { workSpaceId: location.workSpaceId }),
-    ...(location.authType && { authType: location.authType }),
-    ...(location.username && { username: location.username }),
-    ...(location.password && { password: location.password }),
-    ...(location.path && { path: location.path }),
-    ...(location.isDefault && { isDefault: location.isDefault }),
-    ...(location.isReadOnly && { isReadOnly: location.isReadOnly }),
-    ...(location.isNotEditable && { isNotEditable: location.isNotEditable }),
-    ...(location.watchForChanges && {
-      watchForChanges: location.watchForChanges,
-    }),
-    ...(location.disableIndexing && {
-      disableIndexing: location.disableIndexing,
-    }),
-    ...(location.reloadOnFocus && {
-      reloadOnFocus: location.reloadOnFocus,
-    }),
-    ...(location.disableThumbnailGeneration && {
-      disableThumbnailGeneration: location.disableThumbnailGeneration,
-    }),
-    ...(location.fullTextIndex && { fullTextIndex: location.fullTextIndex }),
-    ...(location.extractLinks && { extractLinks: location.extractLinks }),
-    ...(location.maxIndexAge && { maxIndexAge: location.maxIndexAge }),
-    ...(location.maxLoops && { maxLoops: location.maxLoops }),
-    ...(location.persistTagsInSidecarFile && {
-      persistTagsInSidecarFile: location.persistTagsInSidecarFile,
-    }),
-    ...(location.ignorePatternPaths && {
-      ignorePatternPaths: location.ignorePatternPaths,
-    }),
-    ...(location.autoOpenedFilename && {
-      autoOpenedFilename: location.autoOpenedFilename,
-    }),
-    ...(location.creationDate && { creationDate: location.creationDate }),
-    ...(location.lastEditedDate && { lastEditedDate: location.lastEditedDate }),
-    ...(location.accessKeyId && { accessKeyId: location.accessKeyId }),
-    ...(location.secretAccessKey && {
-      secretAccessKey: location.secretAccessKey,
-    }),
-    ...(location.sessionToken && { sessionToken: location.sessionToken }),
-    ...(location.bucketName && { bucketName: location.bucketName }),
-    ...(location.region && { region: location.region }),
-    ...(location.endpointURL && { endpointURL: location.endpointURL }),
-    ...(location.encryptionKey && { encryptionKey: location.encryptionKey }),
   };
-}
 
-export function toBase64Image(uint8Array): string {
-  if (uint8Array) {
-    try {
-      let binaryString = '';
-      uint8Array.forEach((byte) => {
-        binaryString += String.fromCharCode(byte);
-      });
-      return btoa(binaryString);
-    } catch (e) {
-      console.log('toBase64Image', e);
+  // Add optional fields efficiently - only if they have values
+  const optionalFields: Array<keyof CommonLocation> = [
+    'workSpaceId',
+    'authType',
+    'username',
+    'password',
+    'path',
+    'isDefault',
+    'isReadOnly',
+    'isNotEditable',
+    'watchForChanges',
+    'disableIndexing',
+    'reloadOnFocus',
+    'disableThumbnailGeneration',
+    'fullTextIndex',
+    'extractLinks',
+    'maxIndexAge',
+    'maxLoops',
+    'persistTagsInSidecarFile',
+    'ignorePatternPaths',
+    'autoOpenedFilename',
+    'creationDate',
+    'lastEditedDate',
+    'accessKeyId',
+    'secretAccessKey',
+    'sessionToken',
+    'bucketName',
+    'region',
+    'endpointURL',
+    'encryptionKey',
+  ];
+
+  for (const field of optionalFields) {
+    const value = location[field];
+    if (value !== undefined && value !== null && value !== '') {
+      result[field] = value;
     }
   }
-  return undefined;
+
+  return result as TS.S3Location;
+}
+
+export function toBase64Image(
+  uint8Array: Uint8Array | null | undefined,
+): string | undefined {
+  if (!uint8Array || uint8Array.length === 0) {
+    return undefined;
+  }
+  try {
+    return btoa(String.fromCharCode.apply(null, Array.from(uint8Array) as any));
+  } catch (e) {
+    console.error('toBase64Image error:', e);
+    return undefined;
+  }
 }
 
 /**
