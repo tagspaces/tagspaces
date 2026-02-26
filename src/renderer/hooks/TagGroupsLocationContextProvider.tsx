@@ -16,23 +16,21 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo } from 'react';
+import AppConfig from '-/AppConfig';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import { Pro } from '-/pro';
+import { getSaveTagInLocation } from '-/reducers/settings';
+import { mergeFsEntryMeta } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { getDescriptionPreview, mergeFsEntryMeta } from '-/services/utils-io';
+import { CommonLocation } from '-/utils/CommonLocation';
+import versionMeta from '-/version.json';
 import {
   getMetaDirectoryPath,
   getMetaFileLocationForDir,
 } from '@tagspaces/tagspaces-common/paths';
-import AppConfig from '-/AppConfig';
-import versionMeta from '-/version.json';
-import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
+import React, { createContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getSaveTagInLocation } from '-/reducers/settings';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { getTagLibrary } from '-/services/taglibrary-utils';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { Pro } from '-/pro';
-import useFirstRender from '-/utils/useFirstRender';
 
 type TagGroupsLocationContextData = {
   getTagGroups: (location: CommonLocation) => Promise<TS.TagGroup[]>;
@@ -81,40 +79,8 @@ export const TagGroupsLocationContextProvider = ({
 }: TagGroupsLocationContextProviderProps) => {
   const { createDirectoryPromise, saveTextFilePromise } =
     usePlatformFacadeContext();
-
   const { locations } = useCurrentLocationContext();
-
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
-  /*const firstRender = useFirstRender();
-
-  useEffect(() => {
-    if (Pro && saveTagInLocation && firstRender) {
-      refreshTagsFromLocation();
-    }
-  }, [saveTagInLocation]);
-
-  function refreshTagsFromLocation() {
-    getTagsFromLocations().then((locationTagGroups: TagGroupsByLocation) => {
-      for (const [uuid, groups] of Object.entries(locationTagGroups)) {
-        //console.log(`Location ${uuid} has`, groups);
-        const tGroups: TS.TagGroup[] = groups.map(group => ({...group,locationId: uuid}));
-        tagGroups.current = [...tagGroups.current,...tGroups];
-      }
-      forceUpdate();
-    })
-  }*/
-  /*useEffect(() => {
-    if (currentLocation) {
-      getTagGroups(currentLocation.path).then((groups) => {
-        if (groups && groups.length > 0) {
-          tagGroups.current = groups.map((group) => ({
-            ...group,
-            locationID: currentLocation.uuid,
-          }));
-        }
-      });
-    }
-  }, [currentLocation]);*/
 
   async function getTagsFromLocations(): Promise<TagGroupsByLocation> {
     const result: TagGroupsByLocation = {};
@@ -149,21 +115,12 @@ export const TagGroupsLocationContextProvider = ({
     metaFile = AppConfig.folderLocationsFile,
   ): Promise<TS.FileSystemEntryMeta> {
     if (saveTagInLocation) {
-      //const entryProperties = await location.getPropertiesPromise(location.path);
-      //if (!entryProperties.isFile) {
       const metaFilePath = getMetaFileLocationForDir(
         location.path,
         location.getDirSeparator(),
         metaFile,
       );
       return location.loadJSONFile(metaFilePath);
-      /*const metaData = await location.loadJSONFile(metaFilePath);
-      if (metaData) {
-        return {
-          ...metaData,
-          description: getDescriptionPreview(metaData.description, 200),
-        };
-      }*/
     }
     return Promise.resolve(undefined);
   }
@@ -391,8 +348,6 @@ export const TagGroupsLocationContextProvider = ({
     if (!saveTagInLocation || !location) {
       return Promise.resolve(undefined);
     }
-    // const entryProperties = await location.getPropertiesPromise(location.path);
-    // if (entryProperties) {
     let metaFilePath;
     // if (!entryProperties.isFile) {
     // check and create meta folder if not exist
@@ -428,13 +383,10 @@ export const TagGroupsLocationContextProvider = ({
       content,
       true,
     );
-    // }
-    // return Promise.reject(new Error('file not found' + path));
   }
 
   const context = useMemo(() => {
     return {
-      //locationTagGroups: tagGroups.current,
       getTagGroups,
       createLocationTagGroup,
       editLocationTagGroup,
