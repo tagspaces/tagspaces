@@ -31,17 +31,17 @@ class MockCommonLocation {
 }
 
 import {
-    canMoveDown,
-    canMoveUp,
-    findLocalLocation,
-    findLocationById,
-    findLocationByType,
-    getDirSeparatorForLocation,
-    getFirstReadWriteLocation,
-    getLocationPathString,
-    getLocationPositionByUUID,
-    locationExists,
-    validateMoveLocation,
+  canMoveDown,
+  canMoveUp,
+  findLocalLocation,
+  findLocationById,
+  findLocationByType,
+  getDirSeparatorForLocation,
+  getFirstReadWriteLocation,
+  getLocationPathString,
+  getLocationPositionByUUID,
+  locationExists,
+  validateMoveLocation,
 } from '-/utils/locationUtils';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 
@@ -187,12 +187,12 @@ describe('locationUtils', () => {
 
     test('should return AppConfig separator for undefined location', async () => {
       const result = getDirSeparatorForLocation(undefined);
-      expect(result).toBe('/');
+      expect(result).toBe(global.isWin ? '\\\\': '/');
     });
 
     test('should return AppConfig separator for null location', async () => {
       const result = getDirSeparatorForLocation(null);
-      expect(result).toBe('/');
+      expect(result).toBe(global.isWin ? '\\\\': '/');
     });
   });
 

@@ -1,7 +1,8 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig } from '@playwright/test';
 import pwConfig from './playwright.config.common';
 
 const isWin = /win32|mswin(?!ce)|mingw|bccwin|cygwin/i.test(process.platform);
+global.isWin = isWin;
 //const isHeadlessMode = process.env.HEADLESS_MODE === 'true';
 
 // support either 'electron' or ['electron','!_pro'] form
