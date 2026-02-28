@@ -193,7 +193,7 @@ function RenderPerspective(props: Props) {
   //!currentDirectoryPath && currentDirectoryEntries.length < 1;
 
   if (showWelcomePanel) {
-    return AppConfig.showWelcomePanel ? <WelcomePanelAsync /> : null;
+    return AppConfig.ExtShowWelcomePanel ? <WelcomePanelAsync /> : null;
   }
 
   function getPerspectiveComponent() {

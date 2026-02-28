@@ -120,7 +120,7 @@ function NewFileDialog(props: Props) {
         filenameTagPlacedAtEnd,
       );
     }
-    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
+    const template = fileTemplate ?? AppConfig.ExtDefaultFileTemplate;
     if (template && template.fileNameTmpl !== undefined) {
       return getFileNameFromTemplate(template);
     }
@@ -141,7 +141,7 @@ function NewFileDialog(props: Props) {
 
   function getFileContent() {
     if (fileType === 'url') return '';
-    const template = fileTemplate ?? window.ExtDefaultFileTemplate;
+    const template = fileTemplate ?? AppConfig.ExtDefaultFileTemplate;
     if (template && template.content) {
       return getFileContentFromTemplate(template);
     }

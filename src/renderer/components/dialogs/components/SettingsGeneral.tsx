@@ -123,8 +123,6 @@ function SettingsGeneral() {
     defaultPerspective = settings.defaultPerspective;
   }
 
-  const geoTaggingFormatDisabled = AppConfig.geoTaggingFormat !== undefined;
-
   const setDesktopMode = (desktopMode) =>
     dispatch(SettingsActions.setDesktopMode(desktopMode));
 
@@ -340,13 +338,13 @@ function SettingsGeneral() {
           jsx: (
             <ListItem
               title={
-                AppConfig.useSidecarsForFileTaggingDisableSetting
+                AppConfig.ExtUseSidecarsForFileTagging !== undefined
                   ? t('core:settingExternallyConfigured')
                   : ''
               }
             >
               <ListItemText primary={t('core:fileTaggingSetting')} />
-              {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
+              {AppConfig.ExtUseSidecarsForFileTagging !== undefined ? (
                 <TsButton disabled>
                   {persistTagsInSidecarFile
                     ? t('core:useSidecarFile')
@@ -460,14 +458,14 @@ function SettingsGeneral() {
           jsx: (
             <ListItem
               title={
-                window.ExtCheckForUpdatesOnStartup !== undefined
+                AppConfig.ExtCheckForUpdatesOnStartup !== undefined
                   ? t('core:settingExternallyConfigured')
                   : ''
               }
             >
               <ListItemText primary={t('core:checkForNewVersionOnStartup')} />
               <Switch
-                disabled={window.ExtCheckForUpdatesOnStartup !== undefined}
+                disabled={AppConfig.ExtCheckForUpdatesOnStartup !== undefined}
                 data-tid="settingsSetCheckForUpdates"
                 onClick={() =>
                   dispatch(
@@ -477,8 +475,8 @@ function SettingsGeneral() {
                   )
                 }
                 checked={
-                  window.ExtCheckForUpdatesOnStartup !== undefined
-                    ? window.ExtCheckForUpdatesOnStartup
+                  AppConfig.ExtCheckForUpdatesOnStartup !== undefined
+                    ? AppConfig.ExtCheckForUpdatesOnStartup
                     : settings.checkForUpdates
                 }
               />
@@ -531,14 +529,14 @@ function SettingsGeneral() {
           jsx: (
             <ListItem
               title={
-                window.ExtUseOnlyTagsFromTagLibrary !== undefined
+                AppConfig.ExtUseOnlyTagsFromTagLibrary !== undefined
                   ? t('core:settingExternallyConfigured')
                   : ''
               }
             >
               <ListItemText primary={t('core:useOnlyTagsFromTagLibrary')} />
               <Switch
-                disabled={window.ExtUseOnlyTagsFromTagLibrary !== undefined}
+                disabled={AppConfig.ExtUseOnlyTagsFromTagLibrary !== undefined}
                 data-tid="useOnlyTagsFromTagLibraryTID"
                 onClick={() =>
                   dispatch(
@@ -548,8 +546,8 @@ function SettingsGeneral() {
                   )
                 }
                 checked={
-                  window.ExtUseOnlyTagsFromTagLibrary !== undefined
-                    ? window.ExtUseOnlyTagsFromTagLibrary
+                  AppConfig.ExtUseOnlyTagsFromTagLibrary !== undefined
+                    ? AppConfig.ExtUseOnlyTagsFromTagLibrary
                     : settings.useOnlyTagsFromTagLibrary
                 }
               />
@@ -562,7 +560,7 @@ function SettingsGeneral() {
             <ListItem>
               <ListItemText primary={t('core:useGenerateThumbnails')} />
               <Switch
-                disabled={AppConfig.useGenerateThumbnails !== undefined}
+                disabled={AppConfig.ExtUseGenerateThumbnails !== undefined}
                 data-tid="settingsUseGenerateThumbnails"
                 onClick={() =>
                   dispatch(
@@ -572,8 +570,8 @@ function SettingsGeneral() {
                   )
                 }
                 checked={
-                  AppConfig.useGenerateThumbnails !== undefined
-                    ? AppConfig.useGenerateThumbnails
+                  AppConfig.ExtUseGenerateThumbnails !== undefined
+                    ? AppConfig.ExtUseGenerateThumbnails
                     : settings.useGenerateThumbnails
                 }
               />
@@ -682,7 +680,7 @@ function SettingsGeneral() {
               <ListItemText primary={t('enableMobileMode')} />
               <Switch
                 data-tid="settingsSetDesktopMode"
-                disabled={!(typeof window.ExtDisplayMode === 'undefined')}
+                disabled={!(typeof AppConfig.ExtDisplayMode === 'undefined')}
                 onClick={() => setDesktopMode(!settings.desktopMode)}
                 checked={!settings.desktopMode}
               />
@@ -848,12 +846,16 @@ function SettingsGeneral() {
                 }
               />
               <TsTextField
-                disabled={window.ExtAuthor !== undefined}
+                disabled={AppConfig.ExtAuthor !== undefined}
                 title={
-                  window.ExtAuthor ? t('core:settingExternallyConfigured') : ''
+                  AppConfig.ExtAuthor
+                    ? t('core:settingExternallyConfigured')
+                    : ''
                 }
                 data-tid="authorTID"
-                value={window.ExtAuthor ? window.ExtAuthor : settings.author}
+                value={
+                  AppConfig.ExtAuthor ? AppConfig.ExtAuthor : settings.author
+                }
                 onChange={(event) => setAuthor(event.target.value)}
                 slotProps={{
                   input: {
@@ -862,7 +864,7 @@ function SettingsGeneral() {
                         <TooltipTS title={t('loadDefaultAuthor')}>
                           <TsIconButton
                             data-tid="loadDefaultAuthorTID"
-                            disabled={window.ExtAuthor !== undefined}
+                            disabled={AppConfig.ExtAuthor !== undefined}
                             onClick={() =>
                               dispatch(SettingsActions.setAuthor(undefined))
                             }
@@ -907,7 +909,7 @@ function SettingsGeneral() {
           jsx: (
             <ListItem
               title={
-                window.ExtUseLocationTags !== undefined
+                AppConfig.ExtUseLocationTags !== undefined
                   ? t('core:settingExternallyConfigured')
                   : ''
               }
@@ -923,13 +925,13 @@ function SettingsGeneral() {
               />
               <Switch
                 data-tid="saveTagInLocationTID"
-                disabled={!Pro || window.ExtUseLocationTags !== undefined}
+                disabled={!Pro || AppConfig.ExtUseLocationTags !== undefined}
                 onClick={() => {
                   Pro && setSaveTagInLocation(!settings.saveTagInLocation);
                 }}
                 checked={
-                  window.ExtUseLocationTags !== undefined
-                    ? window.ExtUseLocationTags
+                  AppConfig.ExtUseLocationTags !== undefined
+                    ? AppConfig.ExtUseLocationTags
                     : settings.saveTagInLocation
                 }
               />

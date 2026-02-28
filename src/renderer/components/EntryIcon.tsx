@@ -62,8 +62,15 @@ const ICONS = {
 
 function getIcon(isFile: boolean, fileExtension: string): React.ReactNode {
   if (!isFile) return ICONS.folder;
-  const { audio, video, images, notes, bookmarks, emails, ebooks } =
-    AppConfig.SearchTypeGroups;
+  const {
+    audio = [],
+    video = [],
+    images = [],
+    notes = [],
+    bookmarks = [],
+    emails = [],
+    ebooks = [],
+  } = AppConfig.SearchTypeGroups;
   if (audio.includes(fileExtension)) return ICONS.audio;
   if (video.includes(fileExtension)) return ICONS.video;
   if (images.includes(fileExtension)) return ICONS.image;

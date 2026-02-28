@@ -28,8 +28,7 @@ import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useLicenseDialogContext } from '-/components/dialogs/hooks/useLicenseDialogContext';
 import { useThirdPartyLibsDialogContext } from '-/components/dialogs/hooks/useThirdPartyLibsDialogContext';
 import { Pro } from '-/pro';
-import { getLastVersionPromise } from '-/reducers/settings';
-import { openURLExternally } from '-/services/utils-io';
+import { getLastVersionPromise, openURLExternally } from '-/services/utils-io';
 import versionMeta from '-/version.json';
 import { Box } from '@mui/material';
 import DialogContent from '@mui/material/DialogContent';
@@ -104,16 +103,16 @@ function AboutDialog(props: Props) {
   if (AppConfig.isWeb) {
     privacyURL = '';
   }
-  if (window.ExtPrivacyURL) {
-    privacyURL = window.ExtPrivacyURL;
+  if (AppConfig.ExtPrivacyURL) {
+    privacyURL = AppConfig.ExtPrivacyURL;
   }
 
   let imprintURL = Links.links.imprintURL;
   if (AppConfig.isWeb) {
     imprintURL = '';
   }
-  if (window.ExtImprintURL) {
-    imprintURL = window.ExtImprintURL;
+  if (AppConfig.ExtImprintURL) {
+    imprintURL = AppConfig.ExtImprintURL;
   }
 
   const theme = useTheme();

@@ -124,7 +124,7 @@ function SearchAutocomplete(props: Props) {
   const fileTypes = useRef<Array<string>>(
     searchQuery.fileTypes
       ? searchQuery.fileTypes
-      : AppConfig.SearchTypeGroups.any,
+      : AppConfig.SearchTypeGroups?.any,
   );
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const actionValues = useRef<Array<SearchOptionType>>([]);
@@ -245,7 +245,7 @@ function SearchAutocomplete(props: Props) {
       if (
         searchQuery.fileTypes &&
         JSON.stringify(searchQuery.fileTypes) !==
-          JSON.stringify(AppConfig.SearchTypeGroups.any)
+          JSON.stringify(AppConfig.SearchTypeGroups?.any)
       ) {
         fileTypes.current = searchQuery.fileTypes;
         emptySearch = false;

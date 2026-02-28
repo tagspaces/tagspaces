@@ -61,7 +61,7 @@ function SettingsTemplates(props: Props) {
       )
     : undefined;
   const templatesArray = fileTemplatesContext?.getTemplates() ?? [
-    AppConfig.defaultTemplate,
+    AppConfig.ExtDefaultFileTemplate,
   ];
 
   function saveTemplate(key?: string) {
@@ -73,7 +73,7 @@ function SettingsTemplates(props: Props) {
       } else {
         // new template
         const id = getUuid();
-        const def = AppConfig.defaultTemplate;
+        const def = AppConfig.ExtDefaultFileTemplate;
         const temp = {
           id,
           name: 'new template',
@@ -111,7 +111,7 @@ function SettingsTemplates(props: Props) {
 
   /*  const defaultTemplate =
     templatesArray?.find((t) => t.type === undefined) ||
-    AppConfig.defaultTemplate;*/
+    AppConfig.ExtDefaultFileTemplate;*/
 
   function toggleType(template: TS.FileTemplate, type: 'html' | 'md' | 'txt') {
     if (!fileTemplatesContext) return;
@@ -149,7 +149,7 @@ function SettingsTemplates(props: Props) {
           <ProLabel />
           <InfoIcon
             tooltip={
-              !!window.ExtFileTemplates &&
+              !!AppConfig.ExtFileTemplates &&
               'Template functionalities are disabled because templates are externally configured'
             }
           ></InfoIcon>
@@ -187,7 +187,7 @@ function SettingsTemplates(props: Props) {
             file will get an unique name.
           </Typography>
           <TsButton
-            disabled={!!window.ExtFileTemplates}
+            disabled={!!AppConfig.ExtFileTemplates}
             onClick={() => {
               saveTemplate();
             }}
@@ -197,7 +197,7 @@ function SettingsTemplates(props: Props) {
             {t('addTemplate')}
           </TsButton>
           <TsButton
-            disabled={!!window.ExtFileTemplates}
+            disabled={!!AppConfig.ExtFileTemplates}
             variant="text"
             onClick={() => {
               fileTemplatesContext.resetTemplates();
@@ -211,17 +211,17 @@ function SettingsTemplates(props: Props) {
           >
             {t('resetTemplates')}
           </TsButton>
-          <TemplatesDropDown disabled={!!window.ExtFileTemplates} />
+          <TemplatesDropDown disabled={!!AppConfig.ExtFileTemplates} />
           <TemplatesDropDown
-            disabled={!!window.ExtFileTemplates}
+            disabled={!!AppConfig.ExtFileTemplates}
             fileType="md"
           />
           <TemplatesDropDown
-            disabled={!!window.ExtFileTemplates}
+            disabled={!!AppConfig.ExtFileTemplates}
             fileType="txt"
           />
           <TemplatesDropDown
-            disabled={!!window.ExtFileTemplates}
+            disabled={!!AppConfig.ExtFileTemplates}
             fileType="html"
           />
         </AccordionDetails>
@@ -268,7 +268,7 @@ function SettingsTemplates(props: Props) {
                 </small>
               </Typography>
               <TsIconButton
-                disabled={!Pro || !!window.ExtFileTemplates}
+                disabled={!Pro || !!AppConfig.ExtFileTemplates}
                 aria-label="removeTemplate"
                 tooltip={t('core:remove')}
                 onClick={(e) => {
@@ -311,7 +311,7 @@ function SettingsTemplates(props: Props) {
             <AccordionDetails>
               <TsTextField
                 fullWidth
-                disabled={!Pro || !!window.ExtFileTemplates}
+                disabled={!Pro || !!AppConfig.ExtFileTemplates}
                 label={t('name')}
                 error={!currentTemplate(template).name}
                 value={currentTemplate(template).name}
@@ -386,7 +386,7 @@ function SettingsTemplates(props: Props) {
                 fullWidth
                 multiline
                 rows={5}
-                disabled={!Pro || !!window.ExtFileTemplates}
+                disabled={!Pro || !!AppConfig.ExtFileTemplates}
                 label={t('core:templateContent')}
                 value={currentTemplate(template).content}
                 onChange={(e) => {
@@ -402,7 +402,7 @@ function SettingsTemplates(props: Props) {
               />
               <TsTextField
                 fullWidth
-                disabled={!Pro || !!window.ExtFileTemplates}
+                disabled={!Pro || !!AppConfig.ExtFileTemplates}
                 error={!currentTemplate(template).fileNameTmpl}
                 label={t('fileNameTmpl')}
                 placeholder="e.g.: note[{timestamp}] or {uuid}"

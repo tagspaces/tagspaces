@@ -350,7 +350,7 @@ function MainPage() {
               }
           `}
           </style>
-          {isDesktopMode || (AppConfig.isAmplify && !isLoggedIn()) ? (
+          {isDesktopMode || (AppConfig.ExtIsAmplify && !isLoggedIn()) ? (
             <>
               <Drawer
                 sx={{ backgroundColor: 'unset' }}

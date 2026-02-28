@@ -34,7 +34,7 @@ export function haveSearchFilters(searchQuery: TS.SearchQuery) {
       (searchQuery.tagsNOT !== undefined && searchQuery.tagsNOT.length > 0) ||
       (searchQuery.tagsOR !== undefined && searchQuery.tagsOR.length > 0) ||
       (searchQuery.fileTypes !== undefined &&
-        searchQuery.fileTypes !== AppConfig.SearchTypeGroups.any) ||
+        searchQuery.fileTypes !== AppConfig.SearchTypeGroups?.any) ||
       searchQuery.lastModified ||
       searchQuery.dateCreated ||
       searchQuery.tagTimePeriodFrom ||

@@ -17,7 +17,6 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { cleanFrontDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
@@ -30,6 +29,7 @@ import {
   setLanguage,
 } from '-/services/utils-io';
 import { getURLParameter } from '-/utils/dom';
+import { cleanFrontDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import i18n from '../services/i18n';
 
 import { AnyAction } from 'redux';
@@ -57,19 +57,19 @@ export const types = {
 let showLocations = true;
 let showTagLibrary = false;
 let showSearch = false;
-if (window.ExtDefaultVerticalPanel === 'none') {
+if (AppConfig.ExtDefaultVerticalPanel === 'none') {
   showLocations = false;
   showTagLibrary = false;
   showSearch = false;
-} else if (window.ExtDefaultVerticalPanel === 'locations') {
+} else if (AppConfig.ExtDefaultVerticalPanel === 'locations') {
   showLocations = true;
   showTagLibrary = false;
   showSearch = false;
-} else if (window.ExtDefaultVerticalPanel === 'taglibrary') {
+} else if (AppConfig.ExtDefaultVerticalPanel === 'taglibrary') {
   showLocations = false;
   showTagLibrary = true;
   showSearch = false;
-} else if (window.ExtDefaultVerticalPanel === 'search') {
+} else if (AppConfig.ExtDefaultVerticalPanel === 'search') {
   showLocations = false;
   showTagLibrary = false;
   showSearch = true;
@@ -95,15 +95,6 @@ export const initialState = {
   isEntryInFullWidth: false,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
-  /*user: window.ExtDemoUser
-    ? {
-        attributes: window.ExtDemoUser,
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        associateSoftwareToken: () => {},
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        verifySoftwareToken: () => {},
-      }
-    : undefined,*/
 };
 
 // The state described here will not be persisted

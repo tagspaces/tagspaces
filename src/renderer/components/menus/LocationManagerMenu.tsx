@@ -29,11 +29,11 @@ import {
 import { ProLabel } from '-/components/HelperComponents';
 import TsIconButton from '-/components/TsIconButton';
 import TsMenuList from '-/components/TsMenuList';
-import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { Pro } from '-/pro';
 import { openURLExternally } from '-/services/utils-io';
+import { TS } from '-/tagspaces.namespace';
 import { Divider } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -43,7 +43,6 @@ import Links from 'assets/links';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SidePanelTitle from '../SidePanelTitle';
-import { TS } from '-/tagspaces.namespace';
 
 interface Props {
   exportLocations: () => void;
@@ -72,7 +71,7 @@ function LocationManagerMenu(props: Props) {
       : undefined;
 
   const menuItems = [];
-  if (!AppConfig.locationsReadOnly) {
+  if (!AppConfig.ExtLocationsReadOnly) {
     menuItems.push(
       <MenuItem
         key="locationManagerMenuCreateLocation"
@@ -115,7 +114,7 @@ function LocationManagerMenu(props: Props) {
       />
     </MenuItem>,
   );
-  if (!AppConfig.locationsReadOnly) {
+  if (!AppConfig.ExtLocationsReadOnly) {
     menuItems.push(
       <MenuItem
         disabled={!Pro}

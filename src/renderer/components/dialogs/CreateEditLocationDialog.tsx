@@ -960,7 +960,7 @@ function CreateEditLocationDialog(props: Props) {
                   }
                 />
               )}
-              {AppConfig.useSidecarsForFileTaggingDisableSetting ? (
+              {AppConfig.ExtUseSidecarsForFileTagging !== undefined ? (
                 <FormControlLabel
                   labelPlacement="start"
                   sx={{ justifyContent: 'space-between', marginLeft: 0 }}

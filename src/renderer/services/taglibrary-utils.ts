@@ -1,18 +1,19 @@
+import AppConfig from '-/AppConfig';
+import { saveAsTextFile } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import versionMeta from '-/version.json';
 import {
   formatDateTime4Tag,
   prepareTagGroupForExport,
 } from '@tagspaces/tagspaces-common/misc';
-import versionMeta from '-/version.json';
-import { saveAsTextFile } from '-/services/utils-io';
 import defaultTagLibrary from '../reducers/taglibrary-default';
 import TagGroup = TS.TagGroup;
 
 export const tagLibraryKey = 'tsTagLibrary';
 
 export function getTagLibrary(): TS.TagGroup[] {
-  if (window.ExtTagLibrary) {
-    return window.ExtTagLibrary.map((tagGroup) => ({
+  if (AppConfig.ExtTagLibrary) {
+    return AppConfig.ExtTagLibrary.map((tagGroup) => ({
       ...tagGroup,
       readOnly: true,
     }));

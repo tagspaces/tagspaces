@@ -16,6 +16,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { Pro } from '-/pro';
 import defaultSettings from '-/reducers/settings-default';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
@@ -27,7 +28,8 @@ import {
   extractFileName,
   extractTagsAsObjects,
 } from '@tagspaces/tagspaces-common/paths';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
+import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
+import Links from 'assets/links';
 import DOMPurify from 'dompurify';
 import { saveAs } from 'file-saver';
 import { marked } from 'marked';
@@ -370,6 +372,44 @@ export function loadFileContentPromise(
         resolve(response);
       } else {
         reject(new Error('loadFileContentPromise error'));
+      }
+    };
+    xhr.send();
+  });
+}
+
+export function getLastVersionPromise(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    console.log('Checking for new version...');
+    const xhr = new XMLHttpRequest();
+    let versionFile = 'tagspaces.json';
+    const proText = Pro ? 'pro-' : '';
+    if (AppConfig.isWeb) {
+      versionFile = 'tagspaces-pro-web.json';
+    } else if (AppConfig.isWin) {
+      versionFile = 'tagspaces-' + proText + 'win-x64.json';
+    } else if (AppConfig.isMacLike) {
+      versionFile = 'tagspaces-' + proText + 'mac.json';
+    } else if (AppConfig.isLinux) {
+      versionFile = 'tagspaces-' + proText + 'linux-x64.json';
+    } else if (AppConfig.isAndroid) {
+      versionFile = 'tagspaces-' + proText + 'android.json';
+    }
+    const updateUrl =
+      Links.links.checkNewVersionURL +
+      versionFile +
+      '?cv=' +
+      versionMeta.version;
+    xhr.open('GET', updateUrl, true);
+    xhr.responseType = 'text';
+    xhr.onerror = reject;
+    xhr.onload = () => {
+      const data = xhr.response || xhr.responseText;
+      const versioningData = loadJSONString(data);
+      if (versioningData.appVersion && versioningData.appVersion.length > 0) {
+        resolve(versioningData.appVersion);
+      } else {
+        reject('Could not validate update data');
       }
     };
     xhr.send();

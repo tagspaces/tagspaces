@@ -196,7 +196,7 @@ export default function Root({ store, persistor }: RootType) {
         // loading={<LoadingScreen />}
         onBeforeLift={() => {
           // eslint-disable-next-line react/prop-types
-          if (!AppConfig.isAmplify) {
+          if (!AppConfig.ExtIsAmplify) {
             // || store.app.user !== undefined
             // @ts-ignore
             store.dispatch(AppActions.initApp());

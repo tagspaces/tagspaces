@@ -22,6 +22,7 @@ import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import {
   getDefaultEditor,
   getDefaultViewer,
+  getLastVersionPromise,
   mergeByProp,
   setZoomFactorElectron,
   updateByProp,
@@ -29,9 +30,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import versionMeta from '-/version.json';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
-import Links from 'assets/links';
 import semver from 'semver';
-import { Pro } from '../pro';
 import { actions as AppActions } from './app';
 import defaultSettings from './settings-default';
 
@@ -140,10 +139,10 @@ export default (state: any = defaultSettings, action: any) => {
       return {
         ...defaultSettings,
         ...state,
-        currentTheme: window.ExtTheme || state.currentTheme,
+        currentTheme: AppConfig.ExtTheme || state.currentTheme,
         currentRegularTheme:
-          window.ExtRegularTheme || state.currentRegularTheme,
-        currentDarkTheme: window.ExtDarkTheme || state.currentDarkTheme,
+          AppConfig.ExtRegularTheme || state.currentRegularTheme,
+        currentDarkTheme: AppConfig.ExtDarkTheme || state.currentDarkTheme,
         supportedThemes: defaultSettings.supportedThemes, // taking always the themes from default settings
         supportedLanguages: defaultSettings.supportedLanguages, // taking always the languages from default settings
         keyBindings: [
@@ -853,82 +852,29 @@ export const actions = {
     type: types.SET_FILE_EDIT_HISTORY,
     fileEditHistory,
   }),
-  checkForUpdate:
-    () =>
-    (
-      dispatch: (actions: Object) => void,
-      // getState: () => any
-    ) => {
-      // const { settings } = getState();
-      getLastVersionPromise()
-        .then((lastVersion) => {
-          console.log('Last version on server: ' + lastVersion);
-          const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
-          const currentVersion = semver.coerce(versionMeta.version);
-          // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
-          if (
-            semver.valid(newVersion) &&
-            semver.gt(newVersion, currentVersion)
-          ) {
-            console.log('New version available: ' + newVersion.version + '!');
-            dispatch(actions.setLastPublishedVersion(newVersion.version));
-            // if (semver.gt(newVersion, lastPublishedVersion)) {
-            dispatch(AppActions.setUpdateAvailable(true));
-            // }
-          } else {
-            console.log(
-              'Current version: ' + versionMeta.version + ' is up to date',
-            );
-          }
-          return true;
-        })
-        .catch((error) => {
-          console.log('Error while checking for update: ' + error);
-        });
-    },
+  checkForUpdate: () => (dispatch: (actions: Object) => void) => {
+    getLastVersionPromise()
+      .then((lastVersion) => {
+        console.log('Last version on server: ' + lastVersion);
+        const newVersion = semver.coerce(lastVersion); // lastVersion '3.0.5' ;
+        const currentVersion = semver.coerce(versionMeta.version);
+        // const lastPublishedVersion = semver.coerce(settings.lastPublishedVersion);
+        if (semver.valid(newVersion) && semver.gt(newVersion, currentVersion)) {
+          console.log('New version available: ' + newVersion.version + '!');
+          dispatch(actions.setLastPublishedVersion(newVersion.version));
+          dispatch(AppActions.setUpdateAvailable(true));
+        } else {
+          console.log(
+            'Current version: ' + versionMeta.version + ' is up to date',
+          );
+        }
+        return true;
+      })
+      .catch((error) => {
+        console.log('Error while checking for update: ' + error);
+      });
+  },
 };
-
-/**
- * TODO move out of reducer
- */
-export function getLastVersionPromise(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    console.log('Checking for new version...');
-    const xhr = new XMLHttpRequest();
-    let versionFile = 'tagspaces.json';
-    const proText = Pro ? 'pro-' : '';
-    if (AppConfig.isWeb) {
-      versionFile = 'tagspaces-pro-web.json';
-    } else if (AppConfig.isWin) {
-      versionFile = 'tagspaces-' + proText + 'win-x64.json';
-    } else if (AppConfig.isMacLike) {
-      versionFile = 'tagspaces-' + proText + 'mac.json';
-    } else if (AppConfig.isLinux) {
-      versionFile = 'tagspaces-' + proText + 'linux-x64.json';
-    } else if (AppConfig.isAndroid) {
-      versionFile = 'tagspaces-' + proText + 'android.json';
-    }
-    const updateUrl =
-      Links.links.checkNewVersionURL +
-      versionFile +
-      '?cv=' +
-      versionMeta.version;
-    xhr.open('GET', updateUrl, true);
-    xhr.responseType = 'json';
-    xhr.onerror = reject;
-    xhr.onload = () => {
-      const data = xhr.response || xhr.responseText;
-      // console.log('Response from server: ' + JSON.stringify(data));
-      const versioningData = JSON.parse(JSON.stringify(data));
-      if (versioningData.appVersion && versioningData.appVersion.length > 0) {
-        resolve(versioningData.appVersion);
-      } else {
-        reject('Could not validate update data');
-      }
-    };
-    xhr.send();
-  });
-}
 
 function getDefaultAI(aiProviderId: string, aiProviders: AIProvider[]) {
   if (aiProviderId) {
@@ -946,43 +892,43 @@ function getDefaultAI(aiProviderId: string, aiProviders: AIProvider[]) {
 // Selectors
 export const getEntrySplitSize = (state: any) => state.settings.entrySplitSize;
 export const getMapTileServer = (state: any): TS.MapTileServer =>
-  AppConfig.mapTileServers
-    ? AppConfig.mapTileServers[0]
+  AppConfig.ExtMapTileServers
+    ? AppConfig.ExtMapTileServers[0]
     : state.settings.mapTileServers[0];
 export const getMapTileServers = (state: any): Array<TS.MapTileServer> =>
-  AppConfig.mapTileServers || state.settings.mapTileServers;
+  AppConfig.ExtMapTileServers || state.settings.mapTileServers;
 export const getSettings = (state: any) => state.settings;
 export const getEnableWS = (state: any) => state.settings.enableWS;
 export const getDesktopMode = (state: any) => {
-  if (typeof window.ExtDisplayMode === 'undefined') {
+  if (typeof AppConfig.ExtDisplayMode === 'undefined') {
     return state.settings.desktopMode;
   }
-  return window.ExtDisplayMode !== 'mobile';
+  return AppConfig.ExtDisplayMode !== 'mobile';
 };
 export const isDevMode = (state: any) =>
-  window.ExtDevMode ? window.ExtDevMode : state.settings.devMode;
+  AppConfig.ExtDevMode ? AppConfig.ExtDevMode : state.settings.devMode;
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;
 export const getDefaultAIProvider = (state: any) => {
-  if (typeof window.ExtAI === 'undefined') {
+  if (typeof AppConfig.ExtAI === 'undefined') {
     return getDefaultAI(
       state.settings.aiProviderId,
       state.settings.aiProviders,
     );
   }
-  return getDefaultAI(window.ExtAI.defaultEngine, window.ExtAI.engines);
+  return getDefaultAI(AppConfig.ExtAI.defaultEngine, AppConfig.ExtAI.engines);
 };
 export const getAIProviders = (state: any) => {
-  if (typeof window.ExtAI === 'undefined') {
+  if (typeof AppConfig.ExtAI === 'undefined') {
     return state.settings.aiProviders;
   }
-  return window.ExtAI.engines;
+  return AppConfig.ExtAI.engines;
 };
 export const getPrefixTagContainer = (state: any) =>
   state.settings.prefixTagContainer;
 export const getAuthor = (state: any) =>
-  window.ExtAuthor ?? state.settings.author;
+  AppConfig.ExtAuthor ?? state.settings.author;
 export const getGeoTaggingFormat = (state: any) =>
   state.settings.geoTaggingFormat;
 export const getAddTagsToLibrary = (state: any) =>
@@ -990,7 +936,9 @@ export const getAddTagsToLibrary = (state: any) =>
 export const getWarningOpeningFilesExternally = (state: any) =>
   state.settings.warningOpeningFilesExternally;
 export const getCheckForUpdateOnStartup = (state: any) =>
-  state.settings.checkForUpdates;
+  AppConfig.ExtCheckForUpdatesOnStartup !== undefined
+    ? AppConfig.ExtCheckForUpdatesOnStartup
+    : state.settings.checkForUpdates;
 export const getLastPublishedVersion = (state: any) =>
   state.settings.lastPublishedVersion;
 export const getShowUnixHiddenEntries = (state: any) =>
@@ -1024,11 +972,13 @@ export const getMaxCollectedTag = (state: any) =>
     ? state.settings.maxCollectedTag
     : AppConfig.maxCollectedTag;
 export const getPersistTagsInSidecarFile = (state: any): boolean =>
-  AppConfig.useSidecarsForFileTaggingDisableSetting
-    ? AppConfig.useSidecarsForFileTagging
+  AppConfig.ExtUseSidecarsForFileTagging !== undefined
+    ? AppConfig.ExtUseSidecarsForFileTagging
     : state.settings.persistTagsInSidecarFile;
 export const getFileNameTagPlace = (state: any): boolean =>
-  state.settings.filenameTagPlacedAtEnd;
+  typeof AppConfig.ExtFilenameTagPlacedAtEnd === 'undefined'
+    ? state.settings.filenameTagPlacedAtEnd
+    : AppConfig.ExtFilenameTagPlacedAtEnd;
 export const getUseGenerateThumbnails = (state: any) =>
   state.settings.useGenerateThumbnails;
 export const getKeyBindings = (state: any) => state.settings.keyBindings;
@@ -1065,9 +1015,9 @@ export const getStoredSearchesVisible = (state: any) =>
   state.settings.storedSearchesVisible;
 export const getShowBookmarks = (state: any) => state.settings.showBookmarks;
 export const getSaveTagInLocation = (state: any) =>
-  typeof window.ExtUseLocationTags === 'undefined'
+  typeof AppConfig.ExtUseLocationTags === 'undefined'
     ? state.settings.saveTagInLocation
-    : window.ExtUseLocationTags;
+    : AppConfig.ExtUseLocationTags;
 export const getFileOpenHistory = (state: any) =>
   state.settings.fileOpenHistory;
 export const getFolderOpenHistory = (state: any) =>
@@ -1075,10 +1025,10 @@ export const getFolderOpenHistory = (state: any) =>
 export const getFileEditHistory = (state: any) =>
   state.settings.fileEditHistory;
 export const isFirstRun = (state: any) => {
-  if (typeof window.ExtIsFirstRun === 'undefined') {
+  if (typeof AppConfig.ExtIsFirstRun === 'undefined') {
     return state.settings.firstRun;
   }
-  return window.ExtIsFirstRun;
+  return AppConfig.ExtIsFirstRun;
 };
 
 const kbObject: any = {};

@@ -185,7 +185,7 @@ function SettingsAI(props: Props) {
     forceUpdate();
   }
 
-  const externalConfig = typeof window.ExtAI !== 'undefined';
+  const externalConfig = typeof AppConfig.ExtAI !== 'undefined';
 
   const actionButtons = (key) => (
     <InputAdornment
@@ -542,7 +542,7 @@ function SettingsAI(props: Props) {
               multiline
               rows={5}
               disabled={
-                !(typeof window.ExtDefaultQuestionPrompt === 'undefined')
+                !(typeof AppConfig.ExtDefaultQuestionPrompt === 'undefined')
               }
               label={t('defaultQuestionPrompt')}
               value={
@@ -565,7 +565,9 @@ function SettingsAI(props: Props) {
               fullWidth
               multiline
               rows={5}
-              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              disabled={
+                !(typeof AppConfig.ExtDefaultSystemPrompt === 'undefined')
+              }
               label={t('defaultSystemPrompt')}
               value={
                 aiTemplates.current['DEFAULT_SYSTEM_PROMPT'] ??
@@ -587,7 +589,7 @@ function SettingsAI(props: Props) {
               fullWidth
               multiline
               rows={5}
-              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              disabled={!(typeof AppConfig.ExtSummarizePrompt === 'undefined')}
               label={t('summarizePrompt')}
               value={
                 aiTemplates.current['SUMMARIZE_PROMPT'] ??
@@ -609,7 +611,11 @@ function SettingsAI(props: Props) {
               fullWidth
               multiline
               rows={5}
-              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              disabled={
+                !(
+                  typeof AppConfig.ExtDescriptionFromImagePrompt === 'undefined'
+                )
+              }
               label={t('imageDescription')}
               value={
                 aiTemplates.current['IMAGE_DESCRIPTION_PROMPT'] ??
@@ -632,7 +638,12 @@ function SettingsAI(props: Props) {
               fullWidth
               multiline
               rows={5}
-              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              disabled={
+                !(
+                  typeof AppConfig.ExtDescriptionFromImageStructuredPrompt ===
+                  'undefined'
+                )
+              }
               label={t('imageDescriptionStructured')}
               value={
                 aiTemplates.current['IMAGE_DESCRIPTION_STRUCTURED_PROMPT'] ??
@@ -658,7 +669,9 @@ function SettingsAI(props: Props) {
               fullWidth
               multiline
               rows={5}
-              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              disabled={
+                !(typeof AppConfig.ExtDescriptionFromTextPrompt === 'undefined')
+              }
               label={t('textDescription')}
               value={
                 aiTemplates.current['TEXT_DESCRIPTION_PROMPT'] ??
@@ -680,7 +693,9 @@ function SettingsAI(props: Props) {
               fullWidth
               multiline
               rows={5}
-              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              disabled={
+                !(typeof AppConfig.ExtTagsFromImagePrompt === 'undefined')
+              }
               label={t('generateImageTags')}
               value={
                 aiTemplates.current['IMAGE_TAGS_PROMPT'] ??
@@ -702,7 +717,9 @@ function SettingsAI(props: Props) {
               fullWidth
               multiline
               rows={5}
-              disabled={!(typeof window.ExtDefaultSystemPrompt === 'undefined')}
+              disabled={
+                !(typeof AppConfig.ExtTagsFromTextPrompt === 'undefined')
+              }
               label={t('generateTags')}
               value={
                 aiTemplates.current['TEXT_TAGS_PROMPT'] ??

@@ -16,8 +16,9 @@
  *
  */
 
-import React, { createContext, useMemo, useRef } from 'react';
+import AppConfig from '-/AppConfig';
 import { CognitoUserInterface } from '@aws-amplify/ui-components';
+import React, { createContext, useMemo, useRef } from 'react';
 
 type UserContextData = {
   currentUser: CognitoUserInterface;
@@ -48,7 +49,9 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   };
 
   const user = useRef<CognitoUserInterface>(
-    window.ExtDemoUser ? createCognitoUser(window.ExtDemoUser) : undefined,
+    AppConfig.ExtDemoUser
+      ? createCognitoUser(AppConfig.ExtDemoUser)
+      : undefined,
   );
   const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
 

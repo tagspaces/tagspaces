@@ -437,7 +437,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchUntaggedEntries')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.images.toString()}
+            title={AppConfig.SearchTypeGroups.images?.toString()}
             value={AppConfig.SearchTypes.images}
           >
             <TsIconButton size="small">
@@ -446,7 +446,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchPictures')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.documents.toString()}
+            title={AppConfig.SearchTypeGroups.documents?.toString()}
             value={AppConfig.SearchTypes.documents}
           >
             <TsIconButton size="small">
@@ -455,7 +455,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchDocuments')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.notes.toString()}
+            title={AppConfig.SearchTypeGroups.notes?.toString()}
             value={AppConfig.SearchTypes.notes}
           >
             <TsIconButton size="small">
@@ -464,7 +464,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchNotes')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.audio.toString()}
+            title={AppConfig.SearchTypeGroups.audio?.toString()}
             value={AppConfig.SearchTypes.audio}
           >
             <TsIconButton size="small">
@@ -473,7 +473,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchAudio')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.video.toString()}
+            title={AppConfig.SearchTypeGroups.video?.toString()}
             value={AppConfig.SearchTypes.video}
           >
             <TsIconButton size="small">
@@ -482,7 +482,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchVideoFiles')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.archives.toString()}
+            title={AppConfig.SearchTypeGroups.archives?.toString()}
             value={AppConfig.SearchTypes.archives}
           >
             <TsIconButton size="small">
@@ -491,7 +491,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchArchives')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.bookmarks.toString()}
+            title={AppConfig.SearchTypeGroups.bookmarks?.toString()}
             value={AppConfig.SearchTypes.bookmarks}
           >
             <TsIconButton size="small">
@@ -500,7 +500,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchBookmarks')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.ebooks.toString()}
+            title={AppConfig.SearchTypeGroups.ebooks?.toString()}
             value={AppConfig.SearchTypes.ebooks}
           >
             <TsIconButton size="small">
@@ -509,7 +509,7 @@ function EditSearchQuery(props: Props) {
             {t('core:searchEbooks')}
           </MenuItem>
           <MenuItem
-            title={AppConfig.SearchTypeGroups.emails.toString()}
+            title={AppConfig.SearchTypeGroups.emails?.toString()}
             value={AppConfig.SearchTypes.emails}
           >
             <TsIconButton size="small">

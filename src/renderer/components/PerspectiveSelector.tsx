@@ -61,7 +61,7 @@ function PerspectiveSelector(props: Props) {
 
   AvailablePerspectives.forEach((perspective) => {
     let includePerspective = true;
-    if (AppConfig.hideProFeatures && !Pro && perspective.pro === true) {
+    if (AppConfig.ExtHideProFeatures && !Pro && perspective.pro === true) {
       includePerspective = false;
     }
     if (includePerspective) {

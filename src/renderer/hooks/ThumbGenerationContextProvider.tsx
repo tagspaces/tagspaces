@@ -207,8 +207,8 @@ export const ThumbGenerationContextProvider = ({
     if (!location || location.disableThumbnailGeneration === true) {
       return false; // dont generate thumbnails if it's not enabled in location settings
     }
-    if (AppConfig.useGenerateThumbnails !== undefined) {
-      return AppConfig.useGenerateThumbnails;
+    if (AppConfig.ExtUseGenerateThumbnails !== undefined) {
+      return AppConfig.ExtUseGenerateThumbnails;
     }
     return useGenerateThumbnails;
   }

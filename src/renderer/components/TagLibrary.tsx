@@ -352,11 +352,12 @@ function TagLibrary({ reduceHeightBy }: Props) {
         }}
         data-tid="tagLibraryTagGroupList"
       >
-        {AppConfig.showSmartTags && (
-          <Box sx={{ paddingTop: 0, paddingBottom: 0 }}>
-            {SmartTags(t).map(renderTagGroup)}
-          </Box>
-        )}
+        {AppConfig.ExtShowSmartTags === undefined ||
+          (AppConfig.ExtShowSmartTags && (
+            <Box sx={{ paddingTop: 0, paddingBottom: 0 }}>
+              {SmartTags(t).map(renderTagGroup)}
+            </Box>
+          ))}
         <Box sx={{ paddingTop: 0 }}>{wSpaceTagGroups.map(renderTagGroup)}</Box>
       </Box>
     </Box>

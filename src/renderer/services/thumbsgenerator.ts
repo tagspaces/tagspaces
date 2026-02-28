@@ -33,7 +33,7 @@ let maxSize = AppConfig.maxThumbSize;
 const pdfMaxSize = 1000;
 
 export const supportedMisc = ['url', 'html', 'htm'];
-export const supportedImgs = AppConfig.SearchTypeGroups.images;
+export const supportedImgs = AppConfig.SearchTypeGroups?.images;
 export const supportedContainers = [
   'zip',
   'pages',

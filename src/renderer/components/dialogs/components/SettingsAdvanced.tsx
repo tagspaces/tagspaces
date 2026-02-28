@@ -112,7 +112,7 @@ function SettingsAdvanced(props: Props) {
     workSpacesContext.openNewWorkspaceDialog(workSpace);
   };
 
-  const geoTaggingFormatDisabled = AppConfig.geoTaggingFormat !== undefined;
+  const geoTaggingFormatDisabled = AppConfig.ExtGeoTaggingFormat !== undefined;
 
   const setDevMode = (devMode) => dispatch(SettingsActions.setDevMode(devMode));
 
@@ -297,7 +297,7 @@ function SettingsAdvanced(props: Props) {
           }
           value={
             geoTaggingFormatDisabled
-              ? AppConfig.geoTaggingFormat
+              ? AppConfig.ExtGeoTaggingFormat
               : settings.geoTaggingFormat
           }
           onChange={(event: any) => setGeoTaggingFormat(event.target.value)}
@@ -387,7 +387,7 @@ function SettingsAdvanced(props: Props) {
         />
         <Switch
           data-tid="settingsEnableDevMode"
-          disabled={window.ExtDevMode && window.ExtDevMode === true}
+          disabled={AppConfig?.ExtDevMode === true}
           onClick={() => setDevMode(!devMode)}
           checked={devMode}
         />

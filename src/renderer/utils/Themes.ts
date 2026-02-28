@@ -23,11 +23,11 @@ export const createTSTheme = (themeName: string, isDark: boolean = false) => {
   let palette = isDark ? darkThemes[themeName] : lightThemes[themeName];
   if (!palette) {
     const primaryLightColor = isDark
-      ? AppConfig.darkThemeLightColor
-      : AppConfig.lightThemeLightColor;
+      ? AppConfig.ExtDarkThemeLightColor
+      : AppConfig.ExtLightThemeLightColor;
     const primaryMainColor = isDark
-      ? AppConfig.darkThemeMainColor
-      : AppConfig.lightThemeMainColor;
+      ? AppConfig.ExtDarkThemeMainColor
+      : AppConfig.ExtLightThemeMainColor;
     palette = {
       mode: isDark ? 'dark' : 'light',
       primary: {
@@ -61,9 +61,9 @@ export const darkThemes = {};
 darkThemes['darklegacy'] = {
   mode: 'dark',
   primary: {
-    light: AppConfig.darkThemeLightColor,
-    main: AppConfig.darkThemeMainColor, // #ff9abe
-    dark: AppConfig.darkThemeMainColor,
+    light: AppConfig.ExtDarkThemeLightColor,
+    main: AppConfig.ExtDarkThemeMainColor, // #ff9abe
+    dark: AppConfig.ExtDarkThemeMainColor,
   },
   secondary: { main: '#006541' },
   background: { default: '#282A36' },
@@ -134,9 +134,9 @@ export const lightThemes = {};
 lightThemes['legacy'] = {
   mode: 'light',
   primary: {
-    light: AppConfig.lightThemeLightColor,
-    main: AppConfig.lightThemeMainColor, // #1dd19f
-    dark: AppConfig.lightThemeMainColor,
+    light: AppConfig.ExtLightThemeLightColor,
+    main: AppConfig.ExtLightThemeMainColor, // #1dd19f
+    dark: AppConfig.ExtLightThemeMainColor,
   },
   secondary: { main: '#e22e60' },
   background: { default: '#fff' },

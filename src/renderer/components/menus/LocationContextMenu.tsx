@@ -154,7 +154,7 @@ function LocationContextMenu(props: Props) {
   };
 
   const menuItems = [];
-  if (!AppConfig.locationsReadOnly && !selectedLocation.isNotEditable) {
+  if (!AppConfig.ExtLocationsReadOnly && !selectedLocation.isNotEditable) {
     menuItems.push(
       <MenuItem
         key="editLocation"
@@ -195,7 +195,7 @@ function LocationContextMenu(props: Props) {
     );
   }
   menuItems.push(<Divider />);
-  if (!AppConfig.locationsReadOnly) {
+  if (!AppConfig.ExtLocationsReadOnly) {
     menuItems.push(
       <MenuItem
         key="duplicateLocation"
@@ -221,7 +221,7 @@ function LocationContextMenu(props: Props) {
       <ListItemText primary={t('core:indexLocation')} />
     </MenuItem>,
   );
-  if (!AppConfig.locationsReadOnly) {
+  if (!AppConfig.ExtLocationsReadOnly) {
     menuItems.push(<Divider />);
     menuItems.push(
       <MenuItem
@@ -261,7 +261,7 @@ function LocationContextMenu(props: Props) {
       </MenuItem>,
     );
   }
-  if (!AppConfig.locationsReadOnly)
+  if (!AppConfig.ExtLocationsReadOnly)
     menuItems.push(
       <MenuItem
         key="closeLocationTID"

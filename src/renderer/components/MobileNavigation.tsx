@@ -120,7 +120,8 @@ function MobileNavigation(props: Props) {
   const { currentUser } = useUserContext();
   const [showTeaserBanner, setShowTeaserBanner] = useState(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
-  const showProTeaser = !AppConfig.hideProFeatures && !Pro && showTeaserBanner;
+  const showProTeaser =
+    !AppConfig.ExtHideProFeatures && !Pro && showTeaserBanner;
   const { hideDrawer, width } = props;
   const switchTheme = useCallback(
     () => dispatch(SettingsActions.switchTheme()),
@@ -540,7 +541,7 @@ function MobileNavigation(props: Props) {
                       <ListItemText primary={t('core:createDirectory')} />
                     </MenuItem>
                     <Divider />
-                    {!AppConfig.locationsReadOnly && (
+                    {!AppConfig.ExtLocationsReadOnly && (
                       <MenuItem
                         key="createNewLocation"
                         data-tid="createNewLocationTID"

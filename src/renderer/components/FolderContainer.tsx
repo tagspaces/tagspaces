@@ -153,7 +153,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
     () =>
       AvailablePerspectives.map((perspective) => {
         let includePerspective = true;
-        if (AppConfig.hideProFeatures && !Pro && perspective.pro === true) {
+        if (AppConfig.ExtHideProFeatures && !Pro && perspective.pro === true) {
           includePerspective = false;
         }
         return (
@@ -192,7 +192,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
     () =>
       AvailablePerspectives.map((perspective) => {
         let includePerspective = true;
-        if (AppConfig.hideProFeatures && !Pro && perspective.pro === true) {
+        if (AppConfig.ExtHideProFeatures && !Pro && perspective.pro === true) {
           includePerspective = false;
         }
         return (

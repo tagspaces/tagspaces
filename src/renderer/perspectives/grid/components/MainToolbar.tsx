@@ -252,7 +252,7 @@ function MainToolbar(props: Props) {
             <DeleteIcon />
           </TsToolbarButton>
         )}
-        {!AppConfig.hideProFeatures &&
+        {!AppConfig.ExtHideProFeatures &&
           Pro &&
           currentLocation?.haveObjectStoreSupport() && (
             <TsToolbarButton
@@ -282,7 +282,7 @@ function MainToolbar(props: Props) {
           <DownloadIcon />
         </TsToolbarButton>
       )}
-      {!AppConfig.hideProFeatures &&
+      {!AppConfig.ExtHideProFeatures &&
         Pro &&
         !AppConfig.isCordovaAndroid && ( // SaveAs do not work on Android
           <TsToolbarButton

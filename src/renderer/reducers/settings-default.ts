@@ -23,27 +23,27 @@ import keyBindings from '-/reducers/keybindings-default';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 let desktopMode = !AppConfig.isMobile;
-if (window.ExtDisplayMode && window.ExtDisplayMode === 'mobile') {
+if (AppConfig.ExtDisplayMode === 'mobile') {
   desktopMode = false;
-} else if (window.ExtDisplayMode && window.ExtDisplayMode === 'desktop') {
+} else if (AppConfig.ExtDisplayMode === 'desktop') {
   desktopMode = true;
 }
 let checkForUpdates = true;
-if (window.ExtCheckForUpdatesOnStartup !== undefined) {
-  checkForUpdates = window.ExtCheckForUpdatesOnStartup;
+if (AppConfig.ExtCheckForUpdatesOnStartup !== undefined) {
+  checkForUpdates = AppConfig.ExtCheckForUpdatesOnStartup;
 }
 let filenameTagPlacedAtEnd = true;
-if (window.ExtFilenameTagPlacedAtEnd !== undefined) {
-  filenameTagPlacedAtEnd = window.ExtFilenameTagPlacedAtEnd;
+if (AppConfig.ExtFilenameTagPlacedAtEnd !== undefined) {
+  filenameTagPlacedAtEnd = AppConfig.ExtFilenameTagPlacedAtEnd;
 }
 let useOnlyTagsFromTagLibrary = false;
-if (window.ExtUseOnlyTagsFromTagLibrary !== undefined) {
-  useOnlyTagsFromTagLibrary = window.ExtUseOnlyTagsFromTagLibrary;
+if (AppConfig.ExtUseOnlyTagsFromTagLibrary !== undefined) {
+  useOnlyTagsFromTagLibrary = AppConfig.ExtUseOnlyTagsFromTagLibrary;
 }
 
 let author = '';
-if (window.ExtAuthor !== undefined) {
-  author = window.ExtAuthor;
+if (AppConfig.ExtAuthor !== undefined) {
+  author = AppConfig.ExtAuthor;
 } else if (AppConfig.isElectron) {
   try {
     author = window.electronIO.ipcRenderer.getSync('getAuthor');
@@ -67,11 +67,11 @@ export default {
   tagDelimiter: AppConfig.tagDelimiter,
   maxSearchResult: 1000,
   desktopMode,
-  devMode: window.ExtDevMode ? window.ExtDevMode : false,
+  devMode: AppConfig.ExtDevMode ? AppConfig.ExtDevMode : false,
   saveTagInLocation:
-    typeof window.ExtUseLocationTags === 'undefined'
+    typeof AppConfig.ExtUseLocationTags === 'undefined'
       ? false
-      : window.ExtUseLocationTags,
+      : AppConfig.ExtUseLocationTags,
   newHTMLFileContent:
     '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body></body></html>',
   showUnixHiddenEntries: false,
@@ -124,16 +124,16 @@ export default {
   folderOpenHistory: false,
   fileEditHistory: false,
   isRevisionsEnabled:
-    typeof window.ExtRevisionsEnabled === 'undefined'
+    typeof AppConfig.ExtRevisionsEnabled === 'undefined'
       ? true
-      : window.ExtRevisionsEnabled,
+      : AppConfig.ExtRevisionsEnabled,
   prefixTagContainer: AppConfig.prefixTagContainer,
   author: author,
   aiProviders: [],
   isAutoSaveEnabled:
-    typeof window.ExtAutoSaveEnabled === 'undefined'
+    typeof AppConfig.ExtAutoSaveEnabled === 'undefined'
       ? false
-      : window.ExtAutoSaveEnabled,
+      : AppConfig.ExtAutoSaveEnabled,
   supportedLanguages: [
     {
       iso: 'en',
@@ -253,12 +253,12 @@ export default {
     },
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
-  supportedFileTypes: window.ExtSupportedFileTypes
-    ? [...supportedFileTypes, ...window.ExtSupportedFileTypes]
+  supportedFileTypes: AppConfig.ExtSupportedFileTypes
+    ? [...supportedFileTypes, ...AppConfig.ExtSupportedFileTypes]
     : supportedFileTypes,
   explicitlyDeletedFileTypes: [],
-  extensionsFound: window.ExtExtensionsFound
-    ? [...extensionsFound, ...window.ExtExtensionsFound]
+  extensionsFound: AppConfig.ExtExtensionsFound
+    ? [...extensionsFound, ...AppConfig.ExtExtensionsFound]
     : extensionsFound,
   enabledExtensions: [],
   mapTileServers: [

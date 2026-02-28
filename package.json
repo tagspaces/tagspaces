@@ -171,10 +171,10 @@
     "@mui/material": "7.3.7",
     "@mui/x-data-grid": "8.24.0",
     "@mui/x-date-pickers": "8.24.0",
-    "@tagspaces/tagspaces-common": "4.5.110",
-    "@tagspaces/tagspaces-common-aws3": "4.5.110",
-    "@tagspaces/tagspaces-common-cordova": "4.5.110",
-    "@tagspaces/tagspaces-indexer": "4.5.110",
+    "@tagspaces/tagspaces-common": "4.5.111",
+    "@tagspaces/tagspaces-common-aws3": "4.5.111",
+    "@tagspaces/tagspaces-common-cordova": "4.5.111",
+    "@tagspaces/tagspaces-indexer": "4.5.111",
     "aws-amplify": "4.3.36",
     "coordinate-parser": "1.0.7",
     "crypto-js": "4.2.0",
@@ -235,7 +235,7 @@
     "zod-to-json-schema": "3.25.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.217"
+    "@tagspacespro/tagspacespro": "5.0.218"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.7.2",

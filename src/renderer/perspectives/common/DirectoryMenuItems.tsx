@@ -283,7 +283,7 @@ export function getDirectoryMenuItems(
           <ListItemText primary={t('core:createLinkFile')} />
         </MenuItem>,
       );
-      if (!AppConfig.hideProFeatures) {
+      if (!AppConfig.ExtHideProFeatures) {
         menuItems.push(
           <MenuItem
             key="createNewFromTemplate"
@@ -309,7 +309,7 @@ export function getDirectoryMenuItems(
         );
       }
     }
-    if (createNewAudio && !AppConfig.hideProFeatures) {
+    if (createNewAudio && !AppConfig.ExtHideProFeatures) {
       menuItems.push(
         <MenuItem
           key="createNewAudio"
@@ -373,7 +373,7 @@ export function getDirectoryMenuItems(
   if (selectedEntries.length < 2) {
     menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     if (
-      !AppConfig.hideProFeatures &&
+      !AppConfig.ExtHideProFeatures &&
       Pro &&
       !isReadOnlyMode &&
       setFolderThumbnail &&
@@ -398,7 +398,7 @@ export function getDirectoryMenuItems(
       );
     }
     if (
-      !AppConfig.hideProFeatures &&
+      !AppConfig.ExtHideProFeatures &&
       Pro &&
       !isReadOnlyMode &&
       changeFolderThumbnail
@@ -422,7 +422,7 @@ export function getDirectoryMenuItems(
       );
     }
     if (
-      !AppConfig.hideProFeatures &&
+      !AppConfig.ExtHideProFeatures &&
       Pro &&
       !isReadOnlyMode &&
       changeFolderBackground
@@ -484,7 +484,7 @@ export function getDirectoryMenuItems(
   }
 
   if (
-    !AppConfig.hideProFeatures &&
+    !AppConfig.ExtHideProFeatures &&
     AppConfig.isElectron &&
     AppConfig.isMacLike &&
     !perspectiveMode &&

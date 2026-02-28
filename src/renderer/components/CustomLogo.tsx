@@ -42,8 +42,8 @@ function CustomLogo() {
     let customLogo =
       'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>';
     // let customLogo = TextLogoIcon;
-    if (AppConfig.customLogo) {
-      customLogo = AppConfig.customLogo;
+    if (AppConfig.ExtLogoURL) {
+      customLogo = AppConfig.ExtLogoURL;
     }
     return customLogo;
   }, []);

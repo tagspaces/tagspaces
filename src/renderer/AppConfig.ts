@@ -30,7 +30,6 @@ AppConfig.editableFiles = [
   'sh',
   'sql',
 ];
-
 AppConfig.aiSupportedFiletypes = {
   text: ['pdf', ...AppConfig.editableFiles],
   image: ['jpg', 'jpeg', 'png'],
@@ -69,106 +68,96 @@ AppConfig.SearchTimePeriods = {
   pastYear: { key: 'pastYear', periodSpan: 31556952000 },
   moreThanYear: { key: 'moreThanYear', periodSpan: 31556952001 },
 };
-AppConfig.SearchTypeGroups =
-  typeof window !== 'undefined' && window.ExtSearchTypeGroups !== undefined
-    ? window.ExtSearchTypeGroups
-    : {
-        [AppConfig.SearchTypes.any]: [''],
-        [AppConfig.SearchTypes.images]: [
-          'jpg',
-          'jpeg',
-          'jfif',
-          'jif',
-          'jiff',
-          'png',
-          'gif',
-          'svg',
-          'heic',
-          'webp',
-          'bmp',
-          'tga',
-          'tif',
-          'tiff',
-          'nef',
-          'cr2',
-          'dng',
-          'psd',
-          'avif',
-          'nef',
-        ],
-        [AppConfig.SearchTypes.notes]: ['md', 'mdown', 'txt', 'html', 'mdx'],
-        [AppConfig.SearchTypes.documents]: [
-          'pdf',
-          'doc',
-          'docx',
-          'xls',
-          'xlsx',
-          'odt',
-          'ods',
-          'odp',
-          'pptx',
-          'numbers',
-          'potx',
-          'sldx',
-          'dotx',
-        ],
-        [AppConfig.SearchTypes.audio]: [
-          'ogg',
-          'mp3',
-          'wav',
-          'wave',
-          'flac',
-          'acc',
-          'm4a',
-          'm4b',
-          'm4p',
-          'opus',
-          'aiff',
-          'speex',
-          'wma',
-        ],
-        [AppConfig.SearchTypes.video]: [
-          'ogv',
-          'mp4',
-          'webm',
-          'm4v',
-          'mkv',
-          'avi',
-          '3gp',
-          '3g2',
-          'mov',
-        ],
-        [AppConfig.SearchTypes.archives]: [
-          'zip',
-          'rar',
-          'gz',
-          'tgz',
-          'arc',
-          '7z',
-        ],
-        [AppConfig.SearchTypes.bookmarks]: [
-          'url',
-          'lnk',
-          'sym',
-          'desktop',
-          'website',
-        ],
-        [AppConfig.SearchTypes.ebooks]: [
-          'epub',
-          'mobi',
-          'azw',
-          'prc',
-          'azw1',
-          'azw3',
-          'azw4',
-          'azw8',
-          'azk',
-        ],
-        [AppConfig.SearchTypes.emails]: ['eml', 'msg'],
-        [AppConfig.SearchTypes.folders]: ['folders'],
-        [AppConfig.SearchTypes.files]: ['files'],
-        [AppConfig.SearchTypes.untagged]: ['untagged'],
-      };
+AppConfig.SearchTypeGroups = {
+  [AppConfig.SearchTypes.any]: [''],
+  [AppConfig.SearchTypes.images]: [
+    'jpg',
+    'jpeg',
+    'jfif',
+    'jif',
+    'jiff',
+    'png',
+    'gif',
+    'svg',
+    'heic',
+    'webp',
+    'bmp',
+    'tga',
+    'tif',
+    'tiff',
+    'nef',
+    'cr2',
+    'dng',
+    'psd',
+    'avif',
+    'nef',
+  ],
+  [AppConfig.SearchTypes.notes]: ['md', 'mdown', 'txt', 'html', 'mdx'],
+  [AppConfig.SearchTypes.documents]: [
+    'pdf',
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+    'odt',
+    'ods',
+    'odp',
+    'pptx',
+    'numbers',
+    'potx',
+    'sldx',
+    'dotx',
+  ],
+  [AppConfig.SearchTypes.audio]: [
+    'ogg',
+    'mp3',
+    'wav',
+    'wave',
+    'flac',
+    'acc',
+    'm4a',
+    'm4b',
+    'm4p',
+    'opus',
+    'aiff',
+    'speex',
+    'wma',
+  ],
+  [AppConfig.SearchTypes.video]: [
+    'ogv',
+    'mp4',
+    'webm',
+    'm4v',
+    'mkv',
+    'avi',
+    '3gp',
+    '3g2',
+    'mov',
+  ],
+  [AppConfig.SearchTypes.archives]: ['zip', 'rar', 'gz', 'tgz', 'arc', '7z'],
+  [AppConfig.SearchTypes.bookmarks]: [
+    'url',
+    'lnk',
+    'sym',
+    'desktop',
+    'website',
+  ],
+  [AppConfig.SearchTypes.ebooks]: [
+    'epub',
+    'mobi',
+    'azw',
+    'prc',
+    'azw1',
+    'azw3',
+    'azw4',
+    'azw8',
+    'azk',
+  ],
+  [AppConfig.SearchTypes.emails]: ['eml', 'msg'],
+  [AppConfig.SearchTypes.folders]: ['folders'],
+  [AppConfig.SearchTypes.files]: ['files'],
+  [AppConfig.SearchTypes.untagged]: ['untagged'],
+};
 AppConfig.autoSaveInterval = 40000;
 AppConfig.maxCollectedTag = 500;
 AppConfig.maxLoops = 2;
@@ -179,38 +168,14 @@ AppConfig.defaultSpaceBetweenButtons = '10px';
 AppConfig.aiFolder = 'ai';
 AppConfig.aiChatFileName = 'tsc.json';
 AppConfig.sidecarRevisionExtension = '.meta';
-AppConfig.defaultMapBounds =
-  typeof window !== 'undefined' && window.ExtDefaultMapBounds !== undefined
-    ? window.ExtDefaultMapBounds
-    : {
-        southWest: { lat: 56, lng: -13 },
-        northEast: { lat: 29, lng: 50 },
-      };
-
-AppConfig.showTSLogo =
-  typeof window !== 'undefined' && window.ExtShowTSLogo !== undefined
-    ? window.ExtShowTSLogo
-    : true;
-
-AppConfig.showTSVersion =
-  typeof window !== 'undefined' && window.ExtShowTSVersion !== undefined
-    ? window.ExtShowTSVersion
-    : true;
-
-AppConfig.defaultTemplate =
-  typeof window !== 'undefined' && window.ExtDefaultFileTemplate !== undefined
-    ? window.ExtDefaultFileTemplate
-    : {
-        id: 'default',
-        name: 'Default',
-        content: '{createdInApp} ({date}) {author}',
-        fileNameTmpl: 'note[{timestamp}]',
-      };
-
-AppConfig.hideProFeatures =
-  typeof window !== 'undefined' &&
-  (window.ExtHideProFeatures !== undefined ? window.ExtHideProFeatures : false);
-
+AppConfig.ExtDefaultMapBounds = {
+  southWest: { lat: 56, lng: -13 },
+  northEast: { lat: 29, lng: 50 },
+};
+AppConfig.ExtLightThemeLightColor = '#dcf3ec';
+AppConfig.ExtLightThemeMainColor = '#1dd19f';
+AppConfig.ExtDarkThemeLightColor = '#56454e';
+AppConfig.ExtDarkThemeMainColor = '#ff9abe';
 AppConfig.backgroundColors = [
   'transparent',
   '#00000044',
