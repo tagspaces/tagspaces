@@ -79,8 +79,7 @@ function configureApp(extConfigObj) {
     extConfigObj.ExtDefaultMapBounds ?? AppConfig.ExtDefaultMapBounds;
   AppConfig.ExtDefaultVerticalPanel =
     extConfigObj.ExtDefaultVerticalPanel ?? AppConfig.ExtDefaultVerticalPanel; // do not work should be refactored in app.ts
-  AppConfig.ExtShowSmartTags =
-    extConfigObj.ExtShowSmartTags ?? AppConfig.ExtShowSmartTags;
+  AppConfig.ExtShowSmartTags = extConfigObj.ExtShowSmartTags ?? true;
   AppConfig.ExtUseLocationTags =
     extConfigObj.ExtUseLocationTags ?? AppConfig.ExtUseLocationTags;
   AppConfig.ExtHideProFeatures = extConfigObj.ExtHideProFeatures ?? false;
@@ -159,7 +158,8 @@ let externalSearches = false;
 configureApp(window); // Configuring from extconfig.js if loaded
 
 const xhr = new XMLHttpRequest();
-xhr.open('GET', '../../../../extconfig.json', false); // false = synchronous ../../../../extconfig.json
+// for prod: '../../../../extconfig.json' for run dev 'extconfig.json' in public/
+xhr.open('GET', '../../../../extconfig.json', false); // false = synchronous
 try {
   xhr.send(); // Will pause execution here until it finishes or fails
   // Status 200 is for HTTP servers, Status 0 is for local file:// protocol
