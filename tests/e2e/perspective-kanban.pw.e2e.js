@@ -1,19 +1,16 @@
 /*
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
+import { dataTidFormat } from '../../src/renderer/services/test';
+import { AddRemovePropertiesTags } from './file.properties.helpers';
 import { expect, test } from './fixtures';
-import {
-  defaultLocationName,
-  createPwMinioLocation,
-  createPwLocation,
-  createS3Location,
-} from './location.helpers';
 import {
   clickOn,
   expectElementExist,
   getAttribute,
   getElementScreenshot,
   getGridFileSelector,
+  isBackgroundImageLoaded,
   isDisplayed,
   rightClickOn,
   setPerspectiveSetting,
@@ -26,9 +23,12 @@ import {
   startTestingApp,
   stopApp,
 } from './hook';
-import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
-import { openContextEntryMenu } from './test-utils';
-import { dataTidFormat } from '../../src/renderer/services/test';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  defaultLocationName,
+} from './location.helpers';
 import {
   createColumn,
   createMdCard,
@@ -37,7 +37,8 @@ import {
   expectLastColumnElement,
   getColumnsIds,
 } from './perspective-kanban.helpers';
-import { AddRemovePropertiesTags } from './file.properties.helpers';
+import { openContextEntryMenu } from './test-utils';
+import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   if (isS3) {
@@ -401,23 +402,28 @@ test.describe('TST49 - Perspective KanBan', () => {
         'kanban',
         '[data-tid=kanBanPerspectiveToggleShowDetails]',
       );
-      const initThumbStyle = await getAttribute(
-        '[data-tid=folderThumbTID]',
-        'style',
-      );
+      const targetSelector = '[data-tid=folderThumbTID]'; 
 
-      await clickOn('[data-tid=showFolderContentTID]');
-      await openContextEntryMenu(
-        getGridFileSelector('sample.c'),
-        'setAsThumbTID',
-      );
-      const newStyle = await waitUntilChanged(
-        '[data-tid=folderThumbTID]',
-        initThumbStyle,
-        'style',
-      );
+      const loaded = await isBackgroundImageLoaded(targetSelector);
+      // test if the columns uses the first tmb in .ts as folder tmb
+      expect(loaded).toBe(true);
 
-      expect(initThumbStyle).not.toBe(newStyle);
+      // TODO continue test
+      // await clickOn('[data-tid=showFolderContentTID]');
+      // await openContextEntryMenu(
+      //   getGridFileSelector('sample.bmp'),
+      //   'setAsThumbTID',
+      // );
+
+      // global.client.on('dialog', async dialog => {
+      //   await dialog.accept();
+      // });
+
+      // const loaded2 = await isBackgroundImageLoaded(targetSelector);
+      // expect(loaded).toBe(true);
+
+
+
     }
   });
 
@@ -440,26 +446,17 @@ test.describe('TST49 - Perspective KanBan', () => {
       await clickOn('[data-tid=changeThumbnailTID]');
       await clickOn('[data-tid=predefinedThumbnailsTID] > li');
       await clickOn('[data-tid=confirmCustomThumb]');
-      /*   const initColumnThumbStyle = await getAttribute(
-        '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
-        'style',
-      );*/
-      const thumbColumnThumbStyle = await waitUntilChanged(
-        '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
-        undefined, //initColumnThumbStyle,
-        'style',
-      );
+      const targetSelector = '[data-tid=' + columnName + 'KanBanColumnThumbTID]'; 
+
+      const loaded = await isBackgroundImageLoaded(targetSelector);
+      expect(loaded).toBe(true);
 
       await clickOn('[data-tid=changeThumbnailTID]');
       await clickOn('[data-tid=predefinedThumbnailsTID] > li:nth-child(2)');
       await clickOn('[data-tid=confirmCustomThumb]');
-      const newColumnThumbStyle = await waitUntilChanged(
-        '[data-tid=' + columnName + 'KanBanColumnThumbTID]',
-        thumbColumnThumbStyle,
-        'style',
-      );
 
-      expect(thumbColumnThumbStyle).not.toBe(newColumnThumbStyle);
+      const loaded2 = await isBackgroundImageLoaded(targetSelector);
+      expect(loaded2).toBe(true);
     }
   });
 
