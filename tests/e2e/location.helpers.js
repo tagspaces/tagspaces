@@ -5,12 +5,12 @@ import {
   isDisplayed,
   selectorFile,
   setInputKeys,
+  typeInputValue,
   waitForNotification
 } from './general.helpers';
 import { delay } from './hook';
 import { openContextEntryMenu } from './test-utils';
 
-// export const defaultLocationPath = './tests/testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
@@ -31,32 +31,16 @@ export async function createPwMinioLocation(
     await clickOn('[data-tid=locationManagerMenuCreateLocation]');
     await clickOn('[data-tid=locationTypeTID]');
     await clickOn('[data-tid=cloudLocationTID]');
-    //await clickOn('[data-tid=createNewLocation]', { timeout: 35000 });
-    // if (global.isMinio) {
-    // await clickOn('[data-tid=objectStorageLocation]');
-    // }
 
-    // SET LOCATION NAME
-    /*await global.client.fill(
-      '[data-tid=locationName] input',
-      locationName || 'Test Location' + new Date().getTime(),
-    );*/
     await setInputKeys(
       'locationName',
       locationName || 'Test Location' + new Date().getTime(),
       20,
     );
     await setInputKeys('locationPath', locationPath, 20);
-    //await global.client.fill('[data-tid=locationPath] input', locationPath);
     await setInputKeys('accessKeyId', minioAccessKey, 20);
-    //await global.client.fill('[data-tid=accessKeyId] input', minioAccessKey);
     await setInputKeys('secretAccessKey', minioSecretAccessKey, 20);
-    /*await global.client.fill(
-      '[data-tid=secretAccessKey] input',
-      minioSecretAccessKey,
-    );*/
     await setInputKeys('bucketName', 'supported-filestypes', 20);
-    //await global.client.fill('[data-tid=bucketName] input', locationName);
     await setInputKeys('endpointURL', minioEndpointURL, 20);
     //await global.client.fill('[data-tid=endpointURL] input', minioEndpointURL);
 
@@ -96,7 +80,6 @@ export async function createS3Location(
     await setInputKeys('secretAccessKey', 'S3RVER', 20);
     await setInputKeys('bucketName', 'supported-filestypes', 20);
     await setInputKeys('endpointURL', 'http://localhost:4569', 20);
-    //await setInputKeys('regionTID', 'eu-central-1', 20);
 
     if (isDefault) {
       await clickOn('[data-tid=switchAdvancedModeTID]');
@@ -115,22 +98,19 @@ export async function createPwLocation(
   isDefault = false,
   fullTextIndexing = false,
 ) {
-  //await clickOn('[data-tid=locationManager]');
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
   if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=locationManagerMenu]');
     await clickOn('[data-tid=locationManagerMenuCreateLocation]');
-    //   await global.client.click('[data-tid=locationPath]');
-    await setInputKeys('locationPath', locationPath, 20); // || defaultLocationPath
-    await setInputKeys(
-      'locationName',
+    await typeInputValue('[data-tid=locationPath] input', locationPath, 20); 
+    await typeInputValue(
+      '[data-tid=locationName] input',
       locationName || 'Test Location' + new Date().getTime(),
       20,
     );
 
     if (isDefault) {
-      //await clickOn('[data-tid=switchAdvancedModeTID]');
       await global.client.check('[data-tid=locationIsDefault] input');
     }
     if (fullTextIndexing) {
@@ -139,15 +119,6 @@ export async function createPwLocation(
     await global.client.click('[data-tid=confirmLocationCreation]');
   }
 }
-
-/*async function setInputValue(tid, value) {
-  // keys is workarround for not working setValue await global.client.$('[data-tid=locationPath] input').setValue(locationPath || defaultLocationPath);
-  const elem = await global.client.$('[data-tid=' + tid + ']');
-  await elem.click();
-
-  const elemInput = await global.client.$('[data-tid=' + tid + '] input');
-  await elemInput.keys(value);
-}*/
 
 export async function openLocationMenu(locationName) {
   await clickOn('[data-tid=locationMoreButton_' + locationName + ']');
@@ -161,12 +132,9 @@ export async function closeLocation(locationName = undefined) {
   if (locationName) {
     const locationSelector =
       '[data-tid=locationMoreButton_' + locationName + ']';
-    //const element = await global.client.$(locationSelector);
-    // if (!(await element.isDisplayed())) {
     if (!(await isDisplayed(locationSelector))) {
       await clickOn('[data-tid=mobileMenuButton]');
     }
-    // await global.client.pause(500);
     await clickOn(locationSelector);
     await clickOn('[data-tid=closeLocationTID]');
   } else {
@@ -185,7 +153,6 @@ export async function openLocation(locationName) {
   const lName = await global.client.$(
     '[data-tid=location_' + locationName || defaultLocationName + ']',
   );
-  // await delay(1500);
   await lName.waitForDisplayed();
   await lName.click();
 }
@@ -206,7 +173,6 @@ export async function checkForIdExist(tid) {
   const dataTid = await global.client.$('[data-tid=' + tid + ']');
   await delay(500);
   expect(await dataTid.isDisplayed()).toBe(true);
-  // expect(dataTid.selector).toBe('[data-tid=' + tid + ']');
 }
 
 /**
@@ -225,10 +191,8 @@ export async function renameFileFromMenu(newFileName, selector = selectorFile) {
 }
 
 export async function deleteFileFromMenu(fileSelector) {
-  // = selectorFile) {
   await openContextEntryMenu(fileSelector, 'fileMenuDeleteFile');
   await clickOn('[data-tid=confirmDeleteFileDialog]');
-  // await waitForNotification();
 }
 
 /**
@@ -247,18 +211,8 @@ export async function getFirstFileName() {
   return fileName;
 }
 
-/*export async function checkForValidExt(selector, ext) {
-  const getExt = await global.client
-    .waitForVisible(selector)
-    .getText(selector, ext);
-  await delay(500);
-  expect(getExt).toBe(ext);
-}*/
-
 export async function aboutDialogExt(title, ext) {
   await delay(500);
-  // should switch focus to iFrame
-  // await global.client.waitForExist('#viewer').frame(0);
   const viewerMainMneuButton = await global.client.$('#viewerMainMenuButton');
   await viewerMainMneuButton.waitForDisplayed();
   await viewerMainMneuButton.click();
@@ -268,14 +222,8 @@ export async function aboutDialogExt(title, ext) {
   await delay(1500);
   const getTitle = await global.client.$('h4=' + title);
   await getTitle.waitForDisplayed();
-  // .waitForVisible('h4=' + title)
-  // .getText('h4=' + title);
-  // should eventually equals('About HTML Viewer');
   expect(getTitle).toBe(title);
   await delay(1500);
-  // await global.client
-  //   .waitForVisible('#closeAboutDialogButton')
-  //   .click('#closeAboutDialogButton');
 }
 
 export async function startupLocation() {
@@ -291,9 +239,6 @@ export async function startupLocation() {
  * @returns {Promise<string|null>} Location Tid ('location_' + name); example usage: getLocationName(-1) will return the last one
  */
 export async function getLocationTid(locationIndex) {
-  /*const locationList = await global.client.$$(
-    '//!*[@data-tid="locationList"]/div'
-  );*/
   const locationList = await global.client.$$(
     '[data-tid=locationTitleElement]',
   );
@@ -301,9 +246,6 @@ export async function getLocationTid(locationIndex) {
     locationIndex < 0
       ? locationList[locationList.length + locationIndex]
       : locationList[locationIndex];
-  // location = await location.$('li');
-  // location = await location.$('div');
-  // return location.getAttribute('data-tid');
   if (location !== undefined) {
     return await location.getText();
   }
@@ -311,12 +253,8 @@ export async function getLocationTid(locationIndex) {
 }
 
 export async function getPwLocationTid(locationIndex) {
-  /*const locationList = await global.client.$$(
-    '//!*[@data-tid="locationList"]/div'
-  );*/
   try {
     await global.client.waitForSelector('[data-tid=locationTitleElement]', {
-      // state: 'attached',
       timeout: 4000,
     });
   } catch (error) {
@@ -330,9 +268,6 @@ export async function getPwLocationTid(locationIndex) {
     locationIndex < 0
       ? locationList[locationList.length + locationIndex]
       : locationList[locationIndex];
-  // location = await location.$('li');
-  // location = await location.$('div');
-  // return location.getAttribute('data-tid');
   if (location !== undefined) {
     return await location.innerText();
   }

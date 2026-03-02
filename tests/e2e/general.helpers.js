@@ -194,7 +194,7 @@ export async function setInputKeys(tid, value, delay = 0) {
  */
 export async function typeInputValue(inputSelector, value, delay = 0) {
   const oldValue = await global.client.inputValue(inputSelector);
-  await global.client.type(inputSelector, value, {
+  await global.client.fill(inputSelector, value, {
     delay,
   });
   /*if (global.isWin) {
