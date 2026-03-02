@@ -138,7 +138,7 @@ function configureApp(extConfigObj) {
     extConfigObj.ExtRegularTheme ?? AppConfig.ExtRegularTheme; // not documented
   AppConfig.ExtDarkTheme = extConfigObj.ExtDarkTheme ?? AppConfig.ExtDarkTheme; // not documented
   AppConfig.ExtSupportedFileTypes =
-    extConfigObj.ExtSupportedFileTypes ?? AppConfig.ExtSupportedFileTypes; // not documented
+    extConfigObj.ExtSupportedFileTypes ?? AppConfig.ExtSupportedFileTypes; // not documented, can be used for initialization only
   AppConfig.ExtExtensionsFound =
     extConfigObj.ExtExtensionsFound ?? AppConfig.ExtExtensionsFound; // not documented
   AppConfig.ExtUseGenerateThumbnails =
