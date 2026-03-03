@@ -46,7 +46,7 @@ import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
 import { Box } from '@mui/material';
 import Links from 'assets/links';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useSelector } from 'react-redux';
 import GridCell from './GridCell';
@@ -159,31 +159,28 @@ function GridPerspective(props: Props) {
   };
 
   const openHelpWebPage = () => {
-    // closeOptionsMenu();
     openURLExternally(Links.documentationLinks.defaultPerspective, true);
   };
 
   const openSettings = () => {
-    // closeOptionsMenu();
     setIsGridSettingsDialogOpened(true);
   };
 
-  const handleTagMenu = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    tag: TS.Tag,
-    entry: TS.FileSystemEntry,
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleTagMenu = useCallback(
+    (
+      event: React.ChangeEvent<HTMLInputElement>,
+      tag: TS.Tag,
+      entry: TS.FileSystemEntry,
+    ) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-    selectedTag.current = tag;
-    selectedEntry.current = entry;
-    setTagContextMenuAnchorEl(event.currentTarget);
-  };
-
-  // const closeOptionsMenu = () => {
-  //   setOptionsContextMenuAnchorEl(null);
-  // };
+      selectedTag.current = tag;
+      selectedEntry.current = entry;
+      setTagContextMenuAnchorEl(event.currentTarget);
+    },
+    [],
+  );
 
   const keyMap = {
     nextDocument: keyBindings.nextDocument,
@@ -278,51 +275,54 @@ function GridPerspective(props: Props) {
     },
   };
 
-  const getCellContent = (
-    fsEntry: TS.FileSystemEntry,
-    selectedEntries: Array<TS.FileSystemEntry>,
-    index: number,
-    handleGridContextMenu: (
-      event: React.MouseEvent<HTMLDivElement>,
+  const getCellContent = useCallback(
+    (
       fsEntry: TS.FileSystemEntry,
-    ) => void,
-    handleGridCellClick,
-    handleGridCellDblClick,
-    isLast?: boolean,
-  ) => {
-    let selected = false;
-    if (
-      selectedEntries &&
-      selectedEntries.some((entry) => entry.path === fsEntry.path)
-    ) {
-      selected = true;
-    }
+      selectedEntries: Array<TS.FileSystemEntry>,
+      index: number,
+      handleGridContextMenu: (
+        event: React.MouseEvent<HTMLDivElement>,
+        fsEntry: TS.FileSystemEntry,
+      ) => void,
+      handleGridCellClick,
+      handleGridCellDblClick,
+      isLast?: boolean,
+    ) => {
+      let selected = false;
+      if (
+        selectedEntries &&
+        selectedEntries.some((entry) => entry.path === fsEntry.path)
+      ) {
+        selected = true;
+      }
 
-    const selectionMode = selectedEntries.length > 1;
-    return (
-      <FileSourceDnd entry={fsEntry}>
-        <TagDropContainer entry={fsEntry}>
-          <GridCell
-            selected={selected}
-            fsEntry={fsEntry}
-            isLast={isLast}
-            selectionMode={selectionMode}
-            handleTagMenu={handleTagMenu}
-            handleGridContextMenu={(
-              event: React.MouseEvent<HTMLDivElement>,
-              fsEntry: TS.FileSystemEntry,
-            ) => {
-              setMouseX(event.clientX);
-              setMouseY(event.clientY);
-              handleGridContextMenu(event, fsEntry);
-            }}
-            handleGridCellDblClick={handleGridCellDblClick}
-            handleGridCellClick={handleGridCellClick}
-          />
-        </TagDropContainer>
-      </FileSourceDnd>
-    );
-  };
+      const selectionMode = selectedEntries.length > 1;
+      return (
+        <FileSourceDnd entry={fsEntry}>
+          <TagDropContainer entry={fsEntry}>
+            <GridCell
+              selected={selected}
+              fsEntry={fsEntry}
+              isLast={isLast}
+              selectionMode={selectionMode}
+              handleTagMenu={handleTagMenu}
+              handleGridContextMenu={(
+                event: React.MouseEvent<HTMLDivElement>,
+                fsEntry: TS.FileSystemEntry,
+              ) => {
+                setMouseX(event.clientX);
+                setMouseY(event.clientY);
+                handleGridContextMenu(event, fsEntry);
+              }}
+              handleGridCellDblClick={handleGridCellDblClick}
+              handleGridCellClick={handleGridCellClick}
+            />
+          </TagDropContainer>
+        </FileSourceDnd>
+      );
+    },
+    [handleTagMenu],
+  );
 
   return (
     <Box
@@ -345,9 +345,7 @@ function GridPerspective(props: Props) {
       >
         <GridCellsStyleContextProvider>
           <GridPagination
-            //directories={sortedDirectories}
             desktopMode={desktopMode}
-            //files={sortedFiles}
             getCellContent={getCellContent}
             currentDirectoryPath={currentDirectoryPath}
             onClick={onClick}
@@ -390,15 +388,6 @@ function GridPerspective(props: Props) {
           handleSortBy={handleSortBy}
         />
       )}
-      {/* {Boolean(optionsContextMenuAnchorEl) && (
-        <GridOptionsMenu
-          open={Boolean(optionsContextMenuAnchorEl)}
-          onClose={closeOptionsMenu}
-          anchorEl={optionsContextMenuAnchorEl}
-          openHelpWebPage={openHelpWebPage}
-          openSettings={openSettings}
-        />
-      )} */}
     </Box>
   );
 }

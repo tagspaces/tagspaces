@@ -101,7 +101,7 @@ function GridPagination(props: Props) {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const currentLocation = findLocation();
   const theme = useTheme();
-  const pageFiles = getResentPageFiles();
+  const pageFiles = useMemo(() => getResentPageFiles(), [getResentPageFiles]);
 
   // Memoize derived values for performance
   const showPagination = useMemo(
@@ -408,7 +408,7 @@ function GridPagination(props: Props) {
           <GridCellsContainer>
             {pageFiles.map((entry, index) => (
               <CellView
-                key={entry.uuid + index}
+                key={entry.uuid}
                 fsEntry={entry}
                 index={index}
                 cellContent={getCellContent}

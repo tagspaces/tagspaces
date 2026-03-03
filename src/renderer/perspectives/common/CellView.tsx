@@ -43,7 +43,7 @@ import { Box } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
-import React from 'react';
+import React, { memo } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useSelector } from 'react-redux';
 
@@ -87,26 +87,7 @@ function CellView(props: Props) {
   } = useSelectedEntriesContext();
   const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
   const { showNotification } = useNotificationContext();
-
-  //const desktopMode = useSelector(getDesktopMode);
   const selectedTabName = useSelector(getEntryContainerTab);
-  // const fileSourceRef = useRef<HTMLDivElement | null>(null);
-
-  /*useEffect(() => {
-    const dragItem = fileSourceRef.current;
-    if (dragItem) {
-      const handleDragStart = (e) => {
-        e.preventDefault()
-        window.electronIO.ipcRenderer.startDrag(fsEntry.path);
-      };
-
-      dragItem.addEventListener('dragstart', handleDragStart);
-
-      return () => {
-        dragItem.removeEventListener('dragstart', handleDragStart);
-      };
-    }
-  }, [fileSourceRef.current]);*/
 
   if (!fsEntry || (!fsEntry.isFile && !showDirectories)) {
     return null;
@@ -145,7 +126,6 @@ function CellView(props: Props) {
     if (fsEntry.isFile) {
       setSelectedEntries([fsEntry]);
       openEntryInternal(fsEntry);
-      //openEntry(fsEntry.path);
     } else {
       console.log('Handle Grid cell db click, selected path : ', fsEntry.path);
       openDirectory(fsEntry.path);
@@ -174,7 +154,6 @@ function CellView(props: Props) {
       }
 
       let entriesToSelect;
-      // console.log('lastSelectedIndex: ' + lastSelectedIndex + '  currentSelectedIndex: ' + currentSelectedIndex);
       if (currentSelectedIndex > lastSelectedIndex) {
         entriesToSelect = sortedDirContent.slice(
           lastSelectedIndex,
@@ -223,7 +202,7 @@ function CellView(props: Props) {
             openedEntry.isFile ||
             selectedTabName !== TabNames.aiTab
           ) {
-            // dont open file if chat mode is enabled
+            // do not open file if chat mode is enabled
             openEntryInternal(fsEntry);
           }
         } else if (singleClickAction === 'openExternal') {
@@ -239,7 +218,7 @@ function CellView(props: Props) {
         'Importing files is disabled because the location is in read-only mode.',
         'error',
         true,
-      ); //i18n.t('core:dndDisabledReadOnlyMode')
+      );
       return;
     }
     if (item) {
@@ -250,10 +229,9 @@ function CellView(props: Props) {
         selectedEntries.length > 0 &&
         selectedEntries.some((e) => e.path === entry.path)
       ) {
-        const arrSelected = selectedEntries
-          //.map((entry) => entry.path)
-          // remove target folder selection
-          .filter((e) => e.path !== item.targetPath);
+        const arrSelected = selectedEntries.filter(
+          (e) => e.path !== item.targetPath,
+        );
         if (arrSelected.length > 0) {
           arrEntries = arrSelected;
         } else {
@@ -262,7 +240,6 @@ function CellView(props: Props) {
       } else if (entry) {
         arrEntries = [entry];
       }
-      //console.log('Dropped files: ' + JSON.stringify(arrEntries));
       openMoveCopyFilesDialog(arrEntries, item.targetPath, currentLocationId);
     }
   };
@@ -339,4 +316,4 @@ function CellView(props: Props) {
   );
 }
 
-export default CellView;
+export default memo(CellView);
