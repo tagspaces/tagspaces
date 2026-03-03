@@ -14,7 +14,7 @@ import {
   openFolder,
   reloadDirectory,
   selectorFile,
-  setInputKeys,
+  setInputValue,
   waitUntilChanged
 } from './general.helpers';
 import {
@@ -188,7 +188,7 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=newSubdirectoryTID]');
 
     const folderToMove = 'folder_to_move';
-    await setInputKeys('directoryName', folderToMove);
+    await setInputValue('[data-tid=directoryName] input', folderToMove);
     await clickOn('[data-tid=confirmCreateNewDirectory]');
     await clickOn('[data-tid=MoveTarget' + folderToMove + ']');
     await clickOn('[data-tid=confirmMoveFiles]');
@@ -219,7 +219,7 @@ test.describe('TST01 - Folder management', () => {
     );
     await clickOn('[data-tid=newSubdirectoryTID]');
     const folderToCopy = 'folder_to_copy';
-    await setInputKeys('directoryName', folderToCopy);
+    await setInputValue('[data-tid=directoryName] input', folderToCopy);
     await clickOn('[data-tid=confirmCreateNewDirectory]');
     await clickOn('[data-tid=MoveTarget' + folderToCopy + ']');
     await clickOn('[data-tid=confirmCopyFiles]');

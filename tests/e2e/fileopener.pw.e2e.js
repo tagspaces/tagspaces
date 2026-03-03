@@ -22,7 +22,6 @@ import {
   openFile,
   openFolder,
   selectorFile,
-  setInputKeys,
   setInputValue,
   setSettings
 } from './general.helpers';
@@ -43,10 +42,6 @@ import { openContextEntryMenu } from './test-utils';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
 test.afterEach(async ({ isS3, testDataDir }, testInfo) => {
-  /*if (testInfo.status !== testInfo.expectedStatus) {
-    await takeScreenshot(testInfo);
-  }*/
-
   await testDataRefresh(isS3, testDataDir);
   await clearDataStorage();
   await stopApp();
@@ -168,8 +163,6 @@ test.describe('TST08 - File folder properties', () => {
    * full width button not visible on electron (github app size specific)
    */
   test('TST0804 - Open file in full width [web,s3]', async () => {
-    //expect.extend(matchers);
-    //await clickOn('[data-tid=location_supported-filestypes]');
     // open fileProperties
     await clickOn(selectorFile);
     await clickOn('[data-tid=propsActionsMenuTID]');
@@ -181,7 +174,6 @@ test.describe('TST08 - File folder properties', () => {
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=openInFullWidthTID]');
     await clickOn('[id=mobileMenuButton]');
-    // expect(global.client).toHaveSelector('[data-tid=folderContainerTID]');
   });
 
   test('TST0805 - Rename opened file [web,s3,electron]', async ({}) => {
@@ -215,18 +207,7 @@ test.describe('TST08 - File folder properties', () => {
         ? [propsNewFileName + '.json'] // check meta file renamed, thumbnails are not created on web or minio
         : [propsNewFileName + '.json', propsNewFileName + '.jpg'];*/ // check meta and thumbnail renamed
     await expectMetaFilesExist(arrayMeta);
-
     await setSettings('[data-tid=settingsSetPersistTagsInSidecarFile]', true);
-    //await testDataRefresh(isS3, testDataDir);
-    //turn fileName back
-    /*await clickOn('[data-tid=startRenameEntryTID]');
-    await setInputValue('[data-tid=fileNameProperties] input', propsFileName);
-    await clickOn('[data-tid=confirmRenameEntryTID]');
-    await global.client.waitForSelector(
-      '[data-tid=fileNameProperties] input[value="' + propsFileName + '"]'
-    );
-    const propsOldFileName = await getPropertiesFileName();
-    expect(propsOldFileName).toBe(propsFileName);*/
   });
 
   test.skip('TST0806 - Download file [manual]', async () => {});
@@ -302,26 +283,6 @@ test.describe('TST08 - File folder properties', () => {
       10000,
       getGridFileSelector('sample.pdf'),
     );
-
-    /* await clickOn('[data-tid=descriptionTabTID]');
-    await clickOn('[data-tid=descriptionTID]');
-
-    const editor = await global.client.waitForSelector(
-      '[data-tid=descriptionTID] [contenteditable=true]',
-    );
-    await editor.type(desc, {
-      delay: 0,
-    });
-
-    await clickOn('[data-tid=editDescriptionTID]');
-    await clickOn('[data-tid=editDescriptionTID]');
-    await clickOn('[data-tid=editDescriptionTID]');
-    await expectElementExist(
-      '[data-tid=gridCellDescription]',
-      true,
-      10000,
-      fileSelector,
-    );*/
   });
 
   /**
@@ -336,7 +297,6 @@ test.describe('TST08 - File folder properties', () => {
     // open fileProperties
     await clickOn(getGridFileSelector('sample.txt'));
     //Toggle Properties
-    //await clickOn('[data-tid=fileContainerToggleProperties]');
 
     await expectFileContain();
 
@@ -428,12 +388,6 @@ test.describe('TST08 - File folder properties', () => {
       await clickOn(getGridFileSelector('sample.mp4'));
       await clickOn('[data-tid=propsActionsMenuTID]');
       await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
-      // todo there is not close button expect...
-      //await expectElementExist('[data-tid=fullscreenTID]', true, 10000);
-      // await takeScreenshot('TST0814 fullscreenTID exist true');
-      //await clickOn('[data-tid=fullscreenTID]');
-      // await takeScreenshot('TST0814 fullscreenTID exist false');
-      //await expectElementExist('[data-tid=fullscreenTID]', false, 10000);
     }
   });
 
@@ -465,10 +419,8 @@ test.describe('TST08 - File folder properties', () => {
 
     await clickOn('[data-tid=fileContainerCloseOpenedFile]');
 
-    //await clickOn('[data-tid=locationManagerMenu]');
-    //await clickOn('[data-tid=locationManagerMenuOpenLink]');
     await clickOn('[data-tid=openLinkNavigationTID]');
-    await setInputKeys('directoryName', sharingLinkValue);
+    await setInputValue('[data-tid=openLinkTID] input', sharingLinkValue);
     await clickOn('[data-tid=confirmOpenLink]');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(fileName) + ']',

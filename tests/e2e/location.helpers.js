@@ -5,7 +5,7 @@ import {
   isDisplayed,
   selectorFile,
   setInputKeys,
-  typeInputValue,
+  setInputValue,
   waitForNotification
 } from './general.helpers';
 import { delay } from './hook';
@@ -103,11 +103,10 @@ export async function createPwLocation(
   if (locationName !== lastLocationTID) {
     await clickOn('[data-tid=locationManagerMenu]');
     await clickOn('[data-tid=locationManagerMenuCreateLocation]');
-    await typeInputValue('[data-tid=locationPath] input', locationPath, 20); 
-    await typeInputValue(
+    await setInputValue('[data-tid=locationPath] input', locationPath); 
+    await setInputValue(
       '[data-tid=locationName] input',
-      locationName || 'Test Location' + new Date().getTime(),
-      20,
+      locationName || 'Test Location' + new Date().getTime()
     );
 
     if (isDefault) {
