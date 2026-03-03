@@ -12,7 +12,8 @@ import {
   getGridFileSelector,
   openFile,
   openFolder,
-  openFolderProp
+  openFolderProp,
+  setInputValue
 } from './general.helpers';
 import { startTestingApp, stopApp } from './hook';
 import {
