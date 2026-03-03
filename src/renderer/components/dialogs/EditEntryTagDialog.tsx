@@ -78,7 +78,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
   );
 
   const isShowDatePeriodEditor = useMemo(() => {
-    const currentTitle = titleRef.current || tag?.title;
+    const currentTitle = titleRef.current;
     if (!DateTagEditor || !currentTitle) return false;
 
     if (currentTitle.includes('-')) {
@@ -134,14 +134,14 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
             name="title"
             autoFocus
             updateValue={setTitle}
-            retrieveValue={() => titleRef.current || tag?.title}
+            retrieveValue={() => titleRef.current}
             label={t('core:editTag')}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const { value } = event.target;
               handleValidation(value);
               setTitle(value);
             }}
-            value={titleRef.current || tag?.title}
+            value={titleRef.current}
             data-tid="editTagEntryDialog_input"
             slotProps={{
               input: {
@@ -169,10 +169,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
           />
         )}
         {!manualEditing && isShowDatePeriodEditor && tag && (
-          <DateTagEditor
-            datePeriodTag={titleRef.current || tag?.title}
-            onChange={setTitle}
-          />
+          <DateTagEditor datePeriodTag={titleRef.current} onChange={setTitle} />
         )}
       </DialogContent>
     );
