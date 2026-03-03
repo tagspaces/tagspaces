@@ -4,7 +4,6 @@ import {
   clickOn,
   isDisplayed,
   selectorFile,
-  setInputKeys,
   setInputValue,
   waitForNotification
 } from './general.helpers';
@@ -32,17 +31,12 @@ export async function createPwMinioLocation(
     await clickOn('[data-tid=locationTypeTID]');
     await clickOn('[data-tid=cloudLocationTID]');
 
-    await setInputKeys(
-      'locationName',
-      locationName || 'Test Location' + new Date().getTime(),
-      20,
-    );
-    await setInputKeys('locationPath', locationPath, 20);
-    await setInputKeys('accessKeyId', minioAccessKey, 20);
-    await setInputKeys('secretAccessKey', minioSecretAccessKey, 20);
-    await setInputKeys('bucketName', 'supported-filestypes', 20);
-    await setInputKeys('endpointURL', minioEndpointURL, 20);
-    //await global.client.fill('[data-tid=endpointURL] input', minioEndpointURL);
+    await setInputValue('[data-tid=locationName] input', locationName || 'Test Location' + new Date().getTime(),); 
+    await setInputValue('[data-tid=locationPath] input', locationPath); 
+    await setInputValue('[data-tid=accessKeyId] input', minioAccessKey); 
+    await setInputValue('[data-tid=secretAccessKey] input', minioSecretAccessKey); 
+    await setInputValue('[data-tid=bucketName] input', 'supported-filestypes'); 
+    await setInputValue('[data-tid=endpointURL] input', minioEndpointURL); 
 
     if (isDefault) {
       await clickOn('[data-tid=switchAdvancedModeTID]');
@@ -70,16 +64,12 @@ export async function createS3Location(
     await clickOn('[data-tid=locationTypeTID]');
     await clickOn('[data-tid=cloudLocationTID]');
 
-    await setInputKeys(
-      'locationName',
-      locationName || 'Test Location' + new Date().getTime(),
-      20,
-    );
-    await setInputKeys('locationPath', locationPath, 20);
-    await setInputKeys('accessKeyId', 'S3RVER', 20);
-    await setInputKeys('secretAccessKey', 'S3RVER', 20);
-    await setInputKeys('bucketName', 'supported-filestypes', 20);
-    await setInputKeys('endpointURL', 'http://localhost:4569', 20);
+    await setInputValue('[data-tid=locationName] input', locationName || 'Test Location' + new Date().getTime(),); 
+    await setInputValue('[data-tid=locationPath] input', locationPath); 
+    await setInputValue('[data-tid=accessKeyId] input', 'S3RVER'); 
+    await setInputValue('[data-tid=secretAccessKey] input', 'S3RVER'); 
+    await setInputValue('[data-tid=bucketName] input', 'supported-filestypes'); 
+    await setInputValue('[data-tid=endpointURL] input', 'http://localhost:4569'); 
 
     if (isDefault) {
       await clickOn('[data-tid=switchAdvancedModeTID]');

@@ -361,8 +361,6 @@ test.describe('TST50** - Right button on a file', () => {
 
     // Copy file in parent directory
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
-    // await setInputKeys('targetPathInput', defaultLocationPath);
-    //await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=navigateToParentTID]');
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOn('[data-tid=uploadCloseAndClearTID]');
@@ -371,7 +369,6 @@ test.describe('TST50** - Right button on a file', () => {
     await expectElementExist(fileSelector, true);
 
     // cleanup
-    // await global.client.dblclick(selectorFolder);
     await openContextEntryMenu(
       getGridFileSelector(folderName),
       'openDirectory',

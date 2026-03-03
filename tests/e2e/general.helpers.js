@@ -14,7 +14,6 @@ import {
   createS3Location,
 } from './location.helpers';
 
-// export const defaultLocationPath = './testdata-tmp/file-structure/supported-filestypes';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
@@ -24,12 +23,10 @@ export const selectorFile =
 export const selectorFolder =
   '//*[@data-tid="perspectiveGridFileTable"]/div/div';
 
-// const newHTMLFileName = 'newHTMLFile.html';
 const testFolder = 'testFolder';
 const testLocationName = '' + new Date().getTime();
 
 export async function takeScreenshot(testInfo, title = 'failure') {
-  // const sPath = path.join(__dirname, '..', 'test-reports', name + '.png');
   const sPath = testInfo.outputPath(testInfo.title + title + '.png');
   // Add it to the report.
   testInfo.attachments.push({
@@ -47,19 +44,9 @@ export async function getElementScreenshot(
   },
 ) {
   try {
-    /*const el = await global.client.$(selector);
-    await el.waitForElementState('visible');
-    const boundingBox = await el.boundingBox();*/
     const buffer = await global.client.locator(selector).screenshot({
       ...options,
-      /*clip: {
-          x: boundingBox.x + 5,
-          y: boundingBox.y + 5,
-          width: boundingBox.width - 10,
-          height: boundingBox.height -10
-        }*/
     });
-    //const buffer = await el.screenshot({ ...options/*, clip: boundingBox*/ });
     return buffer.toString('base64');
   } catch (e) {
     console.log('getElementScreenshot ' + selector + ' error: ', e);
@@ -204,59 +191,6 @@ export async function typeInputValue(inputSelector, value, delay = 0) {
   return oldValue;
 }
 
-/*export async function setSelectorKeys(selector, value) {
-  const element = await global.client.$(selector);
-  await element.waitUntil(
-    async function() {
-      // const displayed = await this.isDisplayed();
-      const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg:
-        'setSelectorKeys selector ' + element.selector + ' to exist after 5s'
-    }
-  );
-  await element.click();
-
-  const elemInput = await element.$('input');
-  // const elemInput = await global.client.$(selector + ' input');
-  await elemInput.waitUntil(
-    async function() {
-      // const displayed = await this.isDisplayed();
-      const displayed = await this.isDisplayedInViewport();
-      return displayed === true;
-    },
-    {
-      timeout: 5000,
-      timeoutMsg:
-        'setSelectorKeys selector ' + element.selector + ' to exist after 5s'
-    }
-  );
-
-  // await elemInput.clearValue();
-  const oldValue = await clearInputValue(elemInput);
-  await element.click();
-  await elemInput.keys(value);
-  return oldValue;
-}*/
-
-/*export async function clearInputValue(inputElement) {
-  const oldValue = await inputElement.getValue();
-  const count = oldValue.length;
-  for (let i = 0; i < count; i++) {
-    const value = await inputElement.getValue();
-    if (value === '') {
-      break;
-    }
-    await inputElement.click();
-    await inputElement.doubleClick();
-    await global.client.keys('Delete');
-    await inputElement.clearValue();
-  }
-  return oldValue;
-}*/
 
 /**
  * @param fileIndex
@@ -271,19 +205,9 @@ export async function getGridFileName(fileIndex, cleanTags = true) {
         fileIndex < 0
           ? filesList[filesList.length + fileIndex]
           : filesList[fileIndex];
-      // await file.waitForDisplayed({ timeout: 5000 });
-      //file = await file.$('div');
-      //file = await file.$('div');
-      //file = await file.$('div');
       const fileNameElem = await file.$('div div div:nth-child(2) p');
       const fileName = await fileNameElem.getAttribute('title');
       return cleanTags ? fileName.replace(/ *\[[^\]]*]/, '') : fileName;
-      /*const fileName = await getElementText(fileNameElem);
-      const divs = await file.$$('div');
-      const lastDiv = await divs[divs.length - 1];
-      const fileExtElem = await lastDiv.$('span');
-      const fileExt = await getElementText(fileExtElem);
-      return fileName + '.' + fileExt.toLowerCase();*/
     }
     console.log(
       "Can't find getGridFileName:" + fileIndex + ' filesList is empty',
@@ -433,33 +357,6 @@ export async function expectMediaPlay(visible = true) {
 
     await expectVideoToRender();
   }
-  /*
-  await expect
-    .poll(
-      async () => {
-        if (!global.isWin || global.isWeb) {
-          //todo remove this - currently video do not start playing on mac and web
-          return true;
-        }
-        const fLocator = await frameLocator();
-        const progressSeek = await fLocator.locator('[data-plyr=seek]');
-        const ariaValueNow = await progressSeek.getAttribute('aria-valuenow');
-        if (ariaValueNow === 0) {
-          const playButton = await fLocator.locator('[data-plyr=play]');
-          const ariaLabel = await playButton.getAttribute('aria-label');
-          if (ariaLabel === 'Play') {
-            await playButton.click();
-          }
-        }
-        return parseFloat(ariaValueNow) > 0;
-      },
-      {
-        message: 'progress of file is not greater that 0', // custom error message
-        // Poll for 10 seconds; defaults to 5 seconds. Pass 0 to disable timeout.
-        timeout: 15000,
-      },
-    )
-    .toBe(true);*/
 }
 
 export async function expectAllFileSelected(isSelected = true) {
@@ -579,9 +476,6 @@ export async function setGridOptions(
     );
   }
 
-  /*if (entrySize) {
-    await clickOn('[data-tid=' + entrySize + ']');
-  }*/
   await clickOn('[data-tid=defaultSettings]');
 }
 /**
@@ -590,35 +484,17 @@ export async function setGridOptions(
  * @returns {Promise<void>} classSelected
  */
 export async function selectAllFiles() {
-  // classNotSelected) {
-  // await clickOn('[data-tid=gridPerspectiveOptionsMenu]');
-  // todo temp fix: is not clickable
-  // await clickOn('[data-tid=gridPerspectiveToggleShowDirectories]');
 
   // SelectAllFiles
   await clickOn('[data-tid=gridPerspectiveSelectAllFiles]');
-
-  // await expectElementExist('[class="' + classNotSelected + '"]', false, 1000);
-  // return await global.client.$(selectorFile + '/div/div').getAttribute('class');
-  /* return await waitUntilClassChanged(
-    selectorFile + '/div/div',
-    classNotSelected
-  ); */
 }
 
 export async function selectFilesByID(arrEntryIds = []) {
-  //await clickOn('[data-tid=openListPerspective]');
   for (let i = 0; i < arrEntryIds.length; i++) {
     await clickOn(
       'div[data-entry-id="' + arrEntryIds[i] + '"] div:nth-child(3) div button',
     );
-    /* let entry = await global.client.$(
-      '[data-entry-id="' + arrEntryIds[i] + '"]'
-    );
-    entry = await entry.$('[data-tid=rowCellTID]');
-    await entry.click(); */
   }
-  // await clickOn('[data-tid=gridPerspectiveContainer]');
 }
 
 export async function selectRowFiles(arrIndex = []) {
@@ -645,48 +521,6 @@ export async function selectRowFiles(arrIndex = []) {
   expect(arrElements.length).toBe(arrIndex.length);
   return arrElements;
 }
-/**
- * TODO element 0 is not clickable
- * @param arrIndex
- * @returns {Promise<*>}
- */
-/*export async function selectRowFiles(arrIndex = []) {
-  await global.client.waitForSelector('[data-tid=openListPerspective]');
-  await clickOn('[data-tid=openListPerspective]');
-  await setGridOptions('list', false); //, 'gridPerspectiveEntrySizeNormal');
-  // const filesList = await global.client.$('[data-tid=perspectiveGridFileTable]');
-  const filesList = await global.client.$$('[data-tid=rowCellTID]');
-  const arrElements = [];
-  if (filesList.length > 0) {
-    for (let i = 0; i < arrIndex.length; i++) {
-      const index =
-        arrIndex[i] < 0 ? filesList.length + arrIndex[i] : arrIndex[i];
-      if (filesList[index]) {
-        let parent = await filesList[index].$('..');
-        parent = await parent.$('..');
-        parent = await parent.$('..');
-        const id = await parent.getAttribute('data-entry-id');
-        arrElements.push(id);
-        // const classNotSelected = await parent.getAttribute('class');
-        // const elNotSelected = await parent.$('//!*[@class="' + classNotSelected + '"]');
-        await clickOn(
-          'div[data-entry-id="' + id + '"] div[data-tid=rowCellTID]',
-        );
-      } else {
-        console.debug(
-          'selectRowFiles filesList.length:' +
-            filesList.length +
-            ' with index:' +
-            index +
-            ' not exist',
-        );
-      }
-    }
-  }
-  expect(arrElements.length).toBe(arrIndex.length);
-  // await clickOn('[data-tid=gridPerspectiveContainer]');
-  return arrElements;
-}*/
 
 /**
  * TODO holdDownKey + click not work:
@@ -706,9 +540,6 @@ export async function selectFiles(arrIndex = []) {
 
     // await holdDownKey('\uE008');
     filesList[index].click();
-    // await global.client.keys('Shift');
-    // await releaseKey('\uE008');
-    // await global.client.releaseActions();
     arrElements.push(filesList[index]);
   }
   await releaseKey('\uE008');
@@ -815,17 +646,7 @@ export async function setFileTypeExtension(
   await clickOn('[data-tid=settings]');
   await clickOn('[data-tid=fileTypeSettingsDialog]');
   const selector = '[data-tid=' + extensionType + 'TID' + fileType + ']';
-  //const selectEl = await global.client.locator('[data-tid=settingsFileTypesTID]');
-  //await selectEl.evaluate(node => node.scrollIntoView());
-  /*await selectEl.evaluate((el, targetSelector) => {
-    const target = el.locator(targetSelector);
-    if (target) {
-      const topPos = target.offsetTop;
-      el.scrollTop = topPos;
-    }
-  }, selector);*/
 
-  // await selectEl.scrollIntoViewIfNeeded();
   await clickOn(selector);
   await clickOn(
     '[data-tid=' + extension + extensionType + 'TID' + fileType + ']',
@@ -1104,13 +925,6 @@ export async function addDescription(desc) {
   } else {
     await clickOn('[data-tid=saveDescriptionTID]');
   }
-  // await expectElementExist('[data-tid=descriptionChangedTID]', true, 8000);
-  /*
-  // editorContent is empty on web
-  const editorContent = await editor.innerText();
-  await expect(editorContent).toBe(desc);
-  */
-  //   await global.client.waitForTimeout(80000);
 }
 
 export async function createFile(
@@ -1259,17 +1073,7 @@ export async function dragAndDrop(srcSelector, targetSelector) {
 
 export async function reloadDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
-  /* const openDirMenu = await global.client.$(
-    '[data-tid=folderContainerOpenDirMenu]'
-  );
-  await openDirMenu.waitForDisplayed();
-  await openDirMenu.click();
-  await delay(500); */
   await clickOn('[data-tid=reloadDirectory]');
-  /* const reloadDirectory = await global.client.$('[data-tid=reloadDirectory]');
-  await reloadDirectory.waitForDisplayed();
-  await reloadDirectory.click();
-  await delay(500); */
 }
 
 export async function createNewDirectory(dirName = testFolder) {
@@ -1277,7 +1081,7 @@ export async function createNewDirectory(dirName = testFolder) {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=newSubDirectory]');
   // set new dir name
-  await setInputKeys('directoryName', dirName);
+  await setInputValue('[data-tid=directoryName] input', dirName);
   await clickOn('[data-tid=confirmCreateNewDirectory]');
   await expectElementExist(getGridFileSelector(dirName), true, 50000);
   // await waitForNotification();
@@ -1307,21 +1111,12 @@ export async function createTxtFile() {
 
 export async function closeOpenedFile() {
   await clickOn('[data-tid=fileContainerCloseOpenedFile]');
-  /* const closeFile = await global.client.$(
-    '[data-tid=fileContainerCloseOpenedFile]'
-  );
-  await closeFile.waitForDisplayed();
-  await closeFile.click();
-  await delay(500); */
 }
 
 export async function deleteDirectory() {
   await clickOn('[data-tid=folderContainerOpenDirMenu]');
   await clickOn('[data-tid=deleteDirectory]');
   await clickOn('[data-tid=confirmDeleteFileDialog]');
-  /* if (global.isElectron) {
-    await waitForNotification();
-  } */
 }
 
 export async function toHaveText() {
@@ -1329,11 +1124,6 @@ export async function toHaveText() {
   const file = await global.client.$(perspectiveGridTable + firstFile);
   console.log(file.getText());
   expect(file).toBe(filename);
-  // const classNameAndText = await global.client.$('<img>');
-  // await checkFilenameForExist(filename, selector)
-  // expect(file).toEquale(expect.toHaveTextContaining('jpg'));
-  // expect.stringContaining('jpg');
-  // expect(text1==text2).toBe(true);
 }
 
 export async function openCloseAboutDialog(title) {
@@ -1346,10 +1136,6 @@ export async function openCloseAboutDialog(title) {
   await aboutButton.waitForDisplayed();
   await aboutButton.click();
   await delay(1500);
-  // const getTitle = await global.client.$('h4=' + title);
-  // await getTitle.waitForDisplayed();
-  // // should eventually equals('About HTML Viewer');
-  // expect(getTitle).toBe(title);
   const closeAboutDialogButton = await global.client.$(
     '#closeAboutDialogButton',
   );
@@ -1358,11 +1144,3 @@ export async function openCloseAboutDialog(title) {
   await delay(500);
 }
 
-/*export async function openSettings(selectedTab) {
-  await global.client.waitForVisible('[data-tid=settings]');
-  await global.client.click('[data-tid=settings]');
-  if (selectedTab) {
-    await global.client.waitForVisible('[data-tid=' + selectedTab + ']');
-    await global.client.click('[data-tid=' + selectedTab + ']');
-  }
-}*/

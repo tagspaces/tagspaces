@@ -1,15 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
-import { test, expect } from './fixtures';
-import {
-  openLocationMenu,
-  startupLocation,
-  getPwLocationTid,
-  createPwMinioLocation,
-  createPwLocation,
-  createS3Location,
-  defaultLocationName,
-} from './location.helpers';
 import AppConfig from '../../src/renderer/AppConfig';
+import { expect, test } from './fixtures';
 import {
   addDescription,
   clickOn,
@@ -21,11 +12,18 @@ import {
   getGridFileSelector,
   openFile,
   openFolder,
-  openFolderProp,
-  setInputKeys,
+  openFolderProp
 } from './general.helpers';
 import { startTestingApp, stopApp } from './hook';
-import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
+import {
+  createPwLocation,
+  createPwMinioLocation,
+  createS3Location,
+  getPwLocationTid,
+  openLocationMenu,
+  startupLocation
+} from './location.helpers';
+import { clearDataStorage } from './welcome.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location_Name_Changed';
@@ -99,7 +97,7 @@ test.describe('TST03 - Testing locations:', () => {
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=editLocation]');
     await global.client.dblclick('[data-tid=locationName] input');
-    await setInputKeys('locationName', newLocationName);
+    await setInputValue('[data-tid=locationName] input', newLocationName); 
     await clickOn('[data-tid=confirmLocationCreation]');
 
     await expectElementExist(
