@@ -1,19 +1,15 @@
+import { findAction } from '../../src/renderer/components/SearchOptions';
 import {
   clickOn,
   expectElementExist,
-  expectTagsExistBySelector,
   getGridFileSelector,
-  isDisabled,
   isDisplayed,
-  selectorFile,
   selectRowFiles,
-  setInputKeys,
   setInputValue,
   typeInputValue,
-  waitForNotification,
+  waitForNotification
 } from './general.helpers';
 import { AddRemoveTagsToSelectedFiles } from './perspective-grid.helpers';
-import { findAction } from '../../src/renderer/components/SearchOptions';
 
 export const regexQuery = '!"#$%&\'()*+,-./@:;<=>[\\]^_`{|}~';
 export const searchTag = 'tag1';
@@ -33,7 +29,7 @@ export async function addSearchCommand(
     await clickOn('[data-tid=toggleSearch]');
   }
   await expectElementExist('#textQuery', true, 3000);
-  await typeInputValue('#textQuery', command);
+  await global.client.type('#textQuery', command);
   if (!findAction(command, true)) {
     await global.client.keyboard.press('Enter');
   }
@@ -62,7 +58,7 @@ export async function searchEngine(
   if (!(await isDisplayed('#textQuery'))) {
     await clickOn('[data-tid=toggleSearch]');
   }
-  await typeInputValue('#textQuery', filename);
+  await global.client.type('#textQuery', filename);
   if (executeSearch) {
     if (!(await isDisplayed('[data-tid=searchAdvancedTID]'))) {
       await clickOn('[data-tid=advancedSearch]');
