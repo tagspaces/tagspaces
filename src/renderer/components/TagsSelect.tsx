@@ -153,16 +153,16 @@ function TagsSelect(props: Props) {
     const newTags = [];
     tags.map((tag) => {
       if (tagsValidation(tag)) {
-        const newTag: TS.Tag = {
+        const existingTag = allTags.current.find(
+          (option) => option.title === tag,
+        );
+        const newTag: TS.Tag = existingTag ?? {
           id: getUuid(),
           title: '' + tag,
           color: defaultBackgroundColor,
           textcolor: defaultTextColor,
         };
-        //if (!allTags.current.find((option) => option.title === newTag.title)) {
         newTags.push(newTag);
-        //allTags.current.push(newTag);
-        //}
       } else {
         tagsError.current = true;
         forceUpdate();
