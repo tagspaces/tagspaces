@@ -157,9 +157,13 @@ let externalSearches = false;
 
 configureApp(window); // Configuring from extconfig.js if loaded
 
+// for electron prod: '../../../../extconfig.json' for run dev 'extconfig.json' in public/
+const extConfigPath = AppConfig.isWeb
+  ? 'extconfig.json'
+  : '../../../../extconfig.json';
+
 const xhr = new XMLHttpRequest();
-// for prod: '../../../../extconfig.json' for run dev 'extconfig.json' in public/
-xhr.open('GET', '../../../../extconfig.json', false); // false = synchronous
+xhr.open('GET', extConfigPath, false); // false = synchronous
 try {
   xhr.send(); // Will pause execution here until it finishes or fails
   // Status 200 is for HTTP servers, Status 0 is for local file:// protocol
