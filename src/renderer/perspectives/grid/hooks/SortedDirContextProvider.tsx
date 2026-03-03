@@ -16,14 +16,14 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import { defaultSettings } from '-/perspectives/grid';
 import { getSearchFilter } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
-import { defaultSettings } from '-/perspectives/grid';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 type SortedDirContextData = {
   sortedDirContent: TS.FileSystemEntry[];
@@ -52,13 +52,15 @@ export type SortedDirContextProviderProps = {
 export const SortedDirContextProvider = ({
   children,
 }: SortedDirContextProviderProps) => {
-  const { currentDirectoryEntries } = useDirectoryContentContext();
+  const { currentDirectoryEntries, currentDirectory } =
+    useDirectoryContentContext();
   const { settings } = usePerspectiveSettingsContext();
   const searchFilter: string = useSelector(getSearchFilter);
-  /*const settings: TS.FolderSettings = useMemo(() => {
-    return getSettings(directoryMeta, perspective);
-  }, [directoryMeta, perspective]);*/
 
+  // Reset sort only when navigating to a different directory, not on reload of
+  // the same directory. Reloading re-reads directoryMeta (new object reference),
+  // which propagates a new settings reference — previously that caused this
+  // effect to fire and wipe out the user's unsaved sort choice.
   useEffect(() => {
     if (settings.sortBy !== sortBy) {
       setSortBy(settings.sortBy);
@@ -66,7 +68,7 @@ export const SortedDirContextProvider = ({
     if (settings.orderBy !== orderBy) {
       setOrderBy(settings.orderBy);
     }
-  }, [settings]);
+  }, [currentDirectory?.path]);
 
   const [sortBy, setSortBy] = useState<string>(
     settings && settings.sortBy ? settings.sortBy : defaultSettings.sortBy,
