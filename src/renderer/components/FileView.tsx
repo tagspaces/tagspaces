@@ -77,69 +77,54 @@ function FileView(props: Props) {
     }
 
     return () => {
-      if (AppConfig.isElectron && window.electronIO.ipcRenderer) {
-        window.electronIO.ipcRenderer.removeAllListeners('play-pause');
-      }
       fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
       fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
     };
   }, []);
 
-  const handleFullscreenChange = useCallback((e) => {
-    let change = '';
-    if (fscreen.fullscreenElement !== null) {
-      change = 'Entered fullscreen mode';
-      setFullscreen(true);
-      if (
-        fileViewer &&
-        fileViewer.current &&
-        fileViewer.current.contentWindow
-      ) {
-        try {
-          // @ts-ignore
-          fileViewer.current.contentWindow.enterFullscreen();
-        } catch (ex) {
-          console.log('err:', ex);
-        }
-      }
-    } else {
-      change = 'Exited fullscreen mode';
-      setFullscreen(false);
-      if (
-        fileViewer &&
-        fileViewer.current &&
-        fileViewer.current.contentWindow
-      ) {
-        try {
-          // @ts-ignore
-          fileViewer.current.contentWindow.exitFullscreen();
-        } catch (ex) {
-          console.log('err:', ex);
-        }
-      }
-    }
-    console.log(change, e);
-  }, []);
-
-  const handleFullscreenError = useCallback((e) => {
-    console.log('Fullscreen Error', e);
-  }, []);
-
-  useEventListener('message', (e) => {
-    if (typeof e.data === 'string') {
+  const handleFullscreenChange = useCallback((_e: Event) => {
+    const entered = fscreen.fullscreenElement !== null;
+    setFullscreen(entered);
+    const contentWindow = fileViewer?.current?.contentWindow as any;
+    if (contentWindow) {
       try {
-        const dataObj = JSON.parse(e.data);
-        if (dataObj.eventID === eventID.current) {
-          handleMessage(dataObj);
-        }
+        entered
+          ? contentWindow.enterFullscreen()
+          : contentWindow.exitFullscreen();
       } catch (ex) {
-        console.debug(
-          'useEventListener message:' + e.data + ' parse error:',
-          ex,
-        );
+        console.debug('Fullscreen transition error:', ex);
       }
     }
-  });
+  }, []);
+
+  const handleFullscreenError = useCallback((e: Event) => {
+    console.debug('Fullscreen Error', e);
+  }, []);
+
+  const handleWindowMessage = useCallback(
+    (e: MessageEvent) => {
+      // Security: reject messages from untrusted origins to prevent cross-origin injection
+      const trusted =
+        e.origin === window.location.origin || e.origin === 'null';
+      if (!trusted) return;
+      if (typeof e.data === 'string') {
+        try {
+          const dataObj = JSON.parse(e.data);
+          if (dataObj.eventID === eventID.current) {
+            handleMessage(dataObj);
+          }
+        } catch (ex) {
+          console.debug(
+            'useEventListener message:' + e.data + ' parse error:',
+            ex,
+          );
+        }
+      }
+    },
+    [handleMessage],
+  );
+
+  useEventListener('message', handleWindowMessage);
 
   const fileOpenerURL: string = useMemo(() => {
     if (openedEntry && openedEntry.path) {
@@ -243,6 +228,8 @@ function FileView(props: Props) {
           <span>ESC</span>
         </Box>
       )}
+      {/* Note: allow-same-origin + allow-scripts is intentional — viewers are
+          trusted same-origin extensions that require direct app access. */}
       <iframe
         ref={fileViewer}
         style={{
@@ -251,9 +238,9 @@ function FileView(props: Props) {
           zIndex: 3,
           border: 0,
         }}
-        allow="clipboard-write *"
+        allow="clipboard-write 'src'; fullscreen 'src'"
+        referrerPolicy="no-referrer"
         src={fileOpenerURL}
-        allowFullScreen
         sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
         id={'FileViewer' + eventID.current}
       />
