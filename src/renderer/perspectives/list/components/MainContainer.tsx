@@ -120,6 +120,10 @@ function ListPerspective(props: Props) {
   const handleSortBy = (handleSort) => {
     if (sortBy !== handleSort) {
       setSortBy(handleSort);
+      // Date-based sort defaults to descending (newest first) on first selection
+      if (handleSort === 'byDateModified') {
+        setOrderBy(false);
+      }
     } else {
       setOrderBy(!orderBy);
     }
