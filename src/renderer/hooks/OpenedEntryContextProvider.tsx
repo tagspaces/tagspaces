@@ -847,7 +847,11 @@ export const OpenedEntryContextProvider = ({
         } else {
           showNotification(t('core:invalidLink'), 'warning', true);
         }
-      } else if (decodedURI.endsWith(location.pathname)) {
+      } else if (
+        decodedURI ===
+        window.location.origin + window.location.pathname
+      ) {
+        // Ignore links that point to the current web app page itself (no ts params)
         return true;
       } else if (
         // External URL case
