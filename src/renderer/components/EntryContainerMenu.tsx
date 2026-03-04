@@ -11,9 +11,11 @@ import {
   OpenNewWindowIcon,
   ParentFolderIcon,
   ReloadIcon,
+  RenameIcon,
 } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
@@ -67,6 +69,7 @@ function EntryContainerMenu(props: Props) {
     sharingParentFolderLink,
   } = useOpenedEntryContext();
   const keyBindings = useSelector(getKeyBindingObject);
+  const { openRenameEntryDialog } = useMenuContext();
   const { currentLocation } = useCurrentLocationContext();
   const { deleteFile, downloadFsEntry } = useIOActionsContext();
   const { openConfirmDialog } = useNotificationContext();
@@ -231,6 +234,23 @@ function EntryContainerMenu(props: Props) {
     }
     if (!currentLocation?.isReadOnly) {
       menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
+      menuItems.push(
+        <MenuItem
+          key={'renameEntryKey'}
+          data-tid="renameEntryTID"
+          aria-label={t('core:renameFile')}
+          onClick={() => {
+            openRenameEntryDialog();
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <RenameIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:renameFile')} />
+          <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
+        </MenuItem>,
+      );
       menuItems.push(
         <MenuItem
           key={'deleteEntryKey'}
@@ -410,6 +430,23 @@ function EntryContainerMenu(props: Props) {
     }
     if (!currentLocation?.isReadOnly) {
       menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
+      menuItems.push(
+        <MenuItem
+          key={'renameFolderKey'}
+          data-tid="renameFolderTID"
+          aria-label={t('core:renameDirectory')}
+          onClick={() => {
+            openRenameEntryDialog();
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <RenameIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:renameDirectory')} />
+          <MenuKeyBinding keyBinding={keyBindings['renameFile']} />
+        </MenuItem>,
+      );
       menuItems.push(
         <MenuItem
           key={'deleteFolderKey'}
