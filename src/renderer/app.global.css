@@ -5,7 +5,6 @@
 @import '~leaflet/dist/leaflet.css';
 @import 'assets/milkdown.css';
 @import 'react-leaflet-markercluster/styles';
-@import 'react-image-gallery/styles/css/image-gallery.css';
 @import 'swiper/css';
 @import 'swiper/css/navigation';
 @import 'rc-table/assets/index.css';
