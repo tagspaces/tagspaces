@@ -82,6 +82,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
         onChange={toggleAutoSave}
         size="small"
         name="autoSave"
+        disabled={!Pro}
       />
     </Tooltip>
   );
