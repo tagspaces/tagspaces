@@ -296,7 +296,7 @@ function SettingsFileTypes() {
       setRows(sortedTypes);
       isValidationInProgress.current = false;
     }
-  }, [supportedFileTypes, firstRender]);
+  }, [supportedFileTypes]);
 
   const updateItems = (
     fileType: TS.FileTypes,
