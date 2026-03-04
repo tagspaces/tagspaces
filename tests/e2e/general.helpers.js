@@ -835,7 +835,7 @@ export async function expectS3FileContain(
 export async function expectFileContain(
   txtToContain = 'etete&5435',
   timeout = 10000,
-  iframeLocator = 'iframe[allowfullscreen]',
+  iframeLocator = 'iframe[referrerpolicy="no-referrer"]',
 ) {
   await expect
     .poll(
@@ -857,7 +857,7 @@ export async function expectFileContain(
 export async function expectFileSizeGt(
   greater = 2,
   timeout = 10000,
-  iframeLocator = 'iframe[allowfullscreen]',
+  iframeLocator = 'iframe[referrerpolicy="no-referrer"]',
 ) {
   await expect
     .poll(

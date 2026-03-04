@@ -441,7 +441,7 @@ test.describe('TST08 - File folder properties', () => {
     const fileName = 'sample.txt';
     await openFile(fileName);
     await expectFileSizeGt(2);
-    const fLocator = await frameLocator('iframe[allowfullscreen]');
+    const fLocator = await frameLocator('iframe[referrerpolicy="no-referrer"]');
     const initContent = await fLocator.locator('body').innerText();
 
     const revisionContent = 'file changed';
@@ -463,7 +463,7 @@ test.describe('TST08 - File folder properties', () => {
     const fileName = 'sample.txt';
     await openFile(fileName);
     await expectFileSizeGt(2);
-    const fLocator = await frameLocator('iframe[allowfullscreen]');
+    const fLocator = await frameLocator('iframe[referrerpolicy="no-referrer"]');
     const initContent = await fLocator.locator('body').innerText();
 
     const revisionContent = 'file revision';
@@ -480,7 +480,7 @@ test.describe('TST08 - File folder properties', () => {
     // await expectFileContain(
     //   initContent,
     //   15000,
-    //   '[data-tid="filePreviewTID"] iframe[allowfullscreen]',
+    //   '[data-tid="filePreviewTID"] iframe[referrerpolicy="no-referrer"]',
     // );
 
     // await clickOn('[data-tid="closeFilePreviewTID"]');
