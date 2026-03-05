@@ -76,14 +76,16 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
         (!Pro ? ' - ' + t('core:thisFunctionalityIsAvailableInPro') : '')
       }
     >
-      <Switch
-        data-tid="autoSaveTID"
-        checked={openedEntry.meta && openedEntry.meta.autoSave}
-        onChange={toggleAutoSave}
-        size="small"
-        name="autoSave"
-        disabled={!Pro}
-      />
+      <span>
+        <Switch
+          data-tid="autoSaveTID"
+          checked={openedEntry.meta && openedEntry.meta.autoSave}
+          onChange={toggleAutoSave}
+          size="small"
+          name="autoSave"
+          disabled={!Pro}
+        />
+      </span>
     </Tooltip>
   );
 
