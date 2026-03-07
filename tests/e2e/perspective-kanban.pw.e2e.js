@@ -33,8 +33,6 @@ import {
   createColumn,
   createMdCard,
   dragKanBanColumn,
-  expectFirstColumnElement,
-  expectLastColumnElement,
   getColumnsIds,
 } from './perspective-kanban.helpers';
 import { openContextEntryMenu } from './test-utils';
@@ -202,7 +200,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=confirmRenameEntry]');
 
     await expectElementExist(
-      '[data-tid=fsEntryName_' + dataTidFormat(name) + 'md]',
+      '[data-tid=fsEntryName_' + dataTidFormat(name) + '_md]',
       true,
     );
   });
@@ -325,28 +323,28 @@ test.describe('TST49 - Perspective KanBan', () => {
       columnName +
       'KanBanColumnTID"]//parent::div)[1]';
     const initScreenshot = await getElementScreenshot(targetSelector);
-    const initStyle = await getAttribute(targetSelector, 'style');
-    //console.log(initStyle);
+    const initClass = await getAttribute(targetSelector, 'class');
+    //console.log(initClass);
     await clickOn('[data-tid=changeBackgroundColorTID]');
     await clickOn('[data-tid=backgroundTID1]');
 
     await waitUntilChanged(
       targetSelector,
-      initStyle, //'height: 100%; background: rgba(0, 0, 0, 0.267);',
-      'style',
+      initClass,
+      'class',
       10000,
     );
 
     const withBgnColorScreenshot = await getElementScreenshot(targetSelector);
-    const bgStyle = await getAttribute(targetSelector, 'style');
-    //console.log(bgStyle);
+    const bgClass = await getAttribute(targetSelector, 'class');
+    //console.log(bgClass);
     expect(initScreenshot).not.toBe(withBgnColorScreenshot);
 
     // remove background
     await clickOn('[data-tid=backgroundClearTID]');
     await clickOn('[data-tid=confirmConfirmResetColorDialog]');
 
-    await waitUntilChanged(targetSelector, bgStyle, 'style', 10000);
+    await waitUntilChanged(targetSelector, bgClass, 'class', 10000);
 
     //const bgRemovedStyle = await getAttribute(targetSelector, 'style');
     //expect(initStyle).toBe(bgRemovedStyle);
@@ -357,21 +355,36 @@ test.describe('TST49 - Perspective KanBan', () => {
   test('TST4912 - Move card to top / bottom [web,s3,electron,_pro]', async () => {
     const cardName1 = 'testCard1';
     const cardName2 = 'testCard2';
-    const card1 = await createMdCard(cardName1);
-    const card2 = await createMdCard(cardName2);
-    await expectFirstColumnElement(card2.id, 'empty_folder');
+    await createMdCard(cardName1);
+    await createMdCard(cardName2);
 
-    await rightClickOn('[data-tid=fsEntryName_' + dataTidFormat(card2.name) + 'md]');
+    const sel1 = '[data-tid=fsEntryName_' + dataTidFormat(cardName1) + '_md]';
+    const sel2 = '[data-tid=fsEntryName_' + dataTidFormat(cardName2) + '_md]';
+
+    async function getY(sel) {
+      return (await global.client.locator(sel).boundingBox()).y;
+    }
+
+    // card2 (newest) should appear before card1 (lower Y = higher in list)
+    expect(await getY(sel2)).toBeLessThan(await getY(sel1));
+
+    await rightClickOn(sel2);
     await clickOn('[data-tid=reorderBottomTID]');
-    await expectLastColumnElement(card2.id, 'empty_folder');
+    await expectElementExist(sel2, true, 5000);
+    // card2 at bottom: card1 should now be above card2
+    expect(await getY(sel1)).toBeLessThan(await getY(sel2));
 
-    await rightClickOn('[data-tid=fsEntryName_' + dataTidFormat(card1.name) + 'md]');
+    await rightClickOn(sel1);
     await clickOn('[data-tid=reorderBottomTID]');
-    await expectLastColumnElement(card1.id, 'empty_folder');
+    await expectElementExist(sel1, true, 5000);
+    // card1 also at bottom: card2 should now be above card1
+    expect(await getY(sel2)).toBeLessThan(await getY(sel1));
 
-    await rightClickOn('[data-tid=fsEntryName_' + dataTidFormat(card1.name) + 'md]');
+    await rightClickOn(sel1);
     await clickOn('[data-tid=reorderTopTID]');
-    await expectFirstColumnElement(card1.id, 'empty_folder');
+    await expectElementExist(sel1, true, 5000);
+    // card1 moved to top: card1 should now be above card2
+    expect(await getY(sel1)).toBeLessThan(await getY(sel2));
   });
 
   test('TST4913 - Show column details [web,s3,electron,_pro]', async () => {
@@ -472,12 +485,12 @@ test.describe('TST49 - Perspective KanBan', () => {
       const { name } = await createMdCard(cardName, columnName);
 
       await expectElementExist(
-        '[data-tid=OpenedTID' + dataTidFormat(name) + 'md]',
+        '[data-tid=OpenedTID' + dataTidFormat(name) + '_md]',
         true,
         5000,
       );
 
-      const cardSelector = '[data-tid=fsEntryName_' + dataTidFormat(name) + 'md]';
+      const cardSelector = '[data-tid="' + columnName + 'CTID"] [data-tid=fsEntryName_' + dataTidFormat(name) + '_md]';
       const initScreenshot = await getElementScreenshot(cardSelector);
 
       await clickOn('[data-tid=changeThumbnailTID]');

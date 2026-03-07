@@ -21,9 +21,10 @@ export async function createMdCard(cardName, column = 'empty_folder') {
   const newValue = await global.client.locator('[data-tid=newEntryDialogInputTID] input').inputValue();
   //console.log('newValue:'+dataTidFormat(newValue));
   await clickOn('[data-tid=createTID]');
-  const cardSelector = '[data-tid=fsEntryName_' + dataTidFormat(newValue) + 'md]';
-  await expectElementExist(cardSelector, true, 5000);
-  const card = await global.client.locator(cardSelector);
+  const colSelector = '[data-tid="' + column + 'CTID"]';
+  const cardSelector = '[data-tid=fsEntryName_' + dataTidFormat(newValue) + '_md]';
+  await expectElementExist(colSelector + ' ' + cardSelector, true, 5000);
+  const card = await global.client.locator(colSelector).locator(cardSelector);
   const parent = await card.locator('..');
   const id = await parent.getAttribute('data-entry-id');
   return {id,name: newValue};
