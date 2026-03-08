@@ -67,18 +67,26 @@ function FileView(props: Props) {
         }
       };
     }
-    if (fscreen.fullscreenEnabled) {
-      fscreen.addEventListener(
-        'fullscreenchange',
-        handleFullscreenChange,
-        false,
-      );
-      fscreen.addEventListener('fullscreenerror', handleFullscreenError, false);
+    if (!AppConfig.isIOS) {
+      if (fscreen.fullscreenEnabled) {
+        fscreen.addEventListener(
+          'fullscreenchange',
+          handleFullscreenChange,
+          false,
+        );
+        fscreen.addEventListener(
+          'fullscreenerror',
+          handleFullscreenError,
+          false,
+        );
+      }
     }
 
     return () => {
-      fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
-      fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
+      if (!AppConfig.isIOS) {
+        fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
+        fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
+      }
     };
   }, []);
 
