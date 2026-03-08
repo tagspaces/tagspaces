@@ -18,23 +18,18 @@
  under the License.
 -->
 <widget xmlns     = "http://www.w3.org/ns/widgets"
-        id        = "io.cordova.helloCordova"
+        id        = "org.apache.cordova.hellocordova"
         version   = "2.0.0">
 
     <!-- Preferences for iOS -->
     <preference name="AllowInlineMediaPlayback" value="false" />
-    <preference name="BackupWebStorage" value="cloud" />
     <preference name="DisallowOverscroll" value="false" />
     <preference name="EnableViewportScale" value="false" />
-    <preference name="KeyboardDisplayRequiresUserAction" value="true" />
+    <preference name="MediaPermissionGrantType" value="grantIfSameHostElsePrompt" />
     <preference name="MediaTypesRequiringUserActionForPlayback" value="none" />
     <preference name="SuppressesIncrementalRendering" value="false" />
     <preference name="SuppressesLongPressGesture" value="false" />
     <preference name="Suppresses3DTouchGesture" value="false" />
-    <preference name="GapBetweenPages" value="0" />
-    <preference name="PageLength" value="0" />
-    <preference name="PaginationBreakingMode" value="page" /> <!-- page, column -->
-    <preference name="PaginationMode" value="unpaginated" /> <!-- unpaginated, leftToRight, topToBottom, bottomToTop, rightToLeft -->
 
     <feature name="CDVWebViewEngine">
         <param name="ios-package" value="CDVWebViewEngine" />
@@ -59,6 +54,10 @@
     </feature>
     <feature name="GestureHandler">
         <param name="ios-package" value="CDVGestureHandler"/>
+        <param name="onload" value="true"/>
+    </feature>
+    <feature name="StatusBarInternal">
+        <param name="ios-package" value="CDVStatusBarInternal"/>
         <param name="onload" value="true"/>
     </feature>
 

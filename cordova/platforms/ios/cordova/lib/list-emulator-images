@@ -19,7 +19,7 @@
        under the License.
 */
 
-const { run } = require('./listEmulatorImages');
+const { run } = require('cordova-ios/lib/listEmulatorImages');
 
 run().then(names => {
     names.forEach(name => {

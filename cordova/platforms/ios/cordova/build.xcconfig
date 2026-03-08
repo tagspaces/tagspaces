@@ -21,25 +21,3 @@
 // XCode build settings shared by all Build Configurations.
 // Settings are overridden by configuration-level .xcconfig file (build-release/build-debug).
 //
-
-HEADER_SEARCH_PATHS = "$(TARGET_BUILD_DIR)/usr/local/lib/include" "$(OBJROOT)/UninstalledProducts/include" "$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include" "$(BUILT_PRODUCTS_DIR)"
-OTHER_LDFLAGS = -ObjC
-
-// Type of signing identity used for codesigning, resolves to first match of given type.
-// "iPhone Developer": Development builds (default, local only; iOS Development certificate) or "iPhone Distribution": Distribution builds (Adhoc/In-House/AppStore; iOS Distribution certificate)
-CODE_SIGN_IDENTITY = iPhone Developer
-CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
-
-// (CB-9721) Set ENABLE_BITCODE to NO in build.xcconfig
-ENABLE_BITCODE = NO
-
-// (CB-9719) Set CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES to YES in build.xcconfig
-CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
-
-// (CB-10072)
-SWIFT_OBJC_BRIDGING_HEADER = $(PROJECT_DIR)/$(PROJECT_NAME)/Bridging-Header.h
-
-// (CB-11854)
-CODE_SIGN_ENTITLEMENTS = $(PROJECT_DIR)/$(PROJECT_NAME)/Entitlements-$(CONFIGURATION).plist
-
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) WK_WEB_VIEW_ONLY=$(WK_WEB_VIEW_ONLY)

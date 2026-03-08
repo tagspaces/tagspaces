@@ -28,5 +28,7 @@ platforms/android/app/build/*
 platforms/android/build/*
 platforms/android/CordovaLib/build/*
 platforms/android/assets/www/*
+platforms/ios/www/dist/*
+platforms/ios/www/modules/*
 plugins/**/*
 

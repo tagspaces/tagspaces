@@ -19,7 +19,7 @@
        under the License.
 */
 
-const { run } = require('./listDevices');
+const { run } = require('cordova-ios/lib/listDevices');
 
 run().then(devices => {
     devices.forEach(device => {

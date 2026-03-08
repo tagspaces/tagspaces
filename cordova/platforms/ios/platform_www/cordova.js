@@ -1,5 +1,5 @@
-// Platform: ios
-// cordova-js rel/6.0.0-10-g07379820
+// Platform: cordova-ios
+// cordova-js 6.1.0
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '6.2.0';
+var PLATFORM_VERSION_BUILD_LABEL = '8.0.0';
 // file: src/scripts/require.js
 var require;
 var define;
@@ -866,7 +866,7 @@ module.exports = channel;
 
 });
 
-// file: ../cordova-ios/cordova-js-src/exec.js
+// file: ../../cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /**
@@ -905,7 +905,7 @@ function massageMessageNativeToJs (message) {
             return ret.buffer;
         };
         var base64ToArrayBuffer = function (b64) {
-            return stringToArrayBuffer(atob(b64)); // eslint-disable-line no-undef
+            return stringToArrayBuffer(atob(b64));
         };
         message = base64ToArrayBuffer(message.data);
     }
@@ -969,7 +969,7 @@ iOSExec.nativeCallback = function (callbackId, status, message, keepCallback, de
     var success = status === 0 || status === 1;
     var args = convertMessageToArgsNativeToJs(message);
     Promise.resolve().then(function () {
-        cordova.callbackFromNative(callbackId, success, status, args, keepCallback); // eslint-disable-line
+        cordova.callbackFromNative(callbackId, success, status, args, keepCallback);
     });
 };
 
@@ -1233,7 +1233,7 @@ exports.reset();
 
 });
 
-// file: ../cordova-ios/cordova-js-src/platform.js
+// file: ../../cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
@@ -1251,13 +1251,17 @@ module.exports = {
         // see the file under plugin/ios/launchscreen.js
         require('cordova/modulemapper').clobbers('cordova/plugin/ios/launchscreen', 'navigator.splashscreen');
 
+        // Attach the internal statusBar utility to window.statusbar
+        // see the file under plugin/ios/statusbar.js
+        require('cordova/modulemapper').clobbers('cordova/plugin/ios/statusbar', 'window.statusbar');
+
         require('cordova/channel').onNativeReady.fire();
     }
 };
 
 });
 
-// file: ../cordova-ios/cordova-js-src/plugin/ios/console.js
+// file: ../../cordova-js-src/plugin/ios/console.js
 define("cordova/plugin/ios/console", function(require, exports, module) {
 
 // ------------------------------------------------------------------------------
@@ -1428,7 +1432,7 @@ for (var key in console) {
 
 });
 
-// file: ../cordova-ios/cordova-js-src/plugin/ios/launchscreen.js
+// file: ../../cordova-js-src/plugin/ios/launchscreen.js
 define("cordova/plugin/ios/launchscreen", function(require, exports, module) {
 
 var exec = require('cordova/exec');
@@ -1446,7 +1450,7 @@ module.exports = launchscreen;
 
 });
 
-// file: ../cordova-ios/cordova-js-src/plugin/ios/logger.js
+// file: ../../cordova-js-src/plugin/ios/logger.js
 define("cordova/plugin/ios/logger", function(require, exports, module) {
 
 // ------------------------------------------------------------------------------
@@ -1779,7 +1783,74 @@ document.addEventListener('deviceready', logger.__onDeviceReady, false);
 
 });
 
-// file: ../cordova-ios/cordova-js-src/plugin/ios/wkwebkit.js
+// file: ../../cordova-js-src/plugin/ios/statusbar.js
+define("cordova/plugin/ios/statusbar", function(require, exports, module) {
+
+var exec = require('cordova/exec');
+
+var statusBarVisible = true;
+var statusBar = {};
+
+// This <script> element is explicitly used by Cordova's statusbar for computing color. (Do not use this element)
+const statusBarScript = document.createElement('script');
+document.head.appendChild(statusBarScript);
+
+Object.defineProperty(statusBar, 'visible', {
+    configurable: false,
+    enumerable: true,
+    get: function () {
+        if (window.StatusBar) {
+            // Let the CDVStatusBar plugin handle it
+            return window.StatusBar.isVisible;
+        }
+
+        return statusBarVisible;
+    },
+    set: function (value) {
+        if (window.StatusBar) {
+            // Let the CDVStatusBar plugin handle it
+            if (value) {
+                window.StatusBar.show();
+            } else {
+                window.StatusBar.hide();
+            }
+        } else {
+            statusBarVisible = value;
+            exec(null, null, 'StatusBarInternal', 'setVisible', [!!value]);
+        }
+    }
+});
+
+Object.defineProperty(statusBar, 'setBackgroundColor', {
+    configurable: false,
+    enumerable: false,
+    writable: false,
+    value: function (value) {
+        statusBarScript.style.color = value;
+        var rgbStr = window.getComputedStyle(statusBarScript).getPropertyValue('color');
+
+        if (!rgbStr.match(/^rgb/)) {
+            return;
+        }
+
+        var rgbVals = rgbStr.match(/\d+/g).map(function (v) { return parseInt(v, 10); });
+        if (rgbVals.length < 3) {
+            return;
+        }
+
+        if (window.StatusBar) {
+            window.StatusBar.backgroundColorByHexString('#' + rgbVals[0].toString(16).padStart(2, '0') + rgbVals[1].toString(16).padStart(2, '0') + rgbVals[2].toString(16).padStart(2, '0'));
+        } else {
+            exec(null, null, 'StatusBarInternal', 'setBackgroundColor', rgbVals);
+        }
+    }
+});
+
+module.exports = statusBar;
+
+});
+
+// file: ../../cordova-js-src/plugin/ios/wkwebkit.js
 define("cordova/plugin/ios/wkwebkit", function(require, exports, module) {
 
 var exec = require('cordova/exec');

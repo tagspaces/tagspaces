@@ -22,9 +22,6 @@
 //
 
 #include "build.xcconfig"
-
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) DEBUG=1
-
 #include "build-extras.xcconfig"
 
 // (CB-11792)

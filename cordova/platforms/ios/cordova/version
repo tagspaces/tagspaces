@@ -19,13 +19,6 @@
     under the License.
 */
 
-/*
-
-    Returns the VERSION of CordovaLib used.
-    Note: it does not work if the --shared option was used to create the project.
-*/
-
-// Coho updates this line
 const Api = require('./Api');
 
 console.log(Api.version());

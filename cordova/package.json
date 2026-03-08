@@ -10,7 +10,6 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-background-mode": "0.7.3",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-file-opener2": "^3.0.5",
@@ -36,21 +35,21 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-androidx-adapter": {},
-      "cordova-plugin-add-swift-support": {},
       "com-darryncampbell-cordova-plugin-intent": {},
-      "cordova-plugin-androidx": {}
+      "cordova-plugin-androidx": {},
+      "com.whebcraft.cordova.plugin.downloader": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   },
   "devDependencies": {
     "@globules-io/cordova-plugin-ios-xhr": "^1.0.4",
-    "bamboo.cordova.plugin.downloader": "git+https://github.com/sytolk/cordova-plugin-downloader.git",
+    "bamboo.cordova.plugin.downloader": "github:sytolk/cordova-plugin-downloader",
     "com-darryncampbell-cordova-plugin-intent": "^2.0.0",
     "cordova-android": "^9.1.0",
-    "cordova-ios": "^6.2.0",
+    "cordova-ios": "^8.0.0",
     "cordova-ourcodeworld-filebrowser": "git+https://github.com/muhammed-noufal/cordova-ourcodeworld-filebrowser.git",
     "cordova-plugin-androidx": "^3.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.3",
