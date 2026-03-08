@@ -18,8 +18,11 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  AddIcon,
   ArrowDropDownIcon,
   CloseIcon,
+  OrIcon,
+  RemoveIcon,
   RemoveTagIcon,
 } from '-/components/CommonIcons';
 import {
@@ -1388,11 +1391,37 @@ function SearchAutocomplete(props: Props) {
               const action = actionValues.current.find(
                 (a) => a.fullName === option || a.label === option,
               );
+
+              let booleanTagIcon = option;
+              if (option.startsWith('+')) {
+                booleanTagIcon = (
+                  <>
+                    <AddIcon fontSize="small" sx={{ marginRight: '3px' }} />
+                    {option.slice(1)}
+                  </>
+                );
+              } else if (option.startsWith('-')) {
+                booleanTagIcon = (
+                  <>
+                    <RemoveIcon fontSize="small" />
+                    {option.slice(1)}
+                  </>
+                );
+              } else if (option.startsWith('|')) {
+                booleanTagIcon = (
+                  <>
+                    <OrIcon fontSize="small" />
+                    {option.slice(1)}
+                  </>
+                );
+              }
+
               return (
                 <Box
                   key={'button_' + index}
                   sx={{
                     border: '1px solid gray',
+                    display: 'flex',
                     minHeight: '0',
                     minWidth: '0',
                     margin: '2px',
@@ -1402,7 +1431,7 @@ function SearchAutocomplete(props: Props) {
                     paddingBottom: '0px',
                     paddingRight: '0px',
                     paddingLeft: '4px',
-                    borderRadius: AppConfig.defaultCSSRadius,
+                    borderRadius: '7px', // AppConfig.defaultCSSRadius,
                     ...(action &&
                       action.color && {
                         color: action.textcolor,
@@ -1417,10 +1446,12 @@ function SearchAutocomplete(props: Props) {
                     <Box
                       sx={{
                         fontSize: '13px',
-                        display: 'inline',
+                        display: 'flex',
+                        alignItems: 'center',
+                        height: 20,
                       }}
                     >
-                      {option}
+                      {booleanTagIcon}
                     </Box>
                   ) : (
                     <TsButton

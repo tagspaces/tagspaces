@@ -18,13 +18,19 @@
 
 import ExportIcon from '@mui/icons-material/ExitToApp';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import TagsIcon from '@mui/icons-material/LocalOfferOutlined';
+import RemoveCircleOutlineOutlined from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import MarkdownRawIcon from '@mui/icons-material/SimCardDownloadOutlined';
 import SvgIcon from '@mui/material/SvgIcon';
 
-import TagsIcon from '@mui/icons-material/LocalOfferOutlined';
+export const RemoveIcon = (props) => <RemoveCircleOutlineOutlined {...props} />;
 
 export const TagIcon = (props) => (
   <TagsIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
+);
+
+export const OrIcon = (props) => (
+  <RemoveCircleOutlineOutlined sx={{ transform: 'rotate(90deg)' }} {...props} />
 );
 
 export const TagLibraryIcon = (props) => (
@@ -70,8 +76,6 @@ export { default as HelpIcon } from '@mui/icons-material/HelpOutlineOutlined';
 export { default as InfoIcon } from '@mui/icons-material/InfoOutlined';
 
 export { default as EntryPropertiesIcon } from '@mui/icons-material/InfoOutlined';
-
-export { default as RemoveIcon } from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
 export { default as RemoveTagIcon } from '@mui/icons-material/Close';
 
