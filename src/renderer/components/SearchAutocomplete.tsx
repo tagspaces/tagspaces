@@ -1403,14 +1403,14 @@ function SearchAutocomplete(props: Props) {
               } else if (option.startsWith('-')) {
                 booleanTagIcon = (
                   <>
-                    <RemoveIcon fontSize="small" />
+                    <RemoveIcon fontSize="small" sx={{ marginRight: '3px' }} />
                     {option.slice(1)}
                   </>
                 );
               } else if (option.startsWith('|')) {
                 booleanTagIcon = (
                   <>
-                    <OrIcon fontSize="small" />
+                    <OrIcon fontSize="small" sx={{ marginRight: '3px' }} />
                     {option.slice(1)}
                   </>
                 );
