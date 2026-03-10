@@ -1,7 +1,6 @@
 ![TagSpaces Logo](https://www.tagspaces.org/img/tagspaces-logo.svg)
 
 [![GitHub All Releases](https://img.shields.io/github/downloads/tagspaces/tagspaces/total.svg)](https://github.com/tagspaces/tagspaces/releases)
-[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20TagSpaces%20Guru-006BFF)](https://gurubase.io/g/tagspaces)
 
 # TagSpaces
 
