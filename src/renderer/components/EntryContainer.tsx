@@ -450,11 +450,8 @@ function EntryContainer() {
   const savingFile = (force = false) => {
     try {
       if (
-        fileViewer &&
-        fileViewer.current &&
-        fileViewer.current.contentWindow &&
         // @ts-ignore
-        fileViewer.current.contentWindow.getContent
+        fileViewer?.current?.contentWindow?.getContent
       ) {
         //check if file is changed
         if (fileChanged || force) {
@@ -464,12 +461,16 @@ function EntryContainer() {
         }
       } else {
         //console.log('saving crepe file');
-        fileViewer.current.contentWindow.postMessage(
+        fileViewer?.current?.contentWindow.postMessage(
           { action: 'savingFile' },
           '*',
         );
       }
     } catch (e) {
+      fileViewer?.current?.contentWindow.postMessage(
+        { action: 'savingFile' },
+        '*',
+      );
       isSavingInProgress.current = false;
       console.debug('function getContent not exist for file:', e);
     }
