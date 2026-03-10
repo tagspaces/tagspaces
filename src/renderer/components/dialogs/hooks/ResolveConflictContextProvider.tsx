@@ -144,7 +144,12 @@ export const ResolveConflictContextProvider = ({
     if (!location?.isReadOnly) {
       // write revisions
       if (Pro && revisionsEnabled && !isMeta(fileOpen.path)) {
-        const id = await getMetadataID(fileOpen.path, fileOpen.uuid, location);
+        const id = await getMetadataID(
+          fileOpen.path,
+          fileOpen.uuid,
+          location,
+          fileOpen.isFile,
+        );
         const backupDir = getBackupFileDir(fileOpen.path, fileOpen.uuid);
         location.listDirectoryPromise(backupDir, []).then(async (backup) => {
           const haveBackup = backup.some((b) =>

@@ -596,6 +596,7 @@ export const OpenedEntryContextProvider = ({
           fsEntry.path,
           fsEntry.uuid,
           loc,
+          fsEntry.isFile,
         );
         if (meta) {
           entryForOpening.uuid = meta.id;

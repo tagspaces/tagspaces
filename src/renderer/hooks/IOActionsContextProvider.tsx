@@ -179,11 +179,13 @@ type IOActionsContextData = {
     path: string,
     id: string,
     location: CommonLocation,
+    isFile: boolean,
   ) => Promise<TS.FileSystemEntryMeta>;
   getMetadataID: (
     path: string,
     id: string,
     location: CommonLocation,
+    isFile: boolean,
   ) => Promise<string>;
   saveFsEntryMeta: (
     entry: TS.FileSystemEntry,
@@ -1849,8 +1851,9 @@ export const IOActionsContextProvider = ({
     path: string,
     id: string,
     location: CommonLocation,
+    isFile: boolean,
   ): Promise<string> {
-    return getMetadata(path, id, location)
+    return getMetadata(path, id, location, isFile)
       .then((metaData) => metaData.id)
       .catch((err) => {
         console.log('Error getting metadata id: ' + err);
@@ -1862,50 +1865,37 @@ export const IOActionsContextProvider = ({
     path: string,
     id: string,
     location: CommonLocation,
+    isFile: boolean,
   ): Promise<TS.FileSystemEntryMeta> {
+    const isMetaPath =
+      path.indexOf(location.getDirSeparator() + AppConfig.metaFolder) !== -1 ||
+      path.indexOf(AppConfig.metaFolder + location.getDirSeparator()) !== -1;
+
     return location
       .loadMetaDataPromise(path)
       .then((fsEntryMeta: TS.FileSystemEntryMeta) => {
-        if (!fsEntryMeta) {
-          if (
-            path.indexOf(location.getDirSeparator() + AppConfig.metaFolder) ===
-              -1 &&
-            path.indexOf(AppConfig.metaFolder + location.getDirSeparator()) ===
-              -1 &&
-            !location.isReadOnly
-          ) {
-            // create new meta id to not be changed -> next time listDirectory will get the same id for the file from meta
-            const metaData = { id: id };
-            const metaFilePath = path.endsWith(location.getDirSeparator())
-              ? getMetaFileLocationForDir(path, location.getDirSeparator())
-              : getMetaFileLocationForFile(path, location.getDirSeparator());
-
-            return saveTextFilePromise(
-              { path: metaFilePath, locationID: location.uuid },
-              JSON.stringify(metaData),
-              false,
-            )
-              .then(() => metaData)
-              .catch((e) => {
-                console.error(e);
-                return metaData;
-              });
-          } else {
-            return { id: id };
-          }
-        } else if (fsEntryMeta?.id) {
+        if (fsEntryMeta?.id) {
           return fsEntryMeta;
-        } else if (!fsEntryMeta?.id && !location.isReadOnly) {
-          return saveFsEntryMeta(location.toFsEntry(path, fsEntryMeta.isFile), {
+        } else if (!location.isReadOnly) {
+          // meta exists but has no id — save it with the id
+          return saveFsEntryMeta(location.toFsEntry(path, isFile), {
             ...fsEntryMeta,
             id: id,
-          }).then((fsEntryMeta) => fsEntryMeta);
+          })
+            .then((meta) => meta ?? { id: id })
+            .catch(() => ({ id: id }));
         } else {
           return { id: id };
         }
       })
-      .catch((e) => {
-        console.log('Error getting metadata for: ' + path + ' - ' + e);
+      .catch(() => {
+        // loadMetaDataPromise throws when no meta file exists yet
+        if (!isMetaPath && !location.isReadOnly) {
+          // create new meta sidecar so id is persisted across sessions
+          return saveFsEntryMeta(location.toFsEntry(path, isFile), { id: id })
+            .then((meta) => meta ?? { id: id })
+            .catch(() => ({ id: id }));
+        }
         return { id: id };
       });
   }
@@ -1925,7 +1915,7 @@ export const IOActionsContextProvider = ({
           meta.description !== undefined
         ) {
           const uuid = entry.isFile ? entry.uuid : entry.meta?.id;
-          getMetadataID(entry.path, uuid, location).then((id) => {
+          getMetadataID(entry.path, uuid, location, entry.isFile).then((id) => {
             if (fsEntryMeta && fsEntryMeta.description) {
               const backupDir = getBackupDir(entry);
               location.listDirectoryPromise(backupDir, []).then((backup) => {
@@ -2356,7 +2346,7 @@ export const IOActionsContextProvider = ({
     currentDirPath: string,
     dir: TS.OrderVisibilitySettings,
   ): Promise<TS.FileSystemEntryMeta> {
-    return getMetadata(currentDirPath, dir.uuid, currentLocation)
+    return getMetadata(currentDirPath, dir.uuid, currentLocation, false)
       .then((fsEntryMeta) => {
         const customOrder: TS.CustomOrder = fsEntryMeta.customOrder
           ? fsEntryMeta.customOrder

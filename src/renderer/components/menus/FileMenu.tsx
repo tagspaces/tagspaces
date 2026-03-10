@@ -134,6 +134,7 @@ function FileMenu(props: Props) {
       selectedEntries[0].path,
       selectedEntries[0].uuid,
       currentLocation,
+      selectedEntries[0].isFile,
     ).then((id) =>
       generateSharingLink(currentLocationId, relativePath, undefined, id),
     );

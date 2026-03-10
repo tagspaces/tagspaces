@@ -150,14 +150,17 @@ function DirectoryMenu(props: Props) {
         selectedEntries[0] ? selectedEntries[0].name : currentDirectoryPath,
         currentLocation?.getDirSeparator(),
       );
-      return getMetadataID(entryPath, selectedEntries[0]?.uuid, tmpLoc).then(
-        (id) => {
-          return {
-            url: generateSharingLink(locationID, undefined, relativePath, id),
-            name: folderName,
-          };
-        },
-      );
+      return getMetadataID(
+        entryPath,
+        selectedEntries[0]?.uuid,
+        tmpLoc,
+        false,
+      ).then((id) => {
+        return {
+          url: generateSharingLink(locationID, undefined, relativePath, id),
+          name: folderName,
+        };
+      });
     });
   }
 
