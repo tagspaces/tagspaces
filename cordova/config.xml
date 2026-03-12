@@ -57,7 +57,7 @@
 			</intent-filter>
 		</config-file>
 		<config-file parent="/manifest/application" target="AndroidManifest.xml">
-			<provider android:name="android.support.v4.content.FileProvider"
+			<provider android:name="androidx.core.content.FileProvider"
 					  android:authorities="${applicationId}.provider"
 					  android:exported="false"
 					  android:grantUriPermissions="true">

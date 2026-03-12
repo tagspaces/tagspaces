@@ -36,8 +36,7 @@
       },
       "cordova-plugin-androidx-adapter": {},
       "com-darryncampbell-cordova-plugin-intent": {},
-      "cordova-plugin-androidx": {},
-      "com.whebcraft.cordova.plugin.downloader": {}
+      "cordova-plugin-androidx": {}
     },
     "platforms": [
       "android",
