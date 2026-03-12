@@ -300,8 +300,14 @@ export class CommonLocation implements TS.Location {
       return this.getURLforPathInt(bgndPath, expirationInSeconds);
     }
 
-    const normalizedUrl = this.normalizeUrl(bgndPath) + (dt ? '?' + dt : '');
-    return Promise.resolve(normalizedUrl);
+    // For local files load as blob URL to bypass browser cache
+    return this.getFileContentPromise(bgndPath, 'arraybuffer')
+      .then((content) => {
+        if (!content) return undefined;
+        const blob = new Blob([content as BlobPart], { type: 'image/jpeg' });
+        return URL.createObjectURL(blob);
+      })
+      .catch(() => undefined);
   };
 
   listDirectoryPromise = (

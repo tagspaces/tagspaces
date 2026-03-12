@@ -51,8 +51,8 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useReducer,
   useRef,
+  useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import GridCellsContainer from './GridCellsContainer';
@@ -98,7 +98,7 @@ function GridPagination(props: Props) {
         Pro.contextProviders.ThumbDialogContext,
       )
     : undefined;
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
   const currentLocation = findLocation();
   const theme = useTheme();
   const pageFiles = useMemo(() => getResentPageFiles(), [getResentPageFiles]);
@@ -114,8 +114,8 @@ function GridPagination(props: Props) {
     [showPagination, sortedDirContent.length, gridPageLimit],
   );
 
-  const backgroundImage = useRef<string>('none');
-  const thumbImage = useRef<string>('none');
+  const [backgroundImage, setBackgroundImage] = useState<string>('none');
+  const [thumbImage, setThumbImage] = useState<string>('none');
   const containerEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -126,20 +126,12 @@ function GridPagination(props: Props) {
       currentLocation
         .getFolderBgndPath(currentDirectoryPath, directoryMeta?.lastUpdated)
         .then((bgPath) => {
-          const bgImage = `url("${bgPath}")`;
-          if (bgImage !== backgroundImage.current) {
-            backgroundImage.current = bgImage;
-            forceUpdate();
-          }
+          setBackgroundImage(bgPath ? `url("${bgPath}")` : 'none');
         });
       currentLocation
         .getFolderThumbPath(currentDirectoryPath, directoryMeta?.lastUpdated)
         .then((thumbPath) => {
-          const thbImage = `url("${thumbPath}")`;
-          if (thbImage !== thumbImage.current) {
-            thumbImage.current = thbImage;
-            forceUpdate();
-          }
+          setThumbImage(thumbPath ? `url("${thumbPath}")` : 'none');
         });
     }
   }, [currentDirectoryPath, directoryMeta?.lastUpdated, currentLocation]);
@@ -292,7 +284,7 @@ function GridPagination(props: Props) {
         <Box
           sx={{
             ':hover': { border: '1px dashed gray !important' },
-            backgroundImage: thumbImage.current,
+            backgroundImage: thumbImage,
             borderRadius: AppConfig.defaultCSSRadius,
             border: '1px solid transparent',
             height: 100,
@@ -390,7 +382,7 @@ function GridPagination(props: Props) {
         }
         onClick={onClick}
         sx={{
-          backgroundImage: backgroundImage.current,
+          backgroundImage: backgroundImage,
           height: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
