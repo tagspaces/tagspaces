@@ -246,7 +246,7 @@ function FileView(props: Props) {
           zIndex: 3,
           border: 0,
         }}
-        allow="clipboard-write 'src'; fullscreen 'src'"
+        allow="clipboard-write 'src'; fullscreen 'src'; camera 'none'; microphone 'none'; geolocation 'none'; payment 'none'"
         referrerPolicy="no-referrer"
         src={fileOpenerURL}
         sandbox="allow-same-origin allow-scripts allow-modals allow-downloads"
