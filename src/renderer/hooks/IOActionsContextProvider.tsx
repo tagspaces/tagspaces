@@ -1905,6 +1905,9 @@ export const IOActionsContextProvider = ({
     meta: any,
   ): Promise<TS.FileSystemEntryMeta> {
     const location = findLocation(entry.locationID);
+    if (location?.isReadOnly) {
+      return Promise.resolve(undefined);
+    }
     return location
       .loadMetaDataPromise(entry.path)
       .then((fsEntryMeta) => {
