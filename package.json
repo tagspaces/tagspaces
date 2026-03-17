@@ -238,7 +238,7 @@
     "zod-to-json-schema": "3.25.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.220"
+    "@tagspacespro/tagspacespro": "5.0.221"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.7.2",
