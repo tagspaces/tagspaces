@@ -1007,6 +1007,7 @@ export const DirectoryContentContextProvider = ({
     location: CommonLocation = undefined,
   ): Promise<boolean> {
     if (dirPath !== undefined) {
+      manualPerspective.current = 'unspecified';
       /*if (
         location &&
         currentLocation &&
@@ -1160,7 +1161,8 @@ export const DirectoryContentContextProvider = ({
       return directoryMeta.current.perspective;
     }
     return manualPerspective.current;
-  }, [currentDirectory.current, manualPerspective.current]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ignored, defaultPerspective]);
 
   function setManualDirectoryPerspective(
     perspective: TS.PerspectiveType,
