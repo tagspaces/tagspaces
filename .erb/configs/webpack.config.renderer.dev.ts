@@ -188,18 +188,27 @@ const configuration: webpack.Configuration = {
     },
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    static: {
-      // directory: webpackPaths.distRendererPath, //'src/renderer/'),
-      publicPath: '/', //`http://localhost:${port}/renderer`, //'/', //'/src/renderer',//'/release/app/dist',  //'/assets',
-      //staticOptions: {},
-      //serveIndex: true,
-      //watch: true
-      /*watch: {
-        aggregateTimeout: 300,
-        ignored: /node_modules/,
-        poll: 100,
-      },*/
-    },
+    static: [
+      {
+        // directory: webpackPaths.distRendererPath, //'src/renderer/'),
+        publicPath: '/', //`http://localhost:${port}/renderer`, //'/', //'/src/renderer',//'/release/app/dist',  //'/assets',
+        //staticOptions: {},
+        //serveIndex: true,
+        //watch: true
+        /*watch: {
+          aggregateTimeout: 300,
+          ignored: /node_modules/,
+          poll: 100,
+        },*/
+      },
+      {
+        // Serve release/app/node_modules at /modules so that extension paths
+        // like 'modules/@tagspaces/extensions/text-viewer' resolve correctly
+        // in dev mode (mirrors the '../../node_modules/' path used in prod).
+        directory: webpackPaths.appNodeModulesPath,
+        publicPath: '/modules',
+      },
+    ],
     historyApiFallback: {
       verbose: true,
       // disableDotRule: false,

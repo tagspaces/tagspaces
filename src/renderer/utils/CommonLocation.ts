@@ -181,9 +181,19 @@ export class CommonLocation implements TS.Location {
       rest = rest.replace(/^\/+/, '//');
     }
 
-    // 5) ensure a leading slash for non‑HTTP URLs on non‑Windows
+    // 6) ensure a leading slash for non‑HTTP URLs on non‑Windows
     if (!protocol && !AppConfig.isWin && !rest.startsWith('/')) {
       rest = '/' + rest;
+    }
+
+    // 7) In Electron, local paths without a protocol must use tsfile:// so they
+    //    load correctly regardless of the page origin (file:// in prod,
+    //    http://localhost in dev). Without this, bare paths like /Users/…
+    //    resolve to http://localhost:1212/Users/… in dev and fail.
+    //    Windows drive paths (C:/…) need a leading slash: tsfile:///C:/…
+    if (!protocol && AppConfig.isElectron) {
+      const localRest = rest.startsWith('/') ? rest : '/' + rest;
+      return AppConfig.mediaProtocol + '://' + localRest;
     }
 
     return protocol + rest;
@@ -214,9 +224,21 @@ export class CommonLocation implements TS.Location {
     if (!entry || !entry.path) {
       return undefined;
     }
-    return entry.isFile
+    const rawPath = entry.isFile
       ? getThumbFileLocationForFile(entry.path, this.getDirSeparator(), encoded)
       : getThumbFileLocationForDirectory(entry.path, this.getDirSeparator());
+    // In Electron, prefix bare paths with tsfile:// so they load correctly from
+    // any page origin (file:// in prod, http://localhost in dev).
+    if (rawPath && AppConfig.isElectron) {
+      // Normalize backslashes (Windows) and ensure a leading slash so the
+      // resulting URL is tsfile:///… on all platforms (tsfile:///C:/… on Win).
+      const normalized = rawPath.replaceAll(this.getDirSeparator(), '/');
+      const withLeadingSlash = normalized.startsWith('/')
+        ? normalized
+        : '/' + normalized;
+      return AppConfig.mediaProtocol + '://' + withLeadingSlash;
+    }
+    return rawPath;
   };
   /**
    * @param path
