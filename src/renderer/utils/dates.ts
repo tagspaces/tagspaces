@@ -642,10 +642,16 @@ export function formatDateForEchart(date) {
 
 export function extractDate(value: string): Date | null {
   let parsingValue = value;
-  // handling for split tags like booked-20251224
+  // handling for compound tags like booked-20251224 or some-tag-20251224
   const values = parsingValue.split('-');
-  if (values.length > 0) {
-    parsingValue = values[1];
+  if (values.length > 1) {
+    parsingValue = values[values.length - 1];
+  }
+
+  // Strip time component from datetime tags like 20240218T114708
+  const tIndex = parsingValue.indexOf('T');
+  if (tIndex !== -1) {
+    parsingValue = parsingValue.slice(0, tIndex);
   }
 
   let parsedDate = parseYearMonthDayString(parsingValue);
