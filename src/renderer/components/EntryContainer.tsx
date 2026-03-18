@@ -222,7 +222,10 @@ function EntryContainer() {
             .then((base64Image) => {
               const data = base64ToUint8Array(base64Image);
 
-              const thumbPath = cLocation.getThumbEntryPath(openedEntry);
+              const rawThumbPath = cLocation.getThumbEntryPath(openedEntry);
+              const thumbPath = rawThumbPath.startsWith('tsfile://')
+                ? rawThumbPath.substring(9)
+                : rawThumbPath;
               saveBinaryFilePromise(
                 { path: thumbPath },
                 data, //new Blob([data]), //data.buffer ? data.buffer :
