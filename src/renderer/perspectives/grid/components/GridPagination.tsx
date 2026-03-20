@@ -407,6 +407,8 @@ function GridPagination(props: Props) {
                 isLast={index === pageFiles.length - 1}
               />
             ))}
+            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }} />
             {pageFiles.length < 1 &&
               renderEmptyState(t('core:noFileFolderFound'))}
             {files.length < 1 &&
