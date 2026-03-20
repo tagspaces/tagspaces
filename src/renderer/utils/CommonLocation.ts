@@ -15,10 +15,10 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 //import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
+import { Pro } from '-/pro';
 import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
-import { Pro } from '-/pro';
 
 export class CommonLocation implements TS.Location {
   uuid: string;
@@ -229,7 +229,8 @@ export class CommonLocation implements TS.Location {
       : getThumbFileLocationForDirectory(entry.path, this.getDirSeparator());
     // In Electron, prefix bare paths with tsfile:// so they load correctly from
     // any page origin (file:// in prod, http://localhost in dev).
-    if (rawPath && AppConfig.isElectron) {
+    // Skip for S3 — those need signed URLs via getURLforPathInt, not tsfile://.
+    if (rawPath && AppConfig.isElectron && !this.haveObjectStoreSupport()) {
       // Normalize backslashes (Windows) and ensure a leading slash so the
       // resulting URL is tsfile:///… on all platforms (tsfile:///C:/… on Win).
       const normalized = rawPath.replaceAll(this.getDirSeparator(), '/');
