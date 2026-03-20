@@ -251,6 +251,14 @@ export default {
       iso: 'es_CL',
       title: 'Español chileno (Chilean Spanish)',
     },
+    {
+      iso: 'da_DK',
+      title: 'dansk (Danish Denmark)',
+    },
+    {
+      iso: 'pl',
+      title: 'polski (Polish)',
+    },
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
   supportedFileTypes: AppConfig.ExtSupportedFileTypes
