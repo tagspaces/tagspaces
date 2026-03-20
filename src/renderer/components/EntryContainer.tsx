@@ -224,7 +224,7 @@ function EntryContainer() {
 
               const rawThumbPath = cLocation.getThumbEntryPath(openedEntry);
               const thumbPath = rawThumbPath.startsWith('tsfile://')
-                ? rawThumbPath.substring(9)
+                ? rawThumbPath.substring(AppConfig.isWin ? 10 : 9)
                 : rawThumbPath;
               saveBinaryFilePromise(
                 { path: thumbPath },
