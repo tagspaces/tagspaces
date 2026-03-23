@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="FilePickerTheme" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">#2196f3</item>
-        <item name="colorPrimaryDark">#4285f4</item>
-        <item name="colorAccent">#4285f4</item>
-    </style>
+    <style name="FilePickerTheme" parent="android:Theme.Material.Light" />
 </resources>
