@@ -130,11 +130,13 @@ public class DialogShowPicker extends Activity {
                 for (StorageVolume vol : volumes) {
                     String uuid = vol.getUuid();
                     if (volumeId.equalsIgnoreCase(uuid)) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                            File dir = vol.getDirectory();
-                            if (dir != null) return dir.getAbsolutePath();
-                        }
-                        // API 24-29: reflect getPath() which is hidden but reliable
+                        // API 30+: getDirectory() — use reflection to avoid compile-time dependency
+                        try {
+                            java.lang.reflect.Method getDirectory = vol.getClass().getMethod("getDirectory");
+                            Object dir = getDirectory.invoke(vol);
+                            if (dir instanceof File) return ((File) dir).getAbsolutePath();
+                        } catch (Exception ignored) {}
+                        // API 24-29: getPath() hidden but reliable
                         try {
                             java.lang.reflect.Method getPath = vol.getClass().getMethod("getPath");
                             Object path = getPath.invoke(vol);
