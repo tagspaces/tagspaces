@@ -4,11 +4,17 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.provider.DocumentsContract;
 
 import org.json.JSONArray;
+
+import java.io.File;
+import java.util.List;
 
 public class DialogShowPicker extends Activity {
     static final int FILE_CODE = 1;
@@ -72,7 +78,6 @@ public class DialogShowPicker extends Activity {
 
     /**
      * Converts a SAF content URI back to a plain file system path where possible.
-     * Falls back to the URI string for URIs that cannot be mapped.
      */
     private String uriToPath(Uri uri) {
         if (uri == null) return "";
@@ -81,38 +86,66 @@ public class DialogShowPicker extends Activity {
             return uri.getPath();
         }
 
-        if ("content".equals(uri.getScheme())) {
-            String authority = uri.getAuthority();
-
-            if ("com.android.externalstorage.documents".equals(authority)) {
-                String docId;
-                // Tree URIs come from ACTION_OPEN_DOCUMENT_TREE
-                if (uri.getPathSegments().contains("tree")) {
-                    docId = DocumentsContract.getTreeDocumentId(uri);
-                } else {
-                    docId = DocumentsContract.getDocumentId(uri);
-                }
-                return docIdToPath(docId);
-            }
+        if ("content".equals(uri.getScheme())
+                && "com.android.externalstorage.documents".equals(uri.getAuthority())) {
+            String docId = uri.getPathSegments().contains("tree")
+                    ? DocumentsContract.getTreeDocumentId(uri)
+                    : DocumentsContract.getDocumentId(uri);
+            return docIdToPath(docId);
         }
 
         return uri.toString();
     }
 
     /**
-     * Converts a DocumentsContract document ID (e.g. "primary:Pictures") to an absolute path.
+     * Converts a document ID like "primary:Pictures" or "XXXX-XXXX:folder" to an absolute path.
+     * Uses StorageManager to resolve the actual mount point of removable volumes.
      */
     private String docIdToPath(String docId) {
         if (docId == null) return "";
         String[] parts = docId.split(":", 2);
         if (parts.length < 2) return docId;
+
         String storageType = parts[0];
         String relativePath = parts[1];
+
         if ("primary".equalsIgnoreCase(storageType)) {
-            return Environment.getExternalStorageDirectory().getAbsolutePath()
-                    + (relativePath.isEmpty() ? "" : "/" + relativePath);
+            String root = Environment.getExternalStorageDirectory().getAbsolutePath();
+            return relativePath.isEmpty() ? root : root + "/" + relativePath;
         }
-        // Removable storage (SD card)
-        return "/storage/" + storageType + (relativePath.isEmpty() ? "" : "/" + relativePath);
+
+        // Removable storage (SD card, USB stick) — resolve via StorageManager
+        String mountPath = resolveRemovableVolume(storageType);
+        return relativePath.isEmpty() ? mountPath : mountPath + "/" + relativePath;
+    }
+
+    /**
+     * Finds the actual mount path for a removable volume by its UUID/ID.
+     */
+    private String resolveRemovableVolume(String volumeId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            StorageManager sm = (StorageManager) getSystemService(STORAGE_SERVICE);
+            if (sm != null) {
+                List<StorageVolume> volumes = sm.getStorageVolumes();
+                for (StorageVolume vol : volumes) {
+                    String uuid = vol.getUuid();
+                    if (volumeId.equalsIgnoreCase(uuid)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            File dir = vol.getDirectory();
+                            if (dir != null) return dir.getAbsolutePath();
+                        }
+                        // API 24-29: reflect getPath() which is hidden but reliable
+                        try {
+                            java.lang.reflect.Method getPath = vol.getClass().getMethod("getPath");
+                            Object path = getPath.invoke(vol);
+                            if (path != null) return path.toString();
+                        } catch (Exception ignored) {}
+                        // Last resort: standard mount point convention
+                        return "/storage/" + volumeId;
+                    }
+                }
+            }
+        }
+        return "/storage/" + volumeId;
     }
 }
