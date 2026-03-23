@@ -1,12 +1,14 @@
 package com.ourcodeworld.plugins.filebrowser;
 
-import org.apache.cordova.*;
 import android.app.Activity;
-import org.json.JSONArray;
-import android.content.Intent;
-import android.os.Bundle;
-import android.net.Uri;
 import android.content.ClipData;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.DocumentsContract;
+
+import org.json.JSONArray;
 
 public class DialogShowPicker extends Activity {
     static final int FILE_CODE = 1;
@@ -54,10 +56,10 @@ public class DialogShowPicker extends Activity {
             if (data.getClipData() != null) {
                 ClipData clip = data.getClipData();
                 for (int i = 0; i < clip.getItemCount(); i++) {
-                    jsonArray.put(clip.getItemAt(i).getUri().toString());
+                    jsonArray.put(uriToPath(clip.getItemAt(i).getUri()));
                 }
             } else if (data.getData() != null) {
-                jsonArray.put(data.getData().toString());
+                jsonArray.put(uriToPath(data.getData()));
             }
         }
 
@@ -66,5 +68,51 @@ public class DialogShowPicker extends Activity {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         setResult(Activity.RESULT_OK, intent);
         finish();
+    }
+
+    /**
+     * Converts a SAF content URI back to a plain file system path where possible.
+     * Falls back to the URI string for URIs that cannot be mapped.
+     */
+    private String uriToPath(Uri uri) {
+        if (uri == null) return "";
+
+        if ("file".equals(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        if ("content".equals(uri.getScheme())) {
+            String authority = uri.getAuthority();
+
+            if ("com.android.externalstorage.documents".equals(authority)) {
+                String docId;
+                // Tree URIs come from ACTION_OPEN_DOCUMENT_TREE
+                if (uri.getPathSegments().contains("tree")) {
+                    docId = DocumentsContract.getTreeDocumentId(uri);
+                } else {
+                    docId = DocumentsContract.getDocumentId(uri);
+                }
+                return docIdToPath(docId);
+            }
+        }
+
+        return uri.toString();
+    }
+
+    /**
+     * Converts a DocumentsContract document ID (e.g. "primary:Pictures") to an absolute path.
+     */
+    private String docIdToPath(String docId) {
+        if (docId == null) return "";
+        String[] parts = docId.split(":", 2);
+        if (parts.length < 2) return docId;
+        String storageType = parts[0];
+        String relativePath = parts[1];
+        if ("primary".equalsIgnoreCase(storageType)) {
+            return Environment.getExternalStorageDirectory().getAbsolutePath()
+                    + (relativePath.isEmpty() ? "" : "/" + relativePath);
+        }
+        // Removable storage (SD card)
+        return "/storage/" + storageType + (relativePath.isEmpty() ? "" : "/" + relativePath);
     }
 }
