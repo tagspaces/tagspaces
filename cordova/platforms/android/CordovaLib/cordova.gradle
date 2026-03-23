@@ -19,7 +19,38 @@
 
 import java.util.regex.Pattern
 import groovy.swing.SwingBuilder
-import com.g00fy2.versioncompare.Version
+
+// Replacement for com.g00fy2:versioncompare (no longer available on JCenter)
+class Version implements Comparable<Version> {
+    private final String original
+    private final List<Integer> parts
+
+    Version(String version) {
+        this.original = version ?: '0.0.0'
+        this.parts = this.original.tokenize('.').collect {
+            try { it.replaceAll('[^0-9].*', '').toInteger() } catch (e) { 0 }
+        }
+    }
+
+    boolean isEqual(String other) { compareTo(new Version(other)) == 0 }
+    boolean isHigherThan(String other) { compareTo(new Version(other)) > 0 }
+    boolean isLowerThan(String other) { compareTo(new Version(other)) < 0 }
+    String getOriginalString() { original }
+
+    @Override
+    int compareTo(Version other) {
+        int maxLen = Math.max(parts.size(), other.parts.size())
+        for (int i = 0; i < maxLen; i++) {
+            int a = i < parts.size() ? parts[i] : 0
+            int b = i < other.parts.size() ? other.parts[i] : 0
+            if (a != b) return a <=> b
+        }
+        return 0
+    }
+
+    @Override
+    String toString() { original }
+}
 
 String doEnsureValueExists(filePath, props, key) {
     if (props.get(key) == null) {
@@ -192,14 +223,6 @@ ext {
     cdvHelpers.getConfigXml = { doGetConfigXml() }
     // Returns the value for the desired <preference>. Added in 4.1.0.
     cdvHelpers.getConfigPreference = { name, defaultValue -> doGetConfigPreference(name, defaultValue) }
-}
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.g00fy2:versioncompare:1.3.4@jar'
-    }
+    // isVersionValid exposed for use in build.gradle
+    cdvHelpers.isVersionValid = { version -> isVersionValid(version) }
 }

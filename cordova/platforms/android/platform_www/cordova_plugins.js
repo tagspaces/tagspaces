@@ -271,8 +271,8 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
   ];
   module.exports.metadata = {
     "com-darryncampbell-cordova-plugin-intent": "2.0.0",
+    "com.ourcodeworld.plugins.Filebrowser": "1.0.0",
     "com.whebcraft.cordova.plugin.downloader": "0.1.0",
-    "cordova-plugin-add-swift-support": "2.0.2",
     "cordova-plugin-androidx-adapter": "1.1.3",
     "cordova-plugin-device": "2.0.3",
     "cordova-plugin-background-mode": "0.7.3",

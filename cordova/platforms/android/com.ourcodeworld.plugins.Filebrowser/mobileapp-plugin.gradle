@@ -1,7 +1,6 @@
-repositories {
-    jcenter()
-}
-
 dependencies {
-    compile 'com.nononsenseapps:filepicker:3.1.0'
+    implementation fileTree(dir: '../app/libs', include: ['*.aar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.core:core:1.0.0'
 }
