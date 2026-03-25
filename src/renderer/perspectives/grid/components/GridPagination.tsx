@@ -398,6 +398,12 @@ function GridPagination(props: Props) {
         <SelectionDragLayer />
         <SelectionArea onSelect={handleSelect}>
           <GridCellsContainer>
+            {pageFiles.length < 1 &&
+              renderEmptyState(t('core:noFileFolderFound'))}
+            {files.length < 1 &&
+              dirs.length >= 1 &&
+              !showDirectories &&
+              renderEmptyState(t('core:noFileButFoldersFound'))}
             {pageFiles.map((entry, index) => (
               <CellView
                 key={entry.uuid}
@@ -407,14 +413,12 @@ function GridPagination(props: Props) {
                 isLast={index === pageFiles.length - 1}
               />
             ))}
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ flexGrow: 1 }} />
-            {pageFiles.length < 1 &&
-              renderEmptyState(t('core:noFileFolderFound'))}
-            {files.length < 1 &&
-              dirs.length >= 1 &&
-              !showDirectories &&
-              renderEmptyState(t('core:noFileButFoldersFound'))}
+            {pageFiles.length > 0 && (
+              <>
+                <Box sx={{ flexGrow: 1 }} />
+                <Box sx={{ flexGrow: 1 }} />
+              </>
+            )}
           </GridCellsContainer>
           {showPagination && (
             <TooltipTS title={folderSummary}>
