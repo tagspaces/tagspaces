@@ -73,6 +73,7 @@ function EditDescription() {
         sx={{
           border: '1px solid ' + theme.palette.divider,
           borderRadius: AppConfig.defaultCSSRadius,
+          background: theme.palette.background.paper,
           height: 'calc(100% - 10px)',
           width: '100%',
           overflowY: 'auto',
