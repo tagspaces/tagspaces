@@ -172,6 +172,12 @@ AppConfig.defaultSpaceBetweenButtons = '10px';
 AppConfig.aiFolder = 'ai';
 AppConfig.aiChatFileName = 'tsc.json';
 AppConfig.sidecarRevisionExtension = '.meta';
+AppConfig.FilenameTagFormats = {
+  squareBrackets: 'squareBrackets',
+  parentheses: 'parentheses',
+  atSign: 'atSign',
+};
+AppConfig.ExtFilenameTagFormat = AppConfig.FilenameTagFormats.squareBrackets;
 AppConfig.ExtDefaultMapBounds = {
   southWest: { lat: 56, lng: -13 },
   northEast: { lat: 29, lng: 50 },
