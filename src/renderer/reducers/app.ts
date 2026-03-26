@@ -95,6 +95,7 @@ export const initialState = {
   isEntryInFullWidth: false,
   tagLibraryPanelOpened: showTagLibrary,
   searchPanelOpened: showSearch,
+  hideRelatedFilesInMainView: false,
 };
 
 // The state described here will not be persisted
