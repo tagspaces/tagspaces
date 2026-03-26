@@ -125,12 +125,54 @@ export default (state: any = defaultSettings, action: any) => {
       // const currentVersion = semver.coerce(versionMeta.version);
       // console.log('---->' + currentVersion);
 
+      const normalizedStateKeyBindings = (state.keyBindings || []).map(
+        (keyBinding) => {
+          const normalizedKeyBinding = { ...keyBinding };
+
+          if (normalizedKeyBinding.name === 'Escape') {
+            normalizedKeyBinding.name = 'closeOrCancel';
+          }
+
+          if (
+            typeof normalizedKeyBinding.key === 'string' &&
+            normalizedKeyBinding.key.toLowerCase() === 'esc'
+          ) {
+            normalizedKeyBinding.key = 'Escape';
+          }
+
+          if (
+            typeof normalizedKeyBinding.shortcut === 'string' &&
+            normalizedKeyBinding.shortcut.toLowerCase() === 'esc'
+          ) {
+            normalizedKeyBinding.shortcut = 'Escape';
+          }
+
+          if (
+            typeof normalizedKeyBinding.accelerator === 'string' &&
+            normalizedKeyBinding.accelerator.toLowerCase() === 'esc'
+          ) {
+            normalizedKeyBinding.accelerator = 'Escape';
+          }
+
+          return normalizedKeyBinding;
+        },
+      );
+
       const mergedKeyBindings = defaultSettings.keyBindings.map((x) =>
         Object.assign(
           x,
-          state.keyBindings.find((y) => y.name === x.name),
+          normalizedStateKeyBindings.find((y) => y.name === x.name),
         ),
       );
+
+      mergedKeyBindings.forEach((keyBinding) => {
+        if (keyBinding.name === 'Escape') {
+          keyBinding.name = 'closeOrCancel';
+        }
+        if (keyBinding.name === 'closeOrCancel' && !keyBinding.command) {
+          keyBinding.command = 'closeOrCancel';
+        }
+      });
 
       const explicitlyDeletedTypes = state.explicitlyDeletedFileTypes || [];
       const defaultFileTypes = defaultSettings.supportedFileTypes.filter(
