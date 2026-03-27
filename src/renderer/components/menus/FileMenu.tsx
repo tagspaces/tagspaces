@@ -147,6 +147,25 @@ function FileMenu(props: Props) {
     }
   }
 
+  function copyRelativePath() {
+    onClose();
+    if (selectedEntries?.length === 1) {
+      const relativePath = getRelativeEntryPath(
+        currentLocationPath,
+        selectedEntries[0].path,
+      );
+      navigator.clipboard
+        .writeText(relativePath)
+        .then(() => {
+          showNotification(t('core:pathCopied'));
+          return true;
+        })
+        .catch((e) => {
+          console.log('Error copying to clipboard ' + e);
+        });
+    }
+  }
+
   function copySharingLink() {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
@@ -564,6 +583,18 @@ function FileMenu(props: Props) {
   }
 
   if (selectedEntries.length === 1) {
+    menuItems.push(
+      <MenuItem
+        key="copyRelativePath"
+        data-tid="copyRelativePathTID"
+        onClick={copyRelativePath}
+      >
+        <ListItemIcon>
+          <LinkIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:copyRelativePath')} />
+      </MenuItem>,
+    );
     menuItems.push(
       <MenuItem
         key="copySharingLink"

@@ -56,6 +56,7 @@ export function getDirectoryMenuItems(
   addExistingFile?: () => void,
   setFolderThumbnail?: () => void,
   copySharingLink?: () => void,
+  copyRelativePath?: () => void,
   importMacTags?: () => void,
   switchPerspective?: (perspectiveId: string) => void,
   showProperties?: () => void,
@@ -445,6 +446,23 @@ export function getDirectoryMenuItems(
         </MenuItem>,
       );
     }
+  }
+  if (selectedEntries.length === 1 && copyRelativePath) {
+    menuItems.push(
+      <MenuItem
+        key="copyRelativePath"
+        data-tid="copyRelativePathTID"
+        onClick={() => {
+          onClose();
+          copyRelativePath();
+        }}
+      >
+        <ListItemIcon>
+          <LinkIcon />
+        </ListItemIcon>
+        <ListItemText primary={t('core:copyRelativePath')} />
+      </MenuItem>,
+    );
   }
   if (selectedEntries.length === 1 && copySharingLink) {
     menuItems.push(

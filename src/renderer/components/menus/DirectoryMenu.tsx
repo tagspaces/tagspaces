@@ -164,6 +164,22 @@ function DirectoryMenu(props: Props) {
     });
   }
 
+  function copyRelativePath() {
+    onClose();
+    const entryPath =
+      selectedEntries?.length > 0
+        ? selectedEntries[0].path
+        : currentDirectoryPath;
+    const locationID = selectedEntries?.[0]?.locationID;
+    const tmpLoc = findLocation(locationID);
+    getLocationPath(tmpLoc).then((locationPath) => {
+      const relativePath = getRelativeEntryPath(locationPath, entryPath);
+      navigator.clipboard.writeText(relativePath).then(() => {
+        showNotification(t('core:pathCopied'));
+      });
+    });
+  }
+
   function copySharingLink() {
     generateFolderLink().then((sharingLink) => {
       const clibboardItem = generateClipboardLink(
@@ -425,6 +441,7 @@ function DirectoryMenu(props: Props) {
         addExistingFile,
         setFolderThumbnail,
         copySharingLink,
+        copyRelativePath,
         importMacTags,
         switchPerspectives ? perspectiveSwitch : undefined,
         showProperties,
