@@ -553,6 +553,8 @@ function EntryProperties({ tileServer }: Props) {
             onKeyDown={(event) => {
               if (event.key === 'Enter' && !fileNameError.current) {
                 renameEntry();
+              } else if (event.key === 'Escape') {
+                deactivateEditNameField();
               }
             }}
             onChange={handleFileNameChange}
