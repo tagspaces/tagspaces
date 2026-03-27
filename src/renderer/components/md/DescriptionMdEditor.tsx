@@ -20,7 +20,11 @@ import { EditorStatus, commandsCtx } from '@milkdown/kit/core';
 import { $command, $useKeymap, getMarkdown } from '@milkdown/kit/utils';
 import { Milkdown, useEditor } from '@milkdown/react';
 import { replaceAll } from '@milkdown/utils';
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import AppConfig from '-/AppConfig';
 
 import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
 import { createCrepeEditor } from '-/components/md/utils';
@@ -52,9 +56,18 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
     } = useFilePropertiesContext();
     const { openedEntry, openLink } = useOpenedEntryContext();
 
-    // We’ll keep a ref to the “Crepe” wrapper (returned by createCrepeEditor):
+    // We'll keep a ref to the “Crepe” wrapper (returned by createCrepeEditor):
     const crepeRef = useRef<Crepe>(null);
     const firstRender = useFirstRender();
+    const [ctxMenu, setCtxMenu] = useState<{
+      top: number;
+      left: number;
+    } | null>(null);
+    const ctxFocusRef = useRef<{ el: HTMLElement | null; range: Range | null }>(
+      { el: null, range: null },
+    );
+    const isMac = AppConfig.isMacLike;
+    const mod = isMac ? '\u2318' : 'Ctrl+';
 
     const { get, loading } = useEditor(
       (root) => {
@@ -114,7 +127,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
       [currentDirectory?.path], //, isEditDescriptionMode],
     );
 
-    // Whenever openedEntry changes and the user hasn’t manually edited,
+    // Whenever openedEntry changes and the user hasn't manually edited,
     // we “push” the new description into the editor.
     useEffect(() => {
       if (!isDescriptionChanged) {
@@ -158,7 +171,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
         try {
           const currentMd = crepe.editor.action(getMarkdown());
           if (currentMd !== newMd) {
-            // Now we are guaranteed “editorView” is injected, so replaceAll won’t complain:
+            // Now we are guaranteed “editorView” is injected, so replaceAll won't complain:
             crepe.editor.action(replaceAll(newMd, true));
           }
         } catch (e) {
@@ -170,7 +183,93 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
     // Hook up the external ref to our Crepe instance so parent callers can access it
     useCrepeHandler(ref, () => crepeRef.current, get, loading);
 
-    return <Milkdown />;
+    // Context menu for Electron
+    useEffect(() => {
+      if (!AppConfig.isElectron) return;
+      const onContextMenu = (e: MouseEvent) => {
+        e.preventDefault();
+        ctxFocusRef.current = {
+          el: document.activeElement as HTMLElement | null,
+          range: (() => {
+            const sel = window.getSelection();
+            return sel?.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+          })(),
+        };
+        setCtxMenu({ top: e.clientY, left: e.clientX });
+      };
+      document.addEventListener('contextmenu', onContextMenu);
+      return () => document.removeEventListener('contextmenu', onContextMenu);
+    }, []);
+
+    const execCtxCmd = (cmd: string) => {
+      const { el, range } = ctxFocusRef.current;
+      setCtxMenu(null);
+      el?.focus();
+      if (range) {
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
+      if (cmd === 'paste') {
+        // execCommand('paste') is blocked in Electron; read clipboard manually and
+        // dispatch a ClipboardEvent so ProseMirror's own paste handler processes it.
+        navigator.clipboard.readText().then((text) => {
+          const dt = new DataTransfer();
+          dt.setData('text/plain', text);
+          const target = (document.activeElement ?? el) as HTMLElement | null;
+          target?.dispatchEvent(
+            new ClipboardEvent('paste', {
+              bubbles: true,
+              cancelable: true,
+              clipboardData: dt,
+            }),
+          );
+        });
+      } else {
+        // @ts-ignore -- execCommand is deprecated but required to trigger ProseMirror's clipboard event handlers
+        document.execCommand(cmd);
+      }
+    };
+
+    const ctxItems = [
+      { label: 'Cut', shortcut: mod + 'X', cmd: 'cut' },
+      { label: 'Copy', shortcut: mod + 'C', cmd: 'copy' },
+      { label: 'Paste', shortcut: mod + 'V', cmd: 'paste' },
+      { label: 'Select All', shortcut: mod + 'A', cmd: 'selectAll' },
+    ];
+
+    return (
+      <>
+        <Milkdown />
+        {AppConfig.isElectron && (
+          <Menu
+            open={ctxMenu !== null}
+            onClose={() => setCtxMenu(null)}
+            anchorReference="anchorPosition"
+            anchorPosition={ctxMenu ?? undefined}
+            disableAutoFocus
+            disableEnforceFocus
+            disableRestoreFocus
+          >
+            {ctxItems.map(({ label, shortcut, cmd }) => (
+              <MenuItem
+                key={cmd}
+                dense
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => execCtxCmd(cmd)}
+              >
+                <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                  {label}
+                </Typography>
+                <Typography variant="caption" sx={{ ml: 3, opacity: 0.5 }}>
+                  {shortcut}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+        )}
+      </>
+    );
   },
 );
 
