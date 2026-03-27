@@ -85,7 +85,8 @@ function MainToolbar(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
-  const { openEntry, openedEntry, fileChanged } = useOpenedEntryContext();
+  const { openEntry, openedEntry, fileChanged, actuallyCloseFiles } =
+    useOpenedEntryContext();
   const { loadParentDirectoryContent, currentDirectoryPath } =
     useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
@@ -95,7 +96,11 @@ function MainToolbar(props: Props) {
     useDeleteMultipleEntriesDialogContext();
 
   function showProperties() {
-    return openEntry(currentDirectoryPath, TabNames.propertiesTab);
+    if (openedEntry?.path === currentDirectoryPath) {
+      actuallyCloseFiles();
+    } else {
+      openEntry(currentDirectoryPath, TabNames.propertiesTab);
+    }
   }
 
   function multipleDownload() {
