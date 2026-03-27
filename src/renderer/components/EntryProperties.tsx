@@ -101,9 +101,9 @@ import {
   MapContainer,
   Marker,
   Popup,
-  TileLayer,
 } from 'react-leaflet';
 import { useSelector } from 'react-redux';
+import ElectronTileLayer from '-/components/ElectronTileLayer';
 import { Pro } from '../pro';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
@@ -602,7 +602,7 @@ function EntryProperties({ tileServer }: Props) {
               attributionControl={false}
             >
               {tileServer ? (
-                <TileLayer
+                <ElectronTileLayer
                   attribution={tileServer.serverInfo}
                   url={tileServer.serverURL}
                 />

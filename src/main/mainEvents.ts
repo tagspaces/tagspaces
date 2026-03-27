@@ -3,6 +3,7 @@ import {
   dialog,
   globalShortcut,
   ipcMain,
+  net,
   shell,
   nativeImage,
   BrowserWindow,
@@ -93,6 +94,21 @@ export default function loadMainEvents() {
 
     //watchFolder(mainWindow, e, path, depth);
   });
+  ipcMain.handle('fetchTile', async (_event, url: string) => {
+    const response = await net.fetch(url, {
+      headers: { Referer: 'https://tagspaces.org' },
+    });
+    if (!response.ok) {
+      throw new Error(
+        `Tile fetch failed: ${response.status} ${response.statusText}`,
+      );
+    }
+    const contentType = response.headers.get('content-type') || 'image/png';
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    return `data:${contentType};base64,${base64}`;
+  });
+
   ipcMain.handle('fetchUrl', async (event, url, targetPath, withProgress) => {
     function fetchHttp(url) {
       return new Promise((resolve, reject) => {

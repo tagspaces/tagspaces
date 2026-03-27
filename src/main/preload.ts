@@ -82,7 +82,8 @@ export type Channels =
   | 'deleteOllamaModel'
   | 'startup-finished'
   | 'getAuthor'
-  | 'cancelRequest';
+  | 'cancelRequest'
+  | 'fetchTile';
 
 const electronHandler = {
   ipcRenderer: {
