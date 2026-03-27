@@ -5,6 +5,33 @@ import { editorViewCtx, editorViewOptionsCtx } from '@milkdown/kit/core';
 import { trailing } from '@milkdown/kit/plugin/trailing';
 import { remarkPreserveEmptyLinePlugin } from '@milkdown/preset-commonmark';
 
+/**
+ * Resolves a relative path against a base folder path.
+ * Handles '../' and './' traversal.
+ */
+function resolveRelativePath(
+  baseFolderPath: string,
+  relativePath: string,
+): string {
+  const separator = baseFolderPath.includes('\\') ? '\\' : '/';
+  const baseParts = baseFolderPath
+    .replace(/\\/g, '/')
+    .split('/')
+    .filter(Boolean);
+  const relParts = relativePath.replace(/\\/g, '/').split('/');
+
+  for (const part of relParts) {
+    if (part === '..') {
+      baseParts.pop();
+    } else if (part !== '.') {
+      baseParts.push(part);
+    }
+  }
+
+  const joined = baseParts.join(separator);
+  return baseFolderPath.startsWith('/') ? '/' + joined : joined;
+}
+
 export function createCrepeEditor(
   root: HTMLElement,
   defaultContent: string,
@@ -72,7 +99,17 @@ export function createCrepeEditor(
               const href = (target as HTMLAnchorElement).getAttribute('href');
               if (href && !href.startsWith('#')) {
                 event.preventDefault();
-                openLink(href, { fullWidth: false });
+                let resolvedHref = href;
+                if (
+                  currentFolder &&
+                  !href.includes('://') &&
+                  !href.startsWith('/')
+                ) {
+                  const absolutePath = resolveRelativePath(currentFolder, href);
+                  resolvedHref =
+                    'ts://?cmdopen=' + encodeURIComponent(absolutePath);
+                }
+                openLink(resolvedHref, { fullWidth: false });
                 return true;
               }
             }
