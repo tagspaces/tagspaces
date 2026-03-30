@@ -22,7 +22,7 @@ import TsButton from '-/components/TsButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import { openURLExternally } from '-/services/utils-io';
-import { Box } from '@mui/material';
+import { Box, ButtonGroup } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
@@ -131,23 +131,25 @@ function Slide(props: SlideProps) {
         )}
         <br />
         <Box sx={{ whiteSpace: 'nowrap' }}>
-          <TsButton
-            onClick={() => {
-              openURLExternally(Links.links.productsOverview, true);
-            }}
-          >
-            {t('core:compareAndUpgrade')}
-          </TsButton>
-          {ctaTitle && (
+          <ButtonGroup>
             <TsButton
               onClick={() => {
-                openURLExternally(ctaURL, true);
+                openURLExternally(Links.links.productsOverview, true);
               }}
-              sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             >
-              {ctaTitle}
+              {t('core:compareAndUpgrade')}
             </TsButton>
-          )}
+            {ctaTitle && (
+              <TsButton
+                onClick={() => {
+                  openURLExternally(ctaURL, true);
+                }}
+                sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+              >
+                {ctaTitle}
+              </TsButton>
+            )}
+          </ButtonGroup>
         </Box>
       </Box>
     </Box>
