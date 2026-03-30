@@ -241,7 +241,8 @@
     "@tagspacespro/tagspacespro": "5.0.224"
   },
   "devDependencies": {
-    "@electron/rebuild": "^3.7.2",
+    "@electron/fuses": "2.1.1",
+    "@electron/rebuild": "4.0.3",
     "@playwright/test": "^1.53.2",
     "@pmmmwh/react-refresh-webpack-plugin": "0.6.2",
     "@svgr/webpack": "8.1.0",
