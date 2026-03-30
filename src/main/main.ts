@@ -9,15 +9,16 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 
-import pm2 from '@elife/pm2';
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
+  UtilityProcess,
   app,
   dialog,
   globalShortcut,
   ipcMain,
   shell,
+  utilityProcess,
 } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
@@ -37,6 +38,7 @@ import { resolveHtmlPath } from './util';
 // --- App State ---
 let isMacLike = process.platform === 'darwin';
 let mainWindow: BrowserWindow | null = null;
+let wsProcess: UtilityProcess | null = null;
 let globalShortcutsEnabled = false;
 let startupFilePath: string | undefined;
 let portableMode: boolean | undefined;
@@ -368,61 +370,53 @@ async function findPort() {
   return defaultWSPort;
 }
 
+function stopWS() {
+  if (wsProcess) {
+    wsProcess.kill();
+    wsProcess = null;
+  }
+}
+
 function startWS() {
   try {
-    let filepath, script, envPath;
+    let scriptPath: string, envPath: string;
     if (app.isPackaged) {
-      filepath = process.resourcesPath;
-      script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js';
-      envPath = path.join(filepath, 'app.asar/.env');
-    } else {
-      filepath = path.join(
-        __dirname,
-        '../node_modules/@tagspaces/tagspaces-ws/build',
+      scriptPath = path.join(
+        process.resourcesPath,
+        'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js',
       );
-      script = 'index.js';
+      envPath = path.join(process.resourcesPath, 'app.asar/.env');
+    } else {
+      scriptPath = path.join(
+        __dirname,
+        '../node_modules/@tagspaces/tagspaces-ws/build/index.js',
+      );
       envPath = path.join(__dirname, '../.env');
     }
     const properties = propertiesReader(envPath);
-    const results = new Promise((resolve, reject) => {
-      findPort().then((freePort) => {
-        try {
-          pm2.start(
-            {
-              name: 'Tagspaces WS',
-              script,
-              cwd: filepath,
-              args: ['-p', freePort, '-k', properties.get('KEY')],
-              restartAt: [],
-            },
-            (err, pid) => {
-              if (err && pid) {
-                if (pid && pid.name) console.error(pid.name, err, pid);
-                else console.error(err, pid);
-                reject(err);
-              } else if (err) {
-                reject(err);
-              } else {
-                settings.setUsedWsPort(freePort);
-                mainWindow?.webContents.send('start_ws', { port: freePort });
-                console.debug('start_ws:' + freePort);
-                resolve(
-                  `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
-                );
-              }
-            },
-          );
-        } catch (e) {
-          console.error('pm2.start err:', e);
-          reject(e);
-        }
-      });
+    findPort().then((freePort) => {
+      try {
+        wsProcess = utilityProcess.fork(scriptPath, [
+          '-p',
+          String(freePort),
+          '-k',
+          String(properties.get('KEY')),
+        ]);
+        wsProcess.on('spawn', () => {
+          settings.setUsedWsPort(freePort);
+          mainWindow?.webContents.send('start_ws', { port: freePort });
+          console.debug('start_ws:' + freePort);
+        });
+        wsProcess.on('exit', (code) => {
+          console.debug('WS process exited with code:', code);
+          wsProcess = null;
+        });
+      } catch (e) {
+        console.error('startWS err:', e);
+      }
     });
-    results
-      .then((results) => console.debug(results))
-      .catch((err) => console.error('pm2.start err:', err));
   } catch (ex) {
-    console.error('pm2.start Exception __dirname:' + __dirname, ex);
+    console.error('startWS Exception __dirname:' + __dirname, ex);
   }
 }
 
@@ -507,7 +501,7 @@ const createWindow = async (i18n: any) => {
   mainWindow.webContents.on(
     'render-process-gone',
     (_, { reason, exitCode }) => {
-      pm2.stopAll();
+      stopWS();
       globalShortcut.unregisterAll();
       app.quit();
     },
@@ -563,7 +557,7 @@ app.on('window-all-closed', () => {
   // Respect the macOS convention of having the application in memory even
   // after all windows have been closed
   if (!isMacLike) {
-    // pm2.stopAll();
+    // stopWS();
     // globalShortcut.unregisterAll();
     app.quit();
   }
@@ -582,7 +576,7 @@ app.on('activate', (event, hasVisibleWindows) => {
 });
 
 app.on('quit', () => {
-  pm2.stopAll();
+  stopWS();
   globalShortcut.unregisterAll();
 });
 

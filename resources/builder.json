@@ -1,5 +1,6 @@
 {
   "appId": "org.tagspaces.desktopapp",
+  "afterPack": "./resources/afterPack.js",
   "asar": true,
   "asarUnpack": [
     "**\\*.{node,dll}",
