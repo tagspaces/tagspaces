@@ -105,6 +105,7 @@ function Slide(props: SlideProps) {
           >
             <img
               style={{
+                borderRadius: AppConfig.defaultCSSRadius,
                 cursor: 'pointer',
                 maxHeight: pictureHeight,
                 margin: 'auto',

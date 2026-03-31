@@ -17,17 +17,8 @@
  */
 import { InitOptions } from 'i18next';
 import en from '../locales/en/core.json';
-import enUs from '../locales/en_US/core.json';
 
-let defaultLanguage: any = enUs;
-if (
-  typeof process !== 'undefined' &&
-  process.env &&
-  process.env.NODE_ENV &&
-  process.env.NODE_ENV === 'development'
-) {
-  defaultLanguage = en;
-}
+let defaultLanguage: any = en;
 
 async function loadLocales(options, url: string, payload, callback) {
   try {
