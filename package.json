@@ -159,6 +159,7 @@
     "update-changelog": "git log v6.10.3..HEAD --no-merges --format=%B > CHANGELOG.TXT",
     "update-changelog-pro": "cd tagspacespro && git log v5.6.2..HEAD --no-merges --format=%B > ../../CHANGELOG-PRO.TXT",
     "update-i18n": "./tx pull -a -f",
+    "push-i18n": "./tx push -t",
     "version-meta": "node scripts/versionmeta.js"
   },
   "browserslist": [],
