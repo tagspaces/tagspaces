@@ -259,6 +259,10 @@ export default {
       iso: 'pl',
       title: 'polski (Polish)',
     },
+    {
+      iso: 'zh_Hant',
+      title: '繁體中文 (Traditional Chinese)',
+    },
   ],
   keyBindings: keyBindings(AppConfig.isMacLike),
   supportedFileTypes: AppConfig.ExtSupportedFileTypes
