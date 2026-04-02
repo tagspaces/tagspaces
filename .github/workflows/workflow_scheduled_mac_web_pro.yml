@@ -1,4 +1,4 @@
-name: Nightly E2E Tests Web Pro Minio macOS
+name: Nightly E2E Web Pro macOS ObjectStorage
 on:
   schedule:
     - cron: '0 3 * * *'
