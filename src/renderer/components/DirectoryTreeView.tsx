@@ -185,9 +185,15 @@ const DirectoryTreeView = forwardRef(
       return <tr {...propsRow} />;
     };
 
-    const renderNameColumnAction = (field: string) => {
+    const renderNameColumnAction = (field: string, record: SubFolder) => {
       const children = (
-        <Box sx={{ fontSize: '15px', display: 'inline-block' }} title={field}>
+        <Box
+          sx={{
+            fontSize: '15px',
+            display: 'inline-block',
+          }}
+          title={field}
+        >
           <FolderOutlineIcon
             sx={{
               marginTop: 0,
@@ -195,11 +201,14 @@ const DirectoryTreeView = forwardRef(
               marginRight: '6px',
               marginBottom: '-8px',
               display: 'inline-block',
-              color: theme.palette.text.primary,
+              color: theme.palette.text.secondary,
             }}
           />
           <Typography
-            sx={{ color: theme.palette.text.primary, display: 'inline' }}
+            sx={{
+              color: theme.palette.text.secondary,
+              display: 'inline',
+            }}
           >
             {field.length > 25 ? field.substr(0, 25) + '...' : field}
           </Typography>
@@ -470,6 +479,10 @@ const DirectoryTreeView = forwardRef(
                 white-space: nowrap;
               }
 
+              .rc-table tr.rc-table-row-current td {
+                background-color: ${alpha(theme.palette.primary.main, 0.15)} !important;
+              }
+
               .rc-table tr.dropzone td {
                 background-color: #1dd19f40 !important;
                 border: 3px dashed white;
@@ -504,8 +517,12 @@ const DirectoryTreeView = forwardRef(
             columns={columns}
             indentSize={20}
             expandable={{ onExpand }}
-            // expandIcon={this.CustomExpandIcon}
-            // expandIconAsCell
+            rowClassName={(record: SubFolder) =>
+              cleanTrailingDirSeparator(record.path) ===
+              cleanTrailingDirSeparator(currentDirectoryPath)
+                ? 'rc-table-row-current'
+                : ''
+            }
             // @ts-ignore
             onRow={(record, index) => ({
               index,
