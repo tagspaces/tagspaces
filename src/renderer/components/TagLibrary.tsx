@@ -49,7 +49,8 @@ import SmartTags from '-/reducers/smart-tags';
 import { getAllTags } from '-/services/taglibrary-utils';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { Box, Collapse } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { Box, Collapse, IconButton } from '@mui/material';
 import React, {
   useCallback,
   useContext,
@@ -229,6 +230,31 @@ function TagLibrary({ reduceHeightBy }: Props) {
                     />
                   );
                 })}
+              {!tagGroup.readOnly && (
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setSelectedTagGroupEntry(tagGroup);
+                    setIsCreateTagDialogOpened(true);
+                  }}
+                  sx={{
+                    width: 19,
+                    height: 19,
+                    margin: '2px',
+                    borderRadius: '5px',
+                    border: '1px dashed',
+                    borderColor: 'text.disabled',
+                    color: 'text.disabled',
+                    '&:hover': {
+                      borderColor: 'text.primary',
+                      color: 'text.primary',
+                    },
+                  }}
+                  title={t('core:addTags')}
+                >
+                  <AddIcon sx={{ fontSize: 16 }} />
+                </IconButton>
+              )}
             </TagGroupContainer>
           </Collapse>
         </Box>
