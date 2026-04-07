@@ -50,6 +50,7 @@ export async function runS3Proxy(testWorkerDir, port = 4569, silent = true) {
       's3proxy.authorization=none',
       `s3proxy.endpoint=http://127.0.0.1:${port}`,
       's3proxy.ignore-unknown-headers=true',
+      's3proxy.cors-allow-all=true',
       'jclouds.provider=filesystem-nio2',
       'jclouds.identity=test',
       'jclouds.credential=test',
