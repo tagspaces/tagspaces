@@ -10,7 +10,6 @@ import { firstFile, openContextEntryMenu, toContainTID } from './test-utils';
 import fse from 'fs-extra';
 import {
   createPwLocation,
-  createPwMinioLocation,
   createS3Location,
 } from './location.helpers';
 
@@ -419,7 +418,7 @@ export async function expectElementExist(
 }
 
 export async function createLocation(
-  { isMinio, isS3, testDataDir },
+  { isS3, testDataDir },
   locationPath = '',
   locationName = defaultLocationName,
   isDefault = false,
@@ -427,14 +426,7 @@ export async function createLocation(
   expectFolderExist = 'empty_folder',
 ) {
   await clickOn('[data-tid=locationManager]');
-  if (isMinio) {
-    await createPwMinioLocation(
-      locationPath,
-      locationName,
-      isDefault,
-      fullTextIndexing,
-    );
-  } else if (isS3) {
+  if (isS3) {
     await createS3Location(
       locationPath,
       locationName,
@@ -655,7 +647,7 @@ export async function setFileTypeExtension(
 }
 
 export async function expectMetaFileContain(
-  { testDataDir, isS3, isMinio },
+  { testDataDir, isS3 },
   metaFile,
   rootFolder,
   contain,
@@ -669,8 +661,8 @@ export async function expectMetaFileContain(
 
     await expectElementExist(getGridFileSelector(metaFile), true, timeout);
     await openFile(metaFile, 'showPropertiesTID');
-    if (isS3 || isMinio) {
-      await expectS3FileContain({ isMinio }, metaFile, rootFolder, contain);
+    if (isS3) {
+      await expectS3FileContain(metaFile, rootFolder, contain);
     } else {
       await expectLocalFileContain(
         { testDataDir },
@@ -813,14 +805,13 @@ export async function expectLocalFileContain(
 }
 
 export async function expectS3FileContain(
-  { isMinio },
   fileName,
   rootFolder,
   txtToContain = 'etete&5435',
 ) {
   const filePath = rootFolder + '/' + fileName; //pathLib.join(rootFolder,fileName); //testDataDir, rootFolder, fileName);
 
-  const content = await getS3File({ isMinio }, filePath);
+  const content = await getS3File(filePath);
   const contentN = normalized(content);
   const txtToContainN = normalized(txtToContain);
 

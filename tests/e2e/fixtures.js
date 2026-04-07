@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { runS3Server, startMinio, startWebServer } from '../setup-functions';
+import { runS3Proxy, startWebServer } from '../setup-functions';
 import { uploadTestDirectory } from '../s3rver/S3DataRefresh';
 import { copyExtConfig, removeExtConfig } from './hook';
 import pathLib from 'path';
@@ -9,7 +9,6 @@ import fse from 'fs-extra';
 const test = base.extend({
   isWeb: [false, { option: true, scope: 'worker' }],
   isS3: [false, { option: true, scope: 'worker' }],
-  isMinio: [false, { option: true, scope: 'worker' }],
   isWin: [false, { option: true, scope: 'worker' }],
   /* TODO
   // 1) Launch Electron once per test (or per worker if you prefer beforeAll)
@@ -45,8 +44,7 @@ const test = base.extend({
   s3Server: [
     async ({ isS3 }, use, testInfo) => {
       if (isS3) {
-        //testInfo.title.includes('web')) {
-        const s3Server = await runS3Server(`testdata-${testInfo.workerIndex}`);
+        const s3Process = await runS3Proxy(`testdata-${testInfo.workerIndex}`);
         const src = pathLib.join(
           __dirname,
           '..',
@@ -55,8 +53,9 @@ const test = base.extend({
           'supported-filestypes',
         );
         await uploadTestDirectory(src);
-        await use(s3Server);
-        await s3Server.close();
+        await use(s3Process);
+        s3Process.stdin.pause();
+        s3Process.kill();
         await fse.rm(
           pathLib.join(__dirname, '..', `testdata-${testInfo.workerIndex}`),
           {
@@ -66,23 +65,6 @@ const test = base.extend({
             retryDelay: 100, // optional back‑off in ms
           },
         );
-      } else {
-        // If the test does not require the S3 server, just use a dummy value
-        await use(null);
-      }
-    },
-    { scope: 'worker', auto: true },
-  ],
-  minioServer: [
-    async ({ isMinio, isWin, testDataDir }, use, testInfo) => {
-      if (isMinio) {
-        const minioProcess = await startMinio(
-          isWin,
-          `testdata-${testInfo.workerIndex}`,
-        );
-        await use(minioProcess);
-        minioProcess.stdin.pause();
-        minioProcess.kill();
       } else {
         // If the test does not require the S3 server, just use a dummy value
         await use(null);

@@ -4,14 +4,10 @@ import sh from 'shelljs';
 import express from 'express';
 import serveStatic from 'serve-static';
 import portfinder from 'portfinder';
-const S3rver = require('s3rver');
-//const corsConfig = require.resolve('./s3rver/cors.xml');
+import http from 'http';
 
 export async function globalSetup() {
-  // global.isWin = /^win/.test(process.platform);
-  // global.isMac = /^darwin/.test(process.platform);
-
-  const extensionDir = pathLib.resolve(__dirname); //,'../tests');
+  const extensionDir = pathLib.resolve(__dirname);
   if (!sh.test('-d', extensionDir)) {
     sh.mkdir(extensionDir);
   }
@@ -19,40 +15,105 @@ export async function globalSetup() {
   sh.cd(extensionDir);
 }
 
-export async function startMinio(isWin, testWorkerDir) {
-  const winMinio = pathLib.resolve(__dirname, './bin/minio.exe');
-  const unixMinio = pathLib.resolve(__dirname, './bin/minio');
+/**
+ * Start S3Proxy (Java-based S3-compatible server) for a given test worker directory.
+ *
+ * @param {string} testWorkerDir  Relative directory under tests/ (e.g. 'testdata-0')
+ * @param {number} [port=4569]    Port to listen on
+ * @param {boolean} [silent=true] Suppress stdout
+ * @returns {Promise<import('child_process').ChildProcess>}
+ */
+export async function runS3Proxy(testWorkerDir, port = 4569, silent = true) {
+  const { spawn } = require('child_process');
 
-  const command = isWin ? winMinio : unixMinio;
-  const minioProcess = await require('child_process').spawn(command, [
-    'server',
-    pathLib.resolve(__dirname, testWorkerDir, 'file-structure'),
+  const baseDir = pathLib.resolve(
+    __dirname,
+    testWorkerDir,
+    'file-structure',
+  );
+
+  // Create the bucket directory if it doesn't exist
+  const bucketDir = pathLib.join(baseDir, 'supported-filestypes');
+  if (!fs.existsSync(bucketDir)) {
+    fs.mkdirSync(bucketDir, { recursive: true });
+  }
+
+  // Write a per-worker config file
+  const configPath = pathLib.resolve(
+    __dirname,
+    testWorkerDir,
+    's3proxy.conf',
+  );
+  fs.writeFileSync(
+    configPath,
+    [
+      's3proxy.authorization=none',
+      `s3proxy.endpoint=http://127.0.0.1:${port}`,
+      's3proxy.ignore-unknown-headers=true',
+      'jclouds.provider=filesystem-nio2',
+      'jclouds.identity=test',
+      'jclouds.credential=test',
+      `jclouds.filesystem.basedir=${baseDir}`,
+    ].join('\n') + '\n',
+  );
+
+  const jarPath = pathLib.resolve(__dirname, 's3proxy.jar');
+  const s3proxyProcess = spawn('java', [
+    '-jar',
+    jarPath,
+    '--properties',
+    configPath,
   ]);
 
-  minioProcess.on('exit', function (code) {
-    // console.log('exit here with code: ', code);
+  s3proxyProcess.on('exit', function (code) {
+    // console.log('S3Proxy exit with code:', code);
   });
-  minioProcess.on('close', (code, signal) => {
-    // console.log(`child process terminated due to receipt of signal ${signal}`);
-  });
-
-  minioProcess.stdout.on('data', function (data) {
-    // console.log('stdout: ' + data);
+  s3proxyProcess.on('close', (code, signal) => {
+    // console.log(`S3Proxy terminated due to signal ${signal}`);
   });
 
-  minioProcess.stderr.on('data', function (data) {
-    console.log('stderr: ' + data);
-  });
-  return minioProcess;
-}
-/*export function stopMinio(process) {
-  if (process) {
-    // Send SIGHUP to process.
-    console.log('stopMinio');
-    process.stdin.pause();
-    process.kill(); //'SIGHUP');
+  if (!silent) {
+    s3proxyProcess.stdout.on('data', function (data) {
+      console.log('S3Proxy stdout: ' + data);
+    });
   }
-}*/
+
+  s3proxyProcess.stderr.on('data', function (data) {
+    if (!silent) {
+      console.log('S3Proxy stderr: ' + data);
+    }
+  });
+
+  // Wait for S3Proxy to be ready by polling the endpoint
+  await waitForPort(port, 15000);
+  console.log(`S3Proxy running on port ${port} for dir: ${baseDir}`);
+
+  return s3proxyProcess;
+}
+
+/**
+ * Poll until a port is accepting connections.
+ */
+function waitForPort(port, timeoutMs = 10000) {
+  const start = Date.now();
+  return new Promise((resolve, reject) => {
+    const check = () => {
+      const req = http.get(`http://127.0.0.1:${port}/`, (res) => {
+        res.resume();
+        resolve();
+      });
+      req.on('error', () => {
+        if (Date.now() - start > timeoutMs) {
+          reject(new Error(`S3Proxy did not start within ${timeoutMs}ms`));
+        } else {
+          setTimeout(check, 200);
+        }
+      });
+      req.end();
+    };
+    check();
+  });
+}
 
 /**
  * Start a static file server on a free port.
@@ -87,57 +148,4 @@ export async function startWebServer(preferredPort = 0) {
 
     server.on('error', reject);
   });
-}
-
-/*export async function stopServices(s3Server, webServer, minioServer) {
-  await stopS3Server(s3Server);
-  await stopWebServer(webServer);
-  await stopMinio(minioServer);
-}*/
-
-/*export async function stopWebServer(app) {
-  if (app) {
-    await app.server.close();
-    app = null;
-  }
-}*/
-
-/*export async function stopS3Server(server) {
-  if (server) {
-    await server.close();
-    server = null;
-  }
-}*/
-
-export async function runS3Server(folder, silent = true) {
-  // Set NODE_OPTIONS environment variable to use openssl-legacy-provider
-  process.env.NODE_OPTIONS = '--openssl-legacy-provider';
-
-  const directoryTargetPath = pathLib.resolve(
-    __dirname,
-    folder, //'testdata-tmp',
-    'file-structure',
-  );
-  const corsConfig = pathLib.resolve(__dirname, 's3rver', 'cors.xml');
-  const instance = new S3rver({
-    port: 4569,
-    address: 'localhost',
-    silent: silent,
-    directory: directoryTargetPath,
-    resetOnClose: true,
-    sslEnabled: false,
-    configureBuckets: [
-      {
-        name: 'supported-filestypes',
-        configs: [fs.readFileSync(corsConfig)],
-      },
-    ],
-  });
-  try {
-    await instance.run();
-    console.log('S3rver running for folder:' + directoryTargetPath);
-  } catch (e) {
-    console.log('S3rver run', e);
-  }
-  return instance;
 }

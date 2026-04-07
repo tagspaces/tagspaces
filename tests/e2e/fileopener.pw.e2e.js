@@ -34,7 +34,6 @@ import {
 } from './hook';
 import {
   createPwLocation,
-  createPwMinioLocation,
   createS3Location,
   defaultLocationName,
 } from './location.helpers';
@@ -48,15 +47,12 @@ test.afterEach(async ({ isS3, testDataDir }, testInfo) => {
 });
 
 test.beforeEach(
-  async ({ isMinio, isS3, isWeb, webServerPort, testDataDir }, testInfo) => {
+  async ({ isS3, isWeb, webServerPort, testDataDir }, testInfo) => {
     await startTestingApp(
       { isWeb, isS3, webServerPort, testInfo },
-      isMinio || isS3 ? undefined : 'extconfig.js',
+      isS3 ? undefined : 'extconfig.js',
     );
-    if (isMinio) {
-      await closeWelcomePlaywright();
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else if (isS3) {
+    if (isS3) {
       await closeWelcomePlaywright();
       await createS3Location('', defaultLocationName, true);
     } else {
@@ -311,8 +307,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectFileContain(newFileContent, 15000);
   });
 
-  test('TST0813 - Delete file and check meta and thumbnails deleted [web,minio,s3,electron]', async ({
-    isMinio,
+  test('TST0813 - Delete file and check meta and thumbnails deleted [web,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -336,7 +331,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectElementExist(getGridFileSelector(fileName));
     await openFile(fileName, 'showPropertiesTID');
 
-    const tags = isMinio ? ['test-tag1'] : ['test-tag1', 'test-tag2'];
+    const tags = ['test-tag1', 'test-tag2'];
     // add meta json to file
     await AddRemovePropertiesTags(tags, {
       add: true,
@@ -358,7 +353,7 @@ test.describe('TST08 - File folder properties', () => {
     await setSettings('[data-tid=settingsSetPersistTagsInFileName]', true);
   });
 
-  test('TST0813a - Delete file and check revisions deleted [web,minio,s3,electron,_pro]', async () => {
+  test('TST0813a - Delete file and check revisions deleted [web,s3,electron,_pro]', async () => {
     const fileName = 'sample.txt';
     await openFile(fileName);
     await createRevision();
@@ -409,7 +404,7 @@ test.describe('TST08 - File folder properties', () => {
 
   test.skip('TST0825 - Change folder thumbnail / Reset thumbnail [Pro]', async () => {});
 
-  test('TST0827 - Link for internal sharing + copy [web,minio,s3,electron]', async () => {
+  test('TST0827 - Link for internal sharing + copy [web,s3,electron]', async () => {
     const fileName = 'sample.jpg';
     await openFile(fileName, 'showPropertiesTID');
 
@@ -429,7 +424,7 @@ test.describe('TST08 - File folder properties', () => {
     );
   });
 
-  test('TST0828 - Toggle file revisions [web,minio,s3,electron,_pro]', async () => {
+  test('TST0828 - Toggle file revisions [web,s3,electron,_pro]', async () => {
     const fileName = 'sample.html';
     await openFile(fileName);
     await createRevision('revision content', 'div[class="note-editing-area"]');
@@ -437,7 +432,7 @@ test.describe('TST08 - File folder properties', () => {
     expect(revision).not.toBeUndefined();
   });
 
-  test('TST0829 - Create and restore revision [web,minio,s3,electron,_pro]', async () => {
+  test('TST0829 - Create and restore revision [web,s3,electron,_pro]', async () => {
     const fileName = 'sample.txt';
     await openFile(fileName);
     await expectFileSizeGt(2);
@@ -458,7 +453,7 @@ test.describe('TST08 - File folder properties', () => {
     await expectFileContain(initContent, 15000);
   });
 
-  test('TST0830 - Create, open and delete revision [web,minio,s3,electron,_pro]', async () => {
+  test('TST0830 - Create, open and delete revision [web,s3,electron,_pro]', async () => {
     //create revision
     const fileName = 'sample.txt';
     await openFile(fileName);
@@ -496,7 +491,7 @@ test.describe('TST08 - File folder properties', () => {
     );
   });
 
-  test('TST0831 - Create 2 revisions and delete all revision [web,minio,s3,electron,_pro]', async () => {
+  test('TST0831 - Create 2 revisions and delete all revision [web,s3,electron,_pro]', async () => {
     const fileName = 'sample.md';
     await openFile(fileName);
     await createRevision(

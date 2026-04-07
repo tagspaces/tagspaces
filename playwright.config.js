@@ -55,15 +55,6 @@ export default defineConfig({
       },
     },
     {
-      name: 'electron-minio',
-      grep: projectTagGrep(['electron', 'minio']),
-      use: {
-        isElectron: true,
-        isMinio: true,
-        isWin,
-      },
-    },
-    {
       name: 'web-s3',
       grep: projectTagGrep(['web', 's3']),
       use: {
@@ -71,15 +62,6 @@ export default defineConfig({
         isS3: true,
         isWin,
         // ...devices['Desktop Chrome'],
-      },
-    },
-    {
-      name: 'web-minio',
-      grep: projectTagGrep(['web', 'minio']),
-      use: {
-        isWeb: true,
-        isMinio: true,
-        isWin,
       },
     },
   ],

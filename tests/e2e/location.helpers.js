@@ -13,42 +13,6 @@ import { openContextEntryMenu } from './test-utils';
 export const defaultLocationName = 'supported-filestypes';
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
 export const newLocationName = 'Location Name Changed';
-export const minioAccessKey = 'minioadmin';
-export const minioSecretAccessKey = 'minioadmin';
-export const minioEndpointURL = 'http://127.0.0.1:9000';
-
-export async function createPwMinioLocation(
-  locationPath,
-  locationName,
-  isDefault = false,
-  fullTextIndexing = false,
-) {
-  const lastLocationTID = await getPwLocationTid(-1);
-  // Check if location not exist (from extconfig.js)
-  if (locationName !== lastLocationTID) {
-    await clickOn('[data-tid=locationManagerMenu]');
-    await clickOn('[data-tid=locationManagerMenuCreateLocation]');
-    await clickOn('[data-tid=locationTypeTID]');
-    await clickOn('[data-tid=cloudLocationTID]');
-
-    await setInputValue('[data-tid=locationName] input', locationName || 'Test Location' + new Date().getTime(),); 
-    await setInputValue('[data-tid=locationPath] input', locationPath); 
-    await setInputValue('[data-tid=accessKeyId] input', minioAccessKey); 
-    await setInputValue('[data-tid=secretAccessKey] input', minioSecretAccessKey); 
-    await setInputValue('[data-tid=bucketName] input', 'supported-filestypes'); 
-    await setInputValue('[data-tid=endpointURL] input', minioEndpointURL); 
-
-    if (isDefault) {
-      await clickOn('[data-tid=switchAdvancedModeTID]');
-      await global.client.check('[data-tid=locationIsDefault] input');
-    }
-
-    if (fullTextIndexing) {
-      await global.client.check('[data-tid=changeFullTextIndex] input');
-    }
-    await clickOn('[data-tid=confirmLocationCreation]');
-  }
-}
 
 export async function createS3Location(
   locationPath,
@@ -66,8 +30,8 @@ export async function createS3Location(
 
     await setInputValue('[data-tid=locationName] input', locationName || 'Test Location' + new Date().getTime(),); 
     await setInputValue('[data-tid=locationPath] input', locationPath); 
-    await setInputValue('[data-tid=accessKeyId] input', 'S3RVER'); 
-    await setInputValue('[data-tid=secretAccessKey] input', 'S3RVER'); 
+    await setInputValue('[data-tid=accessKeyId] input', 'test');
+    await setInputValue('[data-tid=secretAccessKey] input', 'test'); 
     await setInputValue('[data-tid=bucketName] input', 'supported-filestypes'); 
     await setInputValue('[data-tid=endpointURL] input', 'http://localhost:4569'); 
 

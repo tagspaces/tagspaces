@@ -41,28 +41,16 @@ function getFilesRecursive(dirPath) {
 function getS3Client() {
   return new S3Client({
     region: 'eu-central-1',
-    endpoint: 'http://localhost:4569', // Adjust endpoint as needed
+    endpoint: 'http://localhost:4569',
+    // S3Proxy is configured with authorization=none, but AWS SDK requires credentials
     credentials: {
-      accessKeyId: 'S3RVER',
-      secretAccessKey: 'S3RVER',
+      accessKeyId: 'test',
+      secretAccessKey: 'test',
     },
-    // Force path style required for local S3rver
     forcePathStyle: true,
-    //logger: console,
-  });
-}
-
-function getMinioClient() {
-  return new S3Client({
-    region: 'eu-central-1',
-    endpoint: 'http://127.0.0.1:9000', // Adjust endpoint as needed
-    credentials: {
-      accessKeyId: 'minioadmin',
-      secretAccessKey: 'minioadmin',
-    },
-    // Force path style required for local S3rver
-    forcePathStyle: true,
-    //logger: console,
+    // S3Proxy does not support the CRC32 checksum header added by newer AWS SDK v3
+    requestChecksumCalculation: 'WHEN_REQUIRED',
+    responseChecksumValidation: 'WHEN_REQUIRED',
   });
 }
 
@@ -104,7 +92,7 @@ async function deleteAllObjects(bucketName) {
   }
 }
 
-function getS3File({ isMinio }, filePath) {
+function getS3File(filePath) {
   const key = filePath.replace(/\\/g, '/'); // Normalize path separators
   //const key = path.relative(directoryPath, filePath).replace(/\\/g, '/'); // Normalize path separators
 
@@ -113,7 +101,7 @@ function getS3File({ isMinio }, filePath) {
     Key: key,
     ResponseCacheControl: 'no-cache',
   };
-  const s3Client = isMinio ? getMinioClient() : getS3Client();
+  const s3Client = getS3Client();
   return s3Client
     .send(new GetObjectCommand(params))
     .then((data) => {

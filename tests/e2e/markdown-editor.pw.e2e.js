@@ -4,7 +4,6 @@
 import { test, expect } from './fixtures';
 import {
   defaultLocationName,
-  createPwMinioLocation,
   createPwLocation,
   createS3Location,
 } from './location.helpers';
@@ -39,11 +38,9 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
+test.beforeEach(async ({ isS3, testDataDir }) => {
   await closeWelcomePlaywright();
-  if (isMinio) {
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
+  if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(testDataDir, defaultLocationName, true);
@@ -55,7 +52,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST69 - Markdown editor', () => {
-  test('TST6901 - Open and render md file [web,minio,s3,electron]', async () => {
+  test('TST6901 - Open and render md file [web,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.md'),
       'fileMenuOpenFile',
@@ -76,7 +73,7 @@ test.describe('TST69 - Markdown editor', () => {
       .toBe(true);
   });
 
-  test('TST6902 - Open settings [web,minio,s3,electron]', async () => {
+  test('TST6902 - Open settings [web,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.md'),
       'fileMenuOpenFile',

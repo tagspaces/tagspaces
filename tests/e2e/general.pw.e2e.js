@@ -5,7 +5,6 @@ import { test, expect } from './fixtures';
 import AppConfig from '../../src/renderer/AppConfig';
 import {
   defaultLocationName,
-  createPwMinioLocation,
   createPwLocation,
   createS3Location,
 } from './location.helpers';
@@ -71,11 +70,8 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
-  if (isMinio) {
-    await closeWelcomePlaywright();
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
+test.beforeEach(async ({ isS3, testDataDir }) => {
+  if (isS3) {
     await closeWelcomePlaywright();
     await createS3Location('', defaultLocationName, true);
   } else {
@@ -88,7 +84,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST51 - Perspective Grid', () => {
-  test('TST0501 - Create HTML file [web,minio,s3,electron]', async () => {
+  test('TST0501 - Create HTML file [web,s3,electron]', async () => {
     // await global.client.waitForLoadState('networkidle');
     await createNewDirectory();
     await expectElementExist(
@@ -114,7 +110,7 @@ test.describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0501 after deleteDirectory');
   });
 
-  test('TST0502 - Create MD file [web,minio,s3,electron]', async () => {
+  test('TST0502 - Create MD file [web,s3,electron]', async () => {
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -139,7 +135,7 @@ test.describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0502 after deleteDirectory');
   });
 
-  test('TST0503 - Create TEXT file [web,minio,s3,electron]', async () => {
+  test('TST0503 - Create TEXT file [web,s3,electron]', async () => {
     await createNewDirectory();
     await expectElementExist(
       '[data-tid=fsEntryName_' + testFolder + ']',
@@ -164,7 +160,7 @@ test.describe('TST51 - Perspective Grid', () => {
     // await takeScreenshot('TST0503 after deleteDirectory');
   });
 
-  test('TST0510 - Generate thumbnail from Images [electron,minio,s3]', async () => {
+  test('TST0510 - Generate thumbnail from Images [electron,s3]', async () => {
     const filtered = ['ico', 'tiff', 'tif', 'svg'];
     /*if (global.isMinio || global.isS3) {
       filtered.push('svg');
@@ -176,7 +172,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectMetaFilesExist(metaFiles);
   });
 
-  test('TST0510a - Generate thumbnail from JPG w. rotation from EXIF [web,minio,s3,electron]', async ({
+  test('TST0510a - Generate thumbnail from JPG w. rotation from EXIF [web,s3,electron]', async ({
     isWin,
     isWeb,
   }) => {
@@ -249,7 +245,7 @@ test.describe('TST51 - Perspective Grid', () => {
   /**
    * todo not generated on S3 location
    */
-  test('TST0517 - Generate thumbnail from ODT [electron,minio,_pro]', async () => {
+  test('TST0517 - Generate thumbnail from ODT [electron,s3,_pro]', async () => {
     await expectMetaFilesExist([
       'sample.odt.jpg',
       'sample.ods.jpg',
@@ -259,29 +255,29 @@ test.describe('TST51 - Perspective Grid', () => {
   /**
    * todo not generated on S3 location
    */
-  test('TST0519 - Generate thumbnail from TIFF [electron,minio,_pro]', async () => {
+  test('TST0519 - Generate thumbnail from TIFF [electron,s3,_pro]', async () => {
     await expectMetaFilesExist(['sample.tiff.jpg']);
   });
 
-  test.skip('TST0520 - Generate thumbnail from PSD [electron,minio,s3,_pro]', async () => {
+  test.skip('TST0520 - Generate thumbnail from PSD [electron,s3,_pro]', async () => {
     // TODO fix
     await expectMetaFilesExist(['sample.psd.jpg']);
   });
 
-  test('TST0522 - Generate thumbnail from URL [electron,minio,s3,_pro]', async () => {
+  test('TST0522 - Generate thumbnail from URL [electron,s3,_pro]', async () => {
     await expectMetaFilesExist(['sample.url.jpg']);
   });
 
-  test('TST0523 - Generate thumbnail from HTML [electron,minio,s3,_pro]', async () => {
+  test('TST0523 - Generate thumbnail from HTML [electron,s3,_pro]', async () => {
     await expectMetaFilesExist(['sample.html.jpg']);
   });
 
-  test('TST0524 - Generate thumbnail from TXT,MD [electron,minio,s3,_pro]', async () => {
+  test('TST0524 - Generate thumbnail from TXT,MD [electron,s3,_pro]', async () => {
     // MD thumbs generation is stopped
     await expectMetaFilesExist(['sample.txt.jpg']);
   });
 
-  test('TST0529 - Import EXIF information as Tags [web,minio,s3,electron,_pro]', async () => {
+  test('TST0529 - Import EXIF information as Tags [web,s3,electron,_pro]', async () => {
     await openFile('sample_exif[iptc].jpg', 'showPropertiesTID');
 
     await clickOn('[data-tid=openGalleryPerspective]');
@@ -303,7 +299,7 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
-  test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,minio,s3,electron,_pro]', async () => {
+  test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,s3,electron,_pro]', async () => {
     const tagName = 'custom-date';
     const sourceTagGroup = 'Smart Tags';
 

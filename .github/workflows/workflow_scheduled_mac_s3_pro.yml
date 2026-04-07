@@ -1,13 +1,13 @@
-name: Nightly E2E Electron Pro Windows ObjectStorage
+name: Nightly E2E Electron Pro macOS S3
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 4 * * *'
   workflow_dispatch:
 
 jobs:
-  e2eTestsElectronWin:
-    name: Test TagSpaces Pro on Windows
-    runs-on: windows-latest
+  e2eTestsElectronMac:
+    name: Test TagSpaces Desktop on Mac with S3Proxy
+    runs-on: macos-latest
     steps:
       - name: Checking out default branch
         uses: actions/checkout@v4
@@ -19,7 +19,12 @@ jobs:
         with:
           repository: tagspaces/testdata
           path: tests/testdata
-      - name: Configure NPM for TagSpaces Pro
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: Configure NPM
         uses: actions/setup-node@v4
         with:
           node-version: '22.x'
@@ -36,17 +41,19 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.TSPNPMINSTALL }}
       - name: Run Unit tests
         run: npm run test-unit
-      - uses: carlosperate/download-file-action@v2
-        id: minio
-        name: Download the Minio
+      - name: Cache S3Proxy JAR
+        id: cache-s3proxy
+        uses: actions/cache@v4
         with:
-          file-url: 'https://s3.eu-central-1.wasabisys.com/demots/public/mc-20201119/minio.exe'
-          file-name: 'minio.exe'
-          location: './tests/bin/'
+          path: tests/s3proxy.jar
+          key: s3proxy-3.0.0
+      - name: Download S3Proxy
+        if: steps.cache-s3proxy.outputs.cache-hit != 'true'
+        run: curl -sL -o tests/s3proxy.jar "https://repo1.maven.org/maven2/org/gaul/s3proxy/3.0.0/s3proxy-3.0.0-jar-with-dependencies.jar"
       - name: Run Electron tests
         run: |
           npm run build-e2e
-          npm run test-playwright-minio
+          npm run test-playwright-s3
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
