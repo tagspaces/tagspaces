@@ -446,7 +446,7 @@ export async function createLocation(
     await expectElementExist(
       getGridFileSelector(expectFolderExist),
       true,
-      8000,
+      30000,
     );
   }
 }

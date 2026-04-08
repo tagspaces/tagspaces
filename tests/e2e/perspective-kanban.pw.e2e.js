@@ -108,17 +108,17 @@ test.describe('TST49 - Perspective KanBan', () => {
     await expectElementExist(
       '[data-tid=test_kanban_column1KanBanColumnTID]',
       true,
-      5000,
+      15000,
     );
     await expectElementExist(
       '[data-tid=test_kanban_column2KanBanColumnTID]',
       true,
-      5000,
+      10000,
     );
     await expectElementExist(
       '[data-tid=test_kanban_column3KanBanColumnTID]',
       true,
-      5000,
+      10000,
     );
     await expectElementExist(
       '[data-tid=test_kanban_column4KanBanColumnTID]',

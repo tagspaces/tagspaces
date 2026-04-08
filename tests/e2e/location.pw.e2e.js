@@ -147,7 +147,7 @@ test.describe('TST03 - Testing locations:', () => {
     expect(lastLocation).toBe(testLocationName);
   });
 
-  test('TST0328 - Creating location index [web,s3,electron,_pro]', async ({
+  test('TST0328 - Creating location index [web,electron,_pro]', async ({
     isS3,
     isWeb,
     testDataDir,

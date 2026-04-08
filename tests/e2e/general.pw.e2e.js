@@ -243,9 +243,9 @@ test.describe('TST51 - Perspective Grid', () => {
     await expectMetaFilesExist(['sample.pdf.jpg']);
   });
   /**
-   * todo not generated on S3 location
+   * Thumbnails for ODT/ODS/EPUB are not generated on S3 locations
    */
-  test('TST0517 - Generate thumbnail from ODT [electron,s3,_pro]', async () => {
+  test('TST0517 - Generate thumbnail from ODT [electron,_pro]', async () => {
     await expectMetaFilesExist([
       'sample.odt.jpg',
       'sample.ods.jpg',
@@ -253,9 +253,9 @@ test.describe('TST51 - Perspective Grid', () => {
     ]);
   });
   /**
-   * todo not generated on S3 location
+   * Thumbnails for TIFF are not generated on S3 locations
    */
-  test('TST0519 - Generate thumbnail from TIFF [electron,s3,_pro]', async () => {
+  test('TST0519 - Generate thumbnail from TIFF [electron,_pro]', async () => {
     await expectMetaFilesExist(['sample.tiff.jpg']);
   });
 

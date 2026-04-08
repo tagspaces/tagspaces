@@ -4,7 +4,7 @@ const {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
-  DeleteObjectsCommand,
+  DeleteObjectCommand,
   ListObjectsV2Command,
 } = require('@aws-sdk/client-s3');
 const bucketName = 'supported-filestypes';
@@ -56,35 +56,42 @@ function getS3Client() {
 
 async function deleteAllObjects(bucketName) {
   try {
-    // List objects in the bucket
-    const listParams = {
-      Bucket: bucketName,
-      MaxKeys: 10, // Limit the number of keys to 10 per request
-    };
-
     const s3Client = getS3Client();
+
+    // Collect all keys first, then sort so deepest paths (files inside dirs) are deleted
+    // before their parent directory markers. This avoids DirectoryNotEmptyException
+    // on filesystem-backed S3 implementations like S3Proxy.
+    let allKeys = [];
+    const listParams = { Bucket: bucketName, MaxKeys: 1000 };
     let listedObjects;
     do {
       listedObjects = await s3Client.send(new ListObjectsV2Command(listParams));
-
-      if (!listedObjects.Contents || listedObjects.Contents.length === 0) break;
-
-      // Prepare the list of objects to delete
-      const deleteParams = {
-        Bucket: bucketName,
-        Delete: {
-          Objects: listedObjects.Contents.map((object) => ({
-            Key: object.Key,
-          })),
-        },
-      };
-
-      // Delete objects
-      await s3Client.send(new DeleteObjectsCommand(deleteParams));
-
-      // If the list is truncated, set the continuation token to get the next batch of objects
+      if (listedObjects.Contents) {
+        allKeys.push(...listedObjects.Contents.map((o) => o.Key));
+      }
       listParams.ContinuationToken = listedObjects.NextContinuationToken;
     } while (listedObjects.IsTruncated);
+
+    if (allKeys.length === 0) return;
+
+    // Sort by depth descending (deepest first), so children are deleted before parents
+    allKeys.sort((a, b) => {
+      const depthA = (a.match(/\//g) || []).length;
+      const depthB = (b.match(/\//g) || []).length;
+      return depthB - depthA;
+    });
+
+    // Delete one by one to avoid XML parsing issues with batch DeleteObjects
+    // responses on S3-compatible backends (S3Proxy, S3rver)
+    for (const key of allKeys) {
+      try {
+        await s3Client.send(
+          new DeleteObjectCommand({ Bucket: bucketName, Key: key }),
+        );
+      } catch (err) {
+        // Ignore errors for individual deletes (e.g. already deleted)
+      }
+    }
 
     console.log(`All objects in bucket "${bucketName}" have been deleted.`);
   } catch (error) {
@@ -172,7 +179,11 @@ function uploadTestDirectory(dirPath) {
 }
 
 async function refreshS3testData(testDataDir) {
-  await deleteAllObjects('supported-filestypes');
+  try {
+    await deleteAllObjects('supported-filestypes');
+  } catch (error) {
+    console.error('deleteAllObjects error:', error.message);
+  }
   await uploadTestDirectory(testDataDir);
 }
 
