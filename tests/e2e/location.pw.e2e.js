@@ -18,7 +18,6 @@ import {
 import { startTestingApp, stopApp } from './hook';
 import {
   createPwLocation,
-  createPwMinioLocation,
   createS3Location,
   getPwLocationTid,
   openLocationMenu,
@@ -50,12 +49,10 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
+test.beforeEach(async ({ isS3, testDataDir }) => {
   testLocationName = '' + new Date().getTime();
 
-  if (isMinio) {
-    await createPwMinioLocation('', testLocationName, true);
-  } else if (isS3) {
+  if (isS3) {
     await createS3Location('', testLocationName, true);
   } else {
     await createPwLocation(testDataDir, testLocationName, true);
@@ -68,7 +65,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST03 - Testing locations:', () => {
-  test('TST0301 - Should create a location [web,minio,s3,electron]', async () => {
+  test('TST0301 - Should create a location [web,s3,electron]', async () => {
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
       true,
@@ -76,7 +73,7 @@ test.describe('TST03 - Testing locations:', () => {
     );
   });
 
-  test('TST0302 - Should remove a location [web,minio,s3,electron]', async () => {
+  test('TST0302 - Should remove a location [web,s3,electron]', async () => {
     await expectElementExist(
       '[data-tid=location_' + testLocationName + ']',
       true,
@@ -94,7 +91,7 @@ test.describe('TST03 - Testing locations:', () => {
     await expectElementExist('[data-tid=WelcomePanelTID]', true);
   });
 
-  test('TST0303 - Rename location [web,minio,s3,electron]', async () => {
+  test('TST0303 - Rename location [web,s3,electron]', async () => {
     await openLocationMenu(testLocationName);
     await clickOn('[data-tid=editLocation]');
     await global.client.dblclick('[data-tid=locationName] input');
@@ -108,7 +105,7 @@ test.describe('TST03 - Testing locations:', () => {
     );
   });
 
-  test('TST0305 - Set as startup location [web,minio,s3,electron]', async () => {
+  test('TST0305 - Set as startup location [web,s3,electron]', async () => {
     await openLocationMenu(testLocationName);
     await startupLocation();
     await expectElementExist('[data-tid=startupIndication]', false);
@@ -127,16 +124,13 @@ test.describe('TST03 - Testing locations:', () => {
     // TODO test duplication warning on creating locations
   });
 
-  test('TST0307 - Move location Up and Down [web,minio,s3,electron]', async ({
+  test('TST0307 - Move location Up and Down [web,s3,electron]', async ({
     isWeb,
-    isMinio,
     isS3,
   }) => {
     if (isWeb) {
       // in web there is no other locations
-      if (isMinio) {
-        await createPwMinioLocation('', 'dummyLocation', false);
-      } else if (isS3) {
+      if (isS3) {
         await createS3Location('empty_folder');
       }
     }
@@ -153,14 +147,13 @@ test.describe('TST03 - Testing locations:', () => {
     expect(lastLocation).toBe(testLocationName);
   });
 
-  test('TST0328 - Creating location index [web,minio,s3,electron,_pro]', async ({
+  test('TST0328 - Creating location index [web,electron,_pro]', async ({
     isS3,
-    isMinio,
     isWeb,
     testDataDir,
   }) => {
     test.setTimeout(520000);
-    const props = { isS3, isMinio, testDataDir };
+    const props = { isS3, testDataDir };
     const file1 = 'test_file1[tag1 tag2].md'; // todo sidecar tags + ids
     const file1content = 'test md file 1';
     const file1desc = 'test file 1 desc';
@@ -210,7 +203,7 @@ test.describe('TST03 - Testing locations:', () => {
     const rootFolder = locationFolderName + '/' + AppConfig.metaFolder;
     // await global.client.waitForTimeout(180000);
     await expectMetaFileContain(
-      { testDataDir, isS3, isMinio },
+      { testDataDir, isS3 },
       'tsi.json',
       rootFolder,
       indexFileContent,

@@ -35,17 +35,22 @@ jobs:
           npm run type-check
         env:
           NODE_AUTH_TOKEN: ${{ secrets.TSPNPMINSTALL }}
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
       - name: Run Unit tests
         run: npm run test-unit
-      - uses: suisei-cn/actions-download-file@v1.6.0
-        id: minio
-        name: Download Minio program
+      - name: Cache S3Proxy JAR
+        id: cache-s3proxy
+        uses: actions/cache@v4
         with:
-          # url: 'https://dl.min.io/server/minio/release/windows-amd64/minio.exe'
-          url: 'https://dl.min.io/server/minio/release/linux-amd64/minio'
-          target: tests/bin/
-      - name: Make Minio executable
-        run: chmod +x ./tests/bin/minio
+          path: tests/s3proxy.jar
+          key: s3proxy-3.0.0
+      - name: Download S3Proxy
+        if: steps.cache-s3proxy.outputs.cache-hit != 'true'
+        run: curl -sL -o tests/s3proxy.jar "https://repo1.maven.org/maven2/org/gaul/s3proxy/3.0.0/s3proxy-3.0.0-jar-with-dependencies.jar"
       - name: Run Electron tests
         run: |
           npm run build-e2e

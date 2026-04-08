@@ -1,6 +1,5 @@
 import { test, expect } from './fixtures';
 import {
-  createPwMinioLocation,
   createPwLocation,
   defaultLocationName,
   createS3Location,
@@ -25,15 +24,12 @@ test.afterEach(async () => {
 });
 
 test.beforeEach(
-  async ({ isMinio, isS3, isWeb, webServerPort, testDataDir }, testInfo) => {
+  async ({ isS3, isWeb, webServerPort, testDataDir }, testInfo) => {
     await startTestingApp(
       { isWeb, isS3, webServerPort, testInfo },
-      isMinio || isS3 ? undefined : 'extconfig.js',
+      isS3 ? undefined : 'extconfig.js',
     );
-    if (isMinio) {
-      await closeWelcomePlaywright();
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else if (isS3) {
+    if (isS3) {
       await closeWelcomePlaywright();
       await createS3Location('', defaultLocationName, true);
     } else {

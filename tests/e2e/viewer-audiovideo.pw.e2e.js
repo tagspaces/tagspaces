@@ -5,7 +5,6 @@
 import { test, expect } from './fixtures';
 import {
   defaultLocationName,
-  createPwMinioLocation,
   createPwLocation,
   createS3Location,
 } from './location.helpers';
@@ -30,10 +29,8 @@ test.afterAll(async () => {
   await stopApp();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
-  if (isMinio) {
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
+test.beforeEach(async ({ isS3, testDataDir }) => {
+  if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(testDataDir, defaultLocationName, true);
@@ -45,7 +42,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST59 - Media player', () => {
-  test('TST5901 - Play ogg file [web,minio,s3,electron]', async () => {
+  test('TST5901 - Play ogg file [web,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.ogg'),
       'fileMenuOpenFile',
@@ -56,7 +53,7 @@ test.describe('TST59 - Media player', () => {
   /**
    * http://localhost:63342/test-artifacts/playwright-report/trace/manifest.webmanifest?_ijt=eojod6f91jej1donf3vd1jp8ju
    */
-  test('TST5902 - Play ogv file [web,minio,s3,electron]', async ({ isWin }) => {
+  test('TST5902 - Play ogv file [web,s3,electron]', async ({ isWin }) => {
     if (!isWin) {
       await openContextEntryMenu(
         getGridFileSelector('sample.ogv'),
@@ -66,7 +63,7 @@ test.describe('TST59 - Media player', () => {
     }
   });
 
-  test('TST5903 - Open and close about dialog [web,minio,s3,electron]', async () => {
+  test('TST5903 - Open and close about dialog [web,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.mp4'),
       'fileMenuOpenFile',
@@ -98,7 +95,7 @@ test.describe('TST59 - Media player', () => {
     expect(aboutNotExists).toBeTruthy();
   });
 
-  test('TST5904 - Play mp3 [web,minio,s3,electron]', async () => {
+  test('TST5904 - Play mp3 [web,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.mp3'),
       'fileMenuOpenFile',
@@ -109,7 +106,7 @@ test.describe('TST59 - Media player', () => {
   /**
    * for mp4 codecs missing web on Chromium browser
    */
-  test('TST5905 - Play webm [web,minio,s3,electron]', async ({
+  test('TST5905 - Play webm [web,s3,electron]', async ({
     isWeb,
     isWin,
   }) => {
@@ -130,7 +127,7 @@ test.describe('TST59 - Media player', () => {
     expect(playExists).toBeTruthy();*/
   });
 
-  test('TST5906 - Play flac [web,minio,s3,electron]', async () => {
+  test('TST5906 - Play flac [web,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.flac'),
       'fileMenuOpenFile',
@@ -138,7 +135,7 @@ test.describe('TST59 - Media player', () => {
     await expectMediaPlay(false);
   });
 
-  test('TST5911 - Play 3gp [web,minio,s3,electron]', async () => {
+  test('TST5911 - Play 3gp [web,s3,electron]', async () => {
     /*await clickOn('[data-tid=settings]');
     await clickOn('[data-tid=fileTypeSettingsDialog]');
     const selectEl = global.client.locator('[data-tid=viewerTIDgif]');

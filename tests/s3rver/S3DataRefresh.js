@@ -4,7 +4,7 @@ const {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
-  DeleteObjectsCommand,
+  DeleteObjectCommand,
   ListObjectsV2Command,
 } = require('@aws-sdk/client-s3');
 const bucketName = 'supported-filestypes';
@@ -41,62 +41,57 @@ function getFilesRecursive(dirPath) {
 function getS3Client() {
   return new S3Client({
     region: 'eu-central-1',
-    endpoint: 'http://localhost:4569', // Adjust endpoint as needed
+    endpoint: 'http://localhost:4569',
+    // S3Proxy is configured with authorization=none, but AWS SDK requires credentials
     credentials: {
-      accessKeyId: 'S3RVER',
-      secretAccessKey: 'S3RVER',
+      accessKeyId: 'test',
+      secretAccessKey: 'test',
     },
-    // Force path style required for local S3rver
     forcePathStyle: true,
-    //logger: console,
-  });
-}
-
-function getMinioClient() {
-  return new S3Client({
-    region: 'eu-central-1',
-    endpoint: 'http://127.0.0.1:9000', // Adjust endpoint as needed
-    credentials: {
-      accessKeyId: 'minioadmin',
-      secretAccessKey: 'minioadmin',
-    },
-    // Force path style required for local S3rver
-    forcePathStyle: true,
-    //logger: console,
+    // S3Proxy does not support the CRC32 checksum header added by newer AWS SDK v3
+    requestChecksumCalculation: 'WHEN_REQUIRED',
+    responseChecksumValidation: 'WHEN_REQUIRED',
   });
 }
 
 async function deleteAllObjects(bucketName) {
   try {
-    // List objects in the bucket
-    const listParams = {
-      Bucket: bucketName,
-      MaxKeys: 10, // Limit the number of keys to 10 per request
-    };
-
     const s3Client = getS3Client();
+
+    // Collect all keys first, then sort so deepest paths (files inside dirs) are deleted
+    // before their parent directory markers. This avoids DirectoryNotEmptyException
+    // on filesystem-backed S3 implementations like S3Proxy.
+    let allKeys = [];
+    const listParams = { Bucket: bucketName, MaxKeys: 1000 };
     let listedObjects;
     do {
       listedObjects = await s3Client.send(new ListObjectsV2Command(listParams));
-
-      if (!listedObjects.Contents || listedObjects.Contents.length === 0) break;
-
-      // Prepare the list of objects to delete
-      const deleteParams = {
-        Bucket: bucketName,
-        Delete: {
-          Objects: listedObjects.Contents.map((object) => ({
-            Key: object.Key,
-          })),
-        },
-      };
-
-      // Delete objects
-      await s3Client.send(new DeleteObjectsCommand(deleteParams));
-
-      // If the list is truncated, set the continuation token to get the next batch of objects
+      if (listedObjects.Contents) {
+        allKeys.push(...listedObjects.Contents.map((o) => o.Key));
+      }
       listParams.ContinuationToken = listedObjects.NextContinuationToken;
     } while (listedObjects.IsTruncated);
+
+    if (allKeys.length === 0) return;
+
+    // Sort by depth descending (deepest first), so children are deleted before parents
+    allKeys.sort((a, b) => {
+      const depthA = (a.match(/\//g) || []).length;
+      const depthB = (b.match(/\//g) || []).length;
+      return depthB - depthA;
+    });
+
+    // Delete one by one to avoid XML parsing issues with batch DeleteObjects
+    // responses on S3-compatible backends (S3Proxy, S3rver)
+    for (const key of allKeys) {
+      try {
+        await s3Client.send(
+          new DeleteObjectCommand({ Bucket: bucketName, Key: key }),
+        );
+      } catch (err) {
+        // Ignore errors for individual deletes (e.g. already deleted)
+      }
+    }
 
     console.log(`All objects in bucket "${bucketName}" have been deleted.`);
   } catch (error) {
@@ -104,7 +99,7 @@ async function deleteAllObjects(bucketName) {
   }
 }
 
-function getS3File({ isMinio }, filePath) {
+function getS3File(filePath) {
   const key = filePath.replace(/\\/g, '/'); // Normalize path separators
   //const key = path.relative(directoryPath, filePath).replace(/\\/g, '/'); // Normalize path separators
 
@@ -113,7 +108,7 @@ function getS3File({ isMinio }, filePath) {
     Key: key,
     ResponseCacheControl: 'no-cache',
   };
-  const s3Client = isMinio ? getMinioClient() : getS3Client();
+  const s3Client = getS3Client();
   return s3Client
     .send(new GetObjectCommand(params))
     .then((data) => {
@@ -184,7 +179,11 @@ function uploadTestDirectory(dirPath) {
 }
 
 async function refreshS3testData(testDataDir) {
-  await deleteAllObjects('supported-filestypes');
+  try {
+    await deleteAllObjects('supported-filestypes');
+  } catch (error) {
+    console.error('deleteAllObjects error:', error.message);
+  }
   await uploadTestDirectory(testDataDir);
 }
 

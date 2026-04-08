@@ -4,7 +4,6 @@
 import { test, expect } from './fixtures';
 import {
   defaultLocationName,
-  createPwMinioLocation,
   createPwLocation,
   createS3Location,
 } from './location.helpers';
@@ -40,10 +39,8 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
-  if (isMinio) {
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
+test.beforeEach(async ({ isS3, testDataDir }) => {
+  if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(testDataDir, defaultLocationName, true);
@@ -54,7 +51,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST51 - Perspective openGalleryPerspective', () => {
-  test('TST5120 - prev/next button [web,minio,s3,electron,_pro]', async () => {
+  test('TST5120 - prev/next button [web,s3,electron,_pro]', async () => {
     const fileName = 'sample.svg';
     const nextFileName = 'sample.tga';
     await clickOn(getGridFileSelector(fileName));

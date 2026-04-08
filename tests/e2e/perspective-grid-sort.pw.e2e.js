@@ -4,7 +4,6 @@
 import { test, expect } from './fixtures';
 import {
   defaultLocationName,
-  createPwMinioLocation,
   createPwLocation,
   createS3Location,
 } from './location.helpers';
@@ -42,10 +41,8 @@ test.afterAll(async () => {
   }
 });*/
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
-  if (isMinio) {
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
+test.beforeEach(async ({ isS3, testDataDir }) => {
+  if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(testDataDir, defaultLocationName, true);
@@ -59,7 +56,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 
 // Scenarios for sorting files in grid perspective
 test.describe('TST5003 - Testing sort files in the grid perspective', () => {
-  test('TST10xx - Sort by name [web,minio,s3,electron]', async ({
+  test('TST10xx - Sort by name [web,s3,electron]', async ({
     testDataDir,
   }) => {
     // DESC
@@ -81,7 +78,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective', () => {
     }
   });
 
-  test('TST10xx - Sort by size [web,minio,s3,electron]', async ({
+  test('TST10xx - Sort by size [web,s3,electron]', async ({
     testDataDir,
   }) => {
     await clickOn('[data-tid=gridPerspectiveSortBySize]');
@@ -102,7 +99,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective', () => {
     }
   });
 
-  test('TST10xx - Sort by date [web,minio,s3,electron]', async ({
+  test('TST10xx - Sort by date [web,s3,electron]', async ({
     testDataDir,
   }) => {
     await clickOn('[data-tid=gridPerspectiveSortByDate]');
@@ -124,7 +121,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective', () => {
     }
   });
 
-  test('TST10xx - Sort by extension [web,minio,s3,electron]', async ({
+  test('TST10xx - Sort by extension [web,s3,electron]', async ({
     testDataDir,
   }) => {
     await clickOn('[data-tid=gridPerspectiveSortByExt]');
@@ -143,7 +140,7 @@ test.describe('TST5003 - Testing sort files in the grid perspective', () => {
     }
   });
 
-  test('TST10xx - Sort by tags [web,minio,s3,electron]', async ({
+  test('TST10xx - Sort by tags [web,s3,electron]', async ({
     testDataDir,
   }) => {
     await clickOn('[data-tid=gridPerspectiveSortByFirstTag]');

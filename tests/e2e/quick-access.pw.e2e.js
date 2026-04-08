@@ -4,7 +4,6 @@
 import { test, expect } from './fixtures';
 import {
   defaultLocationName,
-  createPwMinioLocation,
   createPwLocation,
   createS3Location,
 } from './location.helpers';
@@ -40,12 +39,10 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
+test.beforeEach(async ({ isS3, testDataDir }) => {
   await closeWelcomePlaywright();
   await clickOn('[data-tid=locationManager]');
-  if (isMinio) {
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
+  if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(testDataDir, defaultLocationName, true);
@@ -57,7 +54,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST09 - Quick access', () => {
-  test('TST0901 - Create, rename and delete stored search [electron,minio,s3]', async () => {
+  test('TST0901 - Create, rename and delete stored search [electron,s3]', async () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
     //await expectElementExist('[data-tid=quickAccessButton]');
@@ -82,7 +79,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0902 - Create, execute and delete stored search [electron,minio,s3]', async () => {
+  test('TST0902 - Create, execute and delete stored search [electron,s3]', async () => {
     const storedSearchTitle = 'jpgExecutedSearch';
     const textQuery = 'jpg';
     await createSavedSearch({ title: storedSearchTitle, textQuery });
@@ -105,7 +102,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0905 - Create, open and remove bookmark to file in properties [web,minio,s3,electron,_pro]', async () => {
+  test('TST0905 - Create, open and remove bookmark to file in properties [web,s3,electron,_pro]', async () => {
     const bookmarkFileTitle = 'sample.txt';
     const bookmarkFileTid = dataTidFormat(bookmarkFileTitle);
     await openContextEntryMenu(
@@ -139,7 +136,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0906 - Create, open and remove bookmark to folder in quickaccess [web,minio,s3,electron,_pro]', async () => {
+  test('TST0906 - Create, open and remove bookmark to folder in quickaccess [web,s3,electron,_pro]', async () => {
     const testFolder = 'empty_folder';
     await rightClickOn('[data-tid=fsEntryName_' + testFolder + ']');
     await clickOn('[data-tid=showProperties]');
@@ -184,7 +181,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0907 - Create 2 local bookmarks and delete all bookmarks [electron,minio,s3,_pro]', async () => {
+  test('TST0907 - Create 2 local bookmarks and delete all bookmarks [electron,s3,_pro]', async () => {
     await clickOn('[data-tid=quickAccessButton]');
     const bookmarks = ['sample.txt', 'sample.jpg'];
     for (let i = 0; i < bookmarks.length; i++) {
@@ -215,7 +212,7 @@ test.describe('TST09 - Quick access', () => {
       );
     }
   });
-  test('TST0908 - Add, open and remove recently opened file [web,minio,s3,electron,_pro]', async () => {
+  test('TST0908 - Add, open and remove recently opened file [web,s3,electron,_pro]', async () => {
     // Add
     const fileTitle = 'sample.jpg';
     const fileTid = dataTidFormat(fileTitle);
@@ -245,7 +242,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0909 - Add 2 recently opened files and clear history [electron,minio,s3,_pro]', async () => {
+  test('TST0909 - Add 2 recently opened files and clear history [electron,s3,_pro]', async () => {
     await clickOn('[data-tid=quickAccessButton]');
     if (!(await isDisplayed('[data-tid=fileCloseHistoryTID]'))) {
       await clickOn('[data-tid=fileOpenHistoryTID]');
@@ -279,7 +276,7 @@ test.describe('TST09 - Quick access', () => {
     }
   });
 
-  test.skip('TST0910 - Add, open and remove recently edited file [web,minio,s3,electron,_pro]', async () => {
+  test.skip('TST0910 - Add, open and remove recently edited file [web,s3,electron,_pro]', async () => {
     // Add
     const fileTitle = 'sample.txt';
     const fileTid = dataTidFormat(fileTitle);
@@ -309,7 +306,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0912 - Add, open and remove recently opened folder properties [web,minio,s3,electron,_pro]', async () => {
+  test('TST0912 - Add, open and remove recently opened folder properties [web,s3,electron,_pro]', async () => {
     // Add
     const testFolder = 'empty_folder';
     await rightClickOn('[data-tid=fsEntryName_' + testFolder + ']');
@@ -345,7 +342,7 @@ test.describe('TST09 - Quick access', () => {
     );
   });
 
-  test('TST0913 - Add 2 recently opened folders and clear history [web,minio,s3,electron,_pro]', async () => {
+  test('TST0913 - Add 2 recently opened folders and clear history [web,s3,electron,_pro]', async () => {
     const folders = ['new_folder', 'new_folder1'];
     for (let i = 0; i < folders.length; i++) {
       const testFolder = await createNewDirectory(folders[i]);
@@ -393,7 +390,7 @@ test.describe('TST09 - Quick access', () => {
     }
   });
 
-  test.skip('TST0914 - Add search to search history and search [web,minio,s3,electron]', async () => {
+  test.skip('TST0914 - Add search to search history and search [web,s3,electron]', async () => {
     await searchEngine('txt');
     await clickOn('#clearSearchID');
 

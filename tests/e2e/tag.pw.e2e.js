@@ -20,7 +20,6 @@ import {
 } from './hook';
 import {
   createPwLocation,
-  createPwMinioLocation,
   createS3Location,
   defaultLocationName,
 } from './location.helpers';
@@ -59,17 +58,17 @@ test.beforeEach(async ({ isWeb, isS3, webServerPort }, testInfo) => {
 });
 
 test.describe('TST04 - Testing the tag library:', () => {
-  test('TST0401 - Should create a tag group [web,minio,s3,electron]', async () => {
+  test('TST0401 - Should create a tag group [web,s3,electron]', async () => {
     await createTagGroup(testGroup);
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0402 - Should delete tag group [web,minio,s3,electron]', async () => {
+  test('TST0402 - Should delete tag group [web,s3,electron]', async () => {
     await createTagGroup(testGroup);
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0403 - Rename tag group [web,minio,s3,electron]', async () => {
+  test('TST0403 - Rename tag group [web,s3,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await clickOn('[data-tid=editTagGroup]');
@@ -82,7 +81,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(editedGroupName);
   });
 
-  test.skip('TST0404 - Change default tag group tag colors [web,minio,s3,electron]', async () => {
+  test.skip('TST0404 - Change default tag group tag colors [web,s3,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await clickOn('[data-tid=editTagGroup]');
@@ -122,7 +121,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(testGroup);
   });*/
 
-  test('TST0405 - Add tag (s) Should add comma separated tags to a tag group [web,minio,s3,electron]', async () => {
+  test('TST0405 - Add tag (s) Should add comma separated tags to a tag group [web,s3,electron]', async () => {
     await createTagGroup(testGroup);
     await clickOn('[data-tid=tagLibraryMoreButton_' + testGroup + ']');
     await addTags(arrTags);
@@ -138,7 +137,7 @@ test.describe('TST04 - Testing the tag library:', () => {
 
   test.skip('TST0406 - Import tag groups [manual]', async () => {});
 
-  test('TST0407 - Should rename tag [web,minio,s3,electron]', async () => {
+  test('TST0407 - Should rename tag [web,s3,electron]', async () => {
     await tagMenu('done', 'editTagDialog');
     await setInputValue('[data-tid=editTagInput] input', testTagName);
     await clickOn('[data-tid=editTagConfirm]');
@@ -148,13 +147,13 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0408 - Should delete tag from a tag group [web,minio,s3,electron]', async () => {
+  test('TST0408 - Should delete tag from a tag group [web,s3,electron]', async () => {
     await tagMenu('next', 'deleteTagDialog');
     await clickOn('[data-tid=confirmDeleteTagDialogTagMenu]');
     await expectElementExist('[data-tid=tagContainer_next]', false);
   });
 
-  test.skip('TST0409 - Should sort tags in a tag group lexicographically [web,minio,s3,electron]', async () => {
+  test.skip('TST0409 - Should sort tags in a tag group lexicographically [web,s3,electron]', async () => {
     await clickOn('[data-tid=tagLibraryMoreButton_ToDo_Workflow]');
     await clickOn('[data-tid=sortTagGroup]'); // TODO no validation, expect
     // const tagGroupElements = await global.client.getText('//button[contains(., "' + testTagName + '")]');
@@ -162,7 +161,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     // expect(editedTag).toBe(testTagName);
   });
 
-  test.skip('TST0410 - Default colors for tags from settings [web,minio,s3,electron]', async () => {
+  test.skip('TST0410 - Default colors for tags from settings [web,s3,electron]', async () => {
     await clickOn('[data-tid=settings]');
     await clickOn('[data-tid=settingsToggleDefaultTagBackgroundColor]');
     const inputElem = await global.client.$(
@@ -230,7 +229,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     expect(style).toContain('rgb(208, 107, 100)');*/
   });
 
-  test.skip('TST0411 - Should move tag group down [minio,s3,electron]', async () => {
+  test.skip('TST0411 - Should move tag group down [s3,electron]', async () => {
     await clickOn('[data-tid=tagLibraryMoreButton_ToDo_Workflow]');
     await clickOn('[data-tid=moveTagGroupDown]'); // TODO no test confirmation, expect
     // await global.client.getText('[data-tid=tagLibraryTagGroupList]').then((name) => {
@@ -242,7 +241,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     // });
   });
 
-  test.skip('TST0412 - Should move tag group up [minio,s3,electron]', async () => {
+  test.skip('TST0412 - Should move tag group up [s3,electron]', async () => {
     await clickOn('[data-tid=tagLibraryMoreButton_Common_Tags]');
     await clickOn('[data-tid=moveTagGroupUp]'); // TODO no test confirmation
     // await global.client.getText('[data-tid=tagLibraryTagGroupList]').then((name) => {
@@ -259,15 +258,14 @@ test.describe('TST04 - Testing the tag library:', () => {
 
   test.skip('TST0416 - Export tag groups / all / some [manual]', async () => {});
 
-  test('TST0417 - Collect tags from current location [web,minio,s3,electron,_pro]', async ({
+  test('TST0417 - Collect tags from current location [web,s3,electron,_pro]', async ({
     isS3,
-    isMinio,
     testDataDir,
   }) => {
     const tagName = 'iptc';
     const tagGroup = 'ToDo_Workflow';
 
-    await createLocation({ isMinio, isS3, testDataDir });
+    await createLocation({ isS3, testDataDir });
     await clickOn('[data-tid=tagLibrary]');
     await clickOn('[data-tid=tagLibraryMoreButton_' + tagGroup + ']');
     await clickOn('[data-tid=collectTags]');
@@ -280,12 +278,11 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0419 - Create location based tag group [web,minio,s3,electron,_pro]', async ({
+  test('TST0419 - Create location based tag group [web,s3,electron,_pro]', async ({
     isS3,
-    isMinio,
     testDataDir,
   }) => {
-    await createLocation({ isMinio, isS3, testDataDir });
+    await createLocation({ isS3, testDataDir });
     await clickOn('[data-tid=tagLibrary]');
     await checkSettings(
       '[data-tid=saveTagInLocationTID]',
@@ -301,13 +298,12 @@ test.describe('TST04 - Testing the tag library:', () => {
     await deleteTagGroup(testGroup);
   });
 
-  test('TST0420 - Load tag groups from location [web,minio,s3,electron, _pro]', async ({
+  test('TST0420 - Load tag groups from location [web,s3,electron, _pro]', async ({
     isS3,
-    isMinio,
     testDataDir,
   }) => {
     const testTagName = 'Stanimir';
-    await createLocation({ isMinio, isS3, testDataDir });
+    await createLocation({ isS3, testDataDir });
 
     if (isS3) {
       await createFileS3('tsl.json', tslContent, '.ts');
@@ -333,7 +329,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0421 - Move tag to another tag group with DnD [web,minio,s3,electron]', async () => {
+  test('TST0421 - Move tag to another tag group with DnD [web,s3,electron]', async () => {
     const tagName = '1star';
     const sourceTagGroup = 'Ratings';
     const destinationTagGroup = 'Priorities';
@@ -356,18 +352,15 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0422 - Add custom date smarttag [web,minio,s3,electron,_pro]', async ({
+  test('TST0422 - Add custom date smarttag [web,s3,electron,_pro]', async ({
     isS3,
-    isMinio,
     testDataDir,
   }) => {
     const tagName = 'custom-date';
     const sourceTagGroup = 'Smart Tags';
 
     await clickOn('[data-tid=locationManager]');
-    if (isMinio) {
-      await createPwMinioLocation('', defaultLocationName, true);
-    } else if (isS3) {
+    if (isS3) {
       await createS3Location('', defaultLocationName, true);
     } else {
       await createPwLocation(testDataDir, defaultLocationName, true);
@@ -395,12 +388,11 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0425 - Delete tag in location tag group and check tsl.json [web,minio,s3,electron,_pro]', async ({
+  test('TST0425 - Delete tag in location tag group and check tsl.json [web,s3,electron,_pro]', async ({
     isS3,
-    isMinio,
     testDataDir,
   }) => {
-    await createLocation({ isMinio, isS3, testDataDir });
+    await createLocation({ isS3, testDataDir });
 
     if (isS3) {
       await createFileS3('tsl.json', tslContent, '.ts');
@@ -422,12 +414,11 @@ test.describe('TST04 - Testing the tag library:', () => {
     //TODO check in tsl.json content
   });
 
-  test('TST0426 - Rename tag in location tag group and check tsl.json [web,minio,s3,electron,_pro]', async ({
+  test('TST0426 - Rename tag in location tag group and check tsl.json [web,s3,electron,_pro]', async ({
     isS3,
-    isMinio,
     testDataDir,
   }) => {
-    await createLocation({ isMinio, isS3, testDataDir });
+    await createLocation({ isS3, testDataDir });
 
     if (isS3) {
       await createFileS3('tsl.json', tslContent, '.ts');

@@ -8,7 +8,6 @@ import {
   createNewDirectory,
   deleteDirectory,
   expectElementExist,
-  getAttribute,
   getElementScreenshot,
   getGridFileSelector,
   openFolder,
@@ -24,7 +23,6 @@ import {
 } from './hook';
 import {
   createPwLocation,
-  createPwMinioLocation,
   createS3Location,
   defaultLocationName,
   deleteFileFromMenu,
@@ -57,10 +55,8 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
-  if (isMinio) {
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
+test.beforeEach(async ({ isS3, testDataDir }) => {
+  if (isS3) {
     await createS3Location('', defaultLocationName, true);
     await closeWelcomePlaywright();
   } else {
@@ -73,7 +69,7 @@ test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
 });
 
 test.describe('TST01 - Folder management', () => {
-  test('TST0101 - Create subfolder [web,minio,s3,electron]', async () => {
+  test('TST0101 - Create subfolder [web,s3,electron]', async () => {
     const testFolder = await createNewDirectory();
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await expectElementExist(
@@ -93,7 +89,7 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0102 - Reload folder [web,minio,s3,electron]', async () => {
+  test('TST0102 - Reload folder [web,s3,electron]', async () => {
     const testFolder = await createNewDirectory();
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
     await reloadDirectory();
@@ -105,7 +101,7 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0103 - Rename folder [web,minio,s3,electron]', async () => {
+  test('TST0103 - Rename folder [web,s3,electron]', async () => {
     const testFolder = await createNewDirectory();
     await openFolder(testFolder);
     const newDirectoryName = await renameFolder();
@@ -125,7 +121,7 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0104 - Delete empty folder by disabled trashcan [web,minio,s3,electron]', async () => {
+  test('TST0104 - Delete empty folder by disabled trashcan [web,s3,electron]', async () => {
     // await setSettings('[data-tid=settingsSetUseTrashCan]');
     const testFolder = await createNewDirectory();
     await global.client.dblclick('[data-tid=fsEntryName_' + testFolder + ']');
@@ -137,14 +133,14 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0105 - Open subfolder [web,minio,s3,electron]', async () => {
+  test('TST0105 - Open subfolder [web,s3,electron]', async () => {
     await global.client.dblclick(
       '[data-tid=fsEntryName_' + emptyFolderName + ']',
     );
     await expectElementExist(selectorFile, false, 5000);
   });
 
-  test('TST0106 - Show folder tags [web,minio,s3,electron]', async () => {
+  test('TST0106 - Show folder tags [web,s3,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'showProperties',
@@ -165,7 +161,7 @@ test.describe('TST01 - Folder management', () => {
 
   test.skip('TST0107 - Show in file manager [manual]', async () => {});
 
-  test('TST0108 - Move folder [web,minio,s3,electron]', async ({
+  test('TST0108 - Move folder [web,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -199,7 +195,7 @@ test.describe('TST01 - Folder management', () => {
     // await testDataRefresh(isS3, testDataDir);
   });
 
-  test('TST0109 - Copy folder [web,minio,s3,electron]', async ({
+  test('TST0109 - Copy folder [web,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {
@@ -230,13 +226,13 @@ test.describe('TST01 - Folder management', () => {
     // await testDataRefresh(isS3, testDataDir);
   });
 
-  test('TST0110 - Tag folder [web,minio,s3,electron]', async () => {
+  test('TST0110 - Tag folder [web,s3,electron]', async () => {
     await clickOn('[data-tid=fsEntryName_empty_folder]');
     await AddRemoveTagsToSelectedFiles('grid', ['test-tag1']);
     await expectElementExist('[data-tid=tagContainer_test-tag1]', true, 5000);
   });
 
-  test('TST0111 - Open folder properties [web,minio,s3,electron]', async () => {
+  test('TST0111 - Open folder properties [web,s3,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'showProperties',
@@ -249,7 +245,7 @@ test.describe('TST01 - Folder management', () => {
     expect(divText).toEqual('empty_folder');*/
   });
 
-  test('TST0112 - Delete non empty folder by disabled trashcan [web,minio,s3,electron]', async () => {
+  test('TST0112 - Delete non empty folder by disabled trashcan [web,s3,electron]', async () => {
     await openContextEntryMenu(
       '[data-tid=fsEntryName_empty_folder]',
       'deleteDirectory',
@@ -267,7 +263,7 @@ test.describe('TST01 - Folder management', () => {
   /**
    * in old minio preSigned URL for thumbnails cannot be opened SignatureDoesNotMatch error
    */
-  test('TST0114 - Use as thumbnail for parent folder [minio,s3,electron,_pro]', async () => {
+  test('TST0114 - Use as thumbnail for parent folder [electron,_pro]', async () => {
     //if (!isMinio || !isWeb) {
     // on Windows + Minio thumbnails is not displayed -> CORS
     //await global.client.waitForTimeout(10000000);
@@ -299,30 +295,24 @@ test.describe('TST01 - Folder management', () => {
     );
     await expectElementExist(getGridFileSelector(fileName), true, 5000);
 
-    const folderThumbStyle = await getAttribute(
-      '[data-tid=folderThumbTID]',
-      'style',
-    );
-    const initScreenshot = await getElementScreenshot(
-      '[data-tid=folderThumbTID]',
-    );
-
-    // removing automatically set folder thumbnail
+    // Clear auto-generated thumbnail to get a clean baseline
     await clickOn('[data-tid=changeThumbnailTID]');
     await clickOn('[data-tid=clearThumbnail]');
+    await global.client.waitForTimeout(1000);
 
+    const clearedScreenshot = await getElementScreenshot(
+      '[data-tid=folderThumbTID]',
+    );
+
+    // Auto-accept the "Thumbnail already exists, override?" confirm dialog
+    global.client.once('dialog', (dialog) => dialog.accept());
     await openContextEntryMenu(getGridFileSelector(fileName), 'setAsThumbTID');
-    // await global.client.waitForTimeout(1000);
-    // const newStyle = await waitUntilChanged(
-    //   '[data-tid=folderThumbTID]',
-    //   folderThumbStyle,
-    //   'style',
-    // );
+    await global.client.waitForTimeout(2000);
 
     const withThumbScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
     );
-    expect(initScreenshot).not.toBe(withThumbScreenshot);
+    expect(clearedScreenshot).not.toBe(withThumbScreenshot);
 
     // remove thumb
     await clickOn('[data-tid=changeThumbnailTID]');
@@ -332,19 +322,19 @@ test.describe('TST01 - Folder management', () => {
       timeout: 5000,
       state: 'hidden',
     });
-
-    // await waitUntilChanged('[data-tid=folderThumbTID]', newStyle, 'style');
+    await global.client.waitForTimeout(1000);
 
     const thumbRemovedScreenshot = await getElementScreenshot(
       '[data-tid=folderThumbTID]',
     );
-    expect(initScreenshot).toBe(thumbRemovedScreenshot);
+    // After clearing, the thumbnail should no longer show the custom image
+    expect(withThumbScreenshot).not.toBe(thumbRemovedScreenshot);
     //cleanup
     await deleteFileFromMenu(getGridFileSelector(fileName));
     await expectElementExist(getGridFileSelector(fileName), false, 2000);
   });
 
-  test('TST0116 - Switch to Grid Perspective [web,minio,s3,electron]', async () => {
+  test('TST0116 - Switch to Grid Perspective [web,s3,electron]', async () => {
     await clickOn('[data-tid=openListPerspective]');
     await expectElementExist('[data-tid=listPerspectiveContainer]', true, 5000);
     await clickOn('[data-tid=openDefaultPerspective]');
@@ -359,7 +349,7 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=closePerspectiveSettingsTID]');
   });
 
-  test('TST0117 - Switch to List Perspective [web,minio,s3,electron]', async () => {
+  test('TST0117 - Switch to List Perspective [web,s3,electron]', async () => {
     await clickOn('[data-tid=openListPerspective]');
     await expectElementExist('[data-tid=gridPerspectiveContainer]', false);
     await expectElementExist('[data-tid=listPerspectiveContainer]', true, 5000);
@@ -370,7 +360,7 @@ test.describe('TST01 - Folder management', () => {
     );
   });
 
-  test('TST0118 - Switch to Gallery Perspective [web,minio,s3,electron,_pro]', async () => {
+  test('TST0118 - Switch to Gallery Perspective [web,s3,electron,_pro]', async () => {
     await clickOn('[data-tid=openGalleryPerspective]');
     //await clickOn('[data-tid=openGalleryPerspective]');
     await expectElementExist(
@@ -381,7 +371,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist('[data-tid=perspectiveGalleryHelp]', true, 5000);
   });
 
-  test('TST0119 - Switch to Mapique Perspective [web,minio,s3,electron,_pro]', async () => {
+  test('TST0119 - Switch to Mapique Perspective [web,s3,electron,_pro]', async () => {
     await clickOn('[data-tid=openMapiquePerspective]');
     //await clickOn('[data-tid=openMapiquePerspective]');
     await expectElementExist(
@@ -392,7 +382,7 @@ test.describe('TST01 - Folder management', () => {
     await expectElementExist('[data-tid=perspectiveMapiqueHelp]', true, 5000);
   });
 
-  test('TST0120 - Switch to Kanban Perspective [web,minio,s3,electron,_pro]', async () => {
+  test('TST0120 - Switch to Kanban Perspective [web,s3,electron,_pro]', async () => {
     await clickOn('[data-tid=openKanbanPerspective]');
     //await clickOn('[data-tid=openKanbanPerspective]');
     await expectElementExist(

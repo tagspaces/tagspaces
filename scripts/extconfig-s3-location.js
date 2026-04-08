@@ -9,8 +9,8 @@ window.ExtLocations = [
     name: 'supported-filestypes', // the name of the location
     path: '', // the path to sub folder in the location
     endpointURL: 'http://localhost:4569',
-    accessKeyId: 'S3RVER', // the access key of the user
-    secretAccessKey: 'S3RVER', // the secret case of the user
+    accessKeyId: 'test', // the access key of the user
+    secretAccessKey: 'test', // the secret case of the user
     bucketName: 'supported-filestypes', // the name of the S3 bucket
     region: 'eu-central-1', // the AWS region
     isDefault: true, // if true this location will be loaded by the application start

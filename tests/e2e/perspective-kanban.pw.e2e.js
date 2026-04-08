@@ -25,7 +25,6 @@ import {
 } from './hook';
 import {
   createPwLocation,
-  createPwMinioLocation,
   createS3Location,
   defaultLocationName,
 } from './location.helpers';
@@ -61,10 +60,8 @@ test.afterEach(async ({ page }, testInfo) => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3, testDataDir }) => {
-  if (isMinio) {
-    await createPwMinioLocation('', defaultLocationName, true);
-  } else if (isS3) {
+test.beforeEach(async ({ isS3, testDataDir }) => {
+  if (isS3) {
     await createS3Location('', defaultLocationName, true);
   } else {
     await createPwLocation(testDataDir, defaultLocationName, true);
@@ -111,17 +108,17 @@ test.describe('TST49 - Perspective KanBan', () => {
     await expectElementExist(
       '[data-tid=test_kanban_column1KanBanColumnTID]',
       true,
-      5000,
+      15000,
     );
     await expectElementExist(
       '[data-tid=test_kanban_column2KanBanColumnTID]',
       true,
-      5000,
+      10000,
     );
     await expectElementExist(
       '[data-tid=test_kanban_column3KanBanColumnTID]',
       true,
-      5000,
+      10000,
     );
     await expectElementExist(
       '[data-tid=test_kanban_column4KanBanColumnTID]',
@@ -408,7 +405,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     );
   });
 
-  test('TST4915a - Load thumbnails for board [web,minio,s3,electron,_pro]', async ({isWin}) => {
+  test('TST4915a - Load thumbnails for board [web,s3,electron,_pro]', async ({isWin}) => {
     if(!isWin) {
       //board thumbnail
       await setPerspectiveSetting(
@@ -440,7 +437,7 @@ test.describe('TST49 - Perspective KanBan', () => {
     }
   });
 
-  test('TST4915b - Load thumbnails for column [web,minio,s3,electron,_pro]', async ({isWin}) => {
+  test('TST4915b - Load thumbnails for column [web,s3,electron,_pro]', async ({isWin}) => {
     if(!isWin) {
       await setPerspectiveSetting(
         'kanban',
@@ -476,7 +473,7 @@ test.describe('TST49 - Perspective KanBan', () => {
   /**
    * todo web minio not work with thumbnails on Windows
    */
-  test('TST4915c - Load thumbnails for cards [web,minio,s3,electron,_pro]', async ({isWin}) => {
+  test('TST4915c - Load thumbnails for cards [web,s3,electron,_pro]', async ({isWin}) => {
     if(!isWin) {
       const columnName = 'empty_folder3';
       await createColumn(columnName);

@@ -13,7 +13,7 @@ import { openContextEntryMenu } from './test-utils';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import { clearDataStorage } from './welcome.helpers';
 
-test.beforeAll(async ({ isWeb, isS3, isMinio, webServerPort }, testInfo) => {
+test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
   /*if (isS3) {
     await startTestingApp({ isWeb, isS3, webServerPort, testInfo });
     await closeWelcomePlaywright();
@@ -34,11 +34,8 @@ test.afterEach(async () => {
   await clearDataStorage();
 });
 
-test.beforeEach(async ({ isMinio, isS3 }) => {
-  if (isMinio) {
-    //await createPwMinioLocation('', defaultLocationName, true);
-    await clickOn('[data-tid=location_' + defaultLocationName + '-minio]');
-  } else if (isS3) {
+test.beforeEach(async ({ isS3 }) => {
+  if (isS3) {
     //await createS3Location('', defaultLocationName, true);
     await clickOn('[data-tid=location_' + defaultLocationName + '-s3]');
   }
@@ -46,7 +43,7 @@ test.beforeEach(async ({ isMinio, isS3 }) => {
 });
 
 test.describe('TST09 - ObjectStore location', () => {
-  test('TST0917 - Create, open and remove bookmark to S3 file in properties [web,minio,s3,_pro]', async () => {
+  test('TST0917 - Create, open and remove bookmark to S3 file in properties [web,s3,_pro]', async () => {
     const bookmarkFileTitle = 'sample.txt';
     const bookmarkFileTid = dataTidFormat(bookmarkFileTitle);
     await openContextEntryMenu(
