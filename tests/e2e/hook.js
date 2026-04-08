@@ -285,8 +285,29 @@ export async function startTestingApp(
     // Get the first window that the app opens, wait if necessary.
     global.client = await global.app.firstWindow();
     // global.session = await global.client.context().newCDPSession(global.client);
+    // Move to second display if available, then resize
+    await global.app.evaluate(
+      async ({ BrowserWindow, screen }, { w, h }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        if (!win) return;
+        const displays = screen.getAllDisplays();
+        const primaryId = screen.getPrimaryDisplay().id;
+        const secondary = displays.find((d) => d.id !== primaryId);
+        if (secondary) {
+          const { x, y, width, height } = secondary.workArea;
+          // Center the window on the secondary display
+          const posX = x + Math.round((width - w) / 2);
+          const posY = y + Math.round((height - h) / 2);
+          win.setBounds({ x: posX, y: posY, width: w, height: h });
+        } else {
+          win.setSize(w, h);
+          win.center();
+        }
+      },
+      { w: windowWidth, h: windowHeight },
+    );
     // Setting the viewport size helps keep test environments consistent.
-    await global.client.setViewportSize({ width: windowWidth, height: windowHeight }); //{width: 1200,height: 800} ({ width: 800, height: 600 });
+    await global.client.setViewportSize({ width: windowWidth, height: windowHeight });
     await global.client.waitForLoadState('load'); //'domcontentloaded'); //'networkidle');
 
     if (process.env.SHOW_CONSOLE) {
