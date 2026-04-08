@@ -212,7 +212,7 @@ function GridPagination(props: Props) {
   // Memoized folder details
   const folderDetails = useMemo(
     () => (
-      <Grid size={12} sx={{ position: 'relative' }}>
+      <Grid size={12} sx={{ position: 'relative', overflowY: 'auto' }}>
         <Box
           sx={{
             display: 'flex',
