@@ -30,6 +30,7 @@ jobs:
       - name: Running npm install, prettier and type checks
         run: |
           npm install
+          npm run prepare-node
           npm run prettier-check
           npm run type-check
         env:
@@ -78,6 +79,7 @@ jobs:
       - name: Running npm install, prettier and type checks
         run: |
           npm install
+          npm run prepare-node
           npm run prettier-check
           npm run type-check
         env:
