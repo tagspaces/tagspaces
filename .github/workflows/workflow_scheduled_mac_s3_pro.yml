@@ -4,6 +4,9 @@ on:
     - cron: '0 4 * * *'
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   e2eTestsElectronMac:
     name: Test TagSpaces Desktop on Mac with S3Proxy

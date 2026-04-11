@@ -4,6 +4,9 @@ on:
     - cron: '0 2 * * *'
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   e2eTestsElectronMac:
     name: Test TagSpaces Lite Desktop on Mac

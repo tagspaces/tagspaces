@@ -19,6 +19,9 @@ on:
   schedule:
     - cron: '40 22 * * 0'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})

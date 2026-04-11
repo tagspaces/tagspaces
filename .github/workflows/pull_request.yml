@@ -1,6 +1,9 @@
 name: Pull Request Workflow Dispatch Trigger
 on: pull_request
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   e2eTestsWin:
     name: Test desktop pro app on Windows

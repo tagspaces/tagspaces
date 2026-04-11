@@ -4,6 +4,9 @@ on:
     - cron: '0 1 * * *'
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   e2eTestsElectronWin:
     name: Test TagSpaces Pro on Windows with S3Proxy

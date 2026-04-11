@@ -7,6 +7,9 @@ on:
         required: true
         default: 'test-playwright-web-headless'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   e2eTests:
     runs-on: ubuntu-latest
