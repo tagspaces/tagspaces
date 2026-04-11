@@ -7,6 +7,7 @@ import {
   expectElementSelected,
   getGridFileName,
   getGridFileSelector,
+  isDisplayed,
   openFile,
   selectorFile,
   setSettings,
@@ -78,7 +79,7 @@ test.beforeEach(async ({ isS3, testDataDir }) => {
     await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -220,8 +221,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0625 - Search actions - execute query from stored searches [web,s3,electron,_pro]', async () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
-    await clickOn('#clearSearchID');
-    await expectElementExist('#textQuery', false, 5000);
+    // Close search UI completely, then reopen for stored search query
+    await clickOn('[data-tid=toggleSearch]');
+    await global.client.waitForTimeout(500);
+    await clickOn('[data-tid=toggleSearch]');
+    await global.client.waitForTimeout(500);
 
     await searchEngine('q:', {}, false);
     await clickOn('#textQuery-option-0');

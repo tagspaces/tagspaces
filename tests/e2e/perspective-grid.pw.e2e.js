@@ -58,7 +58,7 @@ test.beforeEach(async ({ isS3, testDataDir }) => {
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
 
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -199,9 +199,11 @@ test.describe('TST50 - Perspective Grid', () => {
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmMoveFiles]');
+    // Wait for S3 move operation to complete
+    await global.client.waitForTimeout(1500);
 
     await global.client.dblclick(getGridFileSelector('empty_folder'));
-    await expectElementExist(getGridFileSelector(fileName));
+    await expectElementExist(getGridFileSelector(fileName), true, 8000);
 
     const arrayMeta = [fileName + '.json'];
     /*global.isWeb || global.isMinio

@@ -333,10 +333,13 @@ test.describe('TST02 - Folder properties', () => {
 
     const imgElement = await global.client.waitForSelector(
       '[data-tid=fsEntryName_empty_folder] img', //[contenteditable=true]'
+      { timeout: 10000 },
     );
     const srcValue = await imgElement.getAttribute('src');
     expect(srcValue.indexOf('.ts/tst.jpg')).toBeGreaterThan(-1);
 
+    // Wait for thumbnail to fully render before screenshot
+    await global.client.waitForTimeout(500);
     const withThumbScreenshot = await getElementScreenshot(screenshotSelector);
     expect(initScreenshot).not.toBe(withThumbScreenshot);
 

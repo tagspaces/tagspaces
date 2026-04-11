@@ -12,7 +12,12 @@ export async function openContextEntryMenu(selector, menuOperation) {
   // selector is current selector location for element in perspectiveGridTable or perspectiveListTable (full xpath path to element)
   // menuOption is selector for current menu operation
   await clickOn(selector, { button: 'right' });
-  await clickOn('[data-tid=' + menuOperation + ']');
+  const menuSelector = '[data-tid=' + menuOperation + ']';
+  await global.client.waitForSelector(menuSelector, {
+    state: 'visible',
+    timeout: 5000,
+  });
+  await clickOn(menuSelector);
 }
 
 /**

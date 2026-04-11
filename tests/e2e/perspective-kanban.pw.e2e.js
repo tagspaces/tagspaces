@@ -32,6 +32,7 @@ import {
   createColumn,
   createMdCard,
   dragKanBanColumn,
+  expectFirstColumnElement,
   getColumnsIds,
 } from './perspective-kanban.helpers';
 import { openContextEntryMenu } from './test-utils';
@@ -67,17 +68,18 @@ test.beforeEach(async ({ isS3, testDataDir }) => {
     await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  //await expectElementExist(getGridFileSelector('empty_folder'), true, 10000);
   await clickOn('[data-tid=openKanbanPerspective]');
   await expectElementExist(
     '[data-tid=kanbanSettingsDialogOpenTID]',
     true,
-    5000,
+    10000,
   );
+  // Reload folder to ensure fresh S3 data is loaded
+  await clickOn('[data-tid=kanbanPerspectiveOnReloadDirectory]');
   await expectElementExist(
     '[data-tid=empty_folderKanBanColumnTID]',
     true,
-    10000,
+    20000,
   );
 });
 
@@ -97,6 +99,8 @@ test.describe('TST49 - Perspective KanBan', () => {
       await createFolderS3('test_kanban_column2');
       await createFolderS3('test_kanban_column3');
       await createFolderS3('test_kanban_column4');
+      // Allow S3 to settle after folder creation
+      await global.client.waitForTimeout(2000);
     } else {
       await createLocalFolder(testDataDir, 'test_kanban_column1');
       await createLocalFolder(testDataDir, 'test_kanban_column2');
@@ -105,10 +109,18 @@ test.describe('TST49 - Perspective KanBan', () => {
     }
 
     await global.client.dblclick('[data-tid=empty_folderKanBanColumnTID]');
+    // dblclick navigates into folder, which may switch to default Grid perspective
+    // re-open Kanban perspective after navigation
+    await clickOn('[data-tid=openKanbanPerspective]');
+    await expectElementExist(
+      '[data-tid=kanbanSettingsDialogOpenTID]',
+      true,
+      10000,
+    );
     await expectElementExist(
       '[data-tid=test_kanban_column1KanBanColumnTID]',
       true,
-      15000,
+      20000,
     );
     await expectElementExist(
       '[data-tid=test_kanban_column2KanBanColumnTID]',
@@ -216,11 +228,12 @@ test.describe('TST49 - Perspective KanBan', () => {
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(columnName) + ']',
       true,
-      8000,
+      10000,
     );
     await AddRemovePropertiesTags(['test-tag1', 'test-tag2'], {
       add: true,
       remove: false,
+      expectProp: true,
     });
   });
 
@@ -316,12 +329,9 @@ test.describe('TST49 - Perspective KanBan', () => {
     await clickOn('[data-tid=showProperties]');
 
     const targetSelector =
-      'xpath=(//div[@data-tid="' +
-      columnName +
-      'KanBanColumnTID"]//parent::div)[1]';
+      '[data-tid="' + columnName + 'CTID"]';
     const initScreenshot = await getElementScreenshot(targetSelector);
     const initClass = await getAttribute(targetSelector, 'class');
-    //console.log(initClass);
     await clickOn('[data-tid=changeBackgroundColorTID]');
     await clickOn('[data-tid=backgroundTID1]');
 
@@ -329,19 +339,18 @@ test.describe('TST49 - Perspective KanBan', () => {
       targetSelector,
       initClass,
       'class',
-      10000,
+      15000,
     );
 
     const withBgnColorScreenshot = await getElementScreenshot(targetSelector);
     const bgClass = await getAttribute(targetSelector, 'class');
-    //console.log(bgClass);
     expect(initScreenshot).not.toBe(withBgnColorScreenshot);
 
     // remove background
     await clickOn('[data-tid=backgroundClearTID]');
     await clickOn('[data-tid=confirmConfirmResetColorDialog]');
 
-    await waitUntilChanged(targetSelector, bgClass, 'class', 10000);
+    await waitUntilChanged(targetSelector, bgClass, 'class', 15000);
 
     //const bgRemovedStyle = await getAttribute(targetSelector, 'style');
     //expect(initStyle).toBe(bgRemovedStyle);
@@ -352,43 +361,42 @@ test.describe('TST49 - Perspective KanBan', () => {
   test('TST4912 - Move card to top / bottom [web,s3,electron,_pro]', async () => {
     const cardName1 = 'testCard1';
     const cardName2 = 'testCard2';
-    await createMdCard(cardName1);
-    await createMdCard(cardName2);
+    const card1 = await createMdCard(cardName1);
+    const card2 = await createMdCard(cardName2);
+
+    // Close any opened file panel so it doesn't block right-click on cards
+    await clickOn('[data-tid=fileContainerCloseOpenedFile]');
 
     const sel1 = '[data-tid=fsEntryName_' + dataTidFormat(cardName1) + '_md]';
     const sel2 = '[data-tid=fsEntryName_' + dataTidFormat(cardName2) + '_md]';
 
-    async function getY(sel) {
-      return (await global.client.locator(sel).boundingBox()).y;
-    }
-
-    // card2 (newest) should appear before card1 (lower Y = higher in list)
-    expect(await getY(sel2)).toBeLessThan(await getY(sel1));
+    // card2 (newest) should appear first in the column
+    await expectFirstColumnElement(card2.id);
 
     await rightClickOn(sel2);
     await clickOn('[data-tid=reorderBottomTID]');
     await expectElementExist(sel2, true, 5000);
-    // card2 at bottom: card1 should now be above card2
-    expect(await getY(sel1)).toBeLessThan(await getY(sel2));
+    // card2 at bottom: card1 should now be first
+    await expectFirstColumnElement(card1.id);
 
     await rightClickOn(sel1);
     await clickOn('[data-tid=reorderBottomTID]');
     await expectElementExist(sel1, true, 5000);
-    // card1 also at bottom: card2 should now be above card1
-    expect(await getY(sel2)).toBeLessThan(await getY(sel1));
+    // card1 also at bottom: card2 should now be first
+    await expectFirstColumnElement(card2.id);
 
     await rightClickOn(sel1);
     await clickOn('[data-tid=reorderTopTID]');
     await expectElementExist(sel1, true, 5000);
-    // card1 moved to top: card1 should now be above card2
-    expect(await getY(sel1)).toBeLessThan(await getY(sel2));
+    // card1 moved to top: card1 should now be first
+    await expectFirstColumnElement(card1.id);
   });
 
   test('TST4913 - Show column details [web,s3,electron,_pro]', async () => {
     const columnName = 'empty_folder';
     await clickOn('[data-tid=' + columnName + 'KanBanColumnActionTID]');
     await clickOn('[data-tid=showProperties]');
-    await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 5000);
+    await expectElementExist('[data-tid=OpenedTIDempty_folder]', true, 10000);
   });
 
   test('TST4914 - Show current folder details [web,s3,electron,_pro]', async () => {
@@ -456,8 +464,10 @@ test.describe('TST49 - Perspective KanBan', () => {
       await clickOn('[data-tid=changeThumbnailTID]');
       await clickOn('[data-tid=predefinedThumbnailsTID] > li');
       await clickOn('[data-tid=confirmCustomThumb]');
-      const targetSelector = '[data-tid=' + columnName + 'KanBanColumnThumbTID]'; 
+      const targetSelector = '[data-tid=' + columnName + 'KanBanColumnThumbTID]';
 
+      // Wait for thumbnail to be applied and rendered
+      await global.client.waitForTimeout(2000);
       const loaded = await isBackgroundImageLoaded(targetSelector);
       expect(loaded).toBe(true);
 
@@ -465,6 +475,8 @@ test.describe('TST49 - Perspective KanBan', () => {
       await clickOn('[data-tid=predefinedThumbnailsTID] > li:nth-child(2)');
       await clickOn('[data-tid=confirmCustomThumb]');
 
+      // Wait for thumbnail to be applied and rendered
+      await global.client.waitForTimeout(2000);
       const loaded2 = await isBackgroundImageLoaded(targetSelector);
       expect(loaded2).toBe(true);
     }
@@ -489,13 +501,22 @@ test.describe('TST49 - Perspective KanBan', () => {
 
       const cardSelector = '[data-tid="' + columnName + 'CTID"] [data-tid=fsEntryName_' + dataTidFormat(name) + '_md]';
       const initScreenshot = await getElementScreenshot(cardSelector);
+      expect(initScreenshot).toBeDefined();
 
       await clickOn('[data-tid=changeThumbnailTID]');
       await clickOn('[data-tid=predefinedThumbnailsTID] > li');
       await clickOn('[data-tid=confirmCustomThumb]');
 
-      const changeThumbScreenshot = await getElementScreenshot(cardSelector);
-      expect(initScreenshot).not.toBe(changeThumbScreenshot);
+      // Wait for thumbnail to be applied and rendered, poll until screenshot changes
+      await expect
+        .poll(
+          async () => {
+            const screenshot = await getElementScreenshot(cardSelector);
+            return screenshot !== initScreenshot;
+          },
+          { timeout: 15000 },
+        )
+        .toBe(true);
     }
   });
 

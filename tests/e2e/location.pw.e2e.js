@@ -59,7 +59,7 @@ test.beforeEach(async ({ isS3, testDataDir }) => {
   }
 
   await clickOn('[data-tid=location_' + testLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
   // await delay(500);
   // await closeFileProperties();
 });

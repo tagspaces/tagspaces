@@ -292,7 +292,7 @@ test.describe('TST04 - Testing the tag library:', () => {
     await createTagGroup(testGroup, defaultLocationName);
     await clickOn('[data-tid=locationManager]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
     await expectMetaFilesExist(['tsl.json'], true);
     // cleanup
     await deleteTagGroup(testGroup);

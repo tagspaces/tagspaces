@@ -46,7 +46,7 @@ test.beforeEach(async ({ isS3, testDataDir }) => {
     await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -121,9 +121,11 @@ test.describe('TST69 - Markdown editor', () => {
       '.milkdown div[contenteditable=true]',
     );
     await clickOn('[data-tid=fileContainerSaveFile]');
+    // Wait for S3 write to complete before reloading
+    await global.client.waitForTimeout(1500);
     await clickOn('[data-tid=cancelEditingTID]');
     await clickOn('[data-tid=propsActionsMenuTID]');
     await clickOn('[data-tid=reloadPropertiesTID]');
-    await expectFileContain(newFileContent, 10000);
+    await expectFileContain(newFileContent, 15000);
   });
 });

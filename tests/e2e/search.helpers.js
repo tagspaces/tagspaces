@@ -55,12 +55,13 @@ export async function searchEngine(
   options = {},
   executeSearch = true,
 ) {
-  if (!(await isDisplayed('#textQuery'))) {
+  if (!(await isDisplayed('#textQuery', true, 3000))) {
     await clickOn('[data-tid=toggleSearch]');
+    await expectElementExist('#textQuery', true, 5000);
   }
   await global.client.type('#textQuery', filename);
   if (executeSearch) {
-    if (!(await isDisplayed('[data-tid=searchAdvancedTID]'))) {
+    if (!(await isDisplayed('[data-tid=searchAdvancedTID]', true, 3000))) {
       await clickOn('[data-tid=advancedSearch]');
     }
     if (options.tagName) {

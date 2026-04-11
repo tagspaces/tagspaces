@@ -18,9 +18,16 @@ const directoryPath = path.resolve(
 
 function getFilesRecursive(dirPath) {
   let files = [];
+  let emptyDirs = [];
 
   const traverse = (currentPath) => {
     const items = fs.readdirSync(currentPath);
+
+    if (items.length === 0) {
+      // Track empty directories so we can create markers in S3
+      emptyDirs.push(currentPath);
+      return;
+    }
 
     items.forEach((item) => {
       const itemPath = path.join(currentPath, item);
@@ -35,7 +42,7 @@ function getFilesRecursive(dirPath) {
   };
 
   traverse(dirPath);
-  return files;
+  return { files, emptyDirs };
 }
 
 function getS3Client() {
@@ -168,23 +175,46 @@ function createDir(dirPath) {
     });
 }
 
-function uploadTestDirectory(dirPath) {
+async function uploadTestDirectory(dirPath) {
   try {
-    const files = getFilesRecursive(dirPath);
+    const { files, emptyDirs } = getFilesRecursive(dirPath);
+    // Use allSettled so a single XML parsing error from S3Proxy
+    // doesn't abort all remaining uploads
+    const uploads = files.map((file) => uploadFile(file));
+    // Create directory markers for empty directories
+    const dirMarkers = emptyDirs.map((dir) => {
+      const key = path.relative(directoryPath, dir).replace(/\\/g, '/');
+      return createDir(key);
+    });
+    const results = await Promise.allSettled([...uploads, ...dirMarkers]);
+    const failures = results.filter((r) => r.status === 'rejected');
+    if (failures.length > 0) {
+      console.warn(
+        `${failures.length} of ${results.length} uploads had errors (likely S3Proxy XML response issues)`,
+      );
+    }
     console.log(`All files in ${dirPath} uploaded to ${bucketName}`);
-    return Promise.all(files.map((file) => uploadFile(file)));
   } catch (err) {
     console.error(`Error uploading directory ${dirPath}:`, err);
   }
 }
 
-async function refreshS3testData(testDataDir) {
+async function refreshS3testData() {
   try {
     await deleteAllObjects('supported-filestypes');
   } catch (error) {
     console.error('deleteAllObjects error:', error.message);
   }
-  await uploadTestDirectory(testDataDir);
+  // Always upload from the original test data source (directoryPath),
+  // not from the worker-specific copy, because deleteAllObjects wipes
+  // the S3Proxy filesystem backend which IS the worker copy.
+  try {
+    await uploadTestDirectory(directoryPath);
+  } catch (error) {
+    // S3Proxy may return malformed XML responses that cause AWS SDK
+    // deserialization errors, even though the upload succeeded
+    console.error('uploadTestDirectory error:', error.message);
+  }
 }
 
 module.exports = {

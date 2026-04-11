@@ -58,7 +58,7 @@ export async function clickOn(selector, options = { timeout: 15000 }) {
     await global.client.click(selector, options);
   } catch (e) {
     console.log('clickOn ' + selector + ' error: ', e);
-    // await global.client.click(selector, { ...options, force: true });
+    throw e;
   }
 }
 
@@ -198,6 +198,10 @@ export async function typeInputValue(inputSelector, value, delay = 0) {
  */
 export async function getGridFileName(fileIndex, cleanTags = true) {
   try {
+    await global.client.waitForSelector(selectorFile, {
+      state: 'visible',
+      timeout: 8000,
+    });
     const filesList = await global.client.$$(selectorFile);
     if (filesList.length > 0) {
       let file =

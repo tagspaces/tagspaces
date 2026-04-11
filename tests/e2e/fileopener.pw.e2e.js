@@ -59,7 +59,7 @@ test.beforeEach(
       await createPwLocation(testDataDir, defaultLocationName, true);
     }
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
-    await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+    await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
     global.client.on('dialog', (dialog) => dialog.accept());
     // If its have opened file
     // await closeFileProperties();
@@ -239,8 +239,11 @@ test.describe('TST08 - File folder properties', () => {
       '[data-tid=perspectiveGridFileTable]',
     );
 
+    // After tagging, the file is renamed to include the tag in its filename
+    const taggedFile = 'sample [' + tagName + '].ico';
+    await expectElementExist(getGridFileSelector(taggedFile), true, 10000);
     await openContextEntryMenu(
-      getGridFileSelector('sample[' + tagName + '].ico'),
+      getGridFileSelector(taggedFile),
       'showPropertiesTID',
     );
 
@@ -444,9 +447,14 @@ test.describe('TST08 - File folder properties', () => {
 
     // const revision1 = await getRevision(0);
     // console.log('>>rev1>>> ' + JSON.stringify(revision1))
-    const revision2 = await getRevision(1);
-    // console.log('>>rev2>>> ' + JSON.stringify(revision2))
-    expect(revision2).not.toBeUndefined();
+    // Poll for revision to appear (S3 may be slow to persist)
+    let revision2;
+    await expect
+      .poll(async () => {
+        revision2 = await getRevision(1);
+        return revision2;
+      }, { timeout: 15000 })
+      .not.toBeUndefined();
     await clickOn(
       '[data-tid="' + revision2.id + '"] [data-tid="restoreRevisionTID"]',
     );

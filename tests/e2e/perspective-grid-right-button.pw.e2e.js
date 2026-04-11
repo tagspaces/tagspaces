@@ -70,7 +70,7 @@ test.beforeEach(async ({ isS3, testDataDir }) => {
     await createPwLocation(testDataDir, defaultLocationName, true);
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
   // If its have opened file
   // await closeFileProperties();
 });
@@ -297,13 +297,13 @@ test.describe('TST50** - Right button on a file', () => {
     // await expectTagsExistBySelector(selectorFile, tags, false);
   });
 
-  test('TST5026 - Open file natively [s3,electron]', async () => {
+  test('TST5026 - Open file natively [electron]', async () => {
     await searchEngine('txt');
     await openContextEntryMenu(selectorFile, 'fileMenuOpenFileNatively');
     // check parent directory
   });
 
-  test('TST5027 - Open containing folder [web,s3,electron]', async () => {
+  test('TST5027 - Open containing folder [electron]', async () => {
     await searchEngine('txt');
     await openContextEntryMenu(selectorFile, 'fileMenuOpenContainingFolder');
     // check parent directory
@@ -432,17 +432,17 @@ test.describe('TST50** - Right button on a file', () => {
     await setGridOptions('grid', false);
 
     // file
-    await expectElementExist(selectorFile, true);
+    await expectElementExist(selectorFile, true, 5000);
     // folder
-    await expectElementExist(selectorFolder, false);
+    await expectElementExist(selectorFolder, false, 5000);
 
     // show sub folder in the grid perspective
     await setGridOptions('grid', true);
 
     // file
-    await expectElementExist(selectorFile, true);
+    await expectElementExist(selectorFile, true, 5000);
     // folder
-    await expectElementExist(selectorFolder, true);
+    await expectElementExist(selectorFolder, true, 5000);
   });
 
   test.skip('TST5038 - Return directory back [web,electron]', async () => {

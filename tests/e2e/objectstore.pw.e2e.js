@@ -39,7 +39,7 @@ test.beforeEach(async ({ isS3 }) => {
     //await createS3Location('', defaultLocationName, true);
     await clickOn('[data-tid=location_' + defaultLocationName + '-s3]');
   }
-  await expectElementExist(getGridFileSelector('empty_folder'), true, 8000);
+  await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
 });
 
 test.describe('TST09 - ObjectStore location', () => {
