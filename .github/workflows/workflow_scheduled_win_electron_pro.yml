@@ -42,7 +42,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-artifacts
+          name: test-artifacts-electron-win
+          if-no-files-found: ignore
           path: |
             tests/test-reports/
             test-results/
