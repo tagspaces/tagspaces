@@ -322,13 +322,19 @@ test.describe('TST01 - Folder management', () => {
       timeout: 5000,
       state: 'hidden',
     });
-    await global.client.waitForTimeout(1000);
 
-    const thumbRemovedScreenshot = await getElementScreenshot(
-      '[data-tid=folderThumbTID]',
-    );
-    // After clearing, the thumbnail should no longer show the custom image
-    expect(withThumbScreenshot).not.toBe(thumbRemovedScreenshot);
+    // Poll until the thumbnail visually changes (Windows may cache the old image)
+    await expect
+      .poll(
+        async () => {
+          const screenshot = await getElementScreenshot(
+            '[data-tid=folderThumbTID]',
+          );
+          return screenshot !== withThumbScreenshot;
+        },
+        { timeout: 15000 },
+      )
+      .toBe(true);
     //cleanup
     await deleteFileFromMenu(getGridFileSelector(fileName));
     await expectElementExist(getGridFileSelector(fileName), false, 2000);
