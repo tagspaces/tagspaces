@@ -404,12 +404,19 @@ test.describe('TST49 - Perspective KanBan', () => {
     await global.client.dblclick(
       '[data-tid=' + columnName + 'KanBanColumnTID]',
     );
+    // dblclick navigates into folder which may switch to Grid perspective
+    await clickOn('[data-tid=openKanbanPerspective]');
+    await expectElementExist(
+      '[data-tid=kanbanSettingsDialogOpenTID]',
+      true,
+      10000,
+    );
     await clickOn('[data-tid=folderContainerOpenDirMenu]');
     await clickOn('[data-tid=showProperties]');
     await expectElementExist(
       '[data-tid=OpenedTID' + dataTidFormat(columnName) + ']',
       true,
-      8000,
+      10000,
     );
   });
 

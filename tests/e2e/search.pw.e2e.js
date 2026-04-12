@@ -7,7 +7,6 @@ import {
   expectElementSelected,
   getGridFileName,
   getGridFileSelector,
-  isDisplayed,
   openFile,
   selectorFile,
   setSettings,
@@ -221,13 +220,11 @@ test.describe('TST06 - Test Search in file structure:', () => {
   test('TST0625 - Search actions - execute query from stored searches [web,s3,electron,_pro]', async () => {
     const storedSearchTitle = 'jpgSearch';
     await createSavedSearch({ title: storedSearchTitle, textQuery: 'jpg' });
-    // Close search UI completely, then reopen for stored search query
-    await clickOn('[data-tid=toggleSearch]');
-    await global.client.waitForTimeout(500);
+    // Close search to clear previous state, then reopen for stored query
     await clickOn('[data-tid=toggleSearch]');
     await global.client.waitForTimeout(500);
 
-    await searchEngine('q:', {}, false);
+    await addSearchCommand('q:', false, true);
     await clickOn('#textQuery-option-0');
     await clickOn('#searchButton');
     // expect to not exist other than jpg files extensions like txt
