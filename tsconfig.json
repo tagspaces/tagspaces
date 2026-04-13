@@ -35,5 +35,11 @@
     "tagspacespro/**/*.ts",
     "tagspacespro/**/*.tsx"
   ],
-  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll", "capacitor"]
+  "exclude": [
+    "test",
+    "release/build",
+    "release/app/dist",
+    ".erb/dll",
+    "capacitor"
+  ]
 }
