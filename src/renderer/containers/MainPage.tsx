@@ -138,7 +138,7 @@ function MainPage() {
   });
 
   useEffect(() => {
-    if (!AppConfig.isCordova) {
+    if (!AppConfig.isNativeMobile) {
       updateDimensions();
     }
     // eslint-disable-next-line
@@ -156,7 +156,7 @@ function MainPage() {
   }, [openedEntry]);
 
   useEventListener('resize', () => {
-    if (!AppConfig.isCordova) {
+    if (!AppConfig.isNativeMobile) {
       updateDimensions();
     }
   });

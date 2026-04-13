@@ -438,7 +438,7 @@ export async function generateImageThumbnail(
     }
 
     // --- STANDARD IMAGE LOGIC ---
-    if (AppConfig.isCordova) {
+    if (AppConfig.isNativeMobile) {
       objectURL = await cordovaCreateObjectURL(blob);
     } else {
       objectURL = URL.createObjectURL(blob);
@@ -451,7 +451,7 @@ export async function generateImageThumbnail(
 
     // Cleanup Memory
     // We must revoke the URL after processing to free up the original image bytes
-    if (objectURL && !AppConfig.isCordova) {
+    if (objectURL && !AppConfig.isNativeMobile) {
       URL.revokeObjectURL(objectURL);
       objectURL = null;
     }
@@ -462,7 +462,7 @@ export async function generateImageThumbnail(
     return '';
   } finally {
     // Safety Cleanup for errors
-    if (objectURL && !AppConfig.isCordova) {
+    if (objectURL && !AppConfig.isNativeMobile) {
       URL.revokeObjectURL(objectURL);
     }
   }

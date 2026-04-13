@@ -76,3 +76,41 @@ npx playwright test --project=electron-s3 folder.pw.e2e.js
 - **`openContextEntryMenu()` waits for menu**: The helper waits for the menu item to be visible (5s) before clicking, reducing flakiness from context menu render timing.
 - **MUI `sx` prop and attribute monitoring**: MUI's `sx` prop generates dynamic CSS class names, not inline `style` attributes. When testing visual changes (e.g., background color), poll the `class` attribute with `waitUntilChanged()`, not `style`.
 - **Kanban `getDirectoryMenuItems` parameter order**: If the `DirectoryMenuItems.tsx` function signature changes (new parameters added), all callers must be updated — especially `ColumnMenu.tsx` in tagspacespro which uses positional arguments. A misaligned parameter shifts all subsequent callbacks into wrong slots.
+
+## Capacitor Mobile App
+
+### Structure
+- **Capacitor project**: `capacitor/` (parallel to `cordova/`, both can coexist)
+- **IO package**: `@tagspaces/tagspaces-common-capacitor` (source: `../tagspaces-common/packages/common-capacitor/`)
+- **Webpack configs**: `.erb/configs/webpack.config.capacitor.prod.ts` / `.dev.ts`
+- **Custom plugins**: `capacitor/android/app/src/main/java/org/tagspaces/plugins/` (StoragePermission, IntentHandler)
+- **Platform detection**: `AppConfig.isCapacitor`, `AppConfig.isCapacitorAndroid`, `AppConfig.isCapacitoriOS`, `AppConfig.isNativeMobile` (unified Cordova+Capacitor flag)
+
+### Build & Run
+```bash
+npm run prepare-capacitor        # Copy extensions + node_modules to www/
+npm run build:capacitor          # Webpack production build
+cd capacitor && npx cap sync     # Sync web assets + plugins to native projects
+npm run run-android-cap          # Full pipeline: prepare + build + sync + run
+npm run run-ios-cap              # Same for iOS
+cd capacitor && npx cap open android  # Open in Android Studio
+cd capacitor && npx cap open ios      # Open in Xcode
+```
+
+### Local Development Symlinks
+The `@tagspaces/tagspaces-common` and `@tagspaces/tagspaces-common-capacitor` packages in `release/app/node_modules/` must be symlinked to the source repos, otherwise `npm install` or `prepare-capacitor` overwrites Capacitor detection code:
+```bash
+ln -s /path/to/tagspaces-common/packages/common release/app/node_modules/@tagspaces/tagspaces-common
+ln -s /path/to/tagspaces-common/packages/common-capacitor release/app/node_modules/@tagspaces/tagspaces-common-capacitor
+ln -s /path/to/tagspaces-common/packages/common-capacitor node_modules/@tagspaces/tagspaces-common-capacitor
+```
+
+### Key Pitfalls
+- **Extension paths**: `prepare-capacitor` must copy `node_modules` directly to `capacitor/www/` (not into a subdirectory). Extensions are loaded as `node_modules/@tagspaces/extensions/{ext}/index.html` in iframes.
+- **File URLs**: Native file paths must go through `Capacitor.convertFileSrc()` to be loadable in WebView (`<img>`, iframes). Applied in `CommonLocation.normalizeUrl()`.
+- **Empty path = "."**: `resolveCapacitorPath()` in `io-capacitor.js` must return `"."` not `""` for root directories. Capacitor Filesystem fails silently with empty string.
+- **CSP must include `capacitor:` scheme**: In `frame-src`, `img-src`, `default-src`, `media-src`. Without it, thumbnails and extension iframes won't load.
+- **No `deviceready` event**: Capacitor bridge is ready immediately. `onDeviceReady()` is called via `setTimeout(..., 0)` at module load time.
+- **Safe area / notch**: Use `StatusBar.setOverlaysWebView({ overlay: false })` programmatically. CSS `env(safe-area-inset-*)` is unreliable on Android. The `<body>` inline `padding:0` overrides CSS — use `!important`.
+- **Android storage**: Uses `MANAGE_EXTERNAL_STORAGE` permission (file manager exemption). Runtime check via custom `StoragePermissionPlugin`. Play Store requires justification.
+- **iOS locations**: Sandboxed to Documents + iCloud only. Enable `UIFileSharingEnabled` in Info.plist for Files app visibility.

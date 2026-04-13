@@ -282,7 +282,7 @@ function EntryContainerMenu(props: Props) {
         <ListItemText primary={t('core:navigateToParentDirectory')} />
       </MenuItem>,
     );
-    if (!AppConfig.isCordova) {
+    if (!AppConfig.isNativeMobile) {
       menuItems.push(
         <MenuItem
           key={'openInWindowKey'}
@@ -297,7 +297,7 @@ function EntryContainerMenu(props: Props) {
         </MenuItem>,
       );
     }
-    if (AppConfig.isCordova) {
+    if (AppConfig.isNativeMobile) {
       menuItems.push(
         <MenuItem
           key={'shareFileKey'}
@@ -373,7 +373,7 @@ function EntryContainerMenu(props: Props) {
         <ListItemText primary={t('core:openInMainArea')} />
       </MenuItem>,
     );
-    if (!AppConfig.isCordova) {
+    if (!AppConfig.isNativeMobile) {
       menuItems.push(
         <MenuItem
           key={'openInWindowKey'}

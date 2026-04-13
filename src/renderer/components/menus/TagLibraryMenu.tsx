@@ -159,7 +159,7 @@ function TagLibraryMenu(props: Props) {
             </ListItemIcon>
             <ListItemText primary={t('core:importTags')} />
           </MenuItem>
-          {!AppConfig.isCordovaAndroid && (
+          {!AppConfig.isCordovaAndroid && !AppConfig.isCapacitorAndroid && (
             <MenuItem data-tid="exportTagGroup" onClick={handleExportTagGroup}>
               <ListItemIcon>
                 <ExportIcon />

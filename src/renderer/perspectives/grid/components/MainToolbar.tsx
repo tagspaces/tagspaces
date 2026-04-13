@@ -124,7 +124,8 @@ function MainToolbar(props: Props) {
     AppConfig.isWeb &&
     selectedEntries?.length > 0 &&
     // (PlatformIO.haveObjectStoreSupport() || PlatformIO.haveWebDavSupport()) &&
-    !AppConfig.isCordovaAndroid; // saveAs do not work on Android
+    !AppConfig.isCordovaAndroid &&
+    !AppConfig.isCapacitorAndroid; // saveAs do not work on Android
 
   const folderSettingsAvailable = haveLocalSetting();
 
@@ -289,7 +290,8 @@ function MainToolbar(props: Props) {
       )}
       {!AppConfig.ExtHideProFeatures &&
         Pro &&
-        !AppConfig.isCordovaAndroid && ( // SaveAs do not work on Android
+        !AppConfig.isCordovaAndroid &&
+        !AppConfig.isCapacitorAndroid && ( // SaveAs do not work on Android
           <TsToolbarButton
             tooltip={t('core:exportCsv')}
             title={t('core:startExportButton')}

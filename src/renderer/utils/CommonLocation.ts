@@ -20,6 +20,19 @@ import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
 
+// Capacitor IO is loaded dynamically to avoid breaking Electron/web builds
+// where the package isn't available. The variable indirection prevents
+// webpack from resolving the module statically.
+let capacitorIO: any;
+if (AppConfig.isCapacitor) {
+  try {
+    const capPkg = '@tagspaces/tagspaces-common-capacitor';
+    capacitorIO = require(capPkg);
+  } catch (e) {
+    console.warn('tagspaces-common-capacitor not available');
+  }
+}
+
 export class CommonLocation implements TS.Location {
   uuid: string;
   newuuid?: string;
@@ -101,6 +114,8 @@ export class CommonLocation implements TS.Location {
       this.ioAPI = require('@tagspaces/tagspaces-common-aws3'); //objectStoreAPI.getS3Api(location);
     } else if (location.type === locationType.TYPE_WEBDAV) {
       // TODO impl
+    } else if (AppConfig.isCapacitor) {
+      this.ioAPI = capacitorIO;
     } else if (AppConfig.isCordova) {
       this.ioAPI = cordovaIO;
     }
@@ -194,6 +209,18 @@ export class CommonLocation implements TS.Location {
     if (!protocol && AppConfig.isElectron) {
       const localRest = rest.startsWith('/') ? rest : '/' + rest;
       return AppConfig.mediaProtocol + '://' + localRest;
+    }
+
+    // 8) In Capacitor, native file paths must be converted to WebView-accessible
+    //    URLs using Capacitor.convertFileSrc(). This maps file:///... paths to
+    //    https://localhost/_capacitor_file_/... (Android) or
+    //    capacitor://localhost/_capacitor_file_/... (iOS).
+    if (!protocol && AppConfig.isCapacitor) {
+      const Capacitor = (window as any).Capacitor;
+      if (Capacitor && Capacitor.convertFileSrc) {
+        const filePath = rest.startsWith('/') ? rest : '/' + rest;
+        return Capacitor.convertFileSrc('file://' + filePath);
+      }
     }
 
     return protocol + rest;
@@ -448,7 +475,7 @@ export class CommonLocation implements TS.Location {
           ...(this.encryptionKey &&
             useEncryption && { encryptionKey: this.encryptionKey }),
         });
-      } else if (AppConfig.isCordova) {
+      } else if (AppConfig.isNativeMobile) {
         return this.ioAPI.checkFileExist(file);
       }
       return this.ioAPI
@@ -470,7 +497,7 @@ export class CommonLocation implements TS.Location {
             location: this,
           })
           .then((stats) => stats && !stats.isFile);
-      } else if (AppConfig.isCordova) {
+      } else if (AppConfig.isNativeMobile) {
         return this.ioAPI.checkDirExist(dir);
       }
       return this.ioAPI
@@ -836,7 +863,7 @@ export class CommonLocation implements TS.Location {
           overwrite,
           onUploadProgress,
         );
-      } else if (AppConfig.isCordova) {
+      } else if (AppConfig.isNativeMobile) {
         return this.ioAPI
           .saveBinaryFilePromise(param, content, overwrite)
           .then((succeeded) => {
@@ -914,10 +941,12 @@ export class CommonLocation implements TS.Location {
   };
 
   shareFiles = (files: Array<string>): void => {
-    if (AppConfig.isCordova) {
+    if (AppConfig.isCapacitor) {
+      capacitorIO.shareFiles(files);
+    } else if (AppConfig.isCordova) {
       cordovaIO.shareFiles(files);
     } else {
-      console.log('shareFiles is implemented in Cordova only.');
+      console.log('shareFiles is implemented in Cordova/Capacitor only.');
     }
   };
 
@@ -1176,7 +1205,7 @@ export class CommonLocation implements TS.Location {
   };
 
   openFile = (file: TS.FileSystemEntry): void => {
-    if (AppConfig.isCordova) {
+    if (AppConfig.isNativeMobile) {
       this.ioAPI.openFile(file.path, getMimeType(file.extension));
     }
   };

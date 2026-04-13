@@ -258,7 +258,7 @@ function RowCell(props: Props) {
   const handlePaperClick = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation();
-      AppConfig.isCordovaiOS
+      AppConfig.isCordovaiOS || AppConfig.isCapacitoriOS
         ? handleGridCellDblClick(event, fsEntry)
         : handleGridCellClick(event, fsEntry);
     },

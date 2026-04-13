@@ -390,7 +390,7 @@ function GridPagination(props: Props) {
         >
           {message}
         </Typography>
-        {!AppConfig.isCordova && (
+        {!AppConfig.isNativeMobile && (
           <Typography sx={{ color: theme.palette.text.secondary }}>
             {t('core:dragAndDropToImport')}
           </Typography>

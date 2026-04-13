@@ -533,7 +533,7 @@ export function getDirectoryMenuItems(
     );
   }
 
-  if (AppConfig.isCordova && cameraTakePicture) {
+  if (AppConfig.isNativeMobile && cameraTakePicture) {
     menuItems.push(
       <MenuItem
         key="takePicture"

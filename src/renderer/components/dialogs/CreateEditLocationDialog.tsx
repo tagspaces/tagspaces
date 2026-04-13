@@ -859,7 +859,7 @@ function CreateEditLocationDialog(props: Props) {
                   disabled={
                     !Pro ||
                     type === locationType.TYPE_CLOUD ||
-                    AppConfig.isCordova
+                    AppConfig.isNativeMobile
                   }
                   labelPlacement="start"
                   sx={{ justifyContent: 'space-between', marginLeft: 0 }}

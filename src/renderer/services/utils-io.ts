@@ -145,7 +145,7 @@ export function findExtensionPathForId(
   if (AppConfig.isWeb) {
     return 'modules/' + extensionId;
   }
-  if (AppConfig.isCordova) {
+  if (AppConfig.isNativeMobile) {
     return 'node_modules/' + extensionId;
   }
   return process.env.NODE_ENV === 'development'
@@ -811,7 +811,7 @@ export function openFileMessage(
   ) {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.sendMessage('openFile', filePath);
-    } else if (AppConfig.isCordova) {
+    } else if (AppConfig.isNativeMobile) {
     } else {
       console.error('Is supported only in Electron');
     }
@@ -867,6 +867,11 @@ export function uploadAbort(path?: string): Promise<any> {
 export function getDevicePaths(): Promise<any> {
   if (AppConfig.isElectron) {
     return window.electronIO.ipcRenderer.invoke('getDevicePaths');
+  } else if (AppConfig.isCapacitor) {
+    // Dynamic require to avoid webpack resolving this for Electron/web builds
+    const capPkg = '@tagspaces/tagspaces-common-capacitor';
+    const ioAPI = require(capPkg);
+    return ioAPI.getDevicePaths();
   } else if (AppConfig.isCordova) {
     const ioAPI = require('@tagspaces/tagspaces-common-cordova');
     return ioAPI.getDevicePaths();
@@ -936,7 +941,7 @@ export function downloadFile(
   const entryName = `${baseName(filePath, dirSeparator)}`;
   const fileName = extractFileName(entryName, dirSeparator);
 
-  if (AppConfig.isCordova) {
+  if (AppConfig.isNativeMobile) {
     if (fileUrl) {
       const downloadCordova = (uri, filename) => {
         const { Downloader } = window.plugins;
@@ -1011,6 +1016,10 @@ export function downloadFile(
 export function selectDirectoryDialog(): Promise<any> {
   if (AppConfig.isElectron) {
     return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
+  } else if (AppConfig.isCapacitor) {
+    const capPkg = '@tagspaces/tagspaces-common-capacitor';
+    const ioAPI = require(capPkg);
+    return ioAPI.selectDirectoryDialog();
   } else if (AppConfig.isCordova) {
     const ioAPI = require('@tagspaces/tagspaces-common-cordova');
     return ioAPI.selectDirectoryDialog();

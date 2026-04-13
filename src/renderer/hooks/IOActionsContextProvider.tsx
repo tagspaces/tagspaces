@@ -1033,7 +1033,11 @@ export const IOActionsContextProvider = ({
         onUploadProgress({ key: key, loaded: 0, total: 0 }, undefined);
       }
     }
-    if (AppConfig.isElectron || AppConfig.isCordovaiOS) {
+    if (
+      AppConfig.isElectron ||
+      AppConfig.isCordovaiOS ||
+      AppConfig.isCapacitoriOS
+    ) {
       return uploadFiles(
         files.map((f) => f.path),
         targetPath,
@@ -1703,7 +1707,7 @@ export const IOActionsContextProvider = ({
 
   function openFsEntryNatively(fsEntry: TS.FileSystemEntry) {
     if (fsEntry.isFile) {
-      if (AppConfig.isCordova) {
+      if (AppConfig.isNativeMobile) {
         currentLocation.openFile(fsEntry);
       } else {
         openFileMessage(fsEntry.path, warningOpeningFilesExternally);

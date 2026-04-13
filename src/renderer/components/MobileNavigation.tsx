@@ -558,7 +558,7 @@ function MobileNavigation(props: Props) {
                         <ListItemText primary={t('core:createLocation')} />
                       </MenuItem>
                     )}
-                    {!AppConfig.isCordova && (
+                    {!AppConfig.isNativeMobile && (
                       <MenuItem
                         key="createWindow"
                         data-tid="createWindowTID"

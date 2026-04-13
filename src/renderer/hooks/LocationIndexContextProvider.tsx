@@ -356,7 +356,7 @@ export const LocationIndexContextProvider = ({
           enableWS &&
           !loc.haveObjectStoreSupport() &&
           !loc.haveWebDavSupport() &&
-          !AppConfig.isCordova
+          !AppConfig.isNativeMobile
         ) {
           // Start indexing in worker if not in the object store mode
           return loc
