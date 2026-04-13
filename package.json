@@ -32,6 +32,7 @@
     "build-e2e-dev": "ts-node ./.erb/scripts/clean.js && npm run prepare-node && cross-env E2E_BUILD=true concurrently \"npm run build:main\" \"npm run build:renderer\" \"npm run build:web\"",
     "build-e2e-web": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test && npm run prepare-web-pro",
     "build-e2e-web-dev": "node scripts/setup-tests.js && cross-env E2E_BUILD=true NODE_ENV=test && npm run prepare-web-pro-dev",
+    "assets:capacitor": "cd capacitor && ./scripts/generate-assets.sh",
     "build:capacitor": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.capacitor.prod.ts",
     "build:capacitor:dev": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.capacitor.dev.ts",
     "build:cordova": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.cordova.prod.ts",
@@ -177,10 +178,10 @@
     "@mui/material": "7.3.9",
     "@mui/x-data-grid": "8.24.0",
     "@mui/x-date-pickers": "8.24.0",
-    "@tagspaces/tagspaces-common": "4.5.111",
-    "@tagspaces/tagspaces-common-aws3": "4.5.111",
-    "@tagspaces/tagspaces-common-cordova": "4.5.111",
-    "@tagspaces/tagspaces-indexer": "4.5.111",
+    "@tagspaces/tagspaces-common": "4.6.0",
+    "@tagspaces/tagspaces-common-aws3": "4.6.0",
+    "@tagspaces/tagspaces-common-cordova": "4.6.0",
+    "@tagspaces/tagspaces-indexer": "4.6.0",
     "aws-amplify": "4.3.36",
     "coordinate-parser": "1.0.7",
     "crypto-js": "4.2.0",
@@ -333,7 +334,7 @@
   },
   "engines": {
     "npm": ">= 6.14.15",
-    "node": ">=18.0.0 <23.0.0",
+    "node": ">=22.0.0",
     "yarn": "please-use-npm"
   },
   "electronmon": {
