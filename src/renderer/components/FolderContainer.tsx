@@ -76,7 +76,8 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   const theme = useTheme();
   const keyBindings = useSelector(getKeyBindingObject);
   const { findLocation } = useCurrentLocationContext();
-  const { goForward, goBack, historyIndex } = useBrowserHistoryContext();
+  const { goForward, goBack, canGoBack, canGoForward } =
+    useBrowserHistoryContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
   const { openEntry } = useOpenedEntryContext();
@@ -323,7 +324,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
             t('core:goback') + ' - BETA - ' + t('core:gobackClarification')
           }
           id="goBackButton"
-          disabled={historyIndex === 0}
+          disabled={!canGoBack}
           onClick={goBack}
           sx={{ WebkitAppRegion: 'no-drag' }}
         >
@@ -333,7 +334,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
           <TsIconButton
             tooltip={t('core:goforward') + ' - BETA'}
             id="goForwardButton"
-            disabled={historyIndex === 0}
+            disabled={!canGoForward}
             onClick={goForward}
             sx={{ WebkitAppRegion: 'no-drag' }}
           >

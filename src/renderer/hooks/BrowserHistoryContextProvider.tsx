@@ -14,6 +14,8 @@ import { FixedSizeArray } from '-/services/FixedSizeArray';
 
 type BrowserHistoryContextData = {
   historyIndex: number;
+  canGoBack: boolean;
+  canGoForward: boolean;
   goBack: () => void;
   goForward: () => void;
   openHistoryItem: (item: TS.HistoryItem) => void;
@@ -21,6 +23,8 @@ type BrowserHistoryContextData = {
 
 export const BrowserHistoryContext = createContext<BrowserHistoryContextData>({
   historyIndex: undefined,
+  canGoBack: false,
+  canGoForward: false,
   goBack: undefined,
   goForward: undefined,
   openHistoryItem: undefined,
@@ -42,16 +46,24 @@ export const BrowserHistoryContextProvider = ({
     new FixedSizeArray<TS.HistoryItem>(50),
   );
   const historyIndex = useRef<number>(0);
+  const isNavigating = useRef<boolean>(false);
+  const goBackRef = useRef<(() => void) | null>(null);
+  const goForwardRef = useRef<(() => void) | null>(null);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
   const currentLocation = findLocation();
+
+  useEffect(() => {
+    goBackRef.current = goBack;
+    goForwardRef.current = goForward;
+  });
 
   useEffect(() => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('history', (arg) => {
         if (arg === 'go-back') {
-          goBack();
+          goBackRef.current?.();
         } else if (arg === 'go-forward') {
-          goForward();
+          goForwardRef.current?.();
         }
       });
 
@@ -108,6 +120,7 @@ export const BrowserHistoryContextProvider = ({
   }, [currentDirectoryPath]);
 
   function addHistory(path, url, lid) {
+    if (isNavigating.current) return;
     const lastItem = lastHistoryItem();
     if (!lastItem || lastItem.path !== path) {
       const sliced = history.current.slice(0, historyIndex.current + 1);
@@ -118,33 +131,37 @@ export const BrowserHistoryContextProvider = ({
     }
   }
 
-  /*function haveHistory() {
-    return historyIndex.current > 0;
-  }*/
-
   function lastHistoryItem() {
     return history.current.get(historyIndex.current);
   }
 
   function goBack() {
     if (historyIndex.current > 0) {
+      isNavigating.current = true;
       historyIndex.current = historyIndex.current - 1;
-      const lastItem = lastHistoryItem();
-      //const filtered = history.current.filter((item) => item.path !== lastItem.path);
-      //history.current = [...filtered, lastItem];
-      openHistoryItem(lastItem);
+      const item = lastHistoryItem();
+      if (item) {
+        openHistoryItem(item);
+      }
       forceUpdate();
+      setTimeout(() => {
+        isNavigating.current = false;
+      }, 300);
     }
   }
 
   function goForward() {
-    if (historyIndex.current < history.current.getArray().length) {
+    if (historyIndex.current < history.current.getArray().length - 1) {
+      isNavigating.current = true;
       historyIndex.current = historyIndex.current + 1;
-      const lastItem = lastHistoryItem();
-      //const filtered = history.current.filter((item) => item.path !== lastItem.path);
-      //history.current = [...filtered, lastItem];
-      openHistoryItem(lastItem);
+      const item = lastHistoryItem();
+      if (item) {
+        openHistoryItem(item);
+      }
       forceUpdate();
+      setTimeout(() => {
+        isNavigating.current = false;
+      }, 300);
     }
   }
 
@@ -161,6 +178,8 @@ export const BrowserHistoryContextProvider = ({
 
   const context = {
     historyIndex: historyIndex.current,
+    canGoBack: historyIndex.current > 0,
+    canGoForward: historyIndex.current < history.current.getArray().length - 1,
     goBack,
     goForward,
     openHistoryItem,
