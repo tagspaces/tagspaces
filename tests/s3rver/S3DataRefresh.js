@@ -103,6 +103,7 @@ async function deleteAllObjects(bucketName) {
     console.log(`All objects in bucket "${bucketName}" have been deleted.`);
   } catch (error) {
     console.error('Error deleting objects:', error);
+    if (error.code === 'ECONNREFUSED') throw error;
   }
 }
 

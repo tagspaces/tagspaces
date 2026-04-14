@@ -67,10 +67,10 @@ export async function runS3Proxy(testWorkerDir, port = 4569, silent = true) {
   ]);
 
   s3proxyProcess.on('exit', function (code) {
-    // console.log('S3Proxy exit with code:', code);
+    console.error('S3Proxy exit with code:', code);
   });
   s3proxyProcess.on('close', (code, signal) => {
-    // console.log(`S3Proxy terminated due to signal ${signal}`);
+    console.error(`S3Proxy closed with code ${code}, signal ${signal}`);
   });
 
   if (!silent) {
@@ -80,9 +80,8 @@ export async function runS3Proxy(testWorkerDir, port = 4569, silent = true) {
   }
 
   s3proxyProcess.stderr.on('data', function (data) {
-    if (!silent) {
-      console.log('S3Proxy stderr: ' + data);
-    }
+    // Always log stderr to capture Java errors/crashes
+    console.error('S3Proxy stderr: ' + data);
   });
 
   // Wait for S3Proxy to be ready by polling the endpoint
