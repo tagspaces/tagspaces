@@ -529,11 +529,13 @@ export const TaggingActionsContextProvider = ({
         if (entry.meta) {
           const uniqueTags = getNonExistingTags(
             tags,
-            extractTags(
-              entry.path,
-              tagDelimiter,
-              currentLocation?.getDirSeparator(),
-            ),
+            entry.isFile
+              ? extractTags(
+                  entry.path,
+                  tagDelimiter,
+                  currentLocation?.getDirSeparator(),
+                )
+              : [],
             entry.meta.tags,
           );
           if (uniqueTags.length > 0) {
