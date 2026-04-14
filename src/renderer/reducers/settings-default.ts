@@ -69,6 +69,7 @@ export default {
   desktopMode,
   devMode: AppConfig.ExtDevMode ? AppConfig.ExtDevMode : false,
   hideProFeatures: false,
+  autoSaveDescription: false,
   saveTagInLocation:
     typeof AppConfig.ExtUseLocationTags === 'undefined'
       ? false

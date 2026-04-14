@@ -27,11 +27,13 @@ import React, {
 import { Pro } from '-/pro';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { TS } from '-/tagspaces.namespace';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { isAutoSaveDescription } from '-/reducers/settings';
 
 type FilePropertiesContextData = {
   description: string;
@@ -73,8 +75,10 @@ export const FilePropertiesContextProvider = ({
   const { showNotification, openConfirmDialog } = useNotificationContext();
   const { setDescriptionChange } = useIOActionsContext();
 
+  const autoSaveDesc = useSelector(isAutoSaveDescription);
   const lastOpenedFile = useRef<TS.OpenedEntry>({ ...openedEntry });
   const isDescriptionChanged = useRef<boolean>(false);
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isEditDescriptionMode, setIsEditDescriptionMode] =
@@ -160,6 +164,14 @@ export const FilePropertiesContextProvider = ({
     });
   }
 
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimer.current) {
+        clearTimeout(autoSaveTimer.current);
+      }
+    };
+  }, []);
+
   function setDescription(d: string, changed = true) {
     if (lastOpenedFile.current?.meta?.description !== d) {
       lastOpenedFile.current = {
@@ -172,6 +184,23 @@ export const FilePropertiesContextProvider = ({
       if (isDescriptionChanged.current !== changed) {
         isDescriptionChanged.current = changed;
         forceUpdate();
+      }
+      if (changed && autoSaveDesc && Pro) {
+        if (autoSaveTimer.current) {
+          clearTimeout(autoSaveTimer.current);
+        }
+        autoSaveTimer.current = setTimeout(() => {
+          const entry = lastOpenedFile.current;
+          const location = findLocation(entry?.locationID);
+          if (entry && location && !location.isReadOnly) {
+            setDescriptionChange(entry, entry.meta?.description ?? '').then(
+              () => {
+                isDescriptionChanged.current = false;
+                forceUpdate();
+              },
+            );
+          }
+        }, 3000);
       }
     }
   }

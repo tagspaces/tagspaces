@@ -34,4 +34,6 @@ if (AppConfig.isCordovaAndroid) {
   tsPro = undefined;
 }
 
+// tsPro = undefined; // disable pro
+
 export { tsPro as Pro };

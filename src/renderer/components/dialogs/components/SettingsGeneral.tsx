@@ -579,6 +579,33 @@ function SettingsGeneral() {
           ),
         },
         {
+          label: t('core:autoSaveDescription'),
+          jsx: (
+            <ListItem>
+              <ListItemText
+                primary={
+                  <>
+                    {t('core:autoSaveDescription')}
+                    <ProLabel />
+                  </>
+                }
+              />
+              <Switch
+                data-tid="settingsAutoSaveDescriptionTID"
+                disabled={!Pro}
+                onClick={() =>
+                  dispatch(
+                    SettingsActions.setAutoSaveDescription(
+                      !settings.autoSaveDescription,
+                    ),
+                  )
+                }
+                checked={settings.autoSaveDescription}
+              />
+            </ListItem>
+          ),
+        },
+        {
           label: t('core:tagBackgroundColor'),
           jsx: (
             <ListItem>

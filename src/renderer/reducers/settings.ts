@@ -106,6 +106,7 @@ export const types = {
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
   SET_HIDE_PRO_FEATURES: 'SETTINGS/SET_HIDE_PRO_FEATURES',
+  SET_AUTO_SAVE_DESCRIPTION: 'SETTINGS/SET_AUTO_SAVE_DESCRIPTION',
 };
 
 function generateUniqueName(array: Array<any>, baseName: string): string {
@@ -198,6 +199,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_HIDE_PRO_FEATURES: {
       return { ...state, hideProFeatures: action.hideProFeatures };
+    }
+    case types.SET_AUTO_SAVE_DESCRIPTION: {
+      return { ...state, autoSaveDescription: action.autoSaveDescription };
     }
     case types.SET_ENABLE_WS: {
       return { ...state, enableWS: action.enableWS };
@@ -634,6 +638,10 @@ export const actions = {
     type: types.SET_HIDE_PRO_FEATURES,
     hideProFeatures,
   }),
+  setAutoSaveDescription: (autoSaveDescription: boolean) => ({
+    type: types.SET_AUTO_SAVE_DESCRIPTION,
+    autoSaveDescription,
+  }),
   setEnableWS: (enableWS: boolean) => ({
     type: types.SET_ENABLE_WS,
     enableWS,
@@ -919,6 +927,8 @@ export const isHideProFeatures = (state: any) =>
   AppConfig.ExtHideProFeatures !== undefined
     ? AppConfig.ExtHideProFeatures
     : state.settings.hideProFeatures;
+export const isAutoSaveDescription = (state: any) =>
+  state.settings.autoSaveDescription;
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;
