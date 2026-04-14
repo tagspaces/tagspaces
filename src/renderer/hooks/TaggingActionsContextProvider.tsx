@@ -43,6 +43,7 @@ import { getAllTags } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { isGeoTag } from '-/utils/geo';
+import { isDateTimeTag } from '-/utils/dates';
 import {
   formatDateTime4Tag,
   immutablySwapItems,
@@ -767,8 +768,20 @@ export const TaggingActionsContextProvider = ({
   function collectTagsToLibrary(tags: TS.Tag[]) {
     if (addTagsToLibrary) {
       // collecting tags
+      // strip date suffixes from compound tags like "viewer-20260312"
+      const processedTags = tags.map((tag) => {
+        if (!tag.title) return tag;
+        const dashIndex = tag.title.lastIndexOf('-');
+        if (dashIndex > 0) {
+          const suffix = tag.title.substring(dashIndex + 1);
+          if (isDateTimeTag(suffix)) {
+            return { ...tag, title: tag.title.substring(0, dashIndex) };
+          }
+        }
+        return tag;
+      });
       // filter existed in tagLibrary
-      const uniqueTags = tags.filter(
+      const uniqueTags = processedTags.filter(
         (tag) =>
           tagGroups.findIndex(
             (tagGroup) =>
