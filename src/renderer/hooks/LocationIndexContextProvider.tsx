@@ -58,6 +58,7 @@ type LocationIndexContextData = {
   createLocationIndex: (
     location: CommonLocation,
     force?: boolean,
+    fullTextIndex?: boolean,
   ) => Promise<boolean>;
   createLocationsIndexes: (
     extractText?: boolean,
@@ -479,6 +480,7 @@ export const LocationIndexContextProvider = ({
   function createLocationIndex(
     location: CommonLocation,
     force = false,
+    fullTextIndex?: boolean,
   ): Promise<boolean> {
     walkingRef.current = true;
     if (location) {
@@ -489,7 +491,7 @@ export const LocationIndexContextProvider = ({
             t('core:indexDisabledConfirm'),
             (result) => {
               if (result) {
-                createLocationIndexInt(location);
+                createLocationIndexInt(location, fullTextIndex);
               }
             },
             'cancelIndexDisabledDialogTID',
@@ -498,13 +500,16 @@ export const LocationIndexContextProvider = ({
           );
         }
       } else {
-        return createLocationIndexInt(location);
+        return createLocationIndexInt(location, fullTextIndex);
       }
     }
     return Promise.resolve(false);
   }
 
-  function createLocationIndexInt(location: CommonLocation): Promise<boolean> {
+  function createLocationIndexInt(
+    location: CommonLocation,
+    fullTextIndex?: boolean,
+  ): Promise<boolean> {
     if (location) {
       isIndexing.current = location.uuid;
       forceUpdate();
@@ -514,7 +519,7 @@ export const LocationIndexContextProvider = ({
         currentLocation && currentLocation.uuid === location.uuid;
       return createDirectoryIndexWrapper(
         { path: locationPath, locationID: location.uuid },
-        location.fullTextIndex,
+        fullTextIndex ?? location.fullTextIndex,
         location.ignorePatternPaths,
         enableWS,
       )

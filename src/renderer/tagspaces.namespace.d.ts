@@ -216,7 +216,13 @@ export namespace TS {
     lon?: number;
   }
 
-  type LinkType = 'url' | 'email' | 'tslink' | 'hashtag' | 'mention';
+  type LinkType =
+    | 'url'
+    | 'email'
+    | 'tslink'
+    | 'hashtag'
+    | 'mention'
+    | 'relative';
 
   interface Link {
     /**

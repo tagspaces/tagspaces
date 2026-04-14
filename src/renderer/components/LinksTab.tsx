@@ -92,7 +92,7 @@ function LinksTab(props: Props) {
   }, [openedEntry, selectedTabName]);
 
   function refreshInboundLinks() {
-    createLocationIndex(location).then(() => setInboundLinks());
+    createLocationIndex(location, true, true).then(() => setInboundLinks());
   }
 
   function setInboundLinks() {
@@ -108,7 +108,9 @@ function LinksTab(props: Props) {
     let url = link.value ? link.value : link.href;
     url = url.split('\\').join(''); // tmp fix for milkdown issue
     let buttonTitle = '';
-    if (link.type === 'url') {
+    if (link.type === 'relative') {
+      buttonTitle = url;
+    } else if (link.type === 'url') {
       try {
         buttonTitle = new URL(url).hostname;
       } catch (e) {
