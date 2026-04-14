@@ -710,9 +710,12 @@ export const DirectoryContentContextProvider = ({
           currentDirectory.current.path,
         );
         resolveRelativePath(loc.path).then((locationPath) => {
+          const normalizedLocationPath = cleanFrontDirSeparator(
+            cleanTrailingDirSeparator(locationPath),
+          );
           if (
-            !locationPath ||
-            parentDirectory.startsWith(cleanTrailingDirSeparator(locationPath))
+            !normalizedLocationPath ||
+            parentDirectory.startsWith(normalizedLocationPath)
           ) {
             //limit opening only from location
             return openDirectory(parentDirectory, undefined, loc);
