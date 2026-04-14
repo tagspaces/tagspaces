@@ -54,7 +54,7 @@ export async function runS3Proxy(testWorkerDir, port = 4569, silent = true) {
       'jclouds.provider=filesystem-nio2',
       'jclouds.identity=test',
       'jclouds.credential=test',
-      `jclouds.filesystem.basedir=${baseDir}`,
+      `jclouds.filesystem.basedir=${baseDir.replace(/\\/g, '/')}`,
     ].join('\n') + '\n',
   );
 
