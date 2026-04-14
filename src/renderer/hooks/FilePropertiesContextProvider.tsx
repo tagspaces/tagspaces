@@ -78,7 +78,7 @@ export const FilePropertiesContextProvider = ({
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isEditDescriptionMode, setIsEditDescriptionMode] =
-    useState<boolean>(true);
+    useState<boolean>(!!Pro);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -87,7 +87,7 @@ export const FilePropertiesContextProvider = ({
       // auto set EditDescriptionMode on opening
       const openedLocation = findLocation(openedEntry.locationID);
       if (openedLocation) {
-        if (openedLocation.isReadOnly) {
+        if (openedLocation.isReadOnly || !Pro) {
           if (isEditDescriptionMode) {
             setIsEditDescriptionMode(false);
           }
