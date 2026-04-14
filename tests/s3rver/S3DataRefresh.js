@@ -178,24 +178,43 @@ function createDir(dirPath) {
 async function uploadTestDirectory(dirPath) {
   try {
     const { files, emptyDirs } = getFilesRecursive(dirPath);
-    // Use allSettled so a single XML parsing error from S3Proxy
-    // doesn't abort all remaining uploads
-    const uploads = files.map((file) => uploadFile(file));
-    // Create directory markers for empty directories
-    const dirMarkers = emptyDirs.map((dir) => {
+
+    // Create directory markers for empty directories first
+    for (const dir of emptyDirs) {
       const key = path.relative(directoryPath, dir).replace(/\\/g, '/');
-      return createDir(key);
-    });
-    const results = await Promise.allSettled([...uploads, ...dirMarkers]);
-    const failures = results.filter((r) => r.status === 'rejected');
-    if (failures.length > 0) {
-      console.warn(
-        `${failures.length} of ${results.length} uploads had errors (likely S3Proxy XML response issues)`,
+      try {
+        await createDir(key);
+      } catch (err) {
+        if (err.code === 'ECONNREFUSED') throw err;
+      }
+    }
+
+    // Upload files in batches to avoid overwhelming S3Proxy
+    const BATCH_SIZE = 10;
+    let connectionError = null;
+    for (let i = 0; i < files.length; i += BATCH_SIZE) {
+      const batch = files.slice(i, i + BATCH_SIZE);
+      const results = await Promise.allSettled(
+        batch.map((file) => uploadFile(file)),
       );
+      const failures = results.filter((r) => r.status === 'rejected');
+      const connFailures = failures.filter(
+        (r) => r.reason && r.reason.code === 'ECONNREFUSED',
+      );
+      if (connFailures.length > 0) {
+        connectionError = new Error(
+          `S3Proxy is unreachable (ECONNREFUSED) during upload batch ${Math.floor(i / BATCH_SIZE) + 1}`,
+        );
+        break;
+      }
+    }
+    if (connectionError) {
+      throw connectionError;
     }
     console.log(`All files in ${dirPath} uploaded to ${bucketName}`);
   } catch (err) {
-    console.error(`Error uploading directory ${dirPath}:`, err);
+    console.error(`Error uploading directory ${dirPath}:`, err.message);
+    throw err;
   }
 }
 
@@ -203,18 +222,13 @@ async function refreshS3testData() {
   try {
     await deleteAllObjects('supported-filestypes');
   } catch (error) {
+    if (error.code === 'ECONNREFUSED') throw error;
     console.error('deleteAllObjects error:', error.message);
   }
   // Always upload from the original test data source (directoryPath),
   // not from the worker-specific copy, because deleteAllObjects wipes
   // the S3Proxy filesystem backend which IS the worker copy.
-  try {
-    await uploadTestDirectory(directoryPath);
-  } catch (error) {
-    // S3Proxy may return malformed XML responses that cause AWS SDK
-    // deserialization errors, even though the upload succeeded
-    console.error('uploadTestDirectory error:', error.message);
-  }
+  await uploadTestDirectory(directoryPath);
 }
 
 module.exports = {
