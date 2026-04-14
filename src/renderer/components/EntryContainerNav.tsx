@@ -1,4 +1,3 @@
-import AppConfig from '-/AppConfig';
 import {
   CloseIcon,
   EntryBookmarkAddIcon,
@@ -11,7 +10,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { Pro } from '-/pro';
-import { getKeyBindingObject } from '-/reducers/settings';
+import { getKeyBindingObject, isHideProFeatures } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { Box } from '@mui/material';
 import { useContext, useReducer } from 'react';
@@ -29,6 +28,7 @@ function EntryContainerNav(props: Props) {
   const { isFile, startClosingEntry, smallScreen } = props;
   const { setActions } = usePerspectiveActionsContext();
   const keyBindings = useSelector(getKeyBindingObject);
+  const hideProFeatures: boolean = useSelector(isHideProFeatures);
   const { openedEntry, sharingLink, fileChanged } = useOpenedEntryContext();
   const { showNotification } = useNotificationContext();
   const { t } = useTranslation();
@@ -66,7 +66,7 @@ function EntryContainerNav(props: Props) {
         alignItems: 'center',
       }}
     >
-      {!AppConfig.ExtHideProFeatures && (
+      {!hideProFeatures && (
         <ProTooltip tooltip={t('core:toggleBookmark')}>
           <TsIconButton
             data-tid="toggleBookmarkTID"

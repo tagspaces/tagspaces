@@ -27,7 +27,11 @@ import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import MenuKeyBinding from '-/components/menus/MenuKeyBinding';
 import { Pro } from '-/pro';
-import { getKeyBindingObject, isDevMode } from '-/reducers/settings';
+import {
+  getKeyBindingObject,
+  isDevMode,
+  isHideProFeatures,
+} from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import Divider from '@mui/material/Divider';
@@ -72,6 +76,7 @@ export function getDirectoryMenuItems(
 ) {
   const keyBindings = useSelector(getKeyBindingObject);
   const devMode: boolean = useSelector(isDevMode);
+  const hideProFeatures: boolean = useSelector(isHideProFeatures);
   const menuItems = [];
   if (selectedEntries.length < 2) {
     if (perspectiveMode) {
@@ -284,7 +289,7 @@ export function getDirectoryMenuItems(
           <ListItemText primary={t('core:createLinkFile')} />
         </MenuItem>,
       );
-      if (!AppConfig.ExtHideProFeatures) {
+      if (!hideProFeatures) {
         menuItems.push(
           <MenuItem
             key="createNewFromTemplate"
@@ -310,7 +315,7 @@ export function getDirectoryMenuItems(
         );
       }
     }
-    if (createNewAudio && !AppConfig.ExtHideProFeatures) {
+    if (createNewAudio && !hideProFeatures) {
       menuItems.push(
         <MenuItem
           key="createNewAudio"
@@ -374,7 +379,7 @@ export function getDirectoryMenuItems(
   if (selectedEntries.length < 2) {
     menuItems.push(<Divider key={`divider-${menuItems.length}`} />);
     if (
-      !AppConfig.ExtHideProFeatures &&
+      !hideProFeatures &&
       Pro &&
       !isReadOnlyMode &&
       setFolderThumbnail &&
@@ -398,12 +403,7 @@ export function getDirectoryMenuItems(
         </MenuItem>,
       );
     }
-    if (
-      !AppConfig.ExtHideProFeatures &&
-      Pro &&
-      !isReadOnlyMode &&
-      changeFolderThumbnail
-    ) {
+    if (!hideProFeatures && Pro && !isReadOnlyMode && changeFolderThumbnail) {
       menuItems.push(
         <MenuItem
           key="changeThumb"
@@ -422,12 +422,7 @@ export function getDirectoryMenuItems(
         </MenuItem>,
       );
     }
-    if (
-      !AppConfig.ExtHideProFeatures &&
-      Pro &&
-      !isReadOnlyMode &&
-      changeFolderBackground
-    ) {
+    if (!hideProFeatures && Pro && !isReadOnlyMode && changeFolderBackground) {
       menuItems.push(
         <MenuItem
           key="changeBackground"
@@ -502,7 +497,7 @@ export function getDirectoryMenuItems(
   }
 
   if (
-    !AppConfig.ExtHideProFeatures &&
+    !hideProFeatures &&
     AppConfig.isElectron &&
     AppConfig.isMacLike &&
     !perspectiveMode &&

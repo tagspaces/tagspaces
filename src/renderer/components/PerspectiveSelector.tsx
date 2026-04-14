@@ -21,7 +21,11 @@ import { BetaLabel } from '-/components/HelperComponents';
 import TsSelect from '-/components/TsSelect';
 import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
-import { isDesktopMode, isDevMode } from '-/reducers/settings';
+import {
+  isDesktopMode,
+  isDevMode,
+  isHideProFeatures,
+} from '-/reducers/settings';
 import LayersClearIcon from '@mui/icons-material/LayersClear';
 import { Box } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -42,6 +46,7 @@ function PerspectiveSelector(props: Props) {
   const { defaultValue, onChange, testId, label, fullWidth = true } = props;
   const devMode: boolean = useSelector(isDevMode);
   const desktopMode = useSelector(isDesktopMode);
+  const hideProFeatures: boolean = useSelector(isHideProFeatures);
   const { t } = useTranslation();
 
   const perspectiveSelectorMenuItems = [];
@@ -61,7 +66,7 @@ function PerspectiveSelector(props: Props) {
 
   AvailablePerspectives.forEach((perspective) => {
     let includePerspective = true;
-    if (AppConfig.ExtHideProFeatures && !Pro && perspective.pro === true) {
+    if (hideProFeatures && !Pro && perspective.pro === true) {
       includePerspective = false;
     }
     if (includePerspective) {

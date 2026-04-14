@@ -40,6 +40,7 @@ import {
   getMapTileServers,
   getSettings,
   isDevMode,
+  isHideProFeatures,
 } from '-/reducers/settings';
 import { isWorkerAvailable } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -64,6 +65,7 @@ function SettingsAdvanced(props: Props) {
   const settings = useSelector(getSettings);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
   const devMode = useSelector(isDevMode);
+  const hideProFeatures = useSelector(isHideProFeatures);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const wsAlive = useRef<boolean>(null);
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
@@ -371,6 +373,25 @@ function SettingsAdvanced(props: Props) {
           tileServer={tileServerDialog}
           isDefault={tileServerDialog.isDefault}
         />
+      )}
+      {!Pro && (
+        <ListItem
+          title={
+            AppConfig.ExtHideProFeatures !== undefined
+              ? t('core:settingExternallyConfigured')
+              : ''
+          }
+        >
+          <ListItemText primary={t('core:hideProFeatures')} />
+          <Switch
+            data-tid="settingsHideProFeatures"
+            disabled={AppConfig.ExtHideProFeatures !== undefined}
+            onClick={() =>
+              dispatch(SettingsActions.setHideProFeatures(!hideProFeatures))
+            }
+            checked={hideProFeatures}
+          />
+        </ListItem>
       )}
       <ListItem>
         <ListItemText

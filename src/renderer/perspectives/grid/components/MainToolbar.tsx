@@ -48,7 +48,7 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { Pro } from '-/pro';
-import { getKeyBindingObject } from '-/reducers/settings';
+import { getKeyBindingObject, isHideProFeatures } from '-/reducers/settings';
 import { Box, Divider, Toolbar } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { saveAs } from 'file-saver';
@@ -91,6 +91,7 @@ function MainToolbar(props: Props) {
     useDirectoryContentContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const keyBindings = useSelector(getKeyBindingObject);
+  const hideProFeatures: boolean = useSelector(isHideProFeatures);
   const { currentLocation } = useCurrentLocationContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
@@ -258,7 +259,7 @@ function MainToolbar(props: Props) {
             <DeleteIcon />
           </TsToolbarButton>
         )}
-        {!AppConfig.ExtHideProFeatures &&
+        {!hideProFeatures &&
           Pro &&
           currentLocation?.haveObjectStoreSupport() && (
             <TsToolbarButton
@@ -288,7 +289,7 @@ function MainToolbar(props: Props) {
           <DownloadIcon />
         </TsToolbarButton>
       )}
-      {!AppConfig.ExtHideProFeatures &&
+      {!hideProFeatures &&
         Pro &&
         !AppConfig.isCordovaAndroid &&
         !AppConfig.isCapacitorAndroid && ( // SaveAs do not work on Android

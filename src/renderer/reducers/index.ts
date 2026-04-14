@@ -82,7 +82,8 @@ function configureApp(extConfigObj) {
   AppConfig.ExtShowSmartTags = extConfigObj.ExtShowSmartTags ?? true;
   AppConfig.ExtUseLocationTags =
     extConfigObj.ExtUseLocationTags ?? AppConfig.ExtUseLocationTags;
-  AppConfig.ExtHideProFeatures = extConfigObj.ExtHideProFeatures ?? false;
+  AppConfig.ExtHideProFeatures =
+    extConfigObj.ExtHideProFeatures ?? AppConfig.ExtHideProFeatures;
   AppConfig.ExtTheme = extConfigObj.ExtTheme ?? AppConfig.ExtTheme;
   AppConfig.ExtDefaultPerspective =
     extConfigObj.ExtDefaultPerspective ?? AppConfig.ExtDefaultPerspective; // currently not implemented

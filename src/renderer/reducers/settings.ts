@@ -105,6 +105,7 @@ export const types = {
   SET_FILE_OPEN_HISTORY: 'SET_FILE_OPEN_HISTORY',
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
+  SET_HIDE_PRO_FEATURES: 'SETTINGS/SET_HIDE_PRO_FEATURES',
 };
 
 function generateUniqueName(array: Array<any>, baseName: string): string {
@@ -194,6 +195,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_DEVMODE: {
       return { ...state, devMode: action.devMode };
+    }
+    case types.SET_HIDE_PRO_FEATURES: {
+      return { ...state, hideProFeatures: action.hideProFeatures };
     }
     case types.SET_ENABLE_WS: {
       return { ...state, enableWS: action.enableWS };
@@ -626,6 +630,10 @@ export const actions = {
     type: types.SET_DEVMODE,
     devMode,
   }),
+  setHideProFeatures: (hideProFeatures: boolean) => ({
+    type: types.SET_HIDE_PRO_FEATURES,
+    hideProFeatures,
+  }),
   setEnableWS: (enableWS: boolean) => ({
     type: types.SET_ENABLE_WS,
     enableWS,
@@ -907,6 +915,10 @@ export const getDesktopMode = (state: any) => {
 };
 export const isDevMode = (state: any) =>
   AppConfig.ExtDevMode ? AppConfig.ExtDevMode : state.settings.devMode;
+export const isHideProFeatures = (state: any) =>
+  AppConfig.ExtHideProFeatures !== undefined
+    ? AppConfig.ExtHideProFeatures
+    : state.settings.hideProFeatures;
 export const isRevisionsEnabled = (state: any) =>
   state.settings.isRevisionsEnabled;
 export const isReorderTags = (state: any) => state.settings.reorderTags;

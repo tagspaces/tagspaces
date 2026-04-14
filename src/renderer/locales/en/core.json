@@ -76,6 +76,7 @@
   "advancedSettingsTab": "Advanced",
   "extensionsTab": "Extensions",
   "enableDevMode": "Enable Developer Mode",
+  "hideProFeatures": "Hide Pro Features",
   "fileViewer": "File Viewer",
   "reloadDocument": "Reload Document",
   "selectAllFiles": "Select all files",

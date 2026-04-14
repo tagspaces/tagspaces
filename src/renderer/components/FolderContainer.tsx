@@ -42,6 +42,7 @@ import {
   getDesktopMode,
   getKeyBindingObject,
   isDevMode,
+  isHideProFeatures,
 } from '-/reducers/settings';
 import { CommonLocation } from '-/utils/CommonLocation';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
@@ -92,6 +93,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   } = useDirectoryContentContext();
 
   const isDesktopMode = useSelector(getDesktopMode);
+  const hideProFeatures: boolean = useSelector(isHideProFeatures);
   const progress = useSelector(getProgress);
 
   const [perspectiveMenuAnchorEl, setPerspectiveMenuAnchorEl] =
@@ -154,7 +156,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
     () =>
       AvailablePerspectives.map((perspective) => {
         let includePerspective = true;
-        if (AppConfig.ExtHideProFeatures && !Pro && perspective.pro === true) {
+        if (hideProFeatures && !Pro && perspective.pro === true) {
           includePerspective = false;
         }
         return (
@@ -193,7 +195,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
     () =>
       AvailablePerspectives.map((perspective) => {
         let includePerspective = true;
-        if (AppConfig.ExtHideProFeatures && !Pro && perspective.pro === true) {
+        if (hideProFeatures && !Pro && perspective.pro === true) {
           includePerspective = false;
         }
         return (

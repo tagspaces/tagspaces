@@ -69,6 +69,7 @@ import {
   actions as SettingsActions,
   getKeyBindingObject,
   isDesktopMode,
+  isHideProFeatures,
 } from '-/reducers/settings';
 import { createNewInstance } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -117,11 +118,11 @@ function MobileNavigation(props: Props) {
   const { currentOpenedPanel, showPanel } = usePanelsContext();
   const { openDownloadUrl } = useDownloadUrlDialogContext();
   const keyBindings = useSelector(getKeyBindingObject);
+  const hideProFeatures: boolean = useSelector(isHideProFeatures);
   const { currentUser } = useUserContext();
   const [showTeaserBanner, setShowTeaserBanner] = useState(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
-  const showProTeaser =
-    !AppConfig.ExtHideProFeatures && !Pro && showTeaserBanner;
+  const showProTeaser = !hideProFeatures && !Pro && showTeaserBanner;
   const { hideDrawer, width } = props;
   const switchTheme = useCallback(
     () => dispatch(SettingsActions.switchTheme()),
