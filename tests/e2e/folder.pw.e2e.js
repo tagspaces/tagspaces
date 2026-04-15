@@ -5,6 +5,7 @@ import { AddRemovePropertiesTags } from './file.properties.helpers';
 import { expect, test } from './fixtures';
 import {
   clickOn,
+  clickOnIfVisible,
   createNewDirectory,
   deleteDirectory,
   expectElementExist,
@@ -187,7 +188,7 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmCreateNewDirectory]');
     await clickOn('[data-tid=MoveTarget' + folderToMove + ']');
     await clickOn('[data-tid=confirmMoveFiles]');
-    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await expectElementExist(getGridFileSelector(testFolder), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
@@ -218,7 +219,7 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmCreateNewDirectory]');
     await clickOn('[data-tid=MoveTarget' + folderToCopy + ']');
     await clickOn('[data-tid=confirmCopyFiles]');
-    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
     await global.client.dblclick(getGridFileSelector(folderToCopy));
@@ -274,7 +275,7 @@ test.describe('TST01 - Folder management', () => {
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
-    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
 
     const fileName2 = 'sample.jpg';
     await openContextEntryMenu(
@@ -283,7 +284,7 @@ test.describe('TST01 - Folder management', () => {
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
-    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
 
     await openContextEntryMenu(
       getGridFileSelector('empty_folder'),

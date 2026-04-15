@@ -7,6 +7,7 @@ import AppConfig from '../../src/renderer/AppConfig';
 import { expect, test } from './fixtures';
 import {
   clickOn,
+  clickOnIfVisible,
   createNewDirectory,
   createTxtFile,
   expectElementExist,
@@ -350,7 +351,7 @@ test.describe('TST50** - Right button on a file', () => {
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
     await clickOn('[data-tid=navigateToParentTID]');
     await clickOn('[data-tid=confirmCopyFiles]');
-    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
 
     await clickOn('[data-tid=gridPerspectiveOnBackButton]');
     await expectElementExist(fileSelector, true);

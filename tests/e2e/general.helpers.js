@@ -62,6 +62,22 @@ export async function clickOn(selector, options = { timeout: 15000 }) {
   }
 }
 
+/**
+ * Click an element if it's visible, otherwise silently skip.
+ * Use for optional UI elements like upload dialogs that may auto-dismiss.
+ */
+export async function clickOnIfVisible(selector, timeout = 3000) {
+  try {
+    await global.client.waitForSelector(selector, {
+      state: 'visible',
+      timeout,
+    });
+    await global.client.click(selector);
+  } catch (e) {
+    // Element didn't appear — that's OK for optional UI
+  }
+}
+
 export async function rightClickOn(selector) {
   const options = { button: 'right' };
   return clickOn(selector, options);

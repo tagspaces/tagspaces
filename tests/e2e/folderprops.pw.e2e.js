@@ -11,6 +11,7 @@ import {
   addDescription,
   checkSettings,
   clickOn,
+  clickOnIfVisible,
   createLocation,
   createNewDirectory,
   dnd,
@@ -184,7 +185,7 @@ test.describe('TST02 - Folder properties', () => {
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]'); //todo moveCopyEntryTID
     await clickOn('[data-tid=MoveTarget' + targetFolder + ']');
     await clickOn('[data-tid=confirmMoveFiles]');
-    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
     await expectElementExist(getGridFileSelector(newFolder), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + targetFolder + ']');
     await expectElementExist(getGridFileSelector(newFolder), true, 5000);
@@ -252,7 +253,7 @@ test.describe('TST02 - Folder properties', () => {
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
     await clickOn('[data-tid=confirmCopyFiles]');
-    await clickOn('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=changePerspectiveTID]', {
       // force: true,
       timeout: 15000,
