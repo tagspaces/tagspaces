@@ -21,6 +21,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Perspectives**: different views for folder content (Grid, List, Kanban, Gallery, Mapique, FolderViz, Calendar)
 - **State management**: Redux with slices in `src/renderer/reducers/`
 
+## Path Handling
+
+The app runs on multiple platforms and storage backends. When working with file/directory paths, always consider all three cases:
+
+- **Mac/Linux local**: Absolute paths with leading `/` (e.g., `/Users/na/Documents/`)
+- **Windows local**: Drive-letter paths with `\` separators (e.g., `C:\Users\na\Documents\`). Java `.properties` files treat `\` as escape characters — always convert to `/` when writing paths to config files.
+- **S3/cloud**: Forward-slash paths, often without a leading `/` (e.g., `bucket-name/folder/`). No drive letter, no OS-specific separator.
+
+When comparing paths (e.g., `startsWith`, equality checks), normalize **both** sides with the same functions. A common bug pattern: applying `cleanFrontDirSeparator` (strips leading `/`) to one path but not the other, breaking the comparison on Mac/Linux where absolute paths start with `/`. Path utilities live in `@tagspaces/tagspaces-common/paths.js`.
+
 ## Translations / i18n
 
 - English source: `src/renderer/locales/en/core.json`
@@ -32,6 +42,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## E2E Tests
 
 ### Setup
+
 - **Framework**: Playwright with Electron and Chromium (web)
 - **Test files**: `tests/e2e/*.pw.e2e.js` — test titles contain platform tags like `[web,s3,electron,_pro]`
 - **S3 backend**: S3Proxy (Java, requires Java 21) replaces the old MinIO/S3rver setup
@@ -40,6 +51,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Test data**: Cloned from `tagspaces/testdata` repo into `tests/testdata/`; per-worker copies in `tests/testdata-{N}/`
 
 ### Running tests locally
+
 ```bash
 # Requires Java 21 on PATH
 export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"  # macOS with Homebrew
@@ -64,6 +76,7 @@ npx playwright test --project=electron-s3 folder.pw.e2e.js
 ```
 
 ### Key patterns and pitfalls
+
 - **Workers = 1**: Tests run sequentially. Running multiple Playwright instances in parallel causes port conflicts on S3Proxy (port 4569).
 - **Test isolation**: Tests share a single Electron/browser instance per worker. Earlier tests can leave dirty state (renamed files, moved folders, tags) that breaks later tests. When a test fails, check if it passes in isolation first (`-g 'TSTXXXX'`).
 - **S3 test data refresh**: `testDataRefresh()` in `hook.js` deletes all S3 objects and re-uploads from the **original** test data source (`tests/testdata/`), not from the worker copy. This is critical because `deleteAllObjects` wipes the S3Proxy filesystem backend which IS the worker copy (`testdata-{N}/`). Uses `Promise.allSettled` because S3Proxy can return malformed XML responses that cause AWS SDK deserialization errors. Empty directories (like `empty_folder`) need explicit directory markers since `getFilesRecursive` only finds files.
@@ -80,6 +93,7 @@ npx playwright test --project=electron-s3 folder.pw.e2e.js
 ## Capacitor Mobile App
 
 ### Structure
+
 - **Capacitor project**: `capacitor/` (parallel to `cordova/`, both can coexist)
 - **IO package**: `@tagspaces/tagspaces-common-capacitor` (source: `../tagspaces-common/packages/common-capacitor/`)
 - **Webpack configs**: `.erb/configs/webpack.config.capacitor.prod.ts` / `.dev.ts`
@@ -87,6 +101,7 @@ npx playwright test --project=electron-s3 folder.pw.e2e.js
 - **Platform detection**: `AppConfig.isCapacitor`, `AppConfig.isCapacitorAndroid`, `AppConfig.isCapacitoriOS`, `AppConfig.isNativeMobile` (unified Cordova+Capacitor flag)
 
 ### Build & Run
+
 ```bash
 npm run prepare-capacitor        # Copy extensions + node_modules to www/
 npm run build:capacitor          # Webpack production build
@@ -98,7 +113,9 @@ cd capacitor && npx cap open ios      # Open in Xcode
 ```
 
 ### Local Development Symlinks
+
 The `@tagspaces/tagspaces-common` and `@tagspaces/tagspaces-common-capacitor` packages in `release/app/node_modules/` must be symlinked to the source repos, otherwise `npm install` or `prepare-capacitor` overwrites Capacitor detection code:
+
 ```bash
 ln -s /path/to/tagspaces-common/packages/common release/app/node_modules/@tagspaces/tagspaces-common
 ln -s /path/to/tagspaces-common/packages/common-capacitor release/app/node_modules/@tagspaces/tagspaces-common-capacitor
@@ -106,6 +123,7 @@ ln -s /path/to/tagspaces-common/packages/common-capacitor node_modules/@tagspace
 ```
 
 ### Key Pitfalls
+
 - **Extension paths**: `prepare-capacitor` must copy `node_modules` directly to `capacitor/www/` (not into a subdirectory). Extensions are loaded as `node_modules/@tagspaces/extensions/{ext}/index.html` in iframes.
 - **File URLs**: Native file paths must go through `Capacitor.convertFileSrc()` to be loadable in WebView (`<img>`, iframes). Applied in `CommonLocation.normalizeUrl()`.
 - **Empty path = "."**: `resolveCapacitorPath()` in `io-capacitor.js` must return `"."` not `""` for root directories. Capacitor Filesystem fails silently with empty string.

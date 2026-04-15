@@ -713,9 +713,10 @@ export const DirectoryContentContextProvider = ({
           const normalizedLocationPath = cleanFrontDirSeparator(
             cleanTrailingDirSeparator(locationPath),
           );
+          const normalizedParentDir = cleanFrontDirSeparator(parentDirectory);
           if (
             !normalizedLocationPath ||
-            parentDirectory.startsWith(normalizedLocationPath)
+            normalizedParentDir.startsWith(normalizedLocationPath)
           ) {
             //limit opening only from location
             return openDirectory(parentDirectory, undefined, loc);
