@@ -404,6 +404,7 @@
   "sort": "Sort",
   "thirdPartyLibs": "Third Party Libraries",
   "indexLocation": "Refresh Location Index",
+  "linksGraphIndexConfirm": "The Links Graph requires full-text indexing with link extraction enabled. This process may take a while depending on the number and size of the files in the location. Do you want to proceed?",
   "forceReindexing": "Force reindexing",
   "indexEmpty": "index is empty",
   "readonlyModeSwitch": "Open this location in read-only mode",

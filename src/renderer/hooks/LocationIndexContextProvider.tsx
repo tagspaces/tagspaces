@@ -59,6 +59,7 @@ type LocationIndexContextData = {
     location: CommonLocation,
     force?: boolean,
     fullTextIndex?: boolean,
+    extractLinks?: boolean,
   ) => Promise<boolean>;
   createLocationsIndexes: (
     extractText?: boolean,
@@ -343,7 +344,7 @@ export const LocationIndexContextProvider = ({
     ignorePatterns: Array<string> = [],
     enableWS = true,
     isWalking = () => true,
-    // disableIndexing = true,
+    extractLinks?: boolean,
   ): Promise<TS.FileSystemEntry[]> {
     if (isWalking()) {
       if (Pro && Pro.Watcher) {
@@ -364,7 +365,7 @@ export const LocationIndexContextProvider = ({
             .createDirectoryIndexInWorker(
               dirPath,
               extractText,
-              !!loc.extractLinks,
+              extractLinks ?? !!loc.extractLinks,
               ignorePatterns,
               loc.uuid,
             )
@@ -389,6 +390,7 @@ export const LocationIndexContextProvider = ({
                 extractText,
                 ignorePatterns,
                 isWalking,
+                extractLinks,
               );
             });
         }
@@ -399,6 +401,7 @@ export const LocationIndexContextProvider = ({
           extractText,
           ignorePatterns,
           isWalking,
+          extractLinks,
         );
       });
     }
@@ -411,11 +414,12 @@ export const LocationIndexContextProvider = ({
     extractText = false,
     ignorePatterns: Array<string> = [],
     isWalking = () => true,
+    extractLinks?: boolean,
   ): Promise<TS.FileSystemEntry[]> {
     const mode = ['loadMeta'];
     if (extractText) {
       mode.push('extractTextContent');
-      if (loc.extractLinks) {
+      if (extractLinks ?? loc.extractLinks) {
         mode.push('extractLinks');
       }
     }
@@ -454,7 +458,7 @@ export const LocationIndexContextProvider = ({
     extractText = false,
     ignorePatterns: Array<string> = [],
     enableWS = true,
-    // disableIndexing = true,
+    extractLinks?: boolean,
   ): Promise<any> {
     const indexFilePath = getMetaIndexFilePath(param.path);
 
@@ -465,6 +469,7 @@ export const LocationIndexContextProvider = ({
       ignorePatterns,
       enableWS,
       isWalking,
+      extractLinks,
     )
       .then((index) => {
         deignoreByWatcher(indexFilePath);
@@ -481,6 +486,7 @@ export const LocationIndexContextProvider = ({
     location: CommonLocation,
     force = false,
     fullTextIndex?: boolean,
+    extractLinks?: boolean,
   ): Promise<boolean> {
     walkingRef.current = true;
     if (location) {
@@ -491,7 +497,7 @@ export const LocationIndexContextProvider = ({
             t('core:indexDisabledConfirm'),
             (result) => {
               if (result) {
-                createLocationIndexInt(location, fullTextIndex);
+                createLocationIndexInt(location, fullTextIndex, extractLinks);
               }
             },
             'cancelIndexDisabledDialogTID',
@@ -500,7 +506,7 @@ export const LocationIndexContextProvider = ({
           );
         }
       } else {
-        return createLocationIndexInt(location, fullTextIndex);
+        return createLocationIndexInt(location, fullTextIndex, extractLinks);
       }
     }
     return Promise.resolve(false);
@@ -509,6 +515,7 @@ export const LocationIndexContextProvider = ({
   function createLocationIndexInt(
     location: CommonLocation,
     fullTextIndex?: boolean,
+    extractLinks?: boolean,
   ): Promise<boolean> {
     if (location) {
       isIndexing.current = location.uuid;
@@ -522,6 +529,7 @@ export const LocationIndexContextProvider = ({
         fullTextIndex ?? location.fullTextIndex,
         location.ignorePatternPaths,
         enableWS,
+        extractLinks,
       )
         .then((directoryIndex) => {
           if (isCurrentLocation) {
