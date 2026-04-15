@@ -50,9 +50,10 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 type LocationIndexContextData = {
-  indexLoadedOn: number;
-  isIndexing: string;
-  getIndex: () => TS.FileSystemEntry[];
+  indexLoadedOn: number | undefined;
+  indexExpired: () => boolean;
+  isIndexing: string | undefined;
+  getIndex: () => TS.FileSystemEntry[] | undefined;
   getLastIndex: (locationId: string) => Promise<TS.FileSystemEntry[]>;
   cancelDirectoryIndexing: (locationId: string) => void;
   createLocationIndex: (
@@ -83,8 +84,9 @@ type LocationIndexContextData = {
 export const LocationIndexContext = createContext<LocationIndexContextData>({
   //index: [],
   indexLoadedOn: undefined,
+  indexExpired: () => true,
   isIndexing: undefined,
-  getIndex: undefined,
+  getIndex: () => undefined,
   getLastIndex: undefined,
   cancelDirectoryIndexing: undefined,
   createLocationIndex: () => Promise.resolve(false),
@@ -898,6 +900,7 @@ export const LocationIndexContextProvider = ({
 
   const context = {
     indexLoadedOn: indexLoadedOn.current,
+    indexExpired,
     isIndexing: isIndexing.current,
     cancelDirectoryIndexing,
     createLocationIndex,
