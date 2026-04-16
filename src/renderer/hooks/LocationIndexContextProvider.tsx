@@ -29,6 +29,8 @@ import {
   executePromisesInBatches,
   isWorkerAvailable,
 } from '-/services/utils-io';
+import { prepareIndex, fuseOptions } from '@tagspaces/tagspaces-search';
+import Fuse from 'fuse.js';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
@@ -43,7 +45,12 @@ import {
 import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import {
   createIndex,
+  createIncrementalIndex,
   getMetaIndexFilePath,
+  getMetaFullTextFilePath,
+  parseFullTextJsonl,
+  serializeFullTextJsonl,
+  mergeFullTextIntoIndex,
 } from '@tagspaces/tagspaces-indexer';
 import React, { createContext, useEffect, useReducer, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -134,6 +141,10 @@ export const LocationIndexContextProvider = ({
   const firstRender = useFirstRender();
   const maxIndexAge = useRef<number>(getMaxIndexAge(currentLocation));
   const prevLocationId = useRef<string>(currentLocationId);
+  const enhancedIndex = useRef<any[]>(undefined);
+  const fuseInstance = useRef<any>(undefined);
+  const fullTextMap = useRef<Record<string, string>>(undefined);
+  const fullTextLoaded = useRef<boolean>(false);
 
   useEffect(() => {
     if (currentLocationId) {
@@ -172,6 +183,10 @@ export const LocationIndexContextProvider = ({
   }
   function setIndex(i, location: CommonLocation = undefined) {
     index.current = i;
+    enhancedIndex.current = undefined;
+    fuseInstance.current = undefined;
+    fullTextMap.current = undefined;
+    fullTextLoaded.current = false;
     if (index.current && index.current.length > 0) {
       indexLoadedOn.current = new Date().getTime();
     } else {
@@ -410,13 +425,14 @@ export const LocationIndexContextProvider = ({
     return Promise.resolve(undefined);
   }
 
-  function createNotWorkerIndex(
+  async function createNotWorkerIndex(
     param: any,
     loc: CommonLocation,
     extractText = false,
     ignorePatterns: Array<string> = [],
     isWalking = () => true,
     extractLinks?: boolean,
+    forceFullReindex = false,
   ): Promise<TS.FileSystemEntry[]> {
     const mode = ['loadMeta'];
     if (extractText) {
@@ -425,34 +441,51 @@ export const LocationIndexContextProvider = ({
         mode.push('extractLinks');
       }
     }
-    return createIndex(
-      {
-        ...param,
-        listDirectoryPromise: loc.listDirectoryPromise,
-        getFileContentPromise: loc.getFileContentPromise,
-      },
-      mode,
-      ignorePatterns,
-      isWalking,
-    )
-      .then((directoryIndex) => {
-        if (!loc.isReadOnly) {
-          persistIndex(param, directoryIndex).then((success) => {
-            if (success) {
-              console.log('Index generated in folder: ' + param.path);
-            }
-          });
+
+    const indexParam = {
+      ...param,
+      listDirectoryPromise: loc.listDirectoryPromise,
+      getFileContentPromise: loc.getFileContentPromise,
+    };
+
+    // Try incremental indexing if an existing index is available
+    let existingIdx = index.current;
+    if (!existingIdx && !forceFullReindex) {
+      existingIdx = await loadIndexFromDisk(param.path, param.locationID);
+    }
+
+    let directoryIndex;
+    if (existingIdx && existingIdx.length > 0 && !forceFullReindex) {
+      console.log('Attempting incremental index for: ' + param.path);
+      const result = await createIncrementalIndex(
+        indexParam,
+        mode,
+        ignorePatterns,
+        isWalking,
+        existingIdx,
+        fullTextMap.current,
+      );
+      directoryIndex = result.index;
+      console.log(
+        `Incremental index stats: +${result.stats.added} ~${result.stats.modified} -${result.stats.deleted} =${result.stats.unchanged}`,
+      );
+    } else {
+      directoryIndex = await createIndex(
+        indexParam,
+        mode,
+        ignorePatterns,
+        isWalking,
+      );
+    }
+
+    if (!loc.isReadOnly) {
+      persistIndex(param, directoryIndex).then((success) => {
+        if (success) {
+          console.log('Index generated in folder: ' + param.path);
         }
-        return enhanceDirectoryIndex(
-          directoryIndex,
-          param.locationID,
-          param.path,
-        );
-      })
-      .catch((err) => {
-        console.log('Error creating index: ', err);
-        return undefined;
       });
+    }
+    return enhanceDirectoryIndex(directoryIndex, param.locationID, param.path);
   }
 
   function createDirectoryIndexWrapper(
@@ -626,16 +659,110 @@ export const LocationIndexContextProvider = ({
     });
   }
 
-  function getSearchResults(
+  function getOrCreateEnhancedIndex(
+    searchIndex: TS.FileSystemEntry[],
+    showUnixHiddenEntries: boolean,
+  ) {
+    // Use cached enhanced index if the raw index hasn't changed
+    if (enhancedIndex.current && searchIndex === index.current) {
+      return enhancedIndex.current;
+    }
+    const prepared = prepareIndex(
+      searchIndex,
+      tagDelimiter,
+      showUnixHiddenEntries,
+    );
+    // Only cache if this is the current location's index
+    if (searchIndex === index.current) {
+      enhancedIndex.current = prepared;
+    }
+    return prepared;
+  }
+
+  function getOrCreateFuse(entries: any[]) {
+    if (fuseInstance.current) {
+      return fuseInstance.current;
+    }
+    fuseInstance.current = new Fuse(entries, fuseOptions);
+    return fuseInstance.current;
+  }
+
+  async function loadFullTextIfNeeded(searchIndex: TS.FileSystemEntry[]) {
+    // Only load fulltext for the current location's index, and only once
+    if (
+      fullTextLoaded.current ||
+      searchIndex !== index.current ||
+      !currentLocation
+    ) {
+      return;
+    }
+    try {
+      const locationPath = await getLocationPath(currentLocation);
+      const ftPath = getMetaFullTextFilePath(locationPath);
+      const ftContent = await currentLocation.loadTextFilePromise(ftPath);
+      if (ftContent) {
+        // Parse JSONL format (new) or JSON object (old backward compat)
+        const trimmed = ftContent.trim();
+        let ftMap: Record<string, string>;
+        if (trimmed.startsWith('{') && !trimmed.startsWith('{"p"')) {
+          // Old JSON object format: {"relative/path": "text content", ...}
+          try {
+            ftMap = JSON.parse(trimmed);
+          } catch (e) {
+            ftMap = parseFullTextJsonl(ftContent);
+          }
+        } else {
+          ftMap = parseFullTextJsonl(ftContent);
+        }
+
+        if (ftMap && typeof ftMap === 'object') {
+          // Fulltext stores relative paths as keys, but index entries have
+          // absolute paths (after enhanceDirectoryIndex). Convert to absolute.
+          const sep = currentLocation.getDirSeparator();
+          const absoluteFtMap: Record<string, string> = {};
+          for (const [relPath, content] of Object.entries(ftMap)) {
+            const absPath = joinPaths(sep, locationPath, relPath);
+            absoluteFtMap[absPath] = content as string;
+          }
+          fullTextMap.current = absoluteFtMap;
+          mergeFullTextIntoIndex(searchIndex, absoluteFtMap);
+          enhancedIndex.current = undefined;
+          fuseInstance.current = undefined;
+        }
+      }
+    } catch (e: any) {
+      // tsft.jsonl may not exist (no fulltext indexing enabled)
+      console.log('No fulltext index found (tsft.jsonl)', e?.message || e);
+    }
+    fullTextLoaded.current = true;
+  }
+
+  async function getSearchResults(
     searchIndex: TS.FileSystemEntry[],
     searchQuery: TS.SearchQuery,
   ): Promise<TS.FileSystemEntry[]> {
-    return Search.searchLocationIndex(searchIndex, searchQuery, tagDelimiter)
+    // Lazy-load fulltext index only when text search is needed
+    const hasTextQuery =
+      searchQuery.textQuery && searchQuery.textQuery.length > 1;
+    if (hasTextQuery && !fullTextLoaded.current) {
+      await loadFullTextIfNeeded(searchIndex);
+    }
+
+    const prepared = getOrCreateEnhancedIndex(
+      searchIndex,
+      searchQuery.showUnixHiddenEntries,
+    );
+    // Build Fuse lazily only when text query is present
+    const fuse = hasTextQuery ? getOrCreateFuse(prepared) : undefined;
+
+    return Search.searchLocationIndex(searchIndex, searchQuery, tagDelimiter, {
+      preparedIndex: prepared,
+      fuseInstance: fuse,
+    })
       .then((searchResults) => {
         return searchResults;
       })
       .catch((err) => {
-        // dispatch(AppActions.hideNotifications());
         console.log('Searching Index failed: ', err);
         showNotification(
           t('core:searchingFailed') + ' ' + err.message,
@@ -716,63 +843,73 @@ export const LocationIndexContextProvider = ({
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
 
     walkingRef.current = true;
-    //let searchResultCount = 0;
     let searchResults = [];
     let maxSearchResultReached = false;
-    const searchingLocation = workSpace
+    const searchingLocations = workSpace
       ? locations.filter((l) => l.workSpaceId === workSpace.uuid)
       : locations;
-    const result = searchingLocation.reduce(
-      (accumulatorPromise, location) =>
-        accumulatorPromise.then(async () => {
-          // cancel search if max search result count reached
-          if (searchResults.length >= searchQuery.maxSearchResults) {
-            maxSearchResultReached = true;
-            return Promise.resolve();
-          }
-          const nextPath = await getLocationPath(location);
-          const isCloudLocation = location.type === locationType.TYPE_CLOUD;
-          let directoryIndex = await loadIndexFromDisk(nextPath, location.uuid);
-          //console.log('Searching in: ' + nextPath);
-          showNotification(
-            t('core:searching') + ' ' + location.name,
-            'default',
-            false,
-            'TIDSearching',
-          );
 
-          if (
-            !location.disableIndexing &&
-            (!directoryIndex ||
-              directoryIndex.length < 1 ||
-              searchQuery.forceIndexing)
-          ) {
-            console.log('Creating index for : ' + nextPath);
-            directoryIndex = await createDirectoryIndexWrapper(
-              {
-                path: nextPath,
-                locationID: location.uuid,
-                ...(isCloudLocation && { bucketName: location.bucketName }),
-              },
-              location.fullTextIndex,
-              location.ignorePatternPaths,
-              enableWS,
-            );
-          }
-          return getSearchResults(directoryIndex, searchQuery).then(
-            (results) => {
-              if (results.length > 0) {
-                searchResults = [...searchResults, ...results];
-                appendSearchResults(results);
-              }
-              return true;
-            },
-          );
-        }),
-      Promise.resolve(),
+    // Sequential on mobile (memory), parallel on desktop/web
+    const CONCURRENCY = AppConfig.isNativeMobile ? 1 : 3;
+
+    const searchSingleLocation = async (location: CommonLocation) => {
+      if (searchResults.length >= searchQuery.maxSearchResults) {
+        maxSearchResultReached = true;
+        return;
+      }
+      const nextPath = await getLocationPath(location);
+      const isCloudLocation = location.type === locationType.TYPE_CLOUD;
+      let directoryIndex = await loadIndexFromDisk(nextPath, location.uuid);
+      showNotification(
+        t('core:searching') + ' ' + location.name,
+        'default',
+        false,
+        'TIDSearching',
+      );
+
+      if (
+        !location.disableIndexing &&
+        (!directoryIndex ||
+          directoryIndex.length < 1 ||
+          searchQuery.forceIndexing)
+      ) {
+        console.log('Creating index for : ' + nextPath);
+        directoryIndex = await createDirectoryIndexWrapper(
+          {
+            path: nextPath,
+            locationID: location.uuid,
+            ...(isCloudLocation && { bucketName: location.bucketName }),
+          },
+          location.fullTextIndex,
+          location.ignorePatternPaths,
+          enableWS,
+        );
+      }
+      const results = await getSearchResults(directoryIndex, searchQuery);
+      if (results.length > 0) {
+        searchResults = [...searchResults, ...results];
+        appendSearchResults(results);
+      }
+    };
+
+    // Execute with concurrency limiting
+    const tasks = searchingLocations.map(
+      (loc) => () => searchSingleLocation(loc),
     );
+    const batchPromises = [];
+    for (let i = 0; i < tasks.length; i += CONCURRENCY) {
+      const batch = tasks.slice(i, i + CONCURRENCY);
+      batchPromises.push(batch);
+    }
 
-    result
+    batchPromises
+      .reduce(
+        (acc, batch) =>
+          acc.then(() =>
+            Promise.allSettled(batch.map((task) => task())).then(() => {}),
+          ),
+        Promise.resolve(),
+      )
       .then(() => {
         enhanceSearchEntries(searchResults);
         console.timeEnd('globalSearch');
@@ -813,16 +950,30 @@ export const LocationIndexContextProvider = ({
     const exist = await cLocation.checkDirExist(metaDirectory);
     try {
       if (!exist) {
-        await cLocation.createDirectoryPromise(metaDirectory); // todo platformFacade?
+        await cLocation.createDirectoryPromise(metaDirectory);
       }
-      const folderIndexPath =
-        metaDirectory +
-        cLocation?.getDirSeparator() +
-        AppConfig.folderIndexFile; // getMetaIndexFilePath(directoryPath);
-      return cLocation
+      const sep = cLocation?.getDirSeparator();
+      const folderIndexPath = metaDirectory + sep + AppConfig.folderIndexFile;
+      const folderFullTextPath =
+        metaDirectory + sep + AppConfig.folderFullTextFile;
+
+      // Split: strip textContent from main index, collect into fulltext map
+      const fullTextEntries: Record<string, string> = {};
+      let hasFullText = false;
+      const strippedIndex = directoryIndex.map((entry: any) => {
+        if (entry && entry.textContent) {
+          fullTextEntries[entry.path] = entry.textContent;
+          hasFullText = true;
+          const { textContent, ...rest } = entry;
+          return rest;
+        }
+        return entry;
+      });
+
+      const saveIndex = cLocation
         .saveTextFilePromise(
           { ...param, path: folderIndexPath },
-          JSON.stringify(directoryIndex), // relativeIndex),
+          JSON.stringify(strippedIndex),
           true,
         )
         .then(() => {
@@ -834,6 +985,28 @@ export const LocationIndexContextProvider = ({
         .catch((err) => {
           console.log('Error saving the index for ' + folderIndexPath, err);
         });
+
+      if (hasFullText) {
+        const saveFullText = cLocation
+          .saveTextFilePromise(
+            { ...param, path: folderFullTextPath },
+            serializeFullTextJsonl(fullTextEntries),
+            true,
+          )
+          .then(() => {
+            console.log('Fulltext index persisted to ' + folderFullTextPath);
+          })
+          .catch((err) => {
+            console.log(
+              'Error saving fulltext index for ' + folderFullTextPath,
+              err,
+            );
+          });
+        return Promise.all([saveIndex, saveFullText]).then(
+          ([indexResult]) => indexResult,
+        );
+      }
+      return saveIndex;
     } catch (e) {
       console.log('Error saving the index', e);
     }
