@@ -21,12 +21,96 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Perspectives**: different views for folder content (Grid, List, Kanban, Gallery, Mapique, FolderViz, Calendar)
 - **State management**: Redux with slices in `src/renderer/reducers/`
 
+## tagspaces-common Monorepo (`../tagspaces-common`)
+
+Lerna-managed monorepo (`packages/*`) providing shared libraries. Version 4.6.1. Key packages:
+
+### @tagspaces/tagspaces-common (`packages/common`)
+
+Core utilities used across all packages and the main app.
+
+- **AppConfig.js** — Central constants: `metaFolder: ".ts"`, `metaFolderFile: "tsm.json"`, `folderIndexFile: "tsi.json"`, `folderThumbFile: "tst.jpg"`, tag delimiters (`[`, `]`, space), platform detection flags
+- **paths.js** — Cross-platform path utilities (27KB). Key functions:
+  - `extractFileName`, `extractFileExtension`, `extractFileNameWithoutExt`, `extractContainingDirectoryPath`
+  - `generateFileName(fileName, tags, delimiter)` — embed tags: `name[tag1 tag2].ext`
+  - `extractTags(filePath)` — parse tags from filename brackets
+  - `getMetaFileLocationForFile(path)` → `.ts/{filename}.json`
+  - `getMetaFileLocationForDir(path)` → `.ts/tsm.json`
+  - `getThumbFileLocationForFile(path)` → `.ts/{filename}.jpg`
+  - `cleanTrailingDirSeparator`, `cleanRootPath`, `normalizePath`, `joinPaths`
+- **utils-io.js** — IO abstractions: `walkDirectory(param, listDirectoryPromise, options, ...)` for recursive traversal with callbacks, `extractTextContent`, `extractHTMLText`, `extractMarkdownText`, `createTextIndex`
+- **misc.js** — Sorting (`sortByName`, `sortBySize`, `sortByDateModified`, `sortByExtension`, `sortByFirstTag`), link extraction (`extractLinks` — handles HTML href, markdown, plain URLs, `ts://` protocol), date formatting, `b64toBlob`, `streamToBuffer`
+
+### @tagspaces/tagspaces-indexer (`packages/indexer`)
+
+Creates searchable directory indexes stored as `.ts/tsi.json`.
+
+- `createIndex(param, mode, ignorePatterns, isWalking)` — Main function. Modes: `["loadMeta", "extractTextContent", "extractLinks", "extractThumbPath"]`. Recursively walks directory, skips `.ts` and dot-hidden folders
+- `persistIndex(param, directoryIndex)` — Saves to `.ts/tsi.json`
+- `loadIndex(param)` / `hasIndex(param)` — Load or check existing index
+- **Index entry structure**: `{ name, path (relative), uuid, isFile, size, lmdt, meta: { tags, color, description }, textContent, links }`
+- The `param` object carries `path`, `listDirectoryPromise`, `getFileContentPromise`, and optionally `extractPDFcontent`
+
+### @tagspaces/shell (`packages/tagspaces-cli`)
+
+CLI tool (`tscmd`) for batch file operations. Built with yargs + webpack. See the sub-project readme for details.
+
+Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers` (thumbnails), `@tagspaces/tagspaces-metacleaner`.
+
+### @tagspaces/tagspaces-ws (`packages/tagspaces-ws`)
+
+HTTP server (localhost-only) providing REST API for indexing and thumbnail generation. Used by the Electron main process to offload heavy work.
+
+- **Start**: Listens on `127.0.0.1:<port>` (default 40352), optional JWT auth key
+- **POST /thumb-gen** — Body: JSON array of file paths. Query: `?pdf=true`. Returns thumbnail metadata
+- **POST /indexer** — Body: `{ directoryPath, extractText, extractLinks, ignorePatterns }`. Creates `.ts/tsi.json`
+- **POST /extract-pdf** — Body: `{ filePath }`. Extracts PDF text content
+- **POST /watch-folder** — Body: `{ directoryPath }`. Monitors filesystem changes
+- **POST /hide-folder** — Body: `{ directoryPath }`. Marks folder as hidden
+- **GET /** — Health check
+
+Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers`, `@tagspaces/tagspaces-pdf-extraction`, `ws`, `jsonwebtoken`. Peer: `sharp` >=0.32.0.
+
+### Supporting packages
+
+- **@tagspaces/tagspaces-common-node** (`packages/common-node`) — Node.js `fs` implementation: `listDirectoryPromise`, `loadTextFilePromise`, `saveTextFilePromise`, `renameFilePromise`, `createDirectoryPromise`, `getDirProperties`
+- **@tagspaces/tagspaces-workers** — Thumbnail generation using `sharp` (JPG, PNG, GIF, WebP, SVG, PDF, video)
+- **@tagspaces/tagspaces-metacleaner** — Finds/removes orphaned `.ts/*.json` and thumbnails for deleted files
+- **@tagspaces/tagspaces-pdf-extraction** — PDF text extraction for indexing
+
+### Metadata filesystem layout
+
+```
+folder/
+├── file.txt
+├── .ts/                    # Metadata folder (AppConfig.metaFolder)
+│   ├── tsm.json            # Folder metadata (tags, color, description, perspective)
+│   ├── tsi.json            # Search index (array of indexed entries)
+│   ├── tst.jpg             # Folder thumbnail
+│   ├── tsb.jpg             # Folder background image
+│   ├── file.txt.json       # File sidecar metadata
+│   └── file.txt.jpg        # File thumbnail
+```
+
+### Package dependency graph
+
+```
+tagspaces-common (core: paths, utils-io, misc, AppConfig)
+  ↓
+tagspaces-indexer (uses common + IO provider)
+  ↓
+tagspaces-cli (uses indexer + workers + metacleaner)
+tagspaces-ws  (uses indexer + workers + pdf-extraction)
+  ↓
+tagspaces-common-node (Node.js fs implementation, injected as IO provider)
+```
+
 ## Path Handling
 
 The app runs on multiple platforms and storage backends. When working with file/directory paths, always consider all three cases:
 
-- **Mac/Linux local**: Absolute paths with leading `/` (e.g., `/Users/na/Documents/`)
-- **Windows local**: Drive-letter paths with `\` separators (e.g., `C:\Users\na\Documents\`). Java `.properties` files treat `\` as escape characters — always convert to `/` when writing paths to config files.
+- **Mac/Linux local**: Absolute paths with leading `/` (e.g., `/Users/username/Documents/`)
+- **Windows local**: Drive-letter paths with `\` separators (e.g., `C:\Users\username\Documents\`). Java `.properties` files treat `\` as escape characters — always convert to `/` when writing paths to config files.
 - **S3/cloud**: Forward-slash paths, often without a leading `/` (e.g., `bucket-name/folder/`). No drive letter, no OS-specific separator.
 
 When comparing paths (e.g., `startsWith`, equality checks), normalize **both** sides with the same functions. A common bug pattern: applying `cleanFrontDirSeparator` (strips leading `/`) to one path but not the other, breaking the comparison on Mac/Linux where absolute paths start with `/`. Path utilities live in `@tagspaces/tagspaces-common/paths.js`.
