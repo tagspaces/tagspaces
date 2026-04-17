@@ -458,12 +458,28 @@ export default function loadMainEvents() {
     },
   );
   ipcMain.handle('loadTextFilePromise', async (event, path, isPreview) => {
-    const result = await loadTextFilePromise(path, isPreview);
-    return result;
+    try {
+      return await loadTextFilePromise(path, isPreview);
+    } catch (err: any) {
+      // ENOENT is an expected outcome when loading optional sidecar metadata
+      // (e.g. .ts/<name>.json, tsft.jsonl). Surface as undefined to the
+      // renderer — the caller's .then(undefined) is the same as a missing
+      // file — and skip Electron's default "Error occurred in handler" log.
+      if (err && err.code === 'ENOENT') {
+        return undefined;
+      }
+      throw err;
+    }
   });
   ipcMain.handle('getFileContentPromise', async (event, filePath, type) => {
-    const result = await getFileContentPromise(filePath, type);
-    return result;
+    try {
+      return await getFileContentPromise(filePath, type);
+    } catch (err: any) {
+      if (err && err.code === 'ENOENT') {
+        return undefined;
+      }
+      throw err;
+    }
   });
   ipcMain.handle(
     'saveFilePromise',

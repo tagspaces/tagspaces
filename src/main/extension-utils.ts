@@ -25,8 +25,12 @@ export function getExtensions(
             reject(err);
             return;
           }
-          // Filter subdirectories
-          const subDirectories = files.filter((file) => file.isDirectory());
+          // Filter subdirectories — skip dot-prefixed folders like `.ts`
+          // (TagSpaces metadata) or `.bin`, which are never valid plugin
+          // directories and would fail the package.json lookup below
+          const subDirectories = files.filter(
+            (file) => file.isDirectory() && !file.name.startsWith('.'),
+          );
 
           resolve(
             processDirs(

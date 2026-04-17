@@ -33,6 +33,23 @@ if (AppConfig.isCapacitor) {
   }
 }
 
+/**
+ * Shallow-clone `obj` dropping any function-valued properties.
+ * Structured cloning (used by Electron's ipcRenderer.invoke) cannot transfer
+ * functions — callers must strip them before IPC to avoid
+ *   "An object could not be cloned".
+ */
+function stripFunctions(obj: any): any {
+  if (!obj || typeof obj !== 'object') return obj;
+  const out: any = {};
+  for (const key of Object.keys(obj)) {
+    if (typeof obj[key] !== 'function') {
+      out[key] = obj[key];
+    }
+  }
+  return out;
+}
+
 export class CommonLocation implements TS.Location {
   uuid: string;
   newuuid?: string;
@@ -386,9 +403,13 @@ export class CommonLocation implements TS.Location {
         resultsLimit,
       );
     } else if (AppConfig.isElectron) {
+      // Structured-clone through IPC can't transfer functions. Strip any
+      // function-valued entries (e.g. extractPDFcontent injected by the
+      // indexer for the non-worker path) to avoid
+      //   "An object could not be cloned"
       return window.electronIO.ipcRenderer.invoke(
         'listDirectoryPromise',
-        param,
+        stripFunctions(param),
         mode,
         ignorePatterns,
       );
@@ -409,7 +430,7 @@ export class CommonLocation implements TS.Location {
     } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'listMetaDirectoryPromise',
-        param,
+        stripFunctions(param),
       );
     }
     return Promise.reject(
@@ -830,7 +851,7 @@ export class CommonLocation implements TS.Location {
     } else if (AppConfig.isElectron) {
       return window.electronIO.ipcRenderer.invoke(
         'saveTextFilePromise',
-        param,
+        stripFunctions(param),
         content,
         overwrite,
       );

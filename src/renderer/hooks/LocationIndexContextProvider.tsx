@@ -729,6 +729,9 @@ export const LocationIndexContextProvider = ({
     try {
       const locationPath = await getLocationPath(currentLocation);
       const ftPath = getMetaFullTextFilePath(locationPath);
+      // loadTextFilePromise returns undefined for non-existent files (the
+      // Electron main handler swallows ENOENT) — no separate existence check
+      // needed, which saves a round-trip on S3/cloud locations.
       const ftContent = await currentLocation.loadTextFilePromise(ftPath);
       if (ftContent) {
         // Parse JSONL format (new) or JSON object (old backward compat)
