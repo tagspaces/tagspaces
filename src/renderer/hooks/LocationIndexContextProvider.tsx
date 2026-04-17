@@ -946,6 +946,15 @@ export const LocationIndexContextProvider = ({
       directoryPath = param;
     }
     const cLocation = findLocation(param?.locationID);
+    // Don't persist index for directories that no longer exist —
+    // would otherwise recreate deleted folders via the .ts subdir
+    const parentExists = await cLocation.checkDirExist(directoryPath);
+    if (!parentExists) {
+      console.log(
+        'Skipping index persist — directory does not exist: ' + directoryPath,
+      );
+      return false;
+    }
     const metaDirectory = getMetaDirectoryPath(directoryPath);
     const exist = await cLocation.checkDirExist(metaDirectory);
     try {
