@@ -707,6 +707,7 @@ export const OpenedEntryContextProvider = ({
             if (fsEntry) {
               if (fsEntry.isFile) {
                 openFsEntry(fsEntry);
+                setSelectedEntries([fsEntry]);
                 setEntryInFullWidth(options.fullWidth);
               } else {
                 openDirectory(fsEntry.path);
@@ -765,6 +766,7 @@ export const OpenedEntryContextProvider = ({
                   .then((fsEntry: TS.FileSystemEntry) => {
                     if (fsEntry) {
                       openFsEntry(fsEntry);
+                      setSelectedEntries([fsEntry]);
                       if (options.fullWidth) {
                         setEntryInFullWidth(true);
                       }
@@ -817,6 +819,7 @@ export const OpenedEntryContextProvider = ({
                         .then((fsEntry: TS.FileSystemEntry) => {
                           if (fsEntry) {
                             openFsEntry(fsEntry);
+                            setSelectedEntries([fsEntry]);
                             if (options.fullWidth) {
                               setEntryInFullWidth(true);
                             }
