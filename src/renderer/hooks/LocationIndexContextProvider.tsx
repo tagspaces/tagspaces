@@ -25,6 +25,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { getEnableWS, getTagDelimiter } from '-/reducers/settings';
 import Search from '-/services/search';
+import { extractPDFcontent } from '-/services/thumbsgenerator';
 import {
   executePromisesInBatches,
   isWorkerAvailable,
@@ -442,11 +443,40 @@ export const LocationIndexContextProvider = ({
       }
     }
 
-    const indexParam = {
+    // Throttled progress callback — update notification at most every 250ms
+    // to avoid flooding React with re-renders during large index walks
+    const PROGRESS_THROTTLE_MS = 250;
+    let lastProgressTs = 0;
+    let lastDir = '';
+    const onProgress = ({ count, entry }: { count: number; entry: any }) => {
+      const now = Date.now();
+      if (now - lastProgressTs < PROGRESS_THROTTLE_MS) return;
+      lastProgressTs = now;
+      const entryDir = entry.isFile
+        ? entry.path.substring(0, entry.path.lastIndexOf('/'))
+        : entry.path;
+      // Skip UI update if we're still in the same directory
+      if (entryDir === lastDir) return;
+      lastDir = entryDir;
+      const shortDir =
+        entryDir.length > 60 ? '…' + entryDir.slice(-59) : entryDir;
+      showNotification(
+        t('core:indexing') + ': ' + count + '  •  ' + shortDir,
+        'default',
+        false,
+        'TIDSearching',
+      );
+    };
+
+    const indexParam: any = {
       ...param,
       listDirectoryPromise: loc.listDirectoryPromise,
       getFileContentPromise: loc.getFileContentPromise,
+      onProgress,
     };
+    if (extractText) {
+      indexParam.extractPDFcontent = extractPDFcontent;
+    }
 
     // Try incremental indexing if an existing index is available
     let existingIdx = index.current;
