@@ -25,7 +25,7 @@ import JSZip from 'jszip';
 import * as mm from 'music-metadata';
 import { getDocument } from 'pdfjs-dist/build/pdf.min.mjs';
 import TgaLoader from 'tga-js';
-import UTIF from 'utif';
+import UTIF from 'utif.ts';
 import { loadFileContentPromise } from './utils-io';
 import('pdfjs-dist/build/pdf.worker.min.mjs');
 
@@ -759,12 +759,14 @@ export async function generateUTIFThumbnail(
     const firstPage = ifds[0];
 
     // Decompress the image data
-    UTIF.decodeImage(buffer, firstPage);
+    UTIF.decodeImage(buffer, firstPage, ifds);
 
-    // Convert to standard RGBA pixels
-    const rgbaPixels = UTIF.toRGBA8(firstPage);
-    const originW = firstPage.width;
-    const originH = firstPage.height;
+    // Convert to standard RGBA pixels. After decodeImage, width/height/data
+    // are guaranteed populated — the UTIF types mark them optional on the
+    // raw IFD but required on the RGBA input, hence the cast.
+    const rgbaPixels = UTIF.toRGBA8(firstPage as any);
+    const originW = firstPage.width as number;
+    const originH = firstPage.height as number;
 
     // Calculate Scaling (Never upscale, maintain aspect ratio)
     const targetSize = maxSize || 200;
@@ -779,9 +781,17 @@ export async function generateUTIFThumbnail(
     const tempCtx = tempCanvas.getContext('2d');
     if (!tempCtx) return '';
 
-    // Put raw pixels directly into the temp canvas
+    // Put raw pixels directly into the temp canvas.
+    // TS 5 widened TypedArray.buffer to ArrayBufferLike (covers
+    // SharedArrayBuffer). Pass offset+length with an ArrayBuffer cast so
+    // we keep the zero-copy aliasing that `new Uint8ClampedArray(buffer)`
+    // provides.
     const imageData = new ImageData(
-      new Uint8ClampedArray(rgbaPixels.buffer),
+      new Uint8ClampedArray(
+        rgbaPixels.buffer as ArrayBuffer,
+        rgbaPixels.byteOffset,
+        rgbaPixels.byteLength,
+      ),
       originW,
       originH,
     );
