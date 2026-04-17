@@ -105,6 +105,48 @@ tagspaces-ws  (uses indexer + workers + pdf-extraction)
 tagspaces-common-node (Node.js fs implementation, injected as IO provider)
 ```
 
+## Indexing & Search
+
+### Architecture
+
+- **Core logic** lives in `tagspaces-common`. See [../tagspaces-common/CLAUDE.md](../tagspaces-common/CLAUDE.md) for the indexing format (tsi.json + tsft.jsonl), CJK tokenization, PDF extraction details, etc.
+- **Renderer integration**: `src/renderer/hooks/LocationIndexContextProvider.tsx` — orchestrates create/load/search. Two code paths:
+  - **Worker path**: Electron-only. Renderer → IPC → Electron main → HTTP POST to local WS server (pm2-managed). Used when `isWorkerAvailable() && enableWS && !objectStore && !webdav && !nativeMobile`.
+  - **Non-worker path** (`createNotWorkerIndex`): Everything else — S3, WebDAV, Cordova, Capacitor, web app, and Electron with WS disabled. Runs in renderer thread.
+- **Search logic** lives in `@tagspaces/tagspaces-search` (pure JS, works on all platforms). The renderer's `src/renderer/services/search.ts` is a thin wrapper.
+
+### Renderer gotchas
+
+- **`createNotWorkerIndex` must inject `extractPDFcontent`** into the `indexParam` when `extractText` is true — imported from `src/renderer/services/thumbsgenerator.ts` (which uses pdfjs-dist). Without it, PDFs in S3/mobile/non-worker locations get no fulltext.
+- **Fulltext lazy loading** (`loadFullTextIfNeeded`): only runs when `searchQuery.textQuery` is present and the index isn't already loaded. Must convert `tsft.jsonl` keys from relative→absolute paths before calling `mergeFullTextIntoIndex`.
+- **Caches** (`enhancedIndex.current`, `fuseInstance.current`, `fullTextMap.current`) must all be invalidated together in `setIndex`. Missing any one causes stale search results.
+- **Progress feedback**: `createIndex` and `createIncrementalIndex` accept an `onProgress({count, entry})` callback. The renderer throttles updates to 250ms to avoid flooding React with re-renders.
+
+### Local dev: syncing changes to node_modules
+
+When editing files in `../tagspaces-common/packages/*`, they must be copied to **both** locations:
+- `node_modules/@tagspaces/*` — used by the renderer (webpack bundle)
+- `release/app/node_modules/@tagspaces/*` — used by the Electron main process and WS worker
+
+```bash
+# Example for indexer changes:
+cp ../tagspaces-common/packages/indexer/indexer.js \
+   node_modules/@tagspaces/tagspaces-indexer/indexer.js
+cp ../tagspaces-common/packages/indexer/indexer.js \
+   release/app/node_modules/@tagspaces/tagspaces-indexer/indexer.js
+```
+
+`@tagspaces/tagspaces-search` is symlinked in both locations (single source of truth). `@tagspaces/tagspaces-ws` must be rebuilt (`cd ../tagspaces-common/packages/tagspaces-ws && npm run build:dev`) — the build produces `build/index.js` + `build/vendors-*.js` chunk + `build/pdf.worker.mjs` (copied by an inline webpack plugin). All three files must go to `release/app/node_modules/@tagspaces/tagspaces-ws/build/`.
+
+### CLI for ad-hoc indexing/searching
+
+```bash
+node ../tagspaces-common/packages/tagspaces-cli/bin/clidev.js indexer -f /path/to/folder  # with fulltext
+node ../tagspaces-common/packages/tagspaces-cli/bin/clidev.js search /path/to/folder -q "query"
+```
+
+CLI has incremental indexing: subsequent runs skip unchanged files (see `+added ~modified -deleted =unchanged` stats). `--force` triggers a full re-index.
+
 ## Path Handling
 
 The app runs on multiple platforms and storage backends. When working with file/directory paths, always consider all three cases:
