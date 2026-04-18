@@ -144,8 +144,15 @@ export const LocationIndexContextProvider = ({
   const prevLocationId = useRef<string>(currentLocationId);
   const enhancedIndex = useRef<any[]>(undefined);
   const fuseInstance = useRef<any>(undefined);
+  // Entries the cached Fuse instance was built from — used to invalidate
+  // the Fuse cache when searchAllLocations iterates over other locations
+  // that have different prepared indexes.
+  const fuseEntriesRef = useRef<any[]>(undefined);
   const fullTextMap = useRef<Record<string, string>>(undefined);
   const fullTextLoaded = useRef<boolean>(false);
+  // In-flight fulltext load — coalesces concurrent searches so two queries
+  // in the same tick don't both fetch+merge the same tsft.jsonl.
+  const fullTextLoadPromise = useRef<Promise<void> | undefined>(undefined);
 
   useEffect(() => {
     if (currentLocationId) {
@@ -186,8 +193,10 @@ export const LocationIndexContextProvider = ({
     index.current = i;
     enhancedIndex.current = undefined;
     fuseInstance.current = undefined;
+    fuseEntriesRef.current = undefined;
     fullTextMap.current = undefined;
     fullTextLoaded.current = false;
+    fullTextLoadPromise.current = undefined;
     if (index.current && index.current.length > 0) {
       indexLoadedOn.current = new Date().getTime();
     } else {
@@ -710,64 +719,87 @@ export const LocationIndexContextProvider = ({
   }
 
   function getOrCreateFuse(entries: any[]) {
-    if (fuseInstance.current) {
+    // Fuse cache tied to the specific entries array — otherwise
+    // searchAllLocations would reuse the current location's Fuse when
+    // iterating over other locations, and text search would return wrong
+    // results (Fuse's internal index is bound to the collection at
+    // construction).
+    if (fuseInstance.current && fuseEntriesRef.current === entries) {
       return fuseInstance.current;
     }
-    fuseInstance.current = new Fuse(entries, fuseOptions);
-    return fuseInstance.current;
+    const fuse = new Fuse(entries, fuseOptions);
+    // Only cache when this is the current location's prepared index —
+    // otherwise each searchAllLocations iteration would overwrite the cache
+    if (entries === enhancedIndex.current) {
+      fuseInstance.current = fuse;
+      fuseEntriesRef.current = entries;
+    }
+    return fuse;
   }
 
-  async function loadFullTextIfNeeded(searchIndex: TS.FileSystemEntry[]) {
+  function loadFullTextIfNeeded(
+    searchIndex: TS.FileSystemEntry[],
+  ): Promise<void> {
     // Only load fulltext for the current location's index, and only once
     if (
       fullTextLoaded.current ||
       searchIndex !== index.current ||
       !currentLocation
     ) {
-      return;
+      return Promise.resolve();
     }
-    try {
-      const locationPath = await getLocationPath(currentLocation);
-      const ftPath = getMetaFullTextFilePath(locationPath);
-      // loadTextFilePromise returns undefined for non-existent files (the
-      // Electron main handler swallows ENOENT) — no separate existence check
-      // needed, which saves a round-trip on S3/cloud locations.
-      const ftContent = await currentLocation.loadTextFilePromise(ftPath);
-      if (ftContent) {
-        // Parse JSONL format (new) or JSON object (old backward compat)
-        const trimmed = ftContent.trim();
-        let ftMap: Record<string, string>;
-        if (trimmed.startsWith('{') && !trimmed.startsWith('{"p"')) {
-          // Old JSON object format: {"relative/path": "text content", ...}
-          try {
-            ftMap = JSON.parse(trimmed);
-          } catch (e) {
+    if (fullTextLoadPromise.current) {
+      return fullTextLoadPromise.current;
+    }
+
+    const loadPromise = (async () => {
+      try {
+        const locationPath = await getLocationPath(currentLocation);
+        const ftPath = getMetaFullTextFilePath(locationPath);
+        // loadTextFilePromise returns undefined for non-existent files
+        // (Electron main swallows ENOENT) — no separate existence check
+        // needed, which saves a round-trip on S3/cloud locations.
+        const ftContent = await currentLocation.loadTextFilePromise(ftPath);
+        if (ftContent) {
+          const trimmed = ftContent.trim();
+          let ftMap: Record<string, string>;
+          if (trimmed.startsWith('{') && !trimmed.startsWith('{"p"')) {
+            try {
+              ftMap = JSON.parse(trimmed);
+            } catch (e) {
+              ftMap = parseFullTextJsonl(ftContent);
+            }
+          } else {
             ftMap = parseFullTextJsonl(ftContent);
           }
-        } else {
-          ftMap = parseFullTextJsonl(ftContent);
-        }
 
-        if (ftMap && typeof ftMap === 'object') {
-          // Fulltext stores relative paths as keys, but index entries have
-          // absolute paths (after enhanceDirectoryIndex). Convert to absolute.
-          const sep = currentLocation.getDirSeparator();
-          const absoluteFtMap: Record<string, string> = {};
-          for (const [relPath, content] of Object.entries(ftMap)) {
-            const absPath = joinPaths(sep, locationPath, relPath);
-            absoluteFtMap[absPath] = content as string;
+          if (ftMap && typeof ftMap === 'object') {
+            // Fulltext stores relative paths; index entries have absolute
+            // paths after enhanceDirectoryIndex. Convert keys to absolute
+            // so mergeFullTextIntoIndex matches by entry.path.
+            const sep = currentLocation.getDirSeparator();
+            const absoluteFtMap: Record<string, string> = {};
+            for (const [relPath, content] of Object.entries(ftMap)) {
+              const absPath = joinPaths(sep, locationPath, relPath);
+              absoluteFtMap[absPath] = content as string;
+            }
+            fullTextMap.current = absoluteFtMap;
+            mergeFullTextIntoIndex(searchIndex, absoluteFtMap);
+            // Invalidate caches that were built without textContent
+            enhancedIndex.current = undefined;
+            fuseInstance.current = undefined;
+            fuseEntriesRef.current = undefined;
           }
-          fullTextMap.current = absoluteFtMap;
-          mergeFullTextIntoIndex(searchIndex, absoluteFtMap);
-          enhancedIndex.current = undefined;
-          fuseInstance.current = undefined;
         }
+      } catch (e: any) {
+        // tsft.jsonl may not exist (no fulltext indexing enabled)
+        console.log('No fulltext index found (tsft.jsonl)', e?.message || e);
       }
-    } catch (e: any) {
-      // tsft.jsonl may not exist (no fulltext indexing enabled)
-      console.log('No fulltext index found (tsft.jsonl)', e?.message || e);
-    }
-    fullTextLoaded.current = true;
+      fullTextLoaded.current = true;
+    })();
+
+    fullTextLoadPromise.current = loadPromise;
+    return loadPromise;
   }
 
   async function getSearchResults(
