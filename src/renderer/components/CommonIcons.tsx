@@ -29,10 +29,6 @@ export const TagIcon = (props) => (
   <TagsIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
 );
 
-export const OrIcon = (props) => (
-  <RemoveCircleOutlineOutlined sx={{ transform: 'rotate(90deg)' }} {...props} />
-);
-
 export const TagLibraryIcon = (props) => (
   <TagsIcon sx={{ transform: 'rotate(90deg)' }} {...props} />
 );
@@ -58,6 +54,8 @@ export { default as WorkspacesIcon } from '@mui/icons-material/WorkspacesOutline
 export const NavigateToFolderIcon = (props) => (
   <KeyboardReturnIcon {...props} />
 );
+
+export { default as OrIcon } from '@mui/icons-material/AltRouteOutlined';
 
 export { default as InfoTooltipIcon } from '@mui/icons-material/InfoOutlined';
 
