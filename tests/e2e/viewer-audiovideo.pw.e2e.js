@@ -53,13 +53,18 @@ test.describe('TST59 - Media player', () => {
   /**
    * http://localhost:63342/test-artifacts/playwright-report/trace/manifest.webmanifest?_ijt=eojod6f91jej1donf3vd1jp8ju
    */
-  test('TST5902 - Play ogv file [web,s3,electron]', async ({ isWin }) => {
+  test('TST5902 - Play mp4 file [web,s3,electron]', async ({
+    isWin,
+    isWeb,
+  }) => {
     if (!isWin) {
       await openContextEntryMenu(
-        getGridFileSelector('sample.ogv'),
+        getGridFileSelector('sample.mp4'),
         'fileMenuOpenFile',
       );
-      await expectMediaPlay();
+      // Playwright's Chromium lacks H.264 codec (licensing), so mp4 can't
+      // actually play on web — only verify the player is visible, not seekable
+      await expectMediaPlay(!isWeb);
     }
   });
 
