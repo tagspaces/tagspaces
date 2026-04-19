@@ -37,6 +37,7 @@ import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
+  cleanRootPath,
   cleanTrailingDirSeparator,
   getMetaDirectoryPath,
   getThumbFileLocationForDirectory,
@@ -253,8 +254,11 @@ export const LocationIndexContextProvider = ({
         location.uuid,
       );
       if (directoryIndex) {
+        // Cache the loaded index so subsequent reads (triggered by effects
+        // re-firing on isIndexing changes, navigation, etc.) don't re-read
+        // and re-enhance the file from disk every time.
+        setIndex(directoryIndex);
         return directoryIndex;
-        //setIndex(directoryIndex, location);
       } else {
         await createLocationIndex(location);
       }
@@ -495,13 +499,24 @@ export const LocationIndexContextProvider = ({
 
     let directoryIndex;
     if (existingIdx && existingIdx.length > 0 && !forceFullReindex) {
+      // existingIdx here is the enhanced (absolute-path) form that the renderer
+      // caches/returns from loadIndexFromDisk. createIncrementalIndex compares
+      // entry.path against cleanRootPath(walked.path, rootPath) which is
+      // relative, so we must de-enhance before handing it off — otherwise
+      // every entry misses the map and the "incremental" run re-processes
+      // (and on error re-persists) the whole index with bad paths.
+      const sep = loc.getDirSeparator();
+      const relativeExistingIdx = existingIdx.map((e) => ({
+        ...e,
+        path: cleanRootPath(e.path, param.path, sep),
+      }));
       console.log('Attempting incremental index for: ' + param.path);
       const result = await createIncrementalIndex(
         indexParam,
         mode,
         ignorePatterns,
         isWalking,
-        existingIdx,
+        relativeExistingIdx,
         fullTextMap.current,
       );
       directoryIndex = result.index;
