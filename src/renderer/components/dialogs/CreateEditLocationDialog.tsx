@@ -765,7 +765,28 @@ function CreateEditLocationDialog(props: Props) {
                 }
                 label={
                   <>
-                    {t('core:createFullTextIndex') + ' (TXT, HTML, MD, PDF)'}
+                    {t('core:createFullTextIndex')}
+                    <InfoIcon
+                      tooltip={
+                        <div style={{ lineHeight: 1.5 }}>
+                          <div style={{ marginBottom: 4 }}>
+                            <b>Supported file formats:</b>
+                          </div>
+                          <div>Plain text: .txt, .md, .marp</div>
+                          <div>HTML: .htm, .html, .xhtml, .shtml, .mhtml</div>
+                          <div>Email: .eml</div>
+                          <div>
+                            Web shortcuts: .url, .website, .webloc, .desktop
+                          </div>
+                          <div>Tabular: .csv</div>
+                          <div>Contacts: .vcf</div>
+                          <div>Documents: .pdf, .docx, .odt</div>
+                          <div>Spreadsheets: .xlsx, .ods</div>
+                          <div>Presentations: .pptx, .odp</div>
+                          <div>Ebooks: .epub</div>
+                        </div>
+                      }
+                    />
                     {Pro ? <BetaLabel /> : <ProLabel />}
                   </>
                 }

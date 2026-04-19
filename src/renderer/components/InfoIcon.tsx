@@ -16,11 +16,12 @@
  *
  */
 
+import { ReactNode } from 'react';
 import Tooltip from '-/components/Tooltip';
 import HelpOutlined from '@mui/icons-material/NotListedLocationOutlined';
 
 interface Props {
-  tooltip?: string;
+  tooltip?: ReactNode;
 }
 
 function InfoIcon(props: Props) {
