@@ -1184,8 +1184,99 @@ function SearchAutocomplete(props: Props) {
     return actions;
   }
 
+  /**
+   * Look up a tag's color from the current tag library by title.
+   * Returns undefined fields if the tag isn't in any group — the chip
+   * will still render, just without the library's custom colors.
+   */
+  function lookupTagColor(title: string): {
+    color?: string;
+    textcolor?: string;
+  } {
+    for (const group of tagGroups) {
+      const found = group.children?.find((t: any) => t.title === title);
+      if (found) {
+        return { color: found.color, textcolor: found.textcolor };
+      }
+    }
+    return {};
+  }
+
+  /**
+   * Parse a whitespace-separated query string into text + action chips.
+   * Handles tokens like "+tag" (AND), "-tag" (NOT), "|tag" (OR).
+   * Everything else falls into the free-text part.
+   *
+   * Example input:  "project notes +work +urgent -draft |client-a"
+   *   textQuery:  "project notes"
+   *   actions:    [
+   *     {label:"+work",  action:"+"}, {label:"+urgent", action:"+"},
+   *     {label:"-draft", action:"-"}, {label:"|client-a", action:"|"},
+   *   ]
+   */
+  function parseComplexQuery(value: string): {
+    textQuery: string;
+    actions: SearchOptionType[];
+  } {
+    const tokens = value.trim().split(/\s+/).filter(Boolean);
+    const textParts: string[] = [];
+    const actions: SearchOptionType[] = [];
+    for (const token of tokens) {
+      const prefix = token[0];
+      if (
+        (prefix === '+' || prefix === '-' || prefix === '|') &&
+        token.length > 1
+      ) {
+        const title = token.slice(1);
+        const colors = lookupTagColor(title);
+        actions.push({
+          label: token,
+          fullName: token,
+          action: prefix,
+          ...(colors.color && { color: colors.color }),
+          ...(colors.textcolor && { textcolor: colors.textcolor }),
+        });
+      } else {
+        textParts.push(token);
+      }
+    }
+    return { textQuery: textParts.join(' '), actions };
+  }
+
   function handleInputChange(event: any, value: string, reason: string) {
     if (reason === 'input') {
+      // Fast path for pasted / fully-typed complex queries like
+      //   "search-term +tag1 -tag2 |tag3"
+      // Triggered only when the value has internal whitespace AND at least
+      // one prefix token — single-prefix-while-typing ("+t") falls through
+      // to the original character-by-character path so the dropdown can
+      // still offer autocomplete suggestions.
+      const trimmed = value.trim();
+      const hasInternalWhitespace = /\s/.test(trimmed);
+      const hasPrefixToken = /(?:^|\s)[+\-|]\S/.test(trimmed);
+      if (hasInternalWhitespace && hasPrefixToken) {
+        const { textQuery, actions: newActions } = parseComplexQuery(value);
+        // Preserve any existing chips not present in the new parse
+        const existing = actionValues.current;
+        const combined = [...existing];
+        for (const a of newActions) {
+          if (
+            !existing.some((e) => e.action === a.action && e.label === a.label)
+          ) {
+            combined.push(a);
+          }
+        }
+        actionValues.current = combined;
+        setTempSearchQuery({ textQuery }, true);
+        searchQuery.textQuery = textQuery;
+        // Close the dropdown — a pasted/fully-typed complex query is a
+        // complete intent. Leaving it open would make the next Enter press
+        // just close the dropdown instead of executing the search.
+        isOpen.current = false;
+        forceUpdate();
+        return;
+      }
+
       const valueArr = value.split(' ');
       actionValues.current = execActions(
         [...actionValues.current, ...valueArr],
@@ -1342,9 +1433,35 @@ function SearchAutocomplete(props: Props) {
           autoSelect
           autoComplete
           handleHomeEndKeys
-          value={actionValues.current.map((v) =>
-            v.fullName ? v.fullName : v.label,
-          )}
+          value={
+            // Sort for display:
+            //   1. scope and accuracy first (search-wide modifiers)
+            //   2. other filters next (type, size, dates)
+            //   3. tag chips (+/-/|) last
+            // Only visual — actionValues.current itself isn't reordered.
+            actionValues.current
+              .map((v, i) => {
+                let priority = 1; // other filters
+                if (v.action === SearchQueryComposition.SCOPE.fullName) {
+                  priority = 0;
+                } else if (
+                  v.action === SearchQueryComposition.ACCURACY.fullName
+                ) {
+                  priority = 0;
+                } else if (
+                  v.action === SearchQueryComposition.TAG_AND.shortName ||
+                  v.action === SearchQueryComposition.TAG_OR.shortName ||
+                  v.action === SearchQueryComposition.TAG_NOT.shortName
+                ) {
+                  priority = 2;
+                }
+                return { v, i, priority };
+              })
+              .sort((a, b) =>
+                a.priority !== b.priority ? a.priority - b.priority : a.i - b.i,
+              )
+              .map(({ v }) => (v.fullName ? v.fullName : v.label))
+          }
           onChange={handleChange}
           inputValue={
             tempSearchQuery.textQuery ? tempSearchQuery.textQuery : ''
