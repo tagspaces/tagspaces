@@ -1580,11 +1580,17 @@ export const IOActionsContextProvider = ({
       })
       .catch((error) => {
         console.log('Error while renaming directory: ' + error);
+        const reason =
+          typeof error === 'string' ? error : error?.message || String(error);
+        const targetExists = /exists\. Renaming of/i.test(reason);
+        const dirName = extractDirectoryName(
+          directoryPath,
+          currentLocation?.getDirSeparator(),
+        );
         showNotification(
-          `Error renaming directory '${extractDirectoryName(
-            directoryPath,
-            currentLocation?.getDirSeparator(),
-          )}'`,
+          targetExists
+            ? `Cannot rename '${dirName}': a directory with the new name already exists.`
+            : `Error renaming directory '${dirName}': ${reason}`,
           'error',
           true,
         );

@@ -144,7 +144,13 @@ function RenameEntryDialog(props: Props) {
             : '') + name.current;
         return renameFile(originPath, newFilePath, currentLocation.uuid);
       } else {
-        return renameDirectory(originPath, name.current, currentLocation.uuid);
+        return renameDirectory(
+          originPath,
+          name.current,
+          currentLocation.uuid,
+        ).catch(() => {
+          // notification already shown by renameDirectory; swallow to avoid uncaught rejection
+        });
       }
     }
   };
