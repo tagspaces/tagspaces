@@ -18,27 +18,33 @@
 
 import AppConfig from '-/AppConfig';
 import { LinkIcon, ReloadIcon } from '-/components/CommonIcons';
+import { ProTooltip } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
+import TsToggleButton from '-/components/TsToggleButton';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { Pro } from '-/pro';
 import { getEntryContainerTab } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
-import { Box, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import { Box, ToggleButtonGroup, Typography } from '@mui/material';
 import { extractLinks } from '@tagspaces/tagspaces-common/misc';
 import {
   cleanRootPath,
   generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import InfoIcon from './InfoIcon';
 import TooltipTS from './Tooltip';
 
 interface Props {}
+
+const LinksGraph: any = Pro && Pro.UI ? Pro.UI.LinksGraph : false;
 
 function LinksTab(props: Props) {
   const { t } = useTranslation();
@@ -50,7 +56,9 @@ function LinksTab(props: Props) {
   const links = useRef<TS.Link[]>([]);
   const inboundLinks = useRef<TS.FileSystemEntry[]>([]);
   const indexExist = useRef<boolean>(false);
-  const theme = useTheme();
+  const [view, setView] = useState<'graph' | 'list'>(
+    LinksGraph ? 'graph' : 'list',
+  );
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   const location = findLocation(openedEntry.locationID);
@@ -117,8 +125,6 @@ function LinksTab(props: Props) {
         console.log('Error parsing URL: ' + e);
       }
     } else if (link.type === 'tslink') {
-      // file ts://?tslid=dd484720e24d429083d81a5379909798&tsepath=contacts%2Fcontacts-gmail.vcf&tseid=acfa652ede334c9490e6d2672ffdc742
-      // folder ts://?tslid=dd484720e24d429083d81a5379909798&tsdpath=DeutscheTelecom&tseid=0bae06de993c4fd0a034fb4ab9484992
       const tsUrl = new URL(url);
       const locationId = tsUrl.searchParams.get('tslid');
       const folderPath = tsUrl.searchParams.get('tsdpath');
@@ -138,7 +144,7 @@ function LinksTab(props: Props) {
         <TsButton
           data-tid={'linkTID' + url}
           tooltip={url}
-          onClick={() => openLink(url)}
+          onClick={() => openLink(url, { fullWidth: false })}
           variant="text"
           startIcon={
             <TooltipTS title={link.type}>
@@ -179,7 +185,7 @@ function LinksTab(props: Props) {
         <TsButton
           data-tid={'linkTID' + fsEntry.uuid}
           tooltip={sharingLink}
-          onClick={() => openLink(sharingLink)}
+          onClick={() => openLink(sharingLink, { fullWidth: false })}
           variant="text"
           startIcon={
             <TooltipTS title={fsEntry.path}>
@@ -201,7 +207,7 @@ function LinksTab(props: Props) {
     );
   };
 
-  return (
+  const listView = (
     <>
       <Box display="block">
         {links.current && links.current.length > 0 && (
@@ -221,24 +227,81 @@ function LinksTab(props: Props) {
       <Box display="block">
         <Typography variant="body2">
           <b>{t('core:incomingLinks')}</b> (
-          {t('from content and description of other files and folders')}
-          )
+          {t('from content and description of other files and folders')})
           <InfoIcon tooltip="Full text search with link extraction for the current location is needed for this feature." />
           :
         </Typography>
         <br />
         {inboundLinks.current?.length ? (
-          <>
-            {inboundLinks.current.map((entry) => {
-              return incomingLinkButton(entry);
-            })}
-          </>
+          <>{inboundLinks.current.map((entry) => incomingLinkButton(entry))}</>
         ) : (
           <>
             <Typography variant="caption">No incoming links found</Typography>
             <br />
           </>
         )}
+      </Box>
+    </>
+  );
+
+  const graphView = LinksGraph ? (
+    <LinksGraph
+      centerLabel={openedEntry.name || openedEntry.path}
+      outgoing={links.current}
+      incoming={inboundLinks.current}
+      findLocation={findLocation}
+      onNavigate={(url: string) => openLink(url, { fullWidth: false })}
+      height="100%"
+    />
+  ) : null;
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        minHeight: 0,
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          mb: 1,
+          flexWrap: 'wrap',
+          flexShrink: 0,
+        }}
+      >
+        <ToggleButtonGroup
+          size="small"
+          value={view}
+          exclusive
+          onChange={(_, v) => {
+            if (!v) return;
+            if (v === 'graph' && !LinksGraph) return;
+            setView(v);
+          }}
+          data-tid="linksViewToggleTID"
+        >
+          <TsToggleButton value="graph" data-tid="linksViewGraphTID">
+            <ProTooltip tooltip={t('core:linksGraphView')}>
+              <AccountTreeIcon
+                fontSize="small"
+                sx={!LinksGraph ? { opacity: 0.4 } : undefined}
+              />
+            </ProTooltip>
+          </TsToggleButton>
+          <TsToggleButton
+            value="list"
+            data-tid="linksViewListTID"
+            tooltip={t('core:linksListView')}
+          >
+            <ViewListIcon fontSize="small" />
+          </TsToggleButton>
+        </ToggleButtonGroup>
+        <Box sx={{ flex: 1 }} />
         <TsButton
           loading={isIndexing !== undefined}
           data-tid={'generateInboundTID'}
@@ -248,7 +311,9 @@ function LinksTab(props: Props) {
           {t('core:generateInbound')}
         </TsButton>
       </Box>
-    </>
+
+      {view === 'graph' && LinksGraph ? graphView : listView}
+    </Box>
   );
 }
 
