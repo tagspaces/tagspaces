@@ -7,6 +7,7 @@ import {
   expectElementSelected,
   getGridFileName,
   getGridFileSelector,
+  isDisplayed,
   openFile,
   selectorFile,
   setSettings,
@@ -16,6 +17,7 @@ import {
   createLocalFile,
   startTestingApp,
   stopApp,
+  testDataRefresh,
 } from './hook';
 import {
   closeFileProperties,
@@ -56,7 +58,7 @@ test.afterAll(async () => {
   await stopApp();
 });
 
-test.afterEach(async ({ page }, testInfo) => {
+test.afterEach(async ({ isS3, testDataDir, page }, testInfo) => {
   /*if (testInfo.status !== testInfo.expectedStatus) {
     await takeScreenshot(testInfo);
     const localStorage = await global.client.evaluate(() =>
@@ -67,6 +69,9 @@ test.afterEach(async ({ page }, testInfo) => {
       localStorage,
     );
   }*/
+  // Refresh test data so files created by previous tests (e.g. TST0632)
+  // don't leak into subsequent tests that expect empty_folder to be empty
+  await testDataRefresh(isS3, testDataDir);
   await clearDataStorage();
 });
 
@@ -79,6 +84,11 @@ test.beforeEach(async ({ isS3, testDataDir }) => {
   }
   await clickOn('[data-tid=location_' + defaultLocationName + ']');
   await expectElementExist(getGridFileSelector('empty_folder'), true, 15000);
+  // Ensure no leftover search state from the previous test
+  if (await isDisplayed('#clearSearchID', true, 1000)) {
+    await clickOn('#clearSearchID');
+    await expectElementExist('#textQuery', false, 5000);
+  }
   // If its have opened file
   // await closeFileProperties();
 });
