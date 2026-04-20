@@ -45,6 +45,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { clearURLParam, getURLParameter, updateHistory } from '-/utils/dom';
+import { isPathEscape, parseTsLink, resolveRelativePath } from '-/utils/tsLink';
 import useFirstRender from '-/utils/useFirstRender';
 import versionMeta from '-/version.json';
 import {
@@ -691,32 +692,27 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
-  function isRelativeLink(uri: string): boolean {
-    if (!uri) return false;
-    if (
-      uri.startsWith('#') ||
-      uri.startsWith('?') ||
-      uri.startsWith('/') ||
-      uri.startsWith('\\')
-    ) {
-      return false;
-    }
-    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(uri)) return false; // any protocol or Windows drive letter
-    return true;
-  }
-
   function openLink(url: string, options = { fullWidth: true }) {
     try {
-      const decodedURI = decodeURI(url);
-      const lid = getURLParameter('tslid', url);
-      const dPath = getURLParameter('tsdpath', url);
-      const ePath = getURLParameter('tsepath', url);
-      const cmdOpen = getURLParameter('cmdopen', url);
-      const id = getURLParameter('tseid', url);
-      if (cmdOpen && cmdOpen.length > 0) {
-        const entryPath = decodeURIComponent(cmdOpen);
-        const locationId = lid ? lid : getFirstRWLocation()?.uuid;
-        getAllPropertiesPromise(entryPath, locationId)
+      const parsed = parseTsLink(
+        url,
+        window.location.origin + window.location.pathname,
+      );
+
+      const invalidLink = () =>
+        showNotification(t('core:invalidLink'), 'warning', true);
+
+      const openEntry = (fsEntry: TS.FileSystemEntry) => {
+        openFsEntry(fsEntry);
+        setSelectedEntries([fsEntry]);
+        if (options.fullWidth) {
+          setEntryInFullWidth(true);
+        }
+      };
+
+      if (parsed.kind === 'cmd' && parsed.cmdOpen) {
+        const locationId = parsed.lid || getFirstRWLocation()?.uuid;
+        getAllPropertiesPromise(parsed.cmdOpen, locationId)
           .then((fsEntry: TS.FileSystemEntry) => {
             if (fsEntry) {
               if (fsEntry.isFile) {
@@ -729,207 +725,150 @@ export const OpenedEntryContextProvider = ({
             }
             return true;
           })
-          .catch((err) => {
-            // console.log('Error opening from cmd ' + JSON.stringify(err));
+          .catch(() => {
             showNotification(t('Missing file or folder'), 'warning', true);
           });
-      } else if (lid && lid.length > 0) {
-        const locationId = decodeURIComponent(lid);
-        let directoryPath = dPath && decodeURIComponent(dPath);
-        const entryPath = ePath && decodeURIComponent(ePath);
-        // fix for created bookmarks files without to have tsdpath in url
-        if (!directoryPath && entryPath) {
-          directoryPath = extractContainingDirectoryPath(entryPath);
+        return;
+      }
+
+      if (parsed.kind === 'ts' && parsed.lid) {
+        const { lid, ePath, id } = parsed;
+        let dPath = parsed.dPath;
+        // Bookmarks created without tsdpath — derive from tsepath.
+        if (!dPath && ePath) {
+          dPath = extractContainingDirectoryPath(ePath);
         }
-        // Check for relative paths
-        const targetLocation: CommonLocation = findLocation(locationId);
-        if (targetLocation) {
-          //let openLocationTimer = 1000;
-          const isCloudLocation =
-            targetLocation.type === locationType.TYPE_CLOUD;
-          if (
-            !currentLocation ||
-            targetLocation.uuid !== currentLocation.uuid
-          ) {
-            openLocation(targetLocation, true);
-          } /*else {
-            openLocationTimer = 0;
-          }*/
-          getLocationPath(targetLocation).then((path) => {
-            const locationPath: string = cleanTrailingDirSeparator(path);
 
-            // setTimeout is needed for case of a location switch, if no location swith the timer is 0
-            //setTimeout(() => {
-            if (isCloudLocation) {
-              if (directoryPath && directoryPath.length > 0) {
-                const newRelDir = getRelativeEntryPath(path, directoryPath);
-                const dirFullPath =
-                  locationPath.length > 0
-                    ? locationPath + '/' + newRelDir
-                    : directoryPath;
-                openDirectory(dirFullPath, undefined, targetLocation);
-              } else {
-                openDirectory(locationPath, undefined, targetLocation);
-              }
+        const targetLocation: CommonLocation = findLocation(lid);
+        if (!targetLocation) {
+          invalidLink();
+          return;
+        }
 
-              if (entryPath) {
-                const filePath =
-                  (locationPath.length > 0 ? locationPath + '/' : '') +
-                  entryPath;
-                getAllPropertiesPromise(filePath, lid)
-                  .then((fsEntry: TS.FileSystemEntry) => {
-                    if (fsEntry) {
-                      openFsEntry(fsEntry);
-                      setSelectedEntries([fsEntry]);
-                      if (options.fullWidth) {
-                        setEntryInFullWidth(true);
-                      }
-                    }
-                    return true;
-                  })
-                  .catch(() =>
-                    showNotification(t('core:invalidLink'), 'warning', true),
-                  );
-              }
-              // });
+        const isCloudLocation = targetLocation.type === locationType.TYPE_CLOUD;
+        if (!currentLocation || targetLocation.uuid !== currentLocation.uuid) {
+          openLocation(targetLocation, true);
+        }
+
+        getLocationPath(targetLocation).then((path) => {
+          const locationPath: string = cleanTrailingDirSeparator(path);
+
+          if (isCloudLocation) {
+            if (dPath && dPath.length > 0) {
+              const newRelDir = getRelativeEntryPath(path, dPath);
+              const dirFullPath =
+                locationPath.length > 0
+                  ? locationPath + '/' + newRelDir
+                  : dPath;
+              openDirectory(dirFullPath, undefined, targetLocation);
             } else {
-              // local files case
-              let dirPath = locationPath;
-              if (directoryPath && directoryPath.length > 0) {
-                if (
-                  directoryPath.includes('../') ||
-                  directoryPath.includes('..\\')
-                ) {
-                  showNotification(t('core:invalidLink'), 'warning', true);
-                  return true;
-                }
-
-                dirPath = joinPaths(
-                  targetLocation.getDirSeparator(),
-                  locationPath,
-                  directoryPath,
-                );
-              }
-              targetLocation.checkDirExist(dirPath).then((exist) => {
-                if (exist) {
-                  openDirectory(dirPath, undefined, targetLocation).then(() => {
-                    if (entryPath && entryPath.length > 0) {
-                      if (
-                        entryPath.includes('../') ||
-                        entryPath.includes('..\\')
-                      ) {
-                        showNotification(
-                          t('core:invalidLink'),
-                          'warning',
-                          true,
-                        );
-                        return true;
-                      }
-                      const entryFullPath =
-                        locationPath +
-                        targetLocation.getDirSeparator() +
-                        entryPath;
-                      getAllPropertiesPromise(entryFullPath, lid)
-                        .then((fsEntry: TS.FileSystemEntry) => {
-                          if (fsEntry) {
-                            openFsEntry(fsEntry);
-                            setSelectedEntries([fsEntry]);
-                            if (options.fullWidth) {
-                              setEntryInFullWidth(true);
-                            }
-                          } else if (id) {
-                            //ENTRY NOT EXIST maybe moved
-                            setLinkFromSearchConfirmDialogOpened(id);
-                          }
-                          return true;
-                        })
-                        .catch(() =>
-                          showNotification(
-                            t('core:invalidLink'),
-                            'warning',
-                            true,
-                          ),
-                        );
-                    }
-                  });
-                } else if (id) {
-                  //ENTRY NOT EXIST maybe moved
-                  setLinkFromSearchConfirmDialogOpened(id);
-                } else {
-                  showNotification(t('core:invalidLink'), 'warning', true);
-                }
-              });
+              openDirectory(locationPath, undefined, targetLocation);
             }
-            //}, openLocationTimer);
+
+            if (ePath) {
+              const filePath =
+                (locationPath.length > 0 ? locationPath + '/' : '') + ePath;
+              getAllPropertiesPromise(filePath, lid)
+                .then((fsEntry: TS.FileSystemEntry) => {
+                  if (fsEntry) openEntry(fsEntry);
+                  return true;
+                })
+                .catch(() => invalidLink());
+            }
+            return;
+          }
+
+          // Local filesystem.
+          if (isPathEscape(dPath)) {
+            invalidLink();
+            return;
+          }
+          const sep = targetLocation.getDirSeparator();
+          const dirPath =
+            dPath && dPath.length > 0
+              ? joinPaths(sep, locationPath, dPath)
+              : locationPath;
+
+          targetLocation.checkDirExist(dirPath).then((exist) => {
+            if (!exist) {
+              if (id) {
+                setLinkFromSearchConfirmDialogOpened(id);
+              } else {
+                invalidLink();
+              }
+              return;
+            }
+            openDirectory(dirPath, undefined, targetLocation).then(() => {
+              if (!ePath || ePath.length === 0) return;
+              if (isPathEscape(ePath)) {
+                invalidLink();
+                return;
+              }
+              const entryFullPath = locationPath + sep + ePath;
+              getAllPropertiesPromise(entryFullPath, lid)
+                .then((fsEntry: TS.FileSystemEntry) => {
+                  if (fsEntry) {
+                    openEntry(fsEntry);
+                  } else if (id) {
+                    setLinkFromSearchConfirmDialogOpened(id);
+                  }
+                  return true;
+                })
+                .catch(() => invalidLink());
+            });
           });
-        } else {
-          showNotification(t('core:invalidLink'), 'warning', true);
-        }
-      } else if (
-        decodedURI ===
-        window.location.origin + window.location.pathname
-      ) {
-        // Ignore links that point to the current web app page itself (no ts params)
-        return true;
-      } else if (
-        // External URL case
-        decodedURI.startsWith('onenote:') ||
-        decodedURI.startsWith('mailto:') ||
-        decodedURI.startsWith('tel:') ||
-        decodedURI.startsWith('http://') ||
-        decodedURI.startsWith('https://') ||
-        decodedURI.startsWith('file://')
-      ) {
-        openURLExternally(decodedURI);
-      } else if (currentEntry.current && isRelativeLink(decodedURI)) {
-        if (decodedURI.includes('../') || decodedURI.includes('..\\')) {
-          showNotification(t('core:invalidLink'), 'warning', true);
-          return true;
+        });
+        return;
+      }
+
+      if (parsed.kind === 'self') {
+        return;
+      }
+
+      if (parsed.kind === 'external') {
+        openURLExternally(parsed.decodedURI);
+        return;
+      }
+
+      if (parsed.kind === 'relative' && currentEntry.current) {
+        if (isPathEscape(parsed.decodedURI)) {
+          invalidLink();
+          return;
         }
         const entryLocation = findLocation(currentEntry.current.locationID);
         if (!entryLocation) {
-          showNotification(t('core:invalidLink'), 'warning', true);
-          return true;
+          invalidLink();
+          return;
         }
         const sep = entryLocation.getDirSeparator();
         const baseDir = extractContainingDirectoryPath(
           currentEntry.current.path,
           sep,
         );
-        const relPath = decodedURI
-          .replace(/^\.[\/\\]/, '')
-          .split(/[\/\\]/)
-          .filter((p) => p.length > 0)
-          .join(sep);
-        const targetPath = joinPaths(sep, baseDir, relPath);
+        const targetPath = resolveRelativePath(baseDir, parsed.decodedURI, sep);
         getAllPropertiesPromise(targetPath, entryLocation.uuid)
           .then((fsEntry: TS.FileSystemEntry) => {
             if (fsEntry) {
               if (fsEntry.isFile) {
-                openFsEntry(fsEntry);
-                setSelectedEntries([fsEntry]);
-                if (options.fullWidth) {
-                  setEntryInFullWidth(true);
-                }
+                openEntry(fsEntry);
               } else {
                 openDirectory(fsEntry.path, undefined, entryLocation);
               }
             } else {
-              showNotification(t('core:invalidLink'), 'warning', true);
+              invalidLink();
             }
             return true;
           })
-          .catch(() =>
-            showNotification(t('core:invalidLink'), 'warning', true),
-          );
-      } else {
-        showNotification(
-          t('core:urlNotSupported') + ': ' + decodedURI,
-          'info',
-          true,
-        );
-        console.log('Not supported URL format: ' + decodedURI);
+          .catch(() => invalidLink());
+        return;
       }
+
+      showNotification(
+        t('core:urlNotSupported') + ': ' + parsed.decodedURI,
+        'info',
+        true,
+      );
+      console.log('Not supported URL format: ' + parsed.decodedURI);
     } catch (e) {
       console.log('OpenLink:', e);
     }
