@@ -691,6 +691,20 @@ export const OpenedEntryContextProvider = ({
     }
   }
 
+  function isRelativeLink(uri: string): boolean {
+    if (!uri) return false;
+    if (
+      uri.startsWith('#') ||
+      uri.startsWith('?') ||
+      uri.startsWith('/') ||
+      uri.startsWith('\\')
+    ) {
+      return false;
+    }
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(uri)) return false; // any protocol or Windows drive letter
+    return true;
+  }
+
   function openLink(url: string, options = { fullWidth: true }) {
     try {
       const decodedURI = decodeURI(url);
@@ -867,6 +881,47 @@ export const OpenedEntryContextProvider = ({
         decodedURI.startsWith('file://')
       ) {
         openURLExternally(decodedURI);
+      } else if (currentEntry.current && isRelativeLink(decodedURI)) {
+        if (decodedURI.includes('../') || decodedURI.includes('..\\')) {
+          showNotification(t('core:invalidLink'), 'warning', true);
+          return true;
+        }
+        const entryLocation = findLocation(currentEntry.current.locationID);
+        if (!entryLocation) {
+          showNotification(t('core:invalidLink'), 'warning', true);
+          return true;
+        }
+        const sep = entryLocation.getDirSeparator();
+        const baseDir = extractContainingDirectoryPath(
+          currentEntry.current.path,
+          sep,
+        );
+        const relPath = decodedURI
+          .replace(/^\.[\/\\]/, '')
+          .split(/[\/\\]/)
+          .filter((p) => p.length > 0)
+          .join(sep);
+        const targetPath = joinPaths(sep, baseDir, relPath);
+        getAllPropertiesPromise(targetPath, entryLocation.uuid)
+          .then((fsEntry: TS.FileSystemEntry) => {
+            if (fsEntry) {
+              if (fsEntry.isFile) {
+                openFsEntry(fsEntry);
+                setSelectedEntries([fsEntry]);
+                if (options.fullWidth) {
+                  setEntryInFullWidth(true);
+                }
+              } else {
+                openDirectory(fsEntry.path, undefined, entryLocation);
+              }
+            } else {
+              showNotification(t('core:invalidLink'), 'warning', true);
+            }
+            return true;
+          })
+          .catch(() =>
+            showNotification(t('core:invalidLink'), 'warning', true),
+          );
       } else {
         showNotification(
           t('core:urlNotSupported') + ': ' + decodedURI,
