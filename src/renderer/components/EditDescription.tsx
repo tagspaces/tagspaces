@@ -20,7 +20,6 @@ import EditDescriptionButtons from '-/components/EditDescriptionButtons';
 import DescriptionMdEditor from '-/components/md/DescriptionMdEditor';
 import { CrepeRef } from '-/components/md/useCrepeHandler';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
-import { Pro } from '-/pro';
 import { MilkdownProvider } from '@milkdown/react';
 import { Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -65,10 +64,8 @@ function EditDescription() {
         className="descriptionEditor"
         data-tid="descriptionTID"
         onDoubleClick={() => {
-          if (Pro) {
-            setEditDescriptionMode(true);
-            setEditMode(true);
-          }
+          setEditDescriptionMode(true);
+          setEditMode(true);
         }}
         sx={{
           border: '1px solid ' + theme.palette.divider,

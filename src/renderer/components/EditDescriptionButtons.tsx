@@ -9,7 +9,6 @@ import DescriptionMenu from '-/components/md/DescriptionMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { Pro } from '-/pro';
 import {
   convertMarkDownToHtml,
   getMimeType,
@@ -148,18 +147,18 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
             {t('core:cancel')}
           </TsButton>
         )}
-        <ProTooltip tooltip={!isEditDescriptionMode && t('editDescription')}>
+        <Tooltip
+          arrow
+          placement="top"
+          title={!isEditDescriptionMode ? t('core:editDescription') : ''}
+        >
           <TsButton
             data-tid={
               isEditDescriptionMode
                 ? 'saveDescriptionTID'
                 : 'editDescriptionTID'
             }
-            disabled={
-              !Pro ||
-              //isEditMode ||
-              findLocation(openedEntry.locationID)?.isReadOnly
-            }
+            disabled={findLocation(openedEntry.locationID)?.isReadOnly}
             sx={{
               borderTopLeftRadius: isEditDescriptionMode
                 ? 0
@@ -191,7 +190,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
               t('core:editDescription')
             )}
           </TsButton>
-        </ProTooltip>
+        </Tooltip>
       </ButtonGroup>
       <ProTooltip
         tooltip={'Add AI generated description based on the file content'}

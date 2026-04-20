@@ -24,7 +24,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Pro } from '-/pro';
 import AppConfig from '-/AppConfig';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -82,7 +81,7 @@ export const FilePropertiesContextProvider = ({
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isEditDescriptionMode, setIsEditDescriptionMode] =
-    useState<boolean>(!!Pro);
+    useState<boolean>(true);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -91,7 +90,7 @@ export const FilePropertiesContextProvider = ({
       // auto set EditDescriptionMode on opening
       const openedLocation = findLocation(openedEntry.locationID);
       if (openedLocation) {
-        if (openedLocation.isReadOnly || !Pro) {
+        if (openedLocation.isReadOnly) {
           if (isEditDescriptionMode) {
             setIsEditDescriptionMode(false);
           }
@@ -143,11 +142,6 @@ export const FilePropertiesContextProvider = ({
       return Promise.resolve(false);
     }
 
-    if (!Pro) {
-      showNotification(t('core:thisFunctionalityIsAvailableInPro'));
-      return Promise.resolve(false);
-    }
-
     return setDescriptionChange(
       lastOpenedFile.current,
       lastOpenedFile.current.meta?.description,
@@ -185,7 +179,7 @@ export const FilePropertiesContextProvider = ({
         isDescriptionChanged.current = changed;
         forceUpdate();
       }
-      if (changed && autoSaveDesc && Pro) {
+      if (changed && autoSaveDesc) {
         if (autoSaveTimer.current) {
           clearTimeout(autoSaveTimer.current);
         }
@@ -255,10 +249,6 @@ export const FilePropertiesContextProvider = ({
           const location = findLocation(fileSnapshot.locationID);
           if (!location || location.isReadOnly) {
             showNotification(t('core:readonlyModeSave'));
-            return;
-          }
-          if (!Pro) {
-            showNotification(t('core:thisFunctionalityIsAvailableInPro'));
             return;
           }
 

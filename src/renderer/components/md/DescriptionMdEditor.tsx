@@ -32,7 +32,6 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { Pro } from '-/pro';
 import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
 
@@ -74,11 +73,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
         // Build a Milkdown‐based “Crepe” editor:
         const placeholder = isEditDescriptionMode
           ? undefined
-          : t(
-              Pro
-                ? 'core:addMarkdownDescription'
-                : 'core:thisFunctionalityIsAvailableInPro',
-            );
+          : t('core:addMarkdownDescription');
         const crepe = createCrepeEditor(
           root,
           description,
