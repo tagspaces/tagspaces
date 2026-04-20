@@ -111,8 +111,6 @@ export const ThumbGenerationContextProvider = ({
     'tiff',
     'ico',
     'webp',
-    'avif',
-    // 'bmp' currently electron main processed: https://github.com/lovell/sharp/issues/806
   ];
 
   function pickByExtensionPriority(

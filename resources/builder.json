@@ -1,11 +1,7 @@
 {
   "appId": "org.tagspaces.desktopapp",
   "asar": true,
-  "asarUnpack": [
-    "**\\*.{node,dll}",
-    "**/node_modules/sharp/**/*",
-    "**/node_modules/@img/**/*"
-  ],
+  "asarUnpack": ["**\\*.{node,dll}", "**/node_modules/wasm-vips/**/*"],
   "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
   "fileAssociations": [
     {

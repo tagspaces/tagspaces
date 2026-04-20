@@ -180,7 +180,7 @@
     "@tagspaces/tagspaces-common": "4.7.2",
     "@tagspaces/tagspaces-common-aws3": "4.7.2",
     "@tagspaces/tagspaces-common-cordova": "4.7.2",
-    "@tagspaces/tagspaces-indexer": "4.7.2",
+    "@tagspaces/tagspaces-indexer": "4.8.0",
     "@tagspaces/tagspaces-search": "^4.7.2",
     "aws-amplify": "4.3.36",
     "coordinate-parser": "1.0.7",

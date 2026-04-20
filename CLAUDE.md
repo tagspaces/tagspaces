@@ -69,12 +69,12 @@ HTTP server (localhost-only) providing REST API for indexing and thumbnail gener
 - **POST /hide-folder** — Body: `{ directoryPath }`. Marks folder as hidden
 - **GET /** — Health check
 
-Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers`, `@tagspaces/tagspaces-pdf-extraction`, `ws`, `jsonwebtoken`. Peer: `sharp` >=0.32.0.
+Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers`, `@tagspaces/tagspaces-pdf-extraction`, `ws`, `jsonwebtoken`, `wasm-vips`.
 
 ### Supporting packages
 
 - **@tagspaces/tagspaces-common-node** (`packages/common-node`) — Node.js `fs` implementation: `listDirectoryPromise`, `loadTextFilePromise`, `saveTextFilePromise`, `renameFilePromise`, `createDirectoryPromise`, `getDirProperties`
-- **@tagspaces/tagspaces-workers** — Thumbnail generation using `sharp` (JPG, PNG, GIF, WebP, SVG, PDF, video)
+- **@tagspaces/tagspaces-workers** — Thumbnail generation using `wasm-vips` (JPG, PNG, GIF, WebP, TIFF, SVG, PDF, video). AVIF/HEIC intentionally unsupported.
 - **@tagspaces/tagspaces-metacleaner** — Finds/removes orphaned `.ts/*.json` and thumbnails for deleted files
 - **@tagspaces/tagspaces-pdf-extraction** — PDF text extraction for indexing
 
@@ -126,6 +126,7 @@ tagspaces-common-node (Node.js fs implementation, injected as IO provider)
 ### Local dev: syncing changes to node_modules
 
 When editing files in `../tagspaces-common/packages/*`, they must be copied to **both** locations:
+
 - `node_modules/@tagspaces/*` — used by the renderer (webpack bundle)
 - `release/app/node_modules/@tagspaces/*` — used by the Electron main process and WS worker
 

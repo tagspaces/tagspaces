@@ -55,7 +55,7 @@ if (platform === 'node') {
       '@tagspaces/tagspaces-ws',
       packageJson.dependencies['@tagspaces/tagspaces-ws'],
     ) ||
-    !isInstalled('sharp', packageJson.dependencies['sharp'])
+    !isInstalled('wasm-vips', packageJson.dependencies['wasm-vips'])
   ) {
     installCmd = 'npm run-script install-ext-node';
   }
