@@ -1,4 +1,6 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
+import pathLib from 'path';
+import fse from 'fs-extra';
 import AppConfig from '../../src/renderer/AppConfig';
 import { expect, test } from './fixtures';
 import {
@@ -23,6 +25,7 @@ import {
   openLocationMenu,
   startupLocation
 } from './location.helpers';
+import { getS3File } from '../s3rver/S3DataRefresh';
 import { clearDataStorage } from './welcome.helpers';
 
 export const perspectiveGridTable = '//*[@data-tid="perspectiveGridFileTable"]';
@@ -209,6 +212,126 @@ test.describe('TST03 - Testing locations:', () => {
       indexFileContent,
       8000,
     );
+  });
+
+  test('TST0329 - Index must persist only relative paths (worker + non-worker) [web,s3,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
+    // Covers all three persist paths:
+    //   * electron-local    → WS worker (indexer package persistIndex)
+    //   * electron-s3       → renderer persistIndex (non-worker, S3 IO)
+    //   * web-s3            → renderer persistIndex (non-worker, S3 IO)
+    // The invariant we assert: tsi.json on disk must only contain paths
+    // relative to the location root. Absolute paths would break search
+    // on the next load because enhanceDirectoryIndex double-joins the
+    // location path onto entries.
+    test.setTimeout(180000);
+
+    const readTsiJson = async () => {
+      const rel = AppConfig.metaFolder + '/' + AppConfig.folderIndexFile;
+      try {
+        if (isS3) {
+          return await getS3File(rel);
+        }
+        return await fse.readFile(
+          pathLib.join(testDataDir, rel),
+          'utf-8',
+        );
+      } catch (e) {
+        return undefined;
+      }
+    };
+
+    // An earlier test in the same worker may have left a tsi.json behind
+    // (testDataDir fixture is worker-scoped). Snapshot it so we can wait
+    // for indexLocation to replace it before reading.
+    const before = await readTsiJson();
+
+    await openLocationMenu(testLocationName);
+    await clickOn('[data-tid=indexLocation]');
+
+    let after;
+    await expect
+      .poll(
+        async () => {
+          after = await readTsiJson();
+          return !!after && after !== before;
+        },
+        { timeout: 120000, intervals: [500, 1000, 2000] },
+      )
+      .toBeTruthy();
+
+    const entries = JSON.parse(after);
+    expect(Array.isArray(entries)).toBe(true);
+    expect(entries.length).toBeGreaterThan(0);
+
+    // Absolute-path shapes we must never find in the persisted index:
+    //   Unix / S3-on-disk: leading "/"
+    //   Windows:           drive letter like "C:\" or "C:/"
+    const absPathRegex = /^(?:\/|[a-zA-Z]:[\\/])/;
+
+    const offenders = entries.filter(
+      (e) =>
+        !e ||
+        typeof e.path !== 'string' ||
+        absPathRegex.test(e.path) ||
+        // Belt-and-suspenders for unusual separator combinations: the
+        // filesystem path of the location itself must not leak in.
+        // Skipped for S3 — there the backing-store path and the bucket
+        // root coincide by design.
+        (!isS3 && e.path.includes(testDataDir)),
+    );
+    if (offenders.length > 0) {
+      throw new Error(
+        'tsi.json contains entries with absolute or location-prefixed paths: ' +
+          JSON.stringify(offenders.slice(0, 5), null, 2) +
+          (offenders.length > 5
+            ? `\n…and ${offenders.length - 5} more.`
+            : ''),
+      );
+    }
+
+    // Best-effort: the fulltext index (tsft.jsonl) shares the same
+    // relative-path contract. Only written when full-text indexing is
+    // enabled, so its absence is fine — but if it exists, its `p` keys
+    // must pass the same check.
+    const ftRel =
+      AppConfig.metaFolder + '/' + AppConfig.folderFullTextFile;
+    let ftContent;
+    try {
+      ftContent = isS3
+        ? await getS3File(ftRel)
+        : await fse.readFile(pathLib.join(testDataDir, ftRel), 'utf-8');
+    } catch (e) {
+      ftContent = undefined;
+    }
+    if (ftContent) {
+      const ftLines = ftContent.split('\n').filter((l) => l.trim());
+      const ftOffenders = [];
+      for (const line of ftLines) {
+        let parsed;
+        try {
+          parsed = JSON.parse(line);
+        } catch (e) {
+          continue;
+        }
+        if (
+          parsed &&
+          typeof parsed.p === 'string' &&
+          (absPathRegex.test(parsed.p) ||
+            (!isS3 && parsed.p.includes(testDataDir)))
+        ) {
+          ftOffenders.push(parsed.p);
+        }
+      }
+      if (ftOffenders.length > 0) {
+        throw new Error(
+          'tsft.jsonl contains absolute or location-prefixed keys: ' +
+            JSON.stringify(ftOffenders.slice(0, 5)),
+        );
+      }
+    }
   });
 });
 /*

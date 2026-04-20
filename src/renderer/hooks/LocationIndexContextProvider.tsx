@@ -792,9 +792,13 @@ export const LocationIndexContextProvider = ({
             // Fulltext stores relative paths; index entries have absolute
             // paths after enhanceDirectoryIndex. Convert keys to absolute
             // so mergeFullTextIntoIndex matches by entry.path.
+            // Defensive: legacy tsft.jsonl files (from before persist
+            // normalization) may contain absolute keys — cleanRootPath
+            // first so the subsequent join doesn't double the prefix.
             const sep = currentLocation.getDirSeparator();
             const absoluteFtMap: Record<string, string> = {};
-            for (const [relPath, content] of Object.entries(ftMap)) {
+            for (const [storedKey, content] of Object.entries(ftMap)) {
+              const relPath = cleanRootPath(storedKey, locationPath, sep);
               const absPath = joinPaths(sep, locationPath, relPath);
               absoluteFtMap[absPath] = content as string;
             }
@@ -1046,17 +1050,26 @@ export const LocationIndexContextProvider = ({
       const folderFullTextPath =
         metaDirectory + sep + AppConfig.folderFullTextFile;
 
+      // Persisted tsi.json / tsft.jsonl must store paths relative to the
+      // location root. Callers may hand us either relative entries (fresh
+      // output of createIndex / createIncrementalIndex) or the enhanced
+      // absolute-path entries cached in index.current (reflectCreate/
+      // reflectDelete/reflectUpdate/reflectUpdateSidecarMeta all persist
+      // index.current). cleanRootPath is a no-op when the root isn't a
+      // prefix, so running it unconditionally is safe for both inputs.
       // Split: strip textContent from main index, collect into fulltext map
       const fullTextEntries: Record<string, string> = {};
       let hasFullText = false;
       const strippedIndex = directoryIndex.map((entry: any) => {
-        if (entry && entry.textContent) {
-          fullTextEntries[entry.path] = entry.textContent;
+        if (!entry) return entry;
+        const relPath = cleanRootPath(entry.path, directoryPath, sep);
+        if (entry.textContent) {
+          fullTextEntries[relPath] = entry.textContent;
           hasFullText = true;
           const { textContent, ...rest } = entry;
-          return rest;
+          return { ...rest, path: relPath };
         }
-        return entry;
+        return entry.path === relPath ? entry : { ...entry, path: relPath };
       });
 
       const saveIndex = cLocation
@@ -1107,17 +1120,23 @@ export const LocationIndexContextProvider = ({
     folderPath,
   ): TS.FileSystemEntry[] {
     const loc = findLocation(locationID);
-    return directoryIndex.map((i: TS.FileSystemEntry) => ({
-      ...i,
-      locationID,
-      path: joinPaths(
-        loc.getDirSeparator(),
-        folderPath,
-        AppConfig.isWin
-          ? i.path.replaceAll('/', loc.getDirSeparator())
-          : i.path, //toPlatformPath()
-      ),
-    }));
+    const sep = loc ? loc.getDirSeparator() : AppConfig.dirSeparator;
+    return directoryIndex.map((i: TS.FileSystemEntry) => {
+      // Defensive: some legacy tsi.json files (from before the persist
+      // normalization was in place) contain absolute paths. Running
+      // cleanRootPath first yields the relative form in both cases and
+      // avoids a double-join like "/a/b/c" + "/a/b/c/file" → "/a/b/c/a/b/c/file".
+      const relPath = cleanRootPath(i.path, folderPath, sep);
+      return {
+        ...i,
+        locationID,
+        path: joinPaths(
+          sep,
+          folderPath,
+          AppConfig.isWin ? relPath.replaceAll('/', sep) : relPath,
+        ),
+      };
+    });
   }
 
   function loadIndexFromDisk(

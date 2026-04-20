@@ -121,6 +121,7 @@ tagspaces-common-node (Node.js fs implementation, injected as IO provider)
 - **Fulltext lazy loading** (`loadFullTextIfNeeded`): only runs when `searchQuery.textQuery` is present and the index isn't already loaded. Must convert `tsft.jsonl` keys from relative→absolute paths before calling `mergeFullTextIntoIndex`.
 - **Caches** (`enhancedIndex.current`, `fuseInstance.current`, `fullTextMap.current`) must all be invalidated together in `setIndex`. Missing any one causes stale search results.
 - **Progress feedback**: `createIndex` and `createIncrementalIndex` accept an `onProgress({count, entry})` callback. The renderer throttles updates to 250ms to avoid flooding React with re-renders.
+- **Index path shape**: `index.current` holds the **enhanced** (absolute-path) form returned by `enhanceDirectoryIndex`. `tsi.json` / `tsft.jsonl` on disk hold **relative** paths. The renderer's `persistIndex` runs `cleanRootPath(entry.path, directoryPath, sep)` on every entry before writing, so it is safe to call with either shape. This matters because `reflectCreateEntry` / `reflectDeleteEntry` / `reflectUpdateEntry` / `reflectUpdateSidecarMeta` / `clearDirectoryIndex(true)` all pass `index.current` (absolute) straight into `persistIndex`. If you add a new code path that writes the index directly (bypassing `persistIndex`), you must strip the root prefix yourself — otherwise `enhanceDirectoryIndex` double-joins on the next load and search misses everything.
 
 ### Local dev: syncing changes to node_modules
 
