@@ -16,8 +16,6 @@
  *
  */
 
-import { joinPaths } from '@tagspaces/tagspaces-common/paths';
-
 export type TsLinkKind =
   | 'cmd'
   | 'ts'
@@ -147,5 +145,9 @@ export function resolveRelativePath(
     .split(/[\/\\]/)
     .filter((p) => p.length > 0)
     .join(sep);
-  return joinPaths(sep, baseDir, relPath);
+  if (!relPath) return baseDir;
+  // Don't use joinPaths here: on Windows it strips the leading separator of
+  // the result (e.g. '/home/...' → 'home/...') via its drive-path trim,
+  // which also fires for unix-style paths joined with '/' on win32.
+  return baseDir.endsWith(sep) ? baseDir + relPath : baseDir + sep + relPath;
 }
