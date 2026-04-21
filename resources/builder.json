@@ -1,6 +1,9 @@
 {
   "appId": "org.tagspaces.desktopapp",
-  "afterPack": "./.erb/scripts/apply-fuses.js",
+  "electronFuses": {
+    "runAsNode": false,
+    "resetAdHocDarwinSignature": true
+  },
   "asar": true,
   "asarUnpack": ["**\\*.{node,dll}", "**/node_modules/wasm-vips/**/*"],
   "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
