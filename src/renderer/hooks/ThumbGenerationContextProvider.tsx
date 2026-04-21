@@ -45,6 +45,7 @@ import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { base64ToUint8Array } from '-/utils/dom';
 import useFirstRender from '-/utils/useFirstRender';
+import { makeCancelable } from '-/utils/useCancelablePerLocation';
 import {
   cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
@@ -92,6 +93,7 @@ export const ThumbGenerationContextProvider = ({
   const enableWS = useSelector(getEnableWS);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const isGeneratingThumbs = useRef(false);
+  const thumbGenAbortRef = useRef<AbortController | null>(null);
   const firstRender = useFirstRender();
 
   function setGenThumbs(isGen: boolean) {
@@ -128,6 +130,15 @@ export const ThumbGenerationContextProvider = ({
     return entries[0];
   }
 
+  // Abort any in-flight thumbnail batch when the current directory changes
+  // (covers directory switches that do not fire a new thumbGenerate action)
+  // and when the provider unmounts.
+  useEffect(() => {
+    return () => {
+      thumbGenAbortRef.current?.abort();
+    };
+  }, [currentDirectoryPath]);
+
   useEffect(() => {
     if (metaActions && metaActions.length > 0) {
       //!firstRender (skip firstRender: if switch from KanBan perspective to Gallery thumbGenerate missing)
@@ -152,37 +163,55 @@ export const ThumbGenerationContextProvider = ({
           genEntries = currentDirectoryEntries;
         }
         if (genEntries) {
-          generateThumbnails(genEntries).then((success) => {
-            if (success) {
-              const entry = pickByExtensionPriority(
-                genEntries.filter((e) => e.isFile),
-                [
-                  ...supportedImgs,
-                  'pdf',
-                  'html',
-                  ...supportedVideos,
-                  ...supportedAudio,
-                  ...supportedText,
-                  'url',
-                ],
-              );
-              if (entry) {
-                setFolderThumbnailPromise(entry.path, false).then((success) => {
-                  if (!success) {
-                    console.debug(
-                      'set automatically thumbnail for folder failed: Thumb already exist',
-                    );
-                  }
-                });
+          thumbGenAbortRef.current?.abort();
+          const controller = new AbortController();
+          thumbGenAbortRef.current = controller;
+          const { signal } = controller;
+          const startPath = currentDirectoryPath;
+          const isStale = () =>
+            signal.aborted || currentDirectoryPath !== startPath;
+
+          generateThumbnails(genEntries, signal)
+            .then((success) => {
+              if (isStale()) {
+                return false;
               }
-            }
-            return loadCurrentDirMeta(currentDirectoryPath, genEntries).then(
-              (ent) => {
+              if (success) {
+                const entry = pickByExtensionPriority(
+                  genEntries.filter((e) => e.isFile),
+                  [
+                    ...supportedImgs,
+                    'pdf',
+                    'html',
+                    ...supportedVideos,
+                    ...supportedAudio,
+                    ...supportedText,
+                    'url',
+                  ],
+                );
+                if (entry) {
+                  setFolderThumbnailPromise(entry.path, false).then(
+                    (success) => {
+                      if (!success) {
+                        console.debug(
+                          'set automatically thumbnail for folder failed: Thumb already exist',
+                        );
+                      }
+                    },
+                  );
+                }
+              }
+              return loadCurrentDirMeta(startPath, genEntries).then((ent) => {
+                if (isStale()) return true;
                 updateCurrentDirEntries(ent);
                 return true;
-              },
-            );
-          });
+              });
+            })
+            .catch((e) => {
+              if (e?.name !== 'AbortError') {
+                console.log('generateThumbnails error', e);
+              }
+            });
         }
       }
     }
@@ -213,8 +242,12 @@ export const ThumbGenerationContextProvider = ({
 
   function generateThumbnails(
     dirEntries: TS.FileSystemEntry[],
+    signal?: AbortSignal,
   ): Promise<boolean> {
     if (dirEntries.length === 0) {
+      return Promise.resolve(false);
+    }
+    if (signal?.aborted) {
       return Promise.resolve(false);
     }
     const location: CommonLocation = findLocation(dirEntries[0].locationID);
@@ -231,16 +264,17 @@ export const ThumbGenerationContextProvider = ({
 
     if (AppConfig.isElectron) {
       return isWorkerAvailable().then((isWorkerAvailable) =>
-        generateThumbnails2(dirEntries, isWorkerAvailable, location),
+        generateThumbnails2(dirEntries, isWorkerAvailable, location, signal),
       );
     }
-    return generateThumbnails2(dirEntries, false, location);
+    return generateThumbnails2(dirEntries, false, location, signal);
   }
 
   function generateThumbnails2(
     dirEntries: TS.FileSystemEntry[],
     isWorkerAvailable,
     location: CommonLocation,
+    signal?: AbortSignal,
   ): Promise<boolean> {
     const workerEntries: string[] = [];
     const mainEntries: string[] = [];
@@ -304,7 +338,7 @@ export const ThumbGenerationContextProvider = ({
       setGenThumbs(true);
       return createThumbnailsInWorker(workerEntries, location.fullTextIndex)
         .then(() =>
-          thumbnailMainGeneration(mainEntries, location).then(() => {
+          thumbnailMainGeneration(mainEntries, location, signal).then(() => {
             console.timeEnd('TMB_GENERATION_WORKER');
             setGenThumbs(false);
             return true;
@@ -317,6 +351,7 @@ export const ThumbGenerationContextProvider = ({
           return thumbnailMainGeneration(
             [...workerEntries, ...mainEntries],
             location,
+            signal,
           ).then(() => {
             setGenThumbs(false);
             return true;
@@ -324,7 +359,7 @@ export const ThumbGenerationContextProvider = ({
         });
     } else if (mainEntries.length > 0) {
       setGenThumbs(true);
-      return thumbnailMainGeneration(mainEntries, location).then(() => {
+      return thumbnailMainGeneration(mainEntries, location, signal).then(() => {
         console.timeEnd('TMB_GENERATION_RENDERER');
         setGenThumbs(false);
         return true;
@@ -340,10 +375,15 @@ export const ThumbGenerationContextProvider = ({
   function thumbnailMainGeneration(
     mainEntries: string[],
     location: CommonLocation,
+    signal?: AbortSignal,
   ): Promise<boolean> {
-    const promises = mainEntries.map((tmbPath) =>
-      getThumbnailURLPromise(tmbPath, location),
-    );
+    if (signal?.aborted) {
+      return Promise.resolve(false);
+    }
+    const promises = mainEntries.map((tmbPath) => {
+      const p = getThumbnailURLPromise(tmbPath, location);
+      return signal ? makeCancelable(p, signal) : p;
+    });
     const promisesWithTimeout = promises.map((promise) => {
       const timeoutPromise = new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -360,7 +400,7 @@ export const ThumbGenerationContextProvider = ({
 
     return Promise.allSettled(promisesWithTimeout)
       .then(() => {
-        return true;
+        return !signal?.aborted;
       })
       .catch((e) => {
         console.log('thumbnailMainGeneration', e);
