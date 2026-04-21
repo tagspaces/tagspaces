@@ -9,7 +9,6 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 
-import pm2 from '@elife/pm2';
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
@@ -18,7 +17,9 @@ import {
   globalShortcut,
   ipcMain,
   shell,
+  utilityProcess,
 } from 'electron';
+import type { UtilityProcess } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
 import path from 'path';
@@ -40,6 +41,7 @@ let mainWindow: BrowserWindow | null = null;
 let globalShortcutsEnabled = false;
 let startupFilePath: string | undefined;
 let portableMode: boolean | undefined;
+let wsProcess: UtilityProcess | null = null;
 const SUPPORTED_EXTS = new Set(['.md', '.mmd', '.txt', '.html', '.glb']);
 
 // --- Debug/Dev Mode ---
@@ -384,45 +386,29 @@ function startWS() {
       envPath = path.join(__dirname, '../.env');
     }
     const properties = propertiesReader(envPath);
-    const results = new Promise((resolve, reject) => {
-      findPort().then((freePort) => {
-        try {
-          pm2.start(
-            {
-              name: 'Tagspaces WS',
-              script,
-              cwd: filepath,
-              args: ['-p', freePort, '-k', properties.get('KEY')],
-              restartAt: [],
-            },
-            (err, pid) => {
-              if (err && pid) {
-                if (pid && pid.name) console.error(pid.name, err, pid);
-                else console.error(err, pid);
-                reject(err);
-              } else if (err) {
-                reject(err);
-              } else {
-                settings.setUsedWsPort(freePort);
-                mainWindow?.webContents.send('start_ws', { port: freePort });
-                console.debug('start_ws:' + freePort);
-                resolve(
-                  `Starting ${pid.name} on ${pid.cwd} - pid (${pid.child.pid})`,
-                );
-              }
-            },
+    findPort()
+      .then((freePort) => {
+        const scriptPath = path.join(filepath, script);
+        wsProcess = utilityProcess.fork(
+          scriptPath,
+          ['-p', String(freePort), '-k', String(properties.get('KEY') ?? '')],
+          { cwd: filepath, serviceName: 'TagspacesWS' },
+        );
+        wsProcess.on('spawn', () => {
+          settings.setUsedWsPort(freePort);
+          mainWindow?.webContents.send('start_ws', { port: freePort });
+          console.debug(
+            `start_ws:${freePort} - Tagspaces WS pid (${wsProcess?.pid})`,
           );
-        } catch (e) {
-          console.error('pm2.start err:', e);
-          reject(e);
-        }
-      });
-    });
-    results
-      .then((results) => console.debug(results))
-      .catch((err) => console.error('pm2.start err:', err));
+        });
+        wsProcess.on('exit', (code) => {
+          console.debug('Tagspaces WS exit code', code);
+          wsProcess = null;
+        });
+      })
+      .catch((err) => console.error('startWS err:', err));
   } catch (ex) {
-    console.error('pm2.start Exception __dirname:' + __dirname, ex);
+    console.error('startWS exception __dirname:' + __dirname, ex);
   }
 }
 
@@ -507,7 +493,8 @@ const createWindow = async (i18n: any) => {
   mainWindow.webContents.on(
     'render-process-gone',
     (_, { reason, exitCode }) => {
-      pm2.stopAll();
+      wsProcess?.kill();
+      wsProcess = null;
       globalShortcut.unregisterAll();
       app.quit();
     },
@@ -563,8 +550,6 @@ app.on('window-all-closed', () => {
   // Respect the macOS convention of having the application in memory even
   // after all windows have been closed
   if (!isMacLike) {
-    // pm2.stopAll();
-    // globalShortcut.unregisterAll();
     app.quit();
   }
 });
@@ -582,7 +567,8 @@ app.on('activate', (event, hasVisibleWindows) => {
 });
 
 app.on('quit', () => {
-  pm2.stopAll();
+  wsProcess?.kill();
+  wsProcess = null;
   globalShortcut.unregisterAll();
 });
 
@@ -609,8 +595,6 @@ app.on('web-contents-created', (event, contents) => {
 });
 
 // --- Startup ---
-startWS();
-
 let appI18N: any;
 
 protocol.register();
@@ -618,6 +602,7 @@ protocol.register();
 app
   .whenReady()
   .then(() => {
+    startWS();
     return i18nInit().then((i18n) => {
       appI18N = i18n;
       if (process.platform === 'darwin') {

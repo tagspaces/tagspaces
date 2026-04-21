@@ -17,7 +17,6 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
-    "@elife/pm2": "3.6.1",
     "@tagspaces/extensions": "1.0.243",
     "@tagspaces/tagspaces-common-node": "4.7.2",
     "@tagspaces/tagspaces-ws": "4.8.0",
