@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import TooltipTS from '-/components/Tooltip';
 import { isDesktopMode } from '-/reducers/settings';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 export type TSIconButtonProps = IconButtonProps & {
@@ -28,36 +28,31 @@ export type TSIconButtonProps = IconButtonProps & {
   keyBinding?: string;
 };
 
-const TsIconButton: React.FC<TSIconButtonProps> = ({
-  sx,
-  keyBinding,
-  tooltip,
-  disabled,
-  ...restProps
-}) => {
-  const desktopMode = useSelector(isDesktopMode);
+const TsIconButton = React.forwardRef<HTMLButtonElement, TSIconButtonProps>(
+  ({ sx, keyBinding, tooltip, disabled, ...restProps }, ref) => {
+    const desktopMode = useSelector(isDesktopMode);
 
-  // Memoize the icon button for performance
-  const iconButton = useMemo(
-    () => (
+    const iconButton = (
       <IconButton
+        ref={ref}
         size={desktopMode ? 'medium' : 'large'}
         sx={{ borderRadius: AppConfig.defaultCSSRadius, ...sx }}
         disabled={disabled}
         {...restProps}
       />
-    ),
-    [desktopMode, sx, disabled, restProps],
-  );
-
-  if (tooltip && !disabled) {
-    return (
-      <TooltipTS keyBinding={keyBinding} title={tooltip}>
-        {iconButton}
-      </TooltipTS>
     );
-  }
-  return iconButton;
-};
+
+    if (tooltip && !disabled) {
+      return (
+        <TooltipTS keyBinding={keyBinding} title={tooltip}>
+          {iconButton}
+        </TooltipTS>
+      );
+    }
+    return iconButton;
+  },
+);
+
+TsIconButton.displayName = 'TsIconButton';
 
 export default TsIconButton;

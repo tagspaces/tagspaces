@@ -43,7 +43,7 @@ const initialize = () => {
     return null;
   }
 
-  protocol.handle(mediaProtocol, (request: any) => {
+  protocol.handle(mediaProtocol, async (request: any) => {
     // Get the file path from the URL without the trailing slash
     let filepath = request.url
       .slice(`${mediaProtocol}://`.length)
@@ -53,6 +53,17 @@ const initialize = () => {
     filepath = filepath.replace(/#/g, '%23');
     const pathname = normalize(fileURLToPath(`file://${filepath}`)); //pathToFileURL(filepath).toString();
     const asFileUrl = pathToFileURL(pathname).toString();
+
+    // Pre-check existence: net.fetch on a missing file yields ERR_UNEXPECTED
+    // which Chromium logs to the dev console and JS can't intercept. A plain
+    // 404 is handled silently by <img> / fetch callers. Common case: missing
+    // thumbnail sidecars under .ts/*.jpg.
+    try {
+      await fs.promises.access(pathname);
+    } catch {
+      return new Response('', { status: 404 });
+    }
+
     console.log(
       'protocol handler: Fetch file param ' +
         filepath +
