@@ -178,8 +178,13 @@ export const LocationIndexContextProvider = ({
           reflectCreateEntry(action.entry);
         } else if (action.action === 'delete') {
           reflectDeleteEntry(action.entry.path);
-        } else if (action.action === 'update') {
+        } else if (action.action === 'update' || action.action === 'move') {
           reflectUpdateEntry(action.oldEntryPath, action.entry);
+        } else {
+          console.warn(
+            'LocationIndexContextProvider: unhandled action type',
+            action.action,
+          );
         }
       }
     }
@@ -271,12 +276,9 @@ export const LocationIndexContextProvider = ({
     if (!index.current || index.current.length < 1) {
       return;
     }
-    for (let i = 0; i < index.current.length; i += 1) {
-      if (index.current[i].path === path) {
-        setIndex(index.current.splice(i, 1), currentLocation);
-        //i -= 1;
-        break;
-      }
+    const nextIndex = index.current.filter((entry) => entry.path !== path);
+    if (nextIndex.length !== index.current.length) {
+      setIndex(nextIndex, currentLocation);
     }
   }
 
