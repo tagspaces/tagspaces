@@ -61,6 +61,64 @@ type ThumbGenerationContextData = {
   generateThumbnails: (dirEntries: TS.FileSystemEntry[]) => Promise<boolean>;
 };
 
+// Matches Chromium's per-host HTTP connection cap; tuned to avoid saturating
+// the browser request queue on S3/WebDAV and to keep IO steady on slow
+// network mounts. Local disk is barely affected since each worker call does
+// real CPU work (wasm-vips) anyway.
+const MAX_THUMB_CONCURRENCY = 6;
+
+// Runs `worker(item)` over `items` with at most `limit` in flight at a time.
+// Honors `signal`: stops dispatching new items on abort and resolves as soon
+// as the currently-in-flight workers settle. Individual rejections are
+// swallowed (callers already log inside their workers).
+function runInPool<T>(
+  items: T[],
+  worker: (item: T) => Promise<any>,
+  options: { limit: number; signal?: AbortSignal },
+): Promise<boolean> {
+  const { limit, signal } = options;
+  if (items.length === 0) return Promise.resolve(true);
+  if (signal?.aborted) return Promise.resolve(false);
+
+  return new Promise((resolve) => {
+    let idx = 0;
+    let active = 0;
+    let done = false;
+
+    const finish = () => {
+      if (done) return;
+      done = true;
+      resolve(!signal?.aborted);
+    };
+
+    const pump = () => {
+      if (done) return;
+      if (signal?.aborted) {
+        if (active === 0) finish();
+        return;
+      }
+      while (active < limit && idx < items.length) {
+        if (signal?.aborted) break;
+        const item = items[idx++];
+        active++;
+        worker(item)
+          .catch(() => undefined)
+          .finally(() => {
+            active--;
+            if (idx >= items.length && active === 0) {
+              finish();
+            } else {
+              pump();
+            }
+          });
+      }
+      if (idx >= items.length && active === 0) finish();
+    };
+
+    pump();
+  });
+}
+
 export const ThumbGenerationContext = createContext<ThumbGenerationContextData>(
   {
     generateThumbnails: undefined,
@@ -380,12 +438,11 @@ export const ThumbGenerationContextProvider = ({
     if (signal?.aborted) {
       return Promise.resolve(false);
     }
-    const promises = mainEntries.map((tmbPath) => {
+
+    const runOne = (tmbPath: string): Promise<any> => {
       const p = getThumbnailURLPromise(tmbPath, location);
-      return signal ? makeCancelable(p, signal) : p;
-    });
-    const promisesWithTimeout = promises.map((promise) => {
-      const timeoutPromise = new Promise((resolve, reject) => {
+      const wrapped = signal ? makeCancelable(p, signal) : p;
+      const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
           reject(
             new Error(
@@ -394,18 +451,13 @@ export const ThumbGenerationContextProvider = ({
           );
         }, AppConfig.maxThumbGenTime);
       });
+      return Promise.race([wrapped, timeoutPromise]);
+    };
 
-      return Promise.race([promise, timeoutPromise]);
+    return runInPool(mainEntries, runOne, {
+      limit: MAX_THUMB_CONCURRENCY,
+      signal,
     });
-
-    return Promise.allSettled(promisesWithTimeout)
-      .then(() => {
-        return !signal?.aborted;
-      })
-      .catch((e) => {
-        console.log('thumbnailMainGeneration', e);
-        return false;
-      });
   }
 
   function getThumbnailURLPromise(
