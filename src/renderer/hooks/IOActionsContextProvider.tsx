@@ -1810,7 +1810,13 @@ export const IOActionsContextProvider = ({
         );
         const metaExist = await location.getPropertiesPromise(metaFolder);
         if (!metaExist) {
-          await createDirectoryPromise(metaFolder, location.uuid);
+          try {
+            await createDirectoryPromise(metaFolder, location.uuid);
+          } catch (err) {
+            // e.g. EPERM inside macOS .app bundles or other protected folders
+            console.log('Cannot create meta folder ' + metaFolder + ': ' + err);
+            return undefined;
+          }
         }
       } else {
         // check and create meta folder if not exist
@@ -1822,7 +1828,19 @@ export const IOActionsContextProvider = ({
         const metaDirectoryProperties =
           await location.getPropertiesPromise(metaDirectoryPath);
         if (!metaDirectoryProperties) {
-          await createDirectoryPromise(metaDirectoryPath, location.uuid, false);
+          try {
+            await createDirectoryPromise(
+              metaDirectoryPath,
+              location.uuid,
+              false,
+            );
+          } catch (err) {
+            // e.g. EPERM inside macOS .app bundles or other protected folders
+            console.log(
+              'Cannot create meta folder ' + metaDirectoryPath + ': ' + err,
+            );
+            return undefined;
+          }
         }
 
         metaFilePath = getMetaFileLocationForDir(

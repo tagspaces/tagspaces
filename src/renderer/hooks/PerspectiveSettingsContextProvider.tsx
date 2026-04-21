@@ -202,10 +202,29 @@ export const PerspectiveSettingsContextProvider = ({
         currentDirectoryPath,
         currentPerspective,
         cleanSettings,
-      ).then((updatedFsEntryMeta: TS.FileSystemEntryMeta) => {
-        saveCurrentLocationMetaData(currentDirectoryPath, updatedFsEntryMeta);
-        setDirectoryMeta(updatedFsEntryMeta);
-      });
+      )
+        .then((updatedFsEntryMeta: TS.FileSystemEntryMeta) => {
+          saveCurrentLocationMetaData(
+            currentDirectoryPath,
+            updatedFsEntryMeta,
+          ).catch((err) => {
+            console.log(
+              'saveCurrentLocationMetaData failed for ' +
+                currentDirectoryPath +
+                ': ' +
+                err,
+            );
+          });
+          setDirectoryMeta(updatedFsEntryMeta);
+        })
+        .catch((err) => {
+          console.log(
+            'setPerspectiveSettings failed for ' +
+              currentDirectoryPath +
+              ': ' +
+              err,
+          );
+        });
     } else {
       if (
         Pro &&
@@ -218,9 +237,28 @@ export const PerspectiveSettingsContextProvider = ({
           currentDirectoryPath,
           currentPerspective,
           undefined,
-        ).then((updatedFsEntryMeta: TS.FileSystemEntryMeta) =>
-          saveCurrentLocationMetaData(currentDirectoryPath, updatedFsEntryMeta),
-        );
+        )
+          .then((updatedFsEntryMeta: TS.FileSystemEntryMeta) =>
+            saveCurrentLocationMetaData(
+              currentDirectoryPath,
+              updatedFsEntryMeta,
+            ).catch((err) => {
+              console.log(
+                'saveCurrentLocationMetaData failed for ' +
+                  currentDirectoryPath +
+                  ': ' +
+                  err,
+              );
+            }),
+          )
+          .catch((err) => {
+            console.log(
+              'setPerspectiveSettings cleanup failed for ' +
+                currentDirectoryPath +
+                ': ' +
+                err,
+            );
+          });
       }
       const defaultSettings = getDefaultPerspectiveSettings(currentPerspective);
       localStorage.setItem(
