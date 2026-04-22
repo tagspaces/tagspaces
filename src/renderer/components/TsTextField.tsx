@@ -36,159 +36,161 @@ type TSTextFieldProps = TextFieldProps & {
   retrieveValue?: () => string;
 };
 
-function TsTextField(props: TSTextFieldProps) {
-  const { updateValue, retrieveValue, children, sx, label, ...restProps } =
-    props;
-  const theme = useTheme();
-  const { t } = useTranslation();
-  const desktopMode = useSelector(isDesktopMode);
-  const textFieldRef = React.useRef<HTMLInputElement | HTMLTextAreaElement>(
-    null,
-  );
-
-  const [contextMenu, setContextMenu] = React.useState<{
-    mouseX: number;
-    mouseY: number;
-  } | null>(null);
-
-  const handleContextMenu = (event) => {
-    event.preventDefault();
-    setContextMenu(
-      contextMenu === null
-        ? {
-            mouseX: event.clientX + 2,
-            mouseY: event.clientY - 6,
-          }
-        : null,
+const TsTextField = React.forwardRef<HTMLDivElement, TSTextFieldProps>(
+  function TsTextField(props, ref) {
+    const { updateValue, retrieveValue, children, sx, label, ...restProps } =
+      props;
+    const theme = useTheme();
+    const { t } = useTranslation();
+    const desktopMode = useSelector(isDesktopMode);
+    const textFieldRef = React.useRef<HTMLInputElement | HTMLTextAreaElement>(
+      null,
     );
-  };
 
-  const handleClose = () => {
-    setContextMenu(null);
-  };
+    const [contextMenu, setContextMenu] = React.useState<{
+      mouseX: number;
+      mouseY: number;
+    } | null>(null);
 
-  async function handleCopy() {
-    try {
-      const selection = document.getSelection()?.toString();
-      let text4Clipboard = '';
-      if (selection) {
-        text4Clipboard = selection;
-      } else if (retrieveValue) {
-        text4Clipboard = retrieveValue();
-      }
-      await navigator.clipboard.writeText(text4Clipboard);
-      handleClose();
-    } catch (error) {
-      console.error(error.message);
-      handleClose();
-    }
-  }
-
-  async function handlePaste() {
-    if (updateValue) {
-      navigator.clipboard.readText().then((clipText) => {
-        const value = retrieveValue ? retrieveValue() : '';
-        const inputElement = textFieldRef.current;
-        if (inputElement) {
-          const selectionStart = inputElement.selectionStart || 0;
-          const selectionEnd = inputElement.selectionEnd || 0;
-
-          // Insert clipboard text at cursor position, replacing any selected text
-          const result =
-            value.substring(0, selectionStart) +
-            clipText +
-            value.substring(selectionEnd);
-          const newCursorPosition = selectionStart + clipText.length;
-
-          updateValue(result);
-
-          // Move cursor to after the pasted text after the DOM has updated
-          setTimeout(() => {
-            if (textFieldRef.current) {
-              textFieldRef.current.selectionStart =
-                textFieldRef.current.selectionEnd = newCursorPosition;
+    const handleContextMenu = (event) => {
+      event.preventDefault();
+      setContextMenu(
+        contextMenu === null
+          ? {
+              mouseX: event.clientX + 2,
+              mouseY: event.clientY - 6,
             }
-          }, 0);
-        } else {
-          // Fallback if ref is not available
-          updateValue(value + clipText);
-        }
-        handleClose();
-      });
-    }
-  }
+          : null,
+      );
+    };
 
-  return (
-    <Box>
-      {label && (
-        <FormHelperText sx={{ marginLeft: '5px', marginTop: 0 }}>
-          {label}
-        </FormHelperText>
-      )}
-      <TextField
-        inputRef={textFieldRef}
-        onContextMenu={handleContextMenu}
-        margin="dense"
-        size={desktopMode ? 'small' : 'medium'}
-        variant="outlined"
-        fullWidth
-        sx={{
-          cursor: 'context-menu',
-          marginTop: 0,
-          backgroundColor: alpha(theme.palette.divider, 0.2),
-          '&:hover': {
-            backgroundColor: alpha(theme.palette.divider, 0.5),
-          },
-          '& .Mui-focused': {
-            backgroundColor: 'transparent !important',
-            borderRadius: AppConfig.defaultCSSRadius,
-          },
-          borderRadius: AppConfig.defaultCSSRadius,
-          transition: '0.3s',
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            border: '2px solid transparent !important',
-            borderRadius: AppConfig.defaultCSSRadius,
-          },
-          '& .MuiOutlinedInput-notchedOutline': {
-            border: '2px solid transparent',
-            borderRadius: AppConfig.defaultCSSRadius,
-          },
-          '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-            border: `2px solid ${alpha(theme.palette.divider, 0.5)} !important`,
-            borderRadius: AppConfig.defaultCSSRadius,
-          },
-          ...sx,
-        }}
-        {...restProps}
-        label={undefined}
-      >
-        {children}
-      </TextField>
-      <Menu
-        open={contextMenu !== null}
-        onClose={handleClose}
-        anchorReference="anchorPosition"
-        anchorPosition={
-          contextMenu !== null
-            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-            : undefined
+    const handleClose = () => {
+      setContextMenu(null);
+    };
+
+    async function handleCopy() {
+      try {
+        const selection = document.getSelection()?.toString();
+        let text4Clipboard = '';
+        if (selection) {
+          text4Clipboard = selection;
+        } else if (retrieveValue) {
+          text4Clipboard = retrieveValue();
         }
-      >
-        <TsMenuList sx={{ minWidth: 150 }}>
-          <MenuItem onClick={handleCopy}>
-            <ListItemText primary={t('core:copy')} />
-            <MenuKeyBinding keyBinding="command+c" />
-          </MenuItem>
-          {updateValue && (
-            <MenuItem onClick={handlePaste}>
-              <ListItemText primary={t('core:paste')} />
-              <MenuKeyBinding keyBinding="command+v" />
+        await navigator.clipboard.writeText(text4Clipboard);
+        handleClose();
+      } catch (error) {
+        console.error(error.message);
+        handleClose();
+      }
+    }
+
+    async function handlePaste() {
+      if (updateValue) {
+        navigator.clipboard.readText().then((clipText) => {
+          const value = retrieveValue ? retrieveValue() : '';
+          const inputElement = textFieldRef.current;
+          if (inputElement) {
+            const selectionStart = inputElement.selectionStart || 0;
+            const selectionEnd = inputElement.selectionEnd || 0;
+
+            // Insert clipboard text at cursor position, replacing any selected text
+            const result =
+              value.substring(0, selectionStart) +
+              clipText +
+              value.substring(selectionEnd);
+            const newCursorPosition = selectionStart + clipText.length;
+
+            updateValue(result);
+
+            // Move cursor to after the pasted text after the DOM has updated
+            setTimeout(() => {
+              if (textFieldRef.current) {
+                textFieldRef.current.selectionStart =
+                  textFieldRef.current.selectionEnd = newCursorPosition;
+              }
+            }, 0);
+          } else {
+            // Fallback if ref is not available
+            updateValue(value + clipText);
+          }
+          handleClose();
+        });
+      }
+    }
+
+    return (
+      <Box ref={ref}>
+        {label && (
+          <FormHelperText sx={{ marginLeft: '5px', marginTop: 0 }}>
+            {label}
+          </FormHelperText>
+        )}
+        <TextField
+          inputRef={textFieldRef}
+          onContextMenu={handleContextMenu}
+          margin="dense"
+          size={desktopMode ? 'small' : 'medium'}
+          variant="outlined"
+          fullWidth
+          sx={{
+            cursor: 'context-menu',
+            marginTop: 0,
+            backgroundColor: alpha(theme.palette.divider, 0.2),
+            '&:hover': {
+              backgroundColor: alpha(theme.palette.divider, 0.5),
+            },
+            '& .Mui-focused': {
+              backgroundColor: 'transparent !important',
+              borderRadius: AppConfig.defaultCSSRadius,
+            },
+            borderRadius: AppConfig.defaultCSSRadius,
+            transition: '0.3s',
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              border: '2px solid transparent !important',
+              borderRadius: AppConfig.defaultCSSRadius,
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              border: '2px solid transparent',
+              borderRadius: AppConfig.defaultCSSRadius,
+            },
+            '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+              border: `2px solid ${alpha(theme.palette.divider, 0.5)} !important`,
+              borderRadius: AppConfig.defaultCSSRadius,
+            },
+            ...sx,
+          }}
+          {...restProps}
+          label={undefined}
+        >
+          {children}
+        </TextField>
+        <Menu
+          open={contextMenu !== null}
+          onClose={handleClose}
+          anchorReference="anchorPosition"
+          anchorPosition={
+            contextMenu !== null
+              ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+              : undefined
+          }
+        >
+          <TsMenuList sx={{ minWidth: 150 }}>
+            <MenuItem onClick={handleCopy}>
+              <ListItemText primary={t('core:copy')} />
+              <MenuKeyBinding keyBinding="command+c" />
             </MenuItem>
-          )}
-        </TsMenuList>
-      </Menu>
-    </Box>
-  );
-}
+            {updateValue && (
+              <MenuItem onClick={handlePaste}>
+                <ListItemText primary={t('core:paste')} />
+                <MenuKeyBinding keyBinding="command+v" />
+              </MenuItem>
+            )}
+          </TsMenuList>
+        </Menu>
+      </Box>
+    );
+  },
+);
 
 export default TsTextField;
