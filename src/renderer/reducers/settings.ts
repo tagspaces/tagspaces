@@ -95,6 +95,7 @@ export const types = {
   SET_LAST_PUBLISHED_VERSION: 'SETTINGS/SET_LAST_PUBLISHED_VERSION',
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
+  SET_LEFT_PANEL_WIDTH: 'SETTINGS/SET_LEFT_PANEL_WIDTH',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
@@ -485,6 +486,12 @@ export default (state: any = defaultSettings, action: any) => {
         mainVSplitSize: action.mainVSplitSize,
       };
     }
+    case types.SET_LEFT_PANEL_WIDTH: {
+      return {
+        ...state,
+        leftPanelWidth: action.leftPanelWidth,
+      };
+    }
     case types.SET_LAST_PUBLISHED_VERSION: {
       return {
         ...state,
@@ -829,13 +836,17 @@ export const actions = {
     type: types.SET_SUPPORTED_FILE_TYPES,
     supportedFileTypes,
   }),
-  setEntryPropertiesSplitSize: (entrySplitSize: string) => ({
+  setEntryPropertiesSplitSize: (entrySplitSize: number) => ({
     type: types.SET_ENTRY_PROPERTIES_SPLIT_SIZE,
     entrySplitSize,
   }),
   setMainVerticalSplitSize: (mainVSplitSize: string) => ({
     type: types.SET_MAIN_VSPLIT_SIZE,
     mainVSplitSize,
+  }),
+  setLeftPanelWidth: (leftPanelWidth: number) => ({
+    type: types.SET_LEFT_PANEL_WIDTH,
+    leftPanelWidth,
   }),
   setFirstRun: (firstRun: boolean) => ({
     type: types.SET_FIRST_RUN,
@@ -906,7 +917,15 @@ function getDefaultAI(aiProviderId: string, aiProviders: AIProvider[]) {
 }
 
 // Selectors
-export const getEntrySplitSize = (state: any) => state.settings.entrySplitSize;
+export const getEntrySplitSize = (state: any): number => {
+  const raw = state.settings.entrySplitSize;
+  // Legacy values were strings like '45%' and are no longer valid (value is now pixels).
+  return typeof raw === 'number' && isFinite(raw) ? raw : 200;
+};
+export const getLeftPanelWidth = (state: any): number => {
+  const raw = state.settings.leftPanelWidth;
+  return typeof raw === 'number' && isFinite(raw) ? raw : 320;
+};
 export const getMapTileServer = (state: any): TS.MapTileServer =>
   AppConfig.ExtMapTileServers
     ? AppConfig.ExtMapTileServers[0]
@@ -967,8 +986,6 @@ export const getShowUnixHiddenEntries = (state: any) =>
   state.settings.showUnixHiddenEntries;
 export const getEntryContainerTab = (state: any) =>
   state.settings.entryContainerTab;
-export const getEntryPropertiesHeight = (state: any) =>
-  state.settings.entryPropertiesHeight;
 export const getUseDefaultLocation = (state: any) =>
   state.settings.useDefaultLocation;
 export const getDefaultPerspective = (state: any) =>
