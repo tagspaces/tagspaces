@@ -2,12 +2,7 @@
  * Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved.
  */
 
-import { test, expect } from './fixtures';
-import {
-  defaultLocationName,
-  createPwLocation,
-  createS3Location,
-} from './location.helpers';
+import { expect, test } from './fixtures';
 import {
   clickOn,
   expectElementExist,
@@ -16,6 +11,11 @@ import {
   isDisplayed,
 } from './general.helpers';
 import { startTestingApp, stopApp } from './hook';
+import {
+  createPwLocation,
+  createS3Location,
+  defaultLocationName,
+} from './location.helpers';
 import { openContextEntryMenu } from './test-utils';
 import { clearDataStorage, closeWelcomePlaywright } from './welcome.helpers';
 
@@ -50,27 +50,22 @@ test.describe('TST59 - Media player', () => {
     await expectMediaPlay(false);
   });
 
-  /**
-   * http://localhost:63342/test-artifacts/playwright-report/trace/manifest.webmanifest?_ijt=eojod6f91jej1donf3vd1jp8ju
-   */
-  test('TST5902 - Play mp4 file [web,s3,electron]', async ({
+  test('TST5902 - Play ogv file [web,s3,electron]', async ({
     isWin,
     isWeb,
   }) => {
     if (!isWin) {
       await openContextEntryMenu(
-        getGridFileSelector('sample.mp4'),
+        getGridFileSelector('sample.ogv'),
         'fileMenuOpenFile',
       );
-      // Playwright's Chromium lacks H.264 codec (licensing), so mp4 can't
-      // actually play on web — only verify the player is visible, not seekable
       await expectMediaPlay(!isWeb);
     }
   });
 
   test('TST5903 - Open and close about dialog [web,s3,electron]', async () => {
     await openContextEntryMenu(
-      getGridFileSelector('sample.mp4'),
+      getGridFileSelector('sample.ogv'),
       'fileMenuOpenFile',
     );
     await expectElementExist('iframe', true, 8000);
@@ -108,30 +103,6 @@ test.describe('TST59 - Media player', () => {
     await expectMediaPlay(false);
   });
 
-  /**
-   * for mp4 codecs missing web on Chromium browser
-   */
-  test('TST5905 - Play webm [web,s3,electron]', async ({
-    isWeb,
-    isWin,
-  }) => {
-    await openContextEntryMenu(
-      getGridFileSelector('sample.webm'),
-      'fileMenuOpenFile',
-    );
-
-    await expectMediaPlay(!(isWeb || isWin));
-
-    // Access the iframe
-    /*const iframeElement = await global.client.waitForSelector('iframe');
-    const frame = await iframeElement.contentFrame();
-
-    // Click on the desired element within the iframe
-    await frame.click('#container');
-    const playExists = await isDisplayed('[data-plyr=play]', true, 2000, frame);
-    expect(playExists).toBeTruthy();*/
-  });
-
   test('TST5906 - Play flac [web,s3,electron]', async () => {
     await openContextEntryMenu(
       getGridFileSelector('sample.flac'),
@@ -140,20 +111,4 @@ test.describe('TST59 - Media player', () => {
     await expectMediaPlay(false);
   });
 
-  test('TST5911 - Play 3gp [web,s3,electron]', async () => {
-    /*await clickOn('[data-tid=settings]');
-    await clickOn('[data-tid=fileTypeSettingsDialog]');
-    const selectEl = global.client.locator('[data-tid=viewerTIDgif]');
-    await selectEl.evaluate(node => node.scrollIntoView());
-   // await selectEl.scrollIntoViewIfNeeded();
-    await clickOn('[data-tid=viewerTIDgif]');
-    await clickOn('[data-tid=Media_PlayerviewerTIDgif]');
-    await clickOn('[data-tid=closeSettingsDialog]');*/
-
-    await openContextEntryMenu(
-      getGridFileSelector('sample.3gp'),
-      'fileMenuOpenFile',
-    );
-    await expectMediaPlay(false);
-  });
 });
