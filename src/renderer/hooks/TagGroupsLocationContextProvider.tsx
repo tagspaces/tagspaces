@@ -102,8 +102,15 @@ export const TagGroupsLocationContextProvider = ({
   function getTagGroups(location: CommonLocation): Promise<TS.TagGroup[]> {
     return loadLocationDataPromise(location).then(
       (fsEntryMeta: TS.FileSystemEntryMeta) => {
-        if (fsEntryMeta) {
-          return fsEntryMeta.tagGroups;
+        if (fsEntryMeta?.tagGroups) {
+          // Stamp locationId and inherit workSpaceId from the parent location
+          // so workspace-filter logic can match location-stored tag groups.
+          // An explicit workSpaceId on the tag group wins over the location's.
+          return fsEntryMeta.tagGroups.map((g) => ({
+            ...g,
+            locationId: location.uuid,
+            workSpaceId: g.workSpaceId ?? location.workSpaceId,
+          }));
         }
         return undefined;
       },
@@ -305,7 +312,12 @@ export const TagGroupsLocationContextProvider = ({
           const newTagGroup = { ...tagGroup, children: oldTagGroup.children };
           let tagGroups;
           if (fsEntryMeta.tagGroups && fsEntryMeta.tagGroups.length > 0) {
-            tagGroups = [...fsEntryMeta.tagGroups, newTagGroup];
+            tagGroups = [
+              ...fsEntryMeta.tagGroups.filter(
+                (group) => group.uuid !== tagGroup.uuid,
+              ),
+              newTagGroup,
+            ];
           } else {
             tagGroups = [newTagGroup];
           }
