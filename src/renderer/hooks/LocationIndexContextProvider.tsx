@@ -378,6 +378,7 @@ export const LocationIndexContextProvider = ({
     enableWS = true,
     isWalking = () => true,
     extractLinks?: boolean,
+    forceFullReindex = false,
   ): Promise<TS.FileSystemEntry[]> {
     if (isWalking()) {
       if (Pro && Pro.Watcher) {
@@ -401,6 +402,7 @@ export const LocationIndexContextProvider = ({
               extractLinks ?? !!loc.extractLinks,
               ignorePatterns,
               loc.uuid,
+              forceFullReindex,
             )
             .then((result) => {
               if (result && result.success) {
@@ -424,6 +426,7 @@ export const LocationIndexContextProvider = ({
                 ignorePatterns,
                 isWalking,
                 extractLinks,
+                forceFullReindex,
               );
             });
         }
@@ -435,6 +438,7 @@ export const LocationIndexContextProvider = ({
           ignorePatterns,
           isWalking,
           extractLinks,
+          forceFullReindex,
         );
       });
     }
@@ -550,6 +554,7 @@ export const LocationIndexContextProvider = ({
     ignorePatterns: Array<string> = [],
     enableWS = true,
     extractLinks?: boolean,
+    forceFullReindex = false,
   ): Promise<any> {
     const indexFilePath = getMetaIndexFilePath(param.path);
 
@@ -561,6 +566,7 @@ export const LocationIndexContextProvider = ({
       enableWS,
       isWalking,
       extractLinks,
+      forceFullReindex,
     )
       .then((index) => {
         deignoreByWatcher(indexFilePath);
@@ -908,6 +914,8 @@ export const LocationIndexContextProvider = ({
           currentLocation.fullTextIndex,
           currentLocation.ignorePatternPaths,
           enableWS,
+          undefined,
+          !!searchQuery.forceIndexing,
         );
         setIndex(newIndex);
       }
@@ -969,6 +977,8 @@ export const LocationIndexContextProvider = ({
           location.fullTextIndex,
           location.ignorePatternPaths,
           enableWS,
+          undefined,
+          !!searchQuery.forceIndexing,
         );
       }
       const results = await getSearchResults(directoryIndex, searchQuery);
