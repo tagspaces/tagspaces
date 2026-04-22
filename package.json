@@ -180,8 +180,8 @@
     "@tagspaces/tagspaces-common": "4.7.2",
     "@tagspaces/tagspaces-common-aws3": "4.7.2",
     "@tagspaces/tagspaces-common-cordova": "4.7.2",
-    "@tagspaces/tagspaces-indexer": "4.8.0",
-    "@tagspaces/tagspaces-search": "^4.7.2",
+    "@tagspaces/tagspaces-indexer": "4.8.1",
+    "@tagspaces/tagspaces-search": "4.7.2",
     "aws-amplify": "4.3.36",
     "coordinate-parser": "1.0.7",
     "crypto-js": "4.2.0",
@@ -241,7 +241,7 @@
     "zod-to-json-schema": "3.25.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.231"
+    "@tagspacespro/tagspacespro": "5.0.232"
   },
   "devDependencies": {
     "@electron/rebuild": "4.0.3",
