@@ -75,7 +75,7 @@
     "sign": false
   },
   "pkg": {
-    "license": "assets/license_en.rtf"
+    "license": "assets/license_en.txt"
   },
   "linux": {
     "target": [

@@ -23,7 +23,8 @@ function escapeRtf(text) {
     if (ch === '\\') out += '\\\\';
     else if (ch === '{') out += '\\{';
     else if (ch === '}') out += '\\}';
-    else if (ch === '\n') out += '\\par\n';
+    else if (ch === '\n') out += '\\par ';
+    else if (ch === '\t') out += '\\tab ';
     else if (ch === '\r') continue;
     else if (code > 127) {
       const signed = code > 0x7fff ? code - 0x10000 : code;
@@ -37,11 +38,11 @@ function txtToRtf(text) {
   if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
   text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   return (
-    '{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat' +
+    '{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033' +
     '{\\fonttbl{\\f0\\fnil\\fcharset0 Segoe UI;}}\n' +
-    '\\fs18\n' +
+    '\\viewkind4\\uc1\\pard\\f0\\fs20 ' +
     escapeRtf(text) +
-    '\n}'
+    '\\par}\n'
   );
 }
 
