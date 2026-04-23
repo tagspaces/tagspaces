@@ -61,7 +61,7 @@
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
     "include": "resources/installer.nsh",
-    "license": null
+    "license": "assets/license_en.rtf"
   },
   "mac": {
     "target": ["pkg", "dmg"],
@@ -75,12 +75,29 @@
     "sign": false
   },
   "pkg": {
-    "license": "assets/license_en.txt"
+    "license": "assets/license_en.rtf"
   },
   "linux": {
-    "target": ["deb", "tar.gz", "appImage"],
+    "target": [
+      { "target": "deb", "arch": ["x64", "arm64"] },
+      { "target": "tar.gz", "arch": ["x64", "arm64"] },
+      { "target": "appImage", "arch": ["x64"] }
+    ],
     "category": "Office",
     "icon": "assets/icon.icns"
+  },
+  "deb": {
+    "depends": [
+      "libgtk-3-0 | libgtk-4-1",
+      "libnotify4",
+      "libnss3",
+      "libxss1",
+      "libxtst6",
+      "xdg-utils",
+      "libatspi2.0-0",
+      "libsecret-1-0",
+      "libuuid1"
+    ]
   },
   "appImage": {
     "license": "assets/license_en.txt"

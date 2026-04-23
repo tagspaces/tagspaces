@@ -62,6 +62,7 @@
     "gen-third-party-extensions": "node -r ts-node/register scripts/generateExtensionsConfig.ts ./web/third-party/extensions",
     "generate-extensions": "node -r ts-node/register scripts/generateExtensionsConfig.ts",
     "generate-jwt": "node scripts/jwt_generate.js",
+    "gen-licenses": "node scripts/build-licenses.js",
     "install-ext-node": "rimraf release/app/node_modules && cd ./release/app && npm install && cd ../.. && npm run generate-extensions",
     "install-ext-node-check": "npx cross-env PD_PLATFORM=node node scripts/checkWSinstalled.js",
     "install-ext-web": "rimraf release/app/node_modules && cd ./release/app && npm install && cd ../..",
@@ -79,8 +80,8 @@
     "package-linux-arm64": "npm run install-ext-node && npm run clean-pro-ext && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --linux --arm64 --config resources/builder.json",
     "package-linux-pro": "npm run install-ext-node && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --linux --config node_modules/@tagspacespro/tagspacespro/resources/builder-pro.json",
     "package-linux-arm64-pro": "npm run install-ext-node && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --linux --arm64 --config node_modules/@tagspacespro/tagspacespro/resources/builder-pro.json",
-    "package-all-lite": "npm run install-ext-node && npm run clean-pro-ext && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --linux --mac --x64 --arm64 --config resources/builder.json",
-    "package-all-pro": "npm run install-ext-node && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --linux --mac --x64 --arm64 --config node_modules/@tagspacespro/tagspacespro/resources/builder-pro.json",
+    "package-all-lite": "npm run install-ext-node && npm run clean-pro-ext && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --linux --mac --win --x64 --arm64 --config resources/builder.json",
+    "package-all-pro": "npm run install-ext-node && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --linux --mac --win --x64 --arm64 --config node_modules/@tagspacespro/tagspacespro/resources/builder-pro.json",
     "package-mac": "npm run install-ext-node && npm run clean-pro-ext && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --mac --x64 --config resources/builder.json",
     "package-mac-arm64": "npm run install-ext-node && npm run clean-pro-ext && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --mac --arm64 --config resources/builder.json",
     "package-mac-arm64-pro": "npm run install-ext-node && npm run generate-extensions && ts-node ./.erb/scripts/clean.js && npm run build && npm run clean-maps && electron-builder --mac --arm64 --config node_modules/@tagspacespro/tagspacespro/resources/builder-pro.json",
@@ -100,7 +101,7 @@
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run prepare-node && node -r ts-node/register ./.erb/scripts/link-modules.ts && npm run build:dll",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{*{js,jsx,json},babelrc,eslintrc,prettierrc,stylelintrc}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
-    "prebuild": "rimraf release/app/dist && npm run prepare-node && npm run generate-extensions",
+    "prebuild": "rimraf release/app/dist && npm run prepare-node && npm run generate-extensions && npm run gen-licenses",
     "prestart": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.dev.ts",
     "prepare": "husky install",
     "prepare-capacitor": "npm run install-ext-web-check && rimraf capacitor/www/dist && rimraf capacitor/www/node_modules && shx cp -rL release/app/node_modules capacitor/www && shx cp LICENSE.txt capacitor/www",
@@ -241,7 +242,7 @@
     "zod-to-json-schema": "3.25.1"
   },
   "optionalDependencies": {
-    "@tagspacespro/tagspacespro": "5.0.232"
+    "@tagspacespro/tagspacespro": "5.0.233"
   },
   "devDependencies": {
     "@electron/rebuild": "4.0.3",
