@@ -54,7 +54,13 @@ import {
   serializeFullTextJsonl,
   mergeFullTextIntoIndex,
 } from '@tagspaces/tagspaces-indexer';
-import React, { createContext, useEffect, useReducer, useRef } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
@@ -62,6 +68,7 @@ type LocationIndexContextData = {
   indexLoadedOn: number | undefined;
   indexExpired: () => boolean;
   isIndexing: string | undefined;
+  indexingProgress: { count: number; folder: string } | undefined;
   getIndex: () => TS.FileSystemEntry[] | undefined;
   getLastIndex: (locationId: string) => Promise<TS.FileSystemEntry[]>;
   cancelDirectoryIndexing: (locationId: string) => void;
@@ -95,6 +102,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   indexLoadedOn: undefined,
   indexExpired: () => true,
   isIndexing: undefined,
+  indexingProgress: undefined,
   getIndex: () => undefined,
   getLastIndex: undefined,
   cancelDirectoryIndexing: undefined,
@@ -136,6 +144,9 @@ export const LocationIndexContextProvider = ({
   const tagDelimiter: string = useSelector(getTagDelimiter);
 
   const isIndexing = useRef<string>(undefined);
+  const [indexingProgress, setIndexingProgress] = useState<
+    { count: number; folder: string } | undefined
+  >(undefined);
   const walkingRef = useRef(true);
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
@@ -367,6 +378,7 @@ export const LocationIndexContextProvider = ({
       window.electronIO.ipcRenderer.sendMessage('cancelRequest', locationId);
       walkingRef.current = false;
       isIndexing.current = undefined;
+      setIndexingProgress(undefined);
       forceUpdate();
     }
   }
@@ -462,8 +474,10 @@ export const LocationIndexContextProvider = ({
       }
     }
 
-    // Throttled progress callback — update notification at most every 250ms
-    // to avoid flooding React with re-renders during large index walks
+    // Throttled progress callback — update shared state at most every 250ms
+    // to avoid flooding React with re-renders during large index walks.
+    // The value is consumed by PageNotification, which merges it into the
+    // single "indexing" snackbar that also hosts the cancel button.
     const PROGRESS_THROTTLE_MS = 250;
     let lastProgressTs = 0;
     let lastDir = '';
@@ -479,12 +493,7 @@ export const LocationIndexContextProvider = ({
       lastDir = entryDir;
       const shortDir =
         entryDir.length > 60 ? '…' + entryDir.slice(-59) : entryDir;
-      showNotification(
-        t('core:indexing') + ': ' + count + '  •  ' + shortDir,
-        'default',
-        false,
-        'TIDSearching',
-      );
+      setIndexingProgress({ count, folder: shortDir });
     };
 
     const indexParam: any = {
@@ -640,11 +649,13 @@ export const LocationIndexContextProvider = ({
             setIndex(directoryIndex);
           }
           isIndexing.current = undefined;
+          setIndexingProgress(undefined);
           forceUpdate();
           return true;
         })
         .catch((err) => {
           isIndexing.current = undefined;
+          setIndexingProgress(undefined);
           //lastError.current = err;
           forceUpdate();
           return false;
@@ -678,6 +689,7 @@ export const LocationIndexContextProvider = ({
       }
     }
     isIndexing.current = undefined;
+    setIndexingProgress(undefined);
     forceUpdate();
     console.log('Resolution is complete!');
     return true;
@@ -685,6 +697,7 @@ export const LocationIndexContextProvider = ({
 
   function clearDirectoryIndex(persist = false) {
     isIndexing.current = undefined;
+    setIndexingProgress(undefined);
     setIndex(undefined, persist ? currentLocation : undefined);
     forceUpdate();
   }
@@ -920,20 +933,34 @@ export const LocationIndexContextProvider = ({
               indexAge > maxIndexAge.current)))
       ) {
         console.log('Start creating index for : ' + currentPath);
-        const newIndex = await createDirectoryIndexWrapper(
-          {
-            path: currentPath,
-            locationID: currentLocation.uuid,
-            ...(isCloudLocation && { bucketName: currentLocation.bucketName }),
-          },
-          currentLocation.fullTextIndex,
-          currentLocation.ignorePatternPaths,
-          enableWS,
-          undefined,
-          !!searchQuery.forceIndexing,
-        );
-        if (Array.isArray(newIndex) && newIndex.length > 0) {
-          setIndex(newIndex);
+        // Surface the indexing snackbar (with live progress + cancel)
+        // while the walker runs. Without this, search-triggered re-index
+        // on Electron + S3 walks silently because PageNotification gates
+        // on `isIndexing !== undefined`.
+        isIndexing.current = currentLocation.uuid;
+        forceUpdate();
+        try {
+          const newIndex = await createDirectoryIndexWrapper(
+            {
+              path: currentPath,
+              locationID: currentLocation.uuid,
+              ...(isCloudLocation && {
+                bucketName: currentLocation.bucketName,
+              }),
+            },
+            currentLocation.fullTextIndex,
+            currentLocation.ignorePatternPaths,
+            enableWS,
+            undefined,
+            !!searchQuery.forceIndexing,
+          );
+          if (Array.isArray(newIndex) && newIndex.length > 0) {
+            setIndex(newIndex);
+          }
+        } finally {
+          isIndexing.current = undefined;
+          setIndexingProgress(undefined);
+          forceUpdate();
         }
       }
       getSearchResults(index.current, searchQuery).then((results) => {
@@ -985,6 +1012,12 @@ export const LocationIndexContextProvider = ({
           searchQuery.forceIndexing)
       ) {
         console.log('Creating index for : ' + nextPath);
+        // Set per-location so the snackbar shows the currently-active
+        // name; the single global clear happens after the whole batch
+        // below (CONCURRENCY > 1 means a per-location clear would hide
+        // the snackbar while other walkers are still running).
+        isIndexing.current = location.uuid;
+        forceUpdate();
         directoryIndex = await createDirectoryIndexWrapper(
           {
             path: nextPath,
@@ -1042,6 +1075,11 @@ export const LocationIndexContextProvider = ({
       .catch((e) => {
         console.timeEnd('globalSearch');
         console.log('Global search failed!', e);
+      })
+      .finally(() => {
+        isIndexing.current = undefined;
+        setIndexingProgress(undefined);
+        forceUpdate();
       });
   }
 
@@ -1212,6 +1250,7 @@ export const LocationIndexContextProvider = ({
     indexLoadedOn: indexLoadedOn.current,
     indexExpired,
     isIndexing: isIndexing.current,
+    indexingProgress,
     cancelDirectoryIndexing,
     createLocationIndex,
     createLocationsIndexes,

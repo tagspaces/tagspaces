@@ -56,7 +56,8 @@ function PageNotification() {
     hideNotifications,
   } = useNotificationContext();
   const { findLocation } = useCurrentLocationContext();
-  const { isIndexing, cancelDirectoryIndexing } = useLocationIndexContext();
+  const { isIndexing, indexingProgress, cancelDirectoryIndexing } =
+    useLocationIndexContext();
   const updateAvailable = useSelector(isUpdateAvailable);
   const lastPublishedVersion = useSelector(getLastPublishedVersion);
 
@@ -121,7 +122,17 @@ function PageNotification() {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={isIndexing !== undefined}
         autoHideDuration={undefined}
-        message={t('indexing') + ': ' + findLocation(isIndexing)?.name}
+        message={
+          t('core:indexing') +
+          ': ' +
+          (findLocation(isIndexing)?.name ?? '') +
+          (indexingProgress
+            ? '  •  ' +
+              indexingProgress.count +
+              '  •  ' +
+              indexingProgress.folder
+            : '')
+        }
         action={[
           <TsButton
             key="cancelIndexButton"
