@@ -264,6 +264,9 @@ export const LocationIndexContextProvider = ({
   ): Promise<TS.FileSystemEntry[]> {
     if (!index.current || index.current.length < 1 || indexExpired()) {
       const location = findLocation(locationId);
+      if (!location) {
+        return index.current ?? [];
+      }
       const locationPath = await getLocationPath(location);
       const directoryIndex = await loadIndexFromDisk(
         locationPath,
@@ -275,11 +278,14 @@ export const LocationIndexContextProvider = ({
         // and re-enhance the file from disk every time.
         setIndex(directoryIndex);
         return directoryIndex;
-      } else {
+      } else if (!location.isReadOnly) {
+        // Read-only locations have no way to produce or persist a fresh
+        // index, so falling through to createLocationIndex only risks
+        // returning an empty/failed walker result. Prefer returning
+        // index.current (likely undefined) and let the caller handle it.
         await createLocationIndex(location);
       }
     }
-
     return index.current;
   }
 
@@ -1221,7 +1227,15 @@ export const LocationIndexContextProvider = ({
         .then((indexFile: TS.FileSystemEntry) => {
           if (indexFile) {
             const indexAge = new Date().getTime() - indexFile.lmdt;
-            if (loc.disableIndexing || indexAge < maxIndexAge.current) {
+            // Read-only locations can never refresh their on-disk index, so
+            // the disk copy is the best (and only) source — bypass the age
+            // check, otherwise a stale tsi.json forces a walker fallback
+            // that cannot persist and risks returning nothing.
+            if (
+              loc.isReadOnly ||
+              loc.disableIndexing ||
+              indexAge < maxIndexAge.current
+            ) {
               return loc
                 .loadTextFilePromise(folderIndexPath)
                 .then((jsonContent) => {
