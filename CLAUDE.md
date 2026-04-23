@@ -159,6 +159,15 @@ The app runs on multiple platforms and storage backends. When working with file/
 
 When comparing paths (e.g., `startsWith`, equality checks), normalize **both** sides with the same functions. A common bug pattern: applying `cleanFrontDirSeparator` (strips leading `/`) to one path but not the other, breaking the comparison on Mac/Linux where absolute paths start with `/`. Path utilities live in `@tagspaces/tagspaces-common/paths.js`.
 
+## Read-only Locations
+
+`CommonLocation.isReadOnly` gates all writes: index/fulltext files, sidecar meta, thumbnails, tag-in-filename renames, `.ts/tsm.json`. Write primitives (`saveTextFilePromise`, `saveBinaryFilePromise`, `renameFilePromise`) reject with `Error('read only Location')`, but callers often swallow that into a sentinel (`false` / `undefined` / `[]`).
+
+- **Classic bug**: caller does `setState(result)` without checking — the sentinel wipes previously good state. Null-check before assigning into shared refs (`index.current`, etc.); prefer `Array.isArray(x) && x.length > 0`.
+- **In-memory work is fine; serialization isn't**: follow the `createNotWorkerIndex` split — compute the fresh index, but wrap the persist call in `if (!loc.isReadOnly)`.
+- **Short-circuit automatic writes** when readonly + usable data already exists (see `searchLocationIndex` in `LocationIndexContextProvider.tsx`).
+- **Disable user-triggered write buttons** with `disabled={currentLocation?.isReadOnly}` and swap the tooltip to `t('core:readOnlyLocationIndexDisabled')`. Silent no-op on click is bad UX. Pattern: FolderViz/Calendar `MainToolbar.tsx`.
+
 ## Translations / i18n
 
 - English source: `src/renderer/locales/en/core.json`

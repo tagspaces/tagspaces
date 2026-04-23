@@ -629,8 +629,14 @@ export const LocationIndexContextProvider = ({
         extractLinks,
       )
         .then((directoryIndex) => {
-          if (isCurrentLocation) {
-            // Load index only if current location
+          // createDirectoryIndexWrapper returns `false` on error — guard
+          // against that sentinel wiping a previously good index (see
+          // readonly-location / slow-S3 failure paths).
+          if (
+            isCurrentLocation &&
+            Array.isArray(directoryIndex) &&
+            directoryIndex.length > 0
+          ) {
             setIndex(directoryIndex);
           }
           isIndexing.current = undefined;
@@ -897,12 +903,21 @@ export const LocationIndexContextProvider = ({
         ? currentTime - indexLoadedOn.current
         : 0;
 
+      // On readonly locations a usable existing index (in memory or on
+      // disk) is reused as-is — we cannot persist a fresh one anyway, and
+      // a walker error would wipe the good index via the `false` sentinel
+      // from createDirectoryIndexWrapper.
+      const hasUsableIndex = index.current && index.current.length > 0;
+      const skipReindexOnReadOnly =
+        currentLocation.isReadOnly && hasUsableIndex;
+
       if (
-        searchQuery.forceIndexing ||
-        (!currentLocation.disableIndexing &&
-          (!index.current ||
-            index.current.length < 1 ||
-            indexAge > maxIndexAge.current))
+        !skipReindexOnReadOnly &&
+        (searchQuery.forceIndexing ||
+          (!currentLocation.disableIndexing &&
+            (!index.current ||
+              index.current.length < 1 ||
+              indexAge > maxIndexAge.current)))
       ) {
         console.log('Start creating index for : ' + currentPath);
         const newIndex = await createDirectoryIndexWrapper(
@@ -917,7 +932,9 @@ export const LocationIndexContextProvider = ({
           undefined,
           !!searchQuery.forceIndexing,
         );
-        setIndex(newIndex);
+        if (Array.isArray(newIndex) && newIndex.length > 0) {
+          setIndex(newIndex);
+        }
       }
       getSearchResults(index.current, searchQuery).then((results) => {
         setSearchResults(results);

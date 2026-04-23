@@ -317,7 +317,7 @@ function HowToStart() {
                   >
                     {index === steps.length - 1
                       ? t('core:finish')
-                      : t('core:goforward')}
+                      : t('core:next')}
                   </TsButton>
                 </div>
               </Box>
