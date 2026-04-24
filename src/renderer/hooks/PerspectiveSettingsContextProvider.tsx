@@ -196,6 +196,14 @@ export const PerspectiveSettingsContextProvider = ({
     if (isDefaultSetting === undefined) {
       isDefaultSetting = !haveLocalSetting();
     }
+    // Read-only locations can't persist perspective settings — any write
+    // would surface as an "Error: read only Location" toast from
+    // saveFsEntryMeta's error handler. Keep the in-memory settings (already
+    // applied by setSettings) and skip the disk write.
+    const loc = findLocation();
+    if (loc?.isReadOnly) {
+      return;
+    }
     const { settingsKey, ...cleanSettings } = settings.current;
     if (Pro && !isDefaultSetting) {
       setPerspectiveSettings(
