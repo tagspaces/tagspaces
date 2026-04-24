@@ -60,8 +60,7 @@
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
-    "include": "resources/installer.nsh",
-    "license": "assets/license_en.txt"
+    "include": "resources/installer.nsh"
   },
   "mac": {
     "target": ["pkg", "dmg"],
@@ -75,7 +74,7 @@
     "sign": false
   },
   "pkg": {
-    "license": "assets/license_en.txt"
+    "license": "resources/license_en.txt"
   },
   "linux": {
     "target": [
@@ -100,7 +99,7 @@
     ]
   },
   "appImage": {
-    "license": "assets/license_en.txt"
+    "license": "resources/license_en.txt"
   },
 
   "directories": {

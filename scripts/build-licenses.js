@@ -1,11 +1,15 @@
-/* Normalize .txt license files for cross-installer compatibility.
+/* Generate / normalize installer license files.
  *
- * Why: electron-builder's NSIS target auto-picks `assets/license*.{txt,rtf}`
- * from buildResources and feeds it to Windows RichEdit, which truncates
- * UTF-8-with-BOM files and prefers CRLF line endings. We rewrite the source
- * .txt files in place (BOM stripped, CRLF line endings, lines >120 chars
- * soft-wrapped) so the auto-detected NSIS license renders fully. macOS pkg
- * and the AppImage license viewer are happy with the same normalized .txt.
+ * Community: read `LICENSE.txt` (root, source of truth), strip BOM, convert to
+ * CRLF, soft-wrap long lines, write the result to `resources/license_en.txt`.
+ * This copy is what macOS pkg and Linux AppImage point at. It lives *outside*
+ * electron-builder's buildResources (`assets/`) on purpose: any file matching
+ * `license_*.{txt,rtf,html}` inside buildResources is auto-picked by the NSIS
+ * target (plus gets a UTF-8 BOM re-injected), which we do not want.
+ *
+ * Pro: normalize `tagspacespro/EULA.txt` in place for pkg/AppImage. It already
+ * lives outside its own buildResources dir, so no relocation needed.
+ *
  * Runs from `prebuild`, so every packaging run produces clean output.
  */
 const fs = require('fs');
@@ -13,7 +17,12 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 
-const sources = ['assets/license_en.txt', 'tagspacespro/EULA.txt'];
+const jobs = [
+  // Generated copy: reads LICENSE.txt, writes resources/license_en.txt
+  { src: 'LICENSE.txt', dst: 'resources/license_en.txt' },
+  // In-place normalization for the Pro EULA
+  { src: 'tagspacespro/EULA.txt', dst: 'tagspacespro/EULA.txt' },
+];
 
 const MAX_LINE = 120;
 
@@ -38,19 +47,33 @@ function normalize(text) {
 }
 
 let processed = 0;
-for (const rel of sources) {
-  const abs = path.join(root, rel);
-  if (!fs.existsSync(abs)) {
-    console.log(`[build-licenses] skipping (missing): ${rel}`);
+for (const { src, dst } of jobs) {
+  const srcAbs = path.join(root, src);
+  const dstAbs = path.join(root, dst);
+  if (!fs.existsSync(srcAbs)) {
+    console.log(`[build-licenses] skipping (missing): ${src}`);
     continue;
   }
-  const raw = fs.readFileSync(abs, 'utf8');
+  const raw = fs.readFileSync(srcAbs, 'utf8');
   const normalized = normalize(raw);
-  if (normalized !== raw) {
-    fs.writeFileSync(abs, normalized, 'utf8');
-    console.log(`[build-licenses] normalized: ${rel}`);
+
+  if (srcAbs === dstAbs) {
+    if (normalized !== raw) {
+      fs.writeFileSync(dstAbs, normalized, 'utf8');
+      console.log(`[build-licenses] normalized: ${src}`);
+    } else {
+      console.log(`[build-licenses] already clean: ${src}`);
+    }
   } else {
-    console.log(`[build-licenses] already clean: ${rel}`);
+    const existing = fs.existsSync(dstAbs)
+      ? fs.readFileSync(dstAbs, 'utf8')
+      : null;
+    if (existing !== normalized) {
+      fs.writeFileSync(dstAbs, normalized, 'utf8');
+      console.log(`[build-licenses] ${src} -> ${dst}`);
+    } else {
+      console.log(`[build-licenses] already up-to-date: ${dst}`);
+    }
   }
   processed++;
 }
