@@ -15,20 +15,20 @@ const jobs = [
   { src: 'tagspacespro/EULA.txt', dst: 'tagspacespro/EULA.rtf' },
 ];
 
-function escapeRtf(text) {
+function escapeRtfLine(line) {
   let out = '';
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const code = text.charCodeAt(i);
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    const code = line.charCodeAt(i);
     if (ch === '\\') out += '\\\\';
     else if (ch === '{') out += '\\{';
     else if (ch === '}') out += '\\}';
-    else if (ch === '\n') out += '\\par ';
     else if (ch === '\t') out += '\\tab ';
-    else if (ch === '\r') continue;
     else if (code > 127) {
-      const signed = code > 0x7fff ? code - 0x10000 : code;
-      out += `\\u${signed}?`;
+      // NSIS ships older RichEdit; \'xx for Windows-1252 chars is safer than \uN?.
+      // Everything outside Latin-1 becomes "?" — license files are almost always ASCII anyway.
+      if (code <= 0xff) out += "\\'" + code.toString(16).padStart(2, '0');
+      else out += '?';
     } else out += ch;
   }
   return out;
@@ -37,12 +37,14 @@ function escapeRtf(text) {
 function txtToRtf(text) {
   if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
   text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = text.split('\n');
+  const body = lines.map((l) => escapeRtfLine(l) + '\\par').join('\n');
   return (
-    '{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033' +
-    '{\\fonttbl{\\f0\\fnil\\fcharset0 Segoe UI;}}\n' +
-    '\\viewkind4\\uc1\\pard\\f0\\fs20 ' +
-    escapeRtf(text) +
-    '\\par}\n'
+    '{\\rtf1\\ansi\\ansicpg1252\\deff0\n' +
+    '{\\fonttbl{\\f0\\fswiss\\fcharset0 Arial;}}\n' +
+    '\\pard\\f0\\fs20\n' +
+    body +
+    '\n}\n'
   );
 }
 
