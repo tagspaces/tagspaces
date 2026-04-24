@@ -34,6 +34,11 @@ import { prepareIndex, fuseOptions } from '@tagspaces/tagspaces-search';
 import Fuse from 'fuse.js';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
+import {
+  applyCreateToIndex,
+  applyDeleteToIndex,
+  applyUpdateToIndex,
+} from '-/utils/indexReflect';
 import useFirstRender from '-/utils/useFirstRender';
 import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
@@ -288,45 +293,22 @@ export const LocationIndexContextProvider = ({
     return index.current;
   }
 
+  // Thin wrappers over the pure transforms in utils/indexReflect (covered
+  // by tests/unit/indexReflect.test.js). `apply*` return null when nothing
+  // should change, so persisting the result is gated on a truthy next.
   function reflectDeleteEntry(path: string) {
-    if (!index.current || index.current.length < 1) {
-      return;
-    }
-    const nextIndex = index.current.filter((entry) => entry.path !== path);
-    if (nextIndex.length !== index.current.length) {
-      setIndex(nextIndex, currentLocation);
-    }
+    const next = applyDeleteToIndex(index.current, path);
+    if (next) setIndex(next, currentLocation);
   }
 
   function reflectCreateEntry(newEntry: TS.FileSystemEntry) {
-    if (!index.current || index.current.length < 1) {
-      return;
-    }
-    let entryFound = index.current.some(
-      (entry) => entry.path === newEntry.path,
-    );
-    if (!entryFound) {
-      setIndex([...index.current, newEntry], currentLocation);
-      //index.current.push(newEntry);
-    }
-    // else todo update index entry ?
+    const next = applyCreateToIndex(index.current, newEntry);
+    if (next) setIndex(next, currentLocation);
   }
 
   function reflectUpdateEntry(path: string, newEntry: TS.FileSystemEntry) {
-    if (!index.current || index.current.length < 1) {
-      return;
-    }
-    if (index.current.some((i) => i.path === path)) {
-      setIndex(
-        index.current.map((i) => {
-          if (i.path === path) {
-            return newEntry;
-          }
-          return i;
-        }),
-        currentLocation,
-      );
-    }
+    const next = applyUpdateToIndex(index.current, path, newEntry);
+    if (next) setIndex(next, currentLocation);
   }
 
   async function findLinks(
