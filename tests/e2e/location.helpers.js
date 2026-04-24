@@ -19,6 +19,7 @@ export async function createS3Location(
   locationName,
   isDefault = false,
   fullTextIndexing = false,
+  isReadOnly = false,
 ) {
   const lastLocationTID = await getPwLocationTid(-1);
   // Check if location not exist (from extconfig.js)
@@ -28,16 +29,31 @@ export async function createS3Location(
     await clickOn('[data-tid=locationTypeTID]');
     await clickOn('[data-tid=cloudLocationTID]');
 
-    await setInputValue('[data-tid=locationName] input', locationName || 'Test Location' + new Date().getTime(),); 
-    await setInputValue('[data-tid=locationPath] input', locationPath); 
+    await setInputValue('[data-tid=locationName] input', locationName || 'Test Location' + new Date().getTime(),);
+    await setInputValue('[data-tid=locationPath] input', locationPath);
     await setInputValue('[data-tid=accessKeyId] input', 'test');
-    await setInputValue('[data-tid=secretAccessKey] input', 'test'); 
-    await setInputValue('[data-tid=bucketName] input', 'supported-filestypes'); 
-    await setInputValue('[data-tid=endpointURL] input', 'http://localhost:4569'); 
+    await setInputValue('[data-tid=secretAccessKey] input', 'test');
+    await setInputValue('[data-tid=bucketName] input', 'supported-filestypes');
+    await setInputValue('[data-tid=endpointURL] input', 'http://localhost:4569');
 
-    if (isDefault) {
+    // Expand the Advanced accordion if either isDefault or isReadOnly
+    // needs it. (isDefault itself lives in the always-expanded first
+    // accordion — the original code still clicked Advanced here, so we
+    // preserve that behavior for existing callers.) changeReadOnlyMode
+    // is inside the Advanced accordion and MUI animates the expansion,
+    // so wait for its input to become visible before checking.
+    if (isDefault || isReadOnly) {
       await clickOn('[data-tid=switchAdvancedModeTID]');
-      await global.client.check('[data-tid=locationIsDefault] input');
+      if (isDefault) {
+        await global.client.check('[data-tid=locationIsDefault] input');
+      }
+      if (isReadOnly) {
+        await global.client.waitForSelector(
+          '[data-tid=changeReadOnlyMode] input',
+          { state: 'visible', timeout: 5000 },
+        );
+        await global.client.check('[data-tid=changeReadOnlyMode] input');
+      }
     }
     if (fullTextIndexing) {
       await global.client.check('[data-tid=changeFullTextIndex] input');
