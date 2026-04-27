@@ -23,7 +23,8 @@ import {
   getDefaultLocationId,
   getLocations,
 } from '-/reducers/locations';
-import { getPersistTagsInSidecarFile } from '-/reducers/settings';
+import { getPersistTagsInSidecarFile, isFirstRun } from '-/reducers/settings';
+import AppConfig from '-/AppConfig';
 import {
   getDevicePaths,
   instanceId,
@@ -145,6 +146,7 @@ export const CurrentLocationContextProvider = ({
 
   const locations: TS.Location[] = useSelector(getLocations);
   const defaultLocationId = useSelector(getDefaultLocationId);
+  const firstRun: boolean = useSelector(isFirstRun);
   const settingsPersistTagsInSidecarFile: boolean = useSelector(
     getPersistTagsInSidecarFile,
   );
@@ -214,10 +216,12 @@ export const CurrentLocationContextProvider = ({
   }
 
   useEffect(() => {
-    if (locations.length < 1) {
-      // init locations
+    if (firstRun && locations.length < 1) {
+      // Auto-bootstrap system folders only on first run, not whenever the
+      // user has emptied their location list. Otherwise deleting all
+      // locations and relaunching would silently re-add them.
       setDefaultLocations();
-    } else {
+    } else if (locations.length > 0) {
       // check if current location exist (or is removed)
       if (currentLocationId.current) {
         const locationExists = locations.some(
@@ -295,21 +299,41 @@ export const CurrentLocationContextProvider = ({
       // setDefaultLocations first time only
       initLocations.current = true;
       getDevicePaths()
-        .then((devicePaths) => {
-          if (devicePaths) {
-            Object.keys(devicePaths).forEach((key) => {
+        .then(async (devicePaths) => {
+          if (!devicePaths) return true;
+          const entries = Object.entries(devicePaths) as [string, string][];
+          // Filter out paths that don't actually exist on disk. On Linux,
+          // Electron's app.getPath('music'/'videos'/'pictures') returns the
+          // XDG-spec'd path even if the user never created the folder.
+          // Only filter on Electron — Capacitor/web paths are sandbox-managed.
+          const checked = await Promise.all(
+            entries.map(async ([key, p]) => {
+              if (!AppConfig.isElectron) return [key, p, true] as const;
+              try {
+                const exists = await window.electronIO.ipcRenderer.invoke(
+                  'isDirectory',
+                  p,
+                );
+                return [key, p, !!exists] as const;
+              } catch {
+                return [key, p, false] as const;
+              }
+            }),
+          );
+          checked
+            .filter(([, , exists]) => exists)
+            .forEach(([key, p]) => {
               const location = new CommonLocation({
                 uuid: getUuid(),
                 type: locationType.TYPE_LOCAL,
                 name: t(('core:' + key) as any) as string,
-                path: devicePaths[key] as string,
-                isDefault: false, // AppConfig.isWeb && devicePaths[key] === '/files/', // Used for the web ts demo
+                path: p,
+                isDefault: false, // AppConfig.isWeb && p === '/files/', // Used for the web ts demo
                 isReadOnly: false,
                 disableIndexing: false,
               });
               addLocation(location, false);
             });
-          }
           return true;
         })
         .catch((ex) => console.log('Error getDevicePaths:', ex));

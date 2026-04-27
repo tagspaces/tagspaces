@@ -16,16 +16,8 @@
  *
  */
 
-import React, {
-  createContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import LoadingLazy from '-/components/LoadingLazy';
-import { useSelector } from 'react-redux';
-import { isFirstRun } from '-/reducers/settings';
 import AppConfig from '-/AppConfig';
 
 type OnboardingDialogContextData = {
@@ -51,15 +43,15 @@ const OnboardingDialog = React.lazy(
 export const OnboardingDialogContextProvider = ({
   children,
 }: OnboardingDialogContextProviderProps) => {
-  const firstRun: boolean = useSelector(isFirstRun);
-  const open = useRef<boolean>(firstRun);
-
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  // Onboarding does not auto-open from state — it's chained from the
+  // license-accept handler (LicenseDialogContextProvider) via this context,
+  // and triggered manually via the help-menu IPC.
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.on('toggle-onboarding-dialog', () => {
-        openDialog();
+        setOpen(true);
       });
 
       return () => {
@@ -73,13 +65,11 @@ export const OnboardingDialogContextProvider = ({
   }, []);
 
   function openDialog() {
-    open.current = true;
-    forceUpdate();
+    setOpen(true);
   }
 
   function closeDialog() {
-    open.current = false;
-    forceUpdate();
+    setOpen(false);
   }
 
   function OnboardingDialogAsync(props) {
@@ -99,7 +89,7 @@ export const OnboardingDialogContextProvider = ({
 
   return (
     <OnboardingDialogContext.Provider value={context}>
-      <OnboardingDialogAsync open={open.current} onClose={closeDialog} />
+      <OnboardingDialogAsync open={open} onClose={closeDialog} />
       {children}
     </OnboardingDialogContext.Provider>
   );

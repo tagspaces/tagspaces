@@ -38,8 +38,14 @@ import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboard
 import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboardingDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
 import { Pro } from '-/pro';
-import { isDesktopMode } from '-/reducers/settings';
+import { AppDispatch } from '-/reducers/app';
+import {
+  actions as SettingsActions,
+  isDesktopMode,
+  isHowToStartHidden,
+} from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Box, ListItemText } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
@@ -49,7 +55,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { useTheme } from '@mui/material/styles';
 import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SidePanelTitle from './SidePanelTitle';
 
 interface Props {
@@ -61,6 +67,8 @@ function HelpFeedbackPanel(props: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const desktopMode = useSelector(isDesktopMode);
+  const howToStartHidden = useSelector(isHowToStartHidden);
+  const dispatch: AppDispatch = useDispatch();
   const { openAboutDialog } = useAboutDialogContext();
   const { openOnboardingDialog } = useOnboardingDialogContext();
   const { openKeyboardDialog } = useKeyboardDialogContext();
@@ -137,6 +145,19 @@ function HelpFeedbackPanel(props: Props) {
             <ListItemText>{t('core:onboardingWizard')}</ListItemText>
           </ListItemButton>
         </ListItem>
+        {howToStartHidden && (
+          <ListItem disablePadding>
+            <ListItemButton
+              data-tid="showHowToStartTID"
+              onClick={() => dispatch(SettingsActions.setHideHowToStart(false))}
+            >
+              <ListItemIcon>
+                <VisibilityIcon />
+              </ListItemIcon>
+              <ListItemText>{t('core:htsShowGuide')}</ListItemText>
+            </ListItemButton>
+          </ListItem>
+        )}
         <ListItem disablePadding>
           <ListItemButton
             onClick={() => openURLExternally(Links.links.webClipper, true)}

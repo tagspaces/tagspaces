@@ -54,10 +54,12 @@ const providers = [
   SettingsDialogContextProvider,
   NewFileDialogContextProvider,
   NewAudioDialogContextProvider,
+  // OnboardingDialogContextProvider must wrap LicenseDialogContextProvider
+  // so the license-accept handler can chain into openOnboardingDialog().
+  OnboardingDialogContextProvider,
   LicenseDialogContextProvider,
   ThirdPartyLibsDialogContextProvider,
   AboutDialogContextProvider,
-  OnboardingDialogContextProvider,
   KeyboardDialogContextProvider,
   LinkDialogContextProvider,
   ProTeaserDialogContextProvider,

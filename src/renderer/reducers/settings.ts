@@ -96,6 +96,9 @@ export const types = {
   SET_ENTRY_PROPERTIES_SPLIT_SIZE: 'SETTINGS/SET_ENTRY_PROPERTIES_SPLIT_SIZE',
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
+  SET_ONBOARDING_COMPLETED: 'SETTINGS/SET_ONBOARDING_COMPLETED',
+  SET_HIDE_HOWTOSTART: 'SETTINGS/SET_HIDE_HOWTOSTART',
+  SET_ONBOARDING_VERSION: 'SETTINGS/SET_ONBOARDING_VERSION',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
   EDIT_MAPTILE_SERVER: 'EDIT_MAPTILE_SERVER',
@@ -241,6 +244,15 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_FIRST_RUN: {
       return { ...state, firstRun: action.firstRun };
+    }
+    case types.SET_ONBOARDING_COMPLETED: {
+      return { ...state, onboardingCompleted: action.onboardingCompleted };
+    }
+    case types.SET_HIDE_HOWTOSTART: {
+      return { ...state, hideHowToStart: action.hideHowToStart };
+    }
+    case types.SET_ONBOARDING_VERSION: {
+      return { ...state, onboardingVersion: action.onboardingVersion };
     }
     case types.SET_LANGUAGE: {
       return { ...state, interfaceLanguage: action.language };
@@ -841,6 +853,18 @@ export const actions = {
     type: types.SET_FIRST_RUN,
     firstRun,
   }),
+  setOnboardingCompleted: (onboardingCompleted: boolean) => ({
+    type: types.SET_ONBOARDING_COMPLETED,
+    onboardingCompleted,
+  }),
+  setHideHowToStart: (hideHowToStart: boolean) => ({
+    type: types.SET_HIDE_HOWTOSTART,
+    hideHowToStart,
+  }),
+  setOnboardingVersion: (onboardingVersion: number) => ({
+    type: types.SET_ONBOARDING_VERSION,
+    onboardingVersion,
+  }),
   upgradeSettings: () => ({
     type: types.UPGRADE_SETTINGS,
   }),
@@ -1052,6 +1076,12 @@ export const isFirstRun = (state: any) => {
   }
   return AppConfig.ExtIsFirstRun;
 };
+export const isOnboardingCompleted = (state: any) =>
+  state.settings.onboardingCompleted === true;
+export const isHowToStartHidden = (state: any) =>
+  state.settings.hideHowToStart === true;
+export const getOnboardingVersion = (state: any) =>
+  state.settings.onboardingVersion || 0;
 
 const kbObject: any = {};
 function generateKeyBindingObject(keyBindings: Array<Object>) {
