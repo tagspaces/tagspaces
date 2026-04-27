@@ -63,6 +63,7 @@
   "locationExist": "Պանակն արդեն կա․ այն կփոխարինվի այս մեկով",
   "notImportedLocation": "Պանակը չի ներմուծվի",
   "createLocationPath": "Պանակի ուղին",
+  "chooseFolder": "Ընտրել պանակ",
   "createLocationName": "Պանակի անունը",
   "createLocationDefaultPerspective": "Լռելյայն ցուցադրաձև",
   "editLocationTitle": "Խմբագրել պանակը",

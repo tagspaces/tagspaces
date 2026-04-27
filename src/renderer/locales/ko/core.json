@@ -63,6 +63,7 @@
   "locationExist": "위치가 이미 존재하기 때문에 이 위치로 대체됩니다.",
   "notImportedLocation": "위치를 가져올 수 없습니다.",
   "createLocationPath": "위치 경로",
+  "chooseFolder": "폴더 선택",
   "createLocationName": "위치 이름",
   "createLocationDefaultPerspective": "기본 보기",
   "editLocationTitle": "위치 수정",

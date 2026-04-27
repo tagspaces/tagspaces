@@ -63,6 +63,7 @@
   "locationExist": "路径已经存在,它将会被替换为这个位置",
   "notImportedLocation": "路径不会被导入",
   "createLocationPath": "位置路径",
+  "chooseFolder": "選擇資料夾",
   "createLocationName": "位置名称",
   "createLocationDefaultPerspective": "默认视图",
   "editLocationTitle": "编辑位置",

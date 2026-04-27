@@ -17,8 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { FolderIcon } from '-/components/CommonIcons';
-import TsIconButton from '-/components/TsIconButton';
+import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { selectDirectoryDialog } from '-/services/utils-io';
@@ -82,9 +81,14 @@ function LocalForm(props: Props) {
                 autoCapitalize: 'none',
                 endAdornment: (
                   <InputAdornment position="end" sx={{ height: '32px' }}>
-                    <TsIconButton onClick={openDirectory}>
-                      <FolderIcon />
-                    </TsIconButton>
+                    <TsButton
+                      size="small"
+                      data-tid="openDirectoryTID"
+                      onClick={openDirectory}
+                      variant="contained"
+                    >
+                      {t('core:chooseFolder')}
+                    </TsButton>
                   </InputAdornment>
                 ),
               },

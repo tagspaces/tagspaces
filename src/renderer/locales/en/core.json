@@ -63,6 +63,7 @@
   "locationExist": "Location already exist, it will be replaced with this one",
   "notImportedLocation": "Location will not be imported",
   "createLocationPath": "Location Path",
+  "chooseFolder": "Choose folder",
   "createLocationName": "Location Name",
   "createLocationDefaultPerspective": "Default Perspective",
   "editLocationTitle": "Edit Location",

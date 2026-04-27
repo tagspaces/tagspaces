@@ -63,6 +63,7 @@
   "locationExist": "Miesto už existuje, bude nahradené týmto",
   "notImportedLocation": "Miesto nebude importované",
   "createLocationPath": "Cesta k miestu",
+  "chooseFolder": "Vybrať priečinok",
   "createLocationName": "Názov miesta",
   "createLocationDefaultPerspective": "Predvolený pohľad",
   "editLocationTitle": "Upraviť miesto",

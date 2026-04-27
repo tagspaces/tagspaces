@@ -63,6 +63,7 @@
   "locationExist": "Местоположението вече съществува, ще бъде заменено с това",
   "notImportedLocation": "Местоположението няма да бъде импортирано",
   "createLocationPath": "Път до местонахождението",
+  "chooseFolder": "Избери папка",
   "createLocationName": "Име на местонахождението",
   "createLocationDefaultPerspective": "Стандартна перспектива",
   "editLocationTitle": "Редактиране на местонахождението",

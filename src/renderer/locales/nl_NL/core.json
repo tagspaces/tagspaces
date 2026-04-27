@@ -63,6 +63,7 @@
   "locationExist": "Locatie bestaat al, het zal vervangen worden met deze",
   "notImportedLocation": "Locatie zal niet geimporteerd worden",
   "createLocationPath": "Locatiepad",
+  "chooseFolder": "Map kiezen",
   "createLocationName": "Locatienaam",
   "createLocationDefaultPerspective": "Standaard perspectief",
   "editLocationTitle": "Locatie bewerken",

@@ -32,21 +32,17 @@ import {
   getDefaultRegularTheme,
 } from '-/reducers/settings';
 import { darkThemes, lightThemes } from '-/utils/Themes';
-import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import FolderIcon from '@mui/icons-material/Folder';
-import RemoveIcon from '@mui/icons-material/Remove';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -430,29 +426,30 @@ function OnboardingDialog(props: Props) {
                           key={row.key}
                           secondaryAction={
                             row.connectedUuid ? (
-                              <Tooltip title={t('core:removeLocation')}>
-                                <IconButton
-                                  edge="end"
-                                  size="small"
-                                  aria-label={t('core:removeLocation')}
-                                  onClick={() =>
-                                    deleteLocation(row.connectedUuid as string)
+                              <TsButton
+                                size="small"
+                                variant="text"
+                                color="error"
+                                data-tid={'onboardingRemoveLoc_' + row.key}
+                                onClick={() => {
+                                  // Re-check at click time in case the row's
+                                  // state changed between render and click.
+                                  if (row.connectedUuid) {
+                                    deleteLocation(row.connectedUuid);
                                   }
-                                >
-                                  <RemoveIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
+                                }}
+                              >
+                                {t('core:removeLocation')}
+                              </TsButton>
                             ) : (
-                              <Tooltip title={t('core:addAsLocation')}>
-                                <IconButton
-                                  edge="end"
-                                  size="small"
-                                  aria-label={t('core:addAsLocation')}
-                                  onClick={() => addSuggested(row)}
-                                >
-                                  <AddIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
+                              <TsButton
+                                size="small"
+                                variant="text"
+                                data-tid={'onboardingAddLoc_' + row.key}
+                                onClick={() => addSuggested(row)}
+                              >
+                                {t('core:addAsLocation')}
+                              </TsButton>
                             )
                           }
                           sx={{

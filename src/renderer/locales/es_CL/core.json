@@ -63,6 +63,7 @@
   "locationExist": "La ubicación ya existe, este será reemplazada por la otra",
   "notImportedLocation": "La ubicación no será importada",
   "createLocationPath": "Ruta del lugar",
+  "chooseFolder": "Elige carpeta",
   "createLocationName": "Nombre del lugar",
   "createLocationDefaultPerspective": "Perspectiva predeterminada",
   "editLocationTitle": "Editar lugar",

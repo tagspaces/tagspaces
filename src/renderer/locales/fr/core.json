@@ -63,6 +63,7 @@
   "locationExist": "L'emplacement exist déjà, il sera remplacé par celui-ci",
   "notImportedLocation": "L'emplacement ne sera pas importé",
   "createLocationPath": "Chemin de l'emplacement",
+  "chooseFolder": "Choisir un dossier",
   "createLocationName": "Nom de l'emplacement",
   "createLocationDefaultPerspective": "Vue par défaut",
   "editLocationTitle": "Paramètres de l'emplacement",

@@ -63,6 +63,7 @@
   "locationExist": "Vị trí đã tồn tại, nó sẽ được thay thế bằng vị trí này",
   "notImportedLocation": "Vị trí sẽ không được nhập",
   "createLocationPath": "Đường Dẫn Vị Trí",
+  "chooseFolder": "Chọn thư mục",
   "createLocationName": "Tên Vị Trí",
   "createLocationDefaultPerspective": "Bố Cục Mặc Định",
   "editLocationTitle": "Chỉnh Sửa Vị Trí",

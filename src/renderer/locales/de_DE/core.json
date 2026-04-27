@@ -63,6 +63,7 @@
   "locationExist": "Speicherort bereits vorhanden, es wieder mit diesem ersetzt.",
   "notImportedLocation": "Speicherort wird nicht importiert",
   "createLocationPath": "Pfad zum aktuellen Speicherort",
+  "chooseFolder": "Verzeichnis wählen",
   "createLocationName": "Speicherort Name",
   "createLocationDefaultPerspective": "Standard Ansicht",
   "editLocationTitle": "Speicherort bearbeiten",

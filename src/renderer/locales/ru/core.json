@@ -63,6 +63,7 @@
   "locationExist": "Каталог уже существует, он будет заменён этим",
   "notImportedLocation": "Каталог не будет импортирован",
   "createLocationPath": "Путь к каталогу",
+  "chooseFolder": "Выбрать папку",
   "createLocationName": "Имя каталога",
   "createLocationDefaultPerspective": "Стандартный вид",
   "editLocationTitle": "Внести изменения в каталог",

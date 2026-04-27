@@ -63,6 +63,7 @@
   "locationExist": "ロケーションが既に存在しています。新しく置き換えられます。",
   "notImportedLocation": "ロケーションがインポートされません。",
   "createLocationPath": "ロケーションパス",
+  "chooseFolder": "フォルダーを選択",
   "createLocationName": "ロケーション名",
   "createLocationDefaultPerspective": "既定の表示モード",
   "editLocationTitle": "ロケーションの編集",

@@ -63,6 +63,7 @@
   "locationExist": "A hely már létezik, ez került használatra",
   "notImportedLocation": "A hely nem lesz importálva",
   "createLocationPath": "Hely elérése",
+  "chooseFolder": "Mappa kiválasztása",
   "createLocationName": "Hely neve",
   "createLocationDefaultPerspective": "Alapértelmezett perspektíva",
   "editLocationTitle": "Hely szerkesztése",

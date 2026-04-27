@@ -63,6 +63,7 @@
   "locationExist": "O local já existe e será substituído por este",
   "notImportedLocation": "O local não será importado",
   "createLocationPath": "Caminho do Local",
+  "chooseFolder": "Escolher pasta",
   "createLocationName": "Nome do Local",
   "createLocationDefaultPerspective": "Perspectiva Padrão",
   "editLocationTitle": "Editar Local",

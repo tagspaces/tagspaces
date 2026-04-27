@@ -63,6 +63,7 @@
   "locationExist": "Lokasi sudah ada, akan digantikan dengan yang ini",
   "notImportedLocation": "Lokasi tidak akan diimpor",
   "createLocationPath": "Jalur Lokasi",
+  "chooseFolder": "Pilih folder",
   "createLocationName": "Nama Lokasi",
   "createLocationDefaultPerspective": "Perspektif Default",
   "editLocationTitle": "Edit Lokasi",

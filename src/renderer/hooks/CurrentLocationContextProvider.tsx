@@ -216,6 +216,14 @@ export const CurrentLocationContextProvider = ({
   }
 
   useEffect(() => {
+    // Always keep allLocations.current in sync with Redux locations,
+    // including when the array transitions to empty. Previously this
+    // assignment lived only in the `else` branch, so deleting the last
+    // location left the context exposing a stale (deleted) entry —
+    // which broke any consumer reading `locations` from the context
+    // (e.g. the onboarding dialog's slide-5 finish CTA).
+    allLocations.current = locations.map((l) => new CommonLocation(l));
+
     if (firstRun && locations.length < 1) {
       // Auto-bootstrap system folders only on first run, not whenever the
       // user has emptied their location list. Otherwise deleting all
@@ -231,9 +239,11 @@ export const CurrentLocationContextProvider = ({
           setCurrentLocation(undefined);
         }
       }
-      allLocations.current = locations.map((l) => new CommonLocation(l));
-      forceUpdate();
+    } else if (currentLocationId.current) {
+      // All locations were just removed — clear current selection.
+      setCurrentLocation(undefined);
     }
+    forceUpdate();
   }, [locations]);
 
   // Open default location if configured

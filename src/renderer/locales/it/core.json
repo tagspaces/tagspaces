@@ -63,6 +63,7 @@
   "locationExist": "Il percorso esiste già, verrà sostituito con questo",
   "notImportedLocation": "Il percorso non verrà importato",
   "createLocationPath": "Percorso",
+  "chooseFolder": "Scegli cartella",
   "createLocationName": "Nome percorso",
   "createLocationDefaultPerspective": "Prospettiva predefinita",
   "editLocationTitle": "Modifica percorso",

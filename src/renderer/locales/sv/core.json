@@ -63,6 +63,7 @@
   "locationExist": "Platsen finns redan och kommer att ersättas",
   "notImportedLocation": "Platsen kommer inte att importeras",
   "createLocationPath": "Platsens sökväg",
+  "chooseFolder": "Välj mapp",
   "createLocationName": "Platsens namn",
   "createLocationDefaultPerspective": "Standardvy",
   "editLocationTitle": "Redigera plats",

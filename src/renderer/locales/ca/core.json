@@ -63,6 +63,7 @@
   "locationExist": "La ubicació ja existeix, se substituirà per aquesta",
   "notImportedLocation": "La ubicació no s'importarà",
   "createLocationPath": "Camí de la ubicació",
+  "chooseFolder": "Tria la carpeta",
   "createLocationName": "Nom de la ubicació",
   "createLocationDefaultPerspective": "Perspectiva per defecte",
   "editLocationTitle": "Edita ubicació",

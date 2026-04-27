@@ -63,6 +63,7 @@
   "locationExist": "Місце вже існує, воно буде замінено на це",
   "notImportedLocation": "Місце не буде імпортовано",
   "createLocationPath": "Шлях до місця",
+  "chooseFolder": "Вибрати папку",
   "createLocationName": "Назва місця",
   "createLocationDefaultPerspective": "Перспектива за замовчуванням",
   "editLocationTitle": "Редагувати місце",

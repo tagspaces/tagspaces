@@ -63,6 +63,7 @@
   "locationExist": "המיקום כבר קיים, הוא יוחלף בזה החדש",
   "notImportedLocation": "המיקום לא ייובא",
   "createLocationPath": "נתיב מיקום",
+  "chooseFolder": "בחר תיקיה",
   "createLocationName": "שם מיקום",
   "createLocationDefaultPerspective": "תצוגה ברירת מחדל",
   "editLocationTitle": "ערוך מיקום",

@@ -63,6 +63,7 @@
   "locationExist": "Lokasjonen eksisterer allerede, den vil bli erstattet av denne",
   "notImportedLocation": "Lokasjonen vil ikke bli importert",
   "createLocationPath": "Lokasjonsplassering",
+  "chooseFolder": "Velg mappe",
   "createLocationName": "Lokasjonsnavn",
   "createLocationDefaultPerspective": "Standardperspektiv",
   "editLocationTitle": "Endre lokasjon",

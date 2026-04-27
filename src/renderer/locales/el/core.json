@@ -63,6 +63,7 @@
   "locationExist": "Η τοποθεσία υπάρχει ήδη, θα αντικατασταθεί με αυτή",
   "notImportedLocation": "Η τοποθεσία δεν θα εισαχθεί",
   "createLocationPath": "Διαδρομή Τοποθεσίας",
+  "chooseFolder": "Επιλογή φακέλου",
   "createLocationName": "Όνομα Τοποθεσίας",
   "createLocationDefaultPerspective": "Προεπιλογή προοπτικής",
   "editLocationTitle": "Επεξεργασία Τοποθεσίας",

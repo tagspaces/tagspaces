@@ -63,6 +63,7 @@
   "locationExist": "Konum zaten mevcut, bu konum ile değiştirilecek",
   "notImportedLocation": "Konum içe aktarılmayacak",
   "createLocationPath": "Konum Yolu",
+  "chooseFolder": "Klasör seç",
   "createLocationName": "Konum Adı",
   "createLocationDefaultPerspective": "Öntanımlı Perspektif",
   "editLocationTitle": "Konumu Düzenle",

@@ -63,6 +63,7 @@
   "locationExist": "Umístění již existuje, bude nahrazeno tímto",
   "notImportedLocation": "Umístění nebude importováno",
   "createLocationPath": "Cesta k umístění",
+  "chooseFolder": "Vybrat složku",
   "createLocationName": "Název umístění",
   "createLocationDefaultPerspective": "Výchozí perspektiva",
   "editLocationTitle": "Změnit umístění",
