@@ -16,6 +16,7 @@
  *
  */
 
+import TagsPoster from '-/assets/images/abacus.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import NewLook from '-/assets/images/desktop.svg';
 import LocationConcept from '-/assets/images/organize.svg';
@@ -523,6 +524,7 @@ function OnboardingDialog(props: Props) {
                     muted
                     playsInline
                     preload="auto"
+                    poster={TagsPoster}
                     aria-hidden="true"
                     style={{
                       maxHeight: 250,
@@ -648,7 +650,11 @@ function OnboardingDialog(props: Props) {
       <DialogActions
         sx={{
           paddingX: 2,
-          paddingY: 1,
+          paddingTop: 1,
+          // env(safe-area-inset-bottom) accounts for the iPhone home
+          // indicator on fullScreen dialogs; the max() keeps a normal
+          // 8px gap on devices/browsers without a safe-area inset.
+          paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
           borderTop: '1px solid',
           borderColor: 'divider',
           gap: 1,
