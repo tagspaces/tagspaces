@@ -82,7 +82,7 @@ const configuration: webpack.Configuration = {
       },
       // Images
       {
-        test: /\.(png|jpg|jpeg|gif|avif)$/i,
+        test: /\.(png|jpg|jpeg|gif|avif|mp4|webm)$/i,
         type: 'asset/resource',
       },
       // Text files

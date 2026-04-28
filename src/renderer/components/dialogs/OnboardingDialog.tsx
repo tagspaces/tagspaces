@@ -16,10 +16,10 @@
  *
  */
 
-import TagIcon from '-/assets/images/abacus.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import NewLook from '-/assets/images/desktop.svg';
 import LocationConcept from '-/assets/images/organize.svg';
+import TagsDemoVideo from '-/assets/videos/tags-demo.webm';
 import TsButton from '-/components/TsButton';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
@@ -31,6 +31,8 @@ import {
   getDefaultDarkTheme,
   getDefaultRegularTheme,
 } from '-/reducers/settings';
+import { getDevicePaths } from '-/services/utils-io';
+import { CommonLocation } from '-/utils/CommonLocation';
 import { darkThemes, lightThemes } from '-/utils/Themes';
 import CheckIcon from '@mui/icons-material/Check';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -53,8 +55,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { CommonLocation } from '-/utils/CommonLocation';
-import { getDevicePaths } from '-/services/utils-io';
 
 interface Props {
   open: boolean;
@@ -485,16 +485,29 @@ function OnboardingDialog(props: Props) {
                 <Typography variant="h5" sx={{ marginBottom: '12px' }}>
                   {t('core:obSlide3Title')}
                 </Typography>
-                <img
-                  style={{
-                    maxHeight: 200,
-                    margin: 'auto',
-                    display: 'block',
-                    paddingBottom: 16,
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    paddingBottom: '16px',
                   }}
-                  src={TagIcon}
-                  alt=""
-                />
+                >
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    aria-hidden="true"
+                    style={{
+                      maxHeight: 250,
+                      maxWidth: '100%',
+                      borderRadius: 8,
+                      display: 'block',
+                    }}
+                  >
+                    <source src={TagsDemoVideo} type="video/webm" />
+                  </video>
+                </Box>
                 <Typography variant="body1">
                   {t('core:obSlide3Body')}
                 </Typography>
