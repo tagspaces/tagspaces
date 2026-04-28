@@ -168,6 +168,7 @@ function OnboardingDialog(props: Props) {
   const { t } = useTranslation();
   const { open, onClose } = props;
   const swiperRef = useRef(null);
+  const tagsVideoRef = useRef<HTMLVideoElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [devicePaths, setDevicePaths] = useState<Record<string, string>>({});
   const currentTheme = useSelector(getCurrentTheme);
@@ -196,6 +197,29 @@ function OnboardingDialog(props: Props) {
       cancelled = true;
     };
   }, [open]);
+
+  // Drive the tags-demo video play/pause based on slide visibility.
+  // Swiper hides non-active slides, so Chromium's autoplay policy may have
+  // declined the initial autoplay (offscreen/hidden video, plus React's
+  // `muted` prop sometimes lands on the DOM property after autoplay is
+  // evaluated). When slide 3 (index 2) becomes active we force `muted`
+  // imperatively and explicitly call play(); we pause when leaving so
+  // the loop doesn't keep running in the background.
+  useEffect(() => {
+    const video = tagsVideoRef.current;
+    if (!video) return;
+    if (open && activeIndex === 2) {
+      video.muted = true;
+      const result = video.play();
+      if (result && typeof result.catch === 'function') {
+        result.catch(() => {
+          /* autoplay still declined — ignore, leave the static frame */
+        });
+      }
+    } else {
+      video.pause();
+    }
+  }, [open, activeIndex]);
 
   // Apply a theme by clicking a tile on slide 4. Switches the light/dark
   // mode and the corresponding regular/dark theme key in one go, so the
@@ -493,10 +517,12 @@ function OnboardingDialog(props: Props) {
                   }}
                 >
                   <video
+                    ref={tagsVideoRef}
                     autoPlay
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     aria-hidden="true"
                     style={{
                       maxHeight: 250,
