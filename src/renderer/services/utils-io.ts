@@ -722,6 +722,13 @@ export function openUrl(url: string): void {
   }
 }
 
+export function sanitizeAttribution(html: string | undefined): string {
+  return DOMPurify.sanitize(html ?? '', {
+    ALLOWED_TAGS: ['a', 'b', 'i', 'em', 'strong', 'span'],
+    ALLOWED_ATTR: ['href', 'title', 'target', 'rel'],
+  });
+}
+
 export function openURLExternally(url: string, skipConfirmation = false) {
   if (skipConfirmation) {
     openUrl(url);
