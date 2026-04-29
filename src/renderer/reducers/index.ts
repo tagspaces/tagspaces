@@ -163,15 +163,58 @@ const extConfigPath = AppConfig.isWeb
   ? 'extconfig.json'
   : '../../../../extconfig.json';
 
+// Sanity ceiling for the config file. The repo's own extconfig.json is
+// only a few KB, but deployers may inline larger assets — most commonly
+// a base64 data: URL for ExtLogoURL — which can push the file into the
+// hundreds of KB or low MB range. 5 MB leaves comfortable headroom for
+// a custom logo while still bailing well before loadJSONString's 50 MB
+// hard cap, so a runaway payload (corrupted install, dev-server
+// misconfiguration) doesn't make it into JSON.parse.
+const EXTCONFIG_MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+
 const xhr = new XMLHttpRequest();
 xhr.open('GET', extConfigPath, false); // false = synchronous
 try {
   xhr.send(); // Will pause execution here until it finishes or fails
   // Status 200 is for HTTP servers, Status 0 is for local file:// protocol
   if ((xhr.status === 200 || xhr.status === 0) && xhr.responseText) {
-    const jsonConfig = loadJSONString(xhr.responseText);
-    console.log('Loaded extconfig.json:', jsonConfig);
-    configureApp(jsonConfig);
+    // Content-Type guard — only accept what the server claims is JSON.
+    // file:// responses (status 0) typically don't set a Content-Type;
+    // empty header is tolerated. We only reject when something explicit
+    // and non-JSON came back (e.g. a dev-server fallback HTML page or a
+    // CDN error page with a 200).
+    const contentType = (
+      xhr.getResponseHeader('Content-Type') || ''
+    ).toLowerCase();
+    if (contentType && !contentType.startsWith('application/json')) {
+      console.warn(
+        `extconfig.json had unexpected Content-Type ${contentType} — ignored.`,
+      );
+    } else if (xhr.responseText.length > EXTCONFIG_MAX_SIZE) {
+      console.warn(
+        `extconfig.json exceeded ${EXTCONFIG_MAX_SIZE} bytes — ignored.`,
+      );
+    } else {
+      const jsonConfig = loadJSONString(xhr.responseText);
+      // Shape guard — loadJSONString returns undefined on malformed
+      // input and may parse legitimate-looking JSON that isn't a plain
+      // object (array, primitive). configureApp expects a record-like
+      // object.
+      if (
+        jsonConfig &&
+        typeof jsonConfig === 'object' &&
+        !Array.isArray(jsonConfig)
+      ) {
+        // Log keys only — never the values. extconfig.json may contain
+        // secrets (ExtAI[].apiKey, ExtLocations[].secretAccessKey, etc.)
+        // and dumping the full object to the console exposes them in
+        // DevTools, screenshots, and shared bug-report transcripts.
+        console.log('extconfig.json loaded — keys:', Object.keys(jsonConfig));
+        configureApp(jsonConfig);
+      } else {
+        console.warn('extconfig.json had unexpected shape — ignored.');
+      }
+    }
   } else {
     // Handled case: File exists but returned 404, 403, etc.
     console.warn(`extconfig.json returned status ${xhr.status}.`);
@@ -200,6 +243,18 @@ const rootPersistConfig: PersistConfig = {
   blacklist,
   debug: false,
 };
+
+// Freeze externally-pinned slices so accidental mutations (e.g. a
+// reducer or component pushing into the array) throw in strict mode
+// instead of silently corrupting the deployer-locked config. The
+// constant-returning reducers below stop normal action-driven mutation
+// — freezing makes that contract explicit.
+if (externalLocations && Array.isArray(externalLocations)) {
+  Object.freeze(externalLocations);
+}
+if (externalSearches && Array.isArray(externalSearches)) {
+  Object.freeze(externalSearches);
+}
 
 const rootReducer = persistCombineReducers(rootPersistConfig, {
   settings,
