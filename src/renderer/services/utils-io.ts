@@ -378,10 +378,18 @@ export function loadFileContentPromise(
   });
 }
 
-export function getLastVersionPromise(): Promise<string> {
+export function getLastVersionPromise(signal?: AbortSignal): Promise<string> {
   return new Promise((resolve, reject) => {
     console.log('Checking for new version...');
-    const xhr = new XMLHttpRequest();
+    // Allow the caller to abort the request — if the dialog/component
+    // unmounts before the server responds, the xhr can be aborted instead
+    // of leaking through closure refs. Pre-aborted signals reject right
+    // away.
+    if (signal?.aborted) {
+      reject(new DOMException('Aborted', 'AbortError'));
+      return;
+    }
+
     let versionFile = 'tagspaces.json';
     const proText = Pro ? 'pro-' : '';
     if (AppConfig.isWeb) {
@@ -400,16 +408,89 @@ export function getLastVersionPromise(): Promise<string> {
       versionFile +
       '?cv=' +
       versionMeta.version;
+
+    // HTTPS enforcement — refuse to fetch update metadata over plain HTTP.
+    // The version string is read into trusted code paths (semver compare,
+    // user-visible "X is available" prompt), so a MITM-injected response
+    // is the wrong thing to silently downgrade to.
+    if (!updateUrl.startsWith('https://')) {
+      reject(new Error('Update URL must use https:// — refusing to fetch'));
+      return;
+    }
+
+    const xhr = new XMLHttpRequest();
     xhr.open('GET', updateUrl, true);
     xhr.responseType = 'text';
-    xhr.onerror = reject;
+    // 10s ceiling so a hung server (slow DNS, captive portal silently
+    // dropping packets) doesn't leave the promise dangling forever and
+    // block consumers like initApp's checkForUpdate dispatch.
+    xhr.timeout = 10000;
+
+    const onAbort = () => {
+      try {
+        xhr.abort();
+      } catch {
+        /* xhr already done */
+      }
+      reject(new DOMException('Aborted', 'AbortError'));
+    };
+    signal?.addEventListener('abort', onAbort, { once: true });
+    const cleanup = () => {
+      signal?.removeEventListener('abort', onAbort);
+    };
+
+    xhr.onerror = () => {
+      cleanup();
+      reject(new Error('Network error while checking for new version'));
+    };
+    xhr.ontimeout = () => {
+      cleanup();
+      reject(new Error('Timeout while checking for new version'));
+    };
     xhr.onload = () => {
-      const data = xhr.response || xhr.responseText;
-      const versioningData = loadJSONString(data);
-      if (versioningData.appVersion && versioningData.appVersion.length > 0) {
-        resolve(versioningData.appVersion);
-      } else {
-        reject('Could not validate update data');
+      cleanup();
+      // Non-2xx responses (404, 500, captive-portal HTML, …) reach onload
+      // too — bail explicitly so we don't try to JSON-parse arbitrary
+      // payloads and silently throw out of the callback.
+      if (xhr.status < 200 || xhr.status >= 300) {
+        reject(
+          new Error(
+            `HTTP ${xhr.status}${xhr.statusText ? ' ' + xhr.statusText : ''}`,
+          ),
+        );
+        return;
+      }
+      // Content-Type guard — only accept what the update server claims is
+      // JSON. Captive portals, error pages from CDNs, and CORS preflight
+      // misconfigurations often return text/html with a 200; without this
+      // check we'd JSON-parse arbitrary HTML. Header value may include
+      // charset suffix (e.g. "application/json; charset=utf-8"), so use
+      // a prefix match.
+      const contentType = (
+        xhr.getResponseHeader('Content-Type') || ''
+      ).toLowerCase();
+      if (contentType && !contentType.startsWith('application/json')) {
+        reject(
+          new Error(
+            `Unexpected Content-Type for update metadata: ${contentType}`,
+          ),
+        );
+        return;
+      }
+      try {
+        const data = xhr.responseText;
+        const versioningData = loadJSONString(data);
+        if (
+          versioningData &&
+          versioningData.appVersion &&
+          versioningData.appVersion.length > 0
+        ) {
+          resolve(versioningData.appVersion);
+        } else {
+          reject(new Error('Could not validate update data'));
+        }
+      } catch (err) {
+        reject(err instanceof Error ? err : new Error(String(err)));
       }
     };
     xhr.send();
