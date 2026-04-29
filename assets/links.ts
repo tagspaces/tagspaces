@@ -81,6 +81,7 @@ const Links = {
     taglibrary: 'https://docs.tagspaces.org/ui/taglibrary' + urlParams,
     search: 'https://docs.tagspaces.org/search' + urlParams,
     settings: 'https://docs.tagspaces.org/ui/settings' + urlParams,
+    mapTiles: 'https://docs.tagspaces.org/maptiles' + urlParams,
     sharing: 'https://docs.tagspaces.org/sharing' + urlParams,
     creatingFiles: 'https://docs.tagspaces.org/creating-files' + urlParams,
   },

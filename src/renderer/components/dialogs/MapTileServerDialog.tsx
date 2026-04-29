@@ -17,28 +17,41 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { HelpIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
+import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
+import { openUrl } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useValidation from '-/utils/useValidation';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useRef } from 'react';
+import Links from 'assets/links';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
+
+const OSM_TILE_SERVER = {
+  name: 'OpenStreetMap',
+  serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
+  serverInfo:
+    '<b>Leaflet</b> | Map data: &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+};
+const OSM_PRIVACY_URL = 'https://osmfoundation.org/wiki/Privacy_Policy';
 
 interface Props {
   open: boolean;
@@ -58,6 +71,17 @@ function MapTileServerDialog(props: Props) {
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const { open, onClose } = props;
   const { setError, haveError } = useValidation();
+  const [osmConfirmOpen, setOsmConfirmOpen] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+
+  const applyOsmDefaults = () => {
+    name.current = OSM_TILE_SERVER.name;
+    serverURL.current = OSM_TILE_SERVER.serverURL;
+    serverInfo.current = OSM_TILE_SERVER.serverInfo;
+    setError('name', false);
+    setFormKey((k) => k + 1);
+    setOsmConfirmOpen(false);
+  };
 
   const validateForm = () => {
     if (!name.current) {
@@ -101,8 +125,20 @@ function MapTileServerDialog(props: Props) {
 
   const renderContent = () => (
     <DialogContent>
+      {!props.tileServer.uuid && (
+        <Stack sx={{ marginBottom: '8px' }}>
+          <TsButton
+            variant="outlined"
+            data-tid="useOpenStreetMapTID"
+            onClick={() => setOsmConfirmOpen(true)}
+          >
+            {t('core:tileServerUseOpenStreetMap')}
+          </TsButton>
+        </Stack>
+      )}
       <FormControl fullWidth={true} error={haveError('name')}>
         <TsTextField
+          key={'name-' + formKey}
           error={haveError('name')}
           autoFocus
           name="name"
@@ -119,6 +155,7 @@ function MapTileServerDialog(props: Props) {
       </FormControl>
       <FormControl fullWidth={true}>
         <TsTextField
+          key={'url-' + formKey}
           name="serverURL"
           label={t('core:tileServerUrlTitle')}
           onChange={(event) => {
@@ -129,14 +166,10 @@ function MapTileServerDialog(props: Props) {
           defaultValue={serverURL.current}
           data-tid="tileServerUrlTID"
         />
-        <FormHelperText
-          sx={{ marginLeft: 0, marginTop: 0, marginBottom: '10px' }}
-        >
-          {t('core:tileServerUrlHelp')}
-        </FormHelperText>
       </FormControl>
       <FormControl fullWidth={true}>
         <TsTextField
+          key={'info-' + formKey}
           name="serverInfo"
           label={t('core:tileServerInfoTitle')}
           onChange={(event) => {
@@ -180,25 +213,31 @@ function MapTileServerDialog(props: Props) {
         onClose={onClose}
       />
       {renderContent()}
-      <TsDialogActions
-        sx={{
-          justifyContent: props.tileServer.uuid ? 'space-between' : 'flex-end',
-        }}
-      >
-        {props.tileServer.uuid && (
-          <TsButton
-            sx={{
-              marginLeft: '10px',
-            }}
-            data-tid="deleteTileServerTID"
-            onClick={() => {
-              dispatch(SettingsActions.deleteTileServer(props.tileServer.uuid));
-              props.onClose();
-            }}
+      <TsDialogActions sx={{ justifyContent: 'space-between' }}>
+        <div>
+          <TsIconButton
+            tooltip={t('core:documentation')}
+            data-tid="tileServerHelpTID"
+            onClick={() => openUrl(Links.documentationLinks.mapTiles)}
+            aria-label="help"
           >
-            {t('core:delete')}
-          </TsButton>
-        )}
+            <HelpIcon />
+          </TsIconButton>
+          {props.tileServer.uuid && (
+            <TsButton
+              sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+              data-tid="deleteTileServerTID"
+              onClick={() => {
+                dispatch(
+                  SettingsActions.deleteTileServer(props.tileServer.uuid),
+                );
+                props.onClose();
+              }}
+            >
+              {t('core:delete')}
+            </TsButton>
+          )}
+        </div>
         <div>
           <TsButton data-tid="closeTileServerDialogTID" onClick={props.onClose}>
             {t('core:closeButton')}
@@ -213,6 +252,46 @@ function MapTileServerDialog(props: Props) {
           </TsButton>
         </div>
       </TsDialogActions>
+      <Dialog
+        open={osmConfirmOpen}
+        onClose={() => setOsmConfirmOpen(false)}
+        keepMounted={false}
+        sx={{ zIndex: 1301 }}
+      >
+        <TsDialogTitle
+          dialogTitle={t('core:tileServerOsmConfirmTitle')}
+          closeButtonTestId="closeOsmConfirmTID"
+          onClose={() => setOsmConfirmOpen(false)}
+        />
+        <DialogContent>
+          <DialogContentText>
+            {t('core:tileServerOsmConfirmText')}
+          </DialogContentText>
+          <TsButton
+            variant="text"
+            sx={{ marginTop: '8px', paddingLeft: 0 }}
+            onClick={() => openUrl(OSM_PRIVACY_URL)}
+          >
+            {t('core:tileServerOsmPrivacyPolicy')}
+          </TsButton>
+        </DialogContent>
+        <TsDialogActions>
+          <TsButton
+            data-tid="cancelOsmConfirmTID"
+            onClick={() => setOsmConfirmOpen(false)}
+          >
+            {t('core:cancel')}
+          </TsButton>
+          <TsButton
+            data-tid="acceptOsmConfirmTID"
+            onClick={applyOsmDefaults}
+            sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+            variant="contained"
+          >
+            {t('core:tileServerOsmConfirmAccept')}
+          </TsButton>
+        </TsDialogActions>
+      </Dialog>
     </Dialog>
   );
 }
