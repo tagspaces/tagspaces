@@ -4,6 +4,7 @@
     "runAsNode": false,
     "resetAdHocDarwinSignature": true
   },
+  "afterPack": "scripts/swap-ffmpeg.js",
   "asar": true,
   "asarUnpack": ["**\\*.{node,dll}", "**/node_modules/wasm-vips/**/*"],
   "files": [
