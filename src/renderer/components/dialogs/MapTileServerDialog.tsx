@@ -47,7 +47,7 @@ import { useDispatch } from 'react-redux';
 
 const OSM_TILE_SERVER = {
   name: 'OpenStreetMap',
-  serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
+  serverURL: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   serverInfo:
     '<b>Leaflet</b> | Map data: &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 };
