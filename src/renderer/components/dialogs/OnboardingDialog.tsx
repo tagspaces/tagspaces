@@ -16,23 +16,28 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import TagsPoster from '-/assets/images/abacus.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import NewLook from '-/assets/images/desktop.svg';
 import LocationConcept from '-/assets/images/organize.svg';
 import TagsDemoVideo from '-/assets/videos/tags-demo.webm';
+import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
+import TsSelect from '-/components/TsSelect';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
+  getCurrentLanguage,
   getCurrentTheme,
   getDefaultDarkTheme,
   getDefaultRegularTheme,
 } from '-/reducers/settings';
-import { getDevicePaths } from '-/services/utils-io';
+import i18n from '-/services/i18n';
+import { getDevicePaths, setLanguage } from '-/services/utils-io';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { darkThemes, lightThemes } from '-/utils/Themes';
 import CheckIcon from '@mui/icons-material/Check';
@@ -42,10 +47,13 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -175,6 +183,18 @@ function OnboardingDialog(props: Props) {
   const currentTheme = useSelector(getCurrentTheme);
   const currentRegularTheme = useSelector(getDefaultRegularTheme);
   const currentDarkTheme = useSelector(getDefaultDarkTheme);
+  const currentLanguage = useSelector(getCurrentLanguage);
+  const checkForUpdates = useSelector(
+    (state: any) => state.settings.checkForUpdates,
+  );
+  // When extconfig sets ExtCheckForUpdatesOnStartup, the toggle is
+  // disabled and reflects the externally-configured value, with a
+  // tooltip explaining why — same pattern as SettingsGeneral.
+  const checkForUpdatesExternallyConfigured =
+    AppConfig.ExtCheckForUpdatesOnStartup !== undefined;
+  const supportedLanguages = useSelector(
+    (state: any) => state.settings.supportedLanguages,
+  ) as Array<{ iso: string; title: string }>;
   const dispatch: AppDispatch = useDispatch();
   const { locations, openLocation, addLocation, deleteLocation } =
     useCurrentLocationContext();
@@ -384,6 +404,12 @@ function OnboardingDialog(props: Props) {
               speed={500}
               initialSlide={0}
               loop={false}
+              // Disable mouse-drag-to-swipe so MUI Select / Switch / form
+              // controls inside slides receive their own pointer events
+              // instead of Swiper's gesture handler swallowing them.
+              // Touch swipe on phones still works; desktop users navigate
+              // via Back/Next and clickable pagination dots.
+              simulateTouch={false}
               onSlideChange={(s) => setActiveIndex(s.activeIndex)}
               className="onboarding-swiper"
             >
@@ -406,6 +432,41 @@ function OnboardingDialog(props: Props) {
                 <Typography variant="body1" sx={{ marginTop: '12px' }}>
                   {t('core:obWelcomeBody')}
                 </Typography>
+                <Box
+                  sx={{
+                    marginTop: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 0.5,
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{ color: 'text.secondary' }}
+                  >
+                    {t('core:interfaceLanguage')}
+                  </Typography>
+                  <TsSelect
+                    data-tid="onboardingLanguageTID"
+                    fullWidth={false}
+                    value={currentLanguage}
+                    onChange={(event: any) => {
+                      const next = event.target.value;
+                      i18n.changeLanguage(next).then(() => {
+                        dispatch(SettingsActions.setLanguage(next));
+                        setLanguage(next);
+                        return true;
+                      });
+                    }}
+                  >
+                    {supportedLanguages.map((language) => (
+                      <MenuItem key={language.iso} value={language.iso}>
+                        {language.title}
+                      </MenuItem>
+                    ))}
+                  </TsSelect>
+                </Box>
               </SwiperSlide>
 
               {/* Slide 2 — What is a Location? + bootstrap consent */}
@@ -547,10 +608,10 @@ function OnboardingDialog(props: Props) {
                 </Typography>
               </SwiperSlide>
 
-              {/* Slide 4 — Theme picker */}
+              {/* Slide 4 — Preferences (theme + auto-update) */}
               <SwiperSlide>
                 <Typography variant="h5" sx={{ marginBottom: '8px' }}>
-                  {t('core:obThemeTitle')}
+                  {t('core:obPreferencesTitle')}
                 </Typography>
                 <Typography
                   variant="body2"
@@ -610,6 +671,51 @@ function OnboardingDialog(props: Props) {
                       onSelect={() => selectTheme(key, true)}
                     />
                   ))}
+                </Box>
+                <Box
+                  sx={{
+                    marginTop: '24px',
+                    paddingTop: '16px',
+                    borderTop: '1px solid',
+                    borderColor: 'divider',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <TooltipTS
+                    title={
+                      checkForUpdatesExternallyConfigured
+                        ? t('core:settingExternallyConfigured')
+                        : ''
+                    }
+                  >
+                    {/* span lets the tooltip catch hover events even
+                        when the Switch is disabled (disabled controls
+                        don't fire pointer events). */}
+                    <span>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            data-tid="onboardingCheckForUpdatesTID"
+                            disabled={checkForUpdatesExternallyConfigured}
+                            checked={
+                              checkForUpdatesExternallyConfigured
+                                ? !!AppConfig.ExtCheckForUpdatesOnStartup
+                                : !!checkForUpdates
+                            }
+                            onChange={(e) =>
+                              dispatch(
+                                SettingsActions.setCheckForUpdates(
+                                  e.target.checked,
+                                ),
+                              )
+                            }
+                          />
+                        }
+                        label={t('core:checkForNewVersionOnStartup')}
+                      />
+                    </span>
+                  </TooltipTS>
                 </Box>
               </SwiperSlide>
 
