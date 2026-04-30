@@ -263,9 +263,15 @@ function ProTeaserDialog(props: Props) {
       </DialogContent>
       <DialogActions
         sx={{
-          paddingX: 2,
+          // env(safe-area-inset-*) handles the iPhone home indicator and
+          // the curved-screen edges on fullScreen dialogs. The max() keeps
+          // a comfortable buffer even when env() resolves to 0 (older
+          // browsers, missing viewport-fit=cover) so the buttons never
+          // sit flush against the rounded display.
+          paddingLeft: 'max(16px, env(safe-area-inset-left))',
+          paddingRight: 'max(16px, env(safe-area-inset-right))',
           paddingTop: 1,
-          paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+          paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
           borderTop: '1px solid',
           borderColor: 'divider',
           gap: 1,
