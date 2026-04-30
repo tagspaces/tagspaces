@@ -26,6 +26,7 @@ import {
 import FileExtBadge from '-/components/FileExtBadge';
 import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
+import TagsOverflowChip from '-/components/TagsOverflowChip';
 import TagsPreview from '-/components/TagsPreview';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
@@ -111,8 +112,11 @@ function RowCell(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
-  const { selectedEntries, selectEntry } = useSelectedEntriesContext();
-  const { entrySize, showTags, thumbnailMode } =
+  // Intentionally do not subscribe to selectedEntries here. The cell receives
+  // its own `selected` boolean from the parent; selectEntry is only used in
+  // event handlers, where reading the latest selection from a ref is fine.
+  const { selectEntry } = useSelectedEntriesContext();
+  const { entrySize, showTags, thumbnailMode, maxVisibleTags } =
     usePerspectiveSettingsContext();
   const { addTag, editTagForEntry } = useTaggingActionsContext();
   const { currentLocation } = useCurrentLocationContext();
@@ -155,17 +159,22 @@ function RowCell(props: Props) {
     [fsEntry],
   );
 
-  const fileNameTags = useMemo(
-    () =>
-      fsEntry.isFile
-        ? extractTagsAsObjects(
-            fsEntry.name,
-            tagDelimiter,
-            currentLocation?.getDirSeparator(),
-          )
-        : [],
-    [fsEntry.isFile, fsEntry.name, tagDelimiter, currentLocation],
-  );
+  // Prefer the value pre-parsed at load time by DirectoryContentContextProvider.
+  const fileNameTags = useMemo(() => {
+    if (!fsEntry.isFile) return [];
+    if (fsEntry.parsedNameTags !== undefined) return fsEntry.parsedNameTags;
+    return extractTagsAsObjects(
+      fsEntry.name,
+      tagDelimiter,
+      currentLocation?.getDirSeparator(),
+    );
+  }, [
+    fsEntry.isFile,
+    fsEntry.name,
+    fsEntry.parsedNameTags,
+    tagDelimiter,
+    currentLocation,
+  ]);
 
   const fileSystemEntryTags: TS.Tag[] = fsEntry.meta?.tags ?? [];
   const sideCarTagsTitles = useMemo(
@@ -191,10 +200,22 @@ function RowCell(props: Props) {
 
   const entryPath = fsEntry.path;
 
+  // In multi-select (selectionMode) the drag operation is on the cell, not on
+  // the tag. Skip the per-tag DnD wiring — same logic as read-only locations.
+  const useStaticTags = currentLocation?.isReadOnly || selectionMode;
+  // Cap inline tag chips; overflow goes into the TagsOverflowChip popover.
+  const cap =
+    typeof maxVisibleTags === 'number' && maxVisibleTags > 0
+      ? maxVisibleTags
+      : Infinity;
+  const visibleTags =
+    entryTags.length > cap ? entryTags.slice(0, cap) : entryTags;
+  const overflowTags =
+    entryTags.length > cap ? entryTags.slice(cap) : undefined;
   const renderTags = useMemo(() => {
     let sideCarLength = 0;
-    return entryTags.map((tag: TS.Tag, index) => {
-      const tagContainer = currentLocation?.isReadOnly ? (
+    return visibleTags.map((tag: TS.Tag, index) => {
+      const tagContainer = useStaticTags ? (
         <TagContainer
           tag={tag}
           key={entryPath + tag.title}
@@ -209,7 +230,6 @@ function RowCell(props: Props) {
           entry={fsEntry}
           addTag={handleAddTag}
           handleTagMenu={handleTagMenu}
-          selectedEntries={selectedEntries}
           editTagForEntry={editTagForEntry}
           reorderTags={reorderTags}
         />
@@ -220,13 +240,12 @@ function RowCell(props: Props) {
       return tagContainer;
     });
   }, [
-    entryTags,
-    currentLocation?.isReadOnly,
+    visibleTags,
+    useStaticTags,
     entryPath,
     fsEntry,
     handleTagMenu,
     addTag,
-    selectedEntries,
     editTagForEntry,
     reorderTags,
   ]);
@@ -381,7 +400,20 @@ function RowCell(props: Props) {
               }
             >
               {entryTitle}
-              {showTags && entryTags.length > 0 ? renderTags : tagPlaceholder}
+              {showTags && entryTags.length > 0 ? (
+                <>
+                  {renderTags}
+                  {overflowTags && (
+                    <TagsOverflowChip
+                      remaining={overflowTags}
+                      entry={fsEntry}
+                      handleTagMenu={handleTagMenu}
+                    />
+                  )}
+                </>
+              ) : (
+                tagPlaceholder
+              )}
             </Typography>
           </Grid>
         ) : (
@@ -412,7 +444,20 @@ function RowCell(props: Props) {
               </Tooltip>
               <span>{description}</span>
             </Typography>
-            {showTags && entryTags.length > 0 ? renderTags : tagPlaceholder}
+            {showTags && entryTags.length > 0 ? (
+              <>
+                {renderTags}
+                {overflowTags && (
+                  <TagsOverflowChip
+                    remaining={overflowTags}
+                    entry={fsEntry}
+                    handleTagMenu={handleTagMenu}
+                  />
+                )}
+              </>
+            ) : (
+              tagPlaceholder
+            )}
           </Grid>
         )}
         {fsEntry.meta?.thumbPath && (
@@ -467,4 +512,20 @@ function RowCell(props: Props) {
   );
 }
 
-export default RowCell;
+// Custom comparator: re-render only when something the row actually displays
+// changes. Mirrors GridCell's memoization so single-file selection doesn't
+// repaint the entire visible page.
+export default React.memo(RowCell, (prev, next) => {
+  return (
+    prev.selected === next.selected &&
+    prev.selectionMode === next.selectionMode &&
+    prev.fsEntry === next.fsEntry &&
+    prev.fsEntry.meta === next.fsEntry.meta &&
+    prev.isLast === next.isLast &&
+    prev.showEntriesDescription === next.showEntriesDescription &&
+    prev.handleTagMenu === next.handleTagMenu &&
+    prev.handleGridContextMenu === next.handleGridContextMenu &&
+    prev.handleGridCellClick === next.handleGridCellClick &&
+    prev.handleGridCellDblClick === next.handleGridCellDblClick
+  );
+});

@@ -56,6 +56,7 @@ import {
   cleanTrailingDirSeparator,
   extractContainingDirectoryPath,
   extractParentDirectoryPath,
+  extractTagsAsObjects,
   getMetaFileLocationForDir,
   getMetaFileLocationForFile,
   getThumbFileLocationForDirectory,
@@ -647,10 +648,40 @@ export const DirectoryContentContextProvider = ({
     return defaultGridSettings;
   }
 
+  // Parse filename-encoded tags once per entry at load time. Cells used to
+  // call extractTagsAsObjects() in their render path; doing it here means
+  // 100 rendered cells skip 100 regex passes per re-render cycle. We keep the
+  // existing array reference for unchanged entries — we only mutate when an
+  // entry is missing parsedNameTags (first time we see it).
+  function ensureParsedNameTags(
+    dirEntries: TS.FileSystemEntry[],
+  ): TS.FileSystemEntry[] {
+    if (!dirEntries || dirEntries.length === 0) return dirEntries;
+    for (const entry of dirEntries) {
+      if (!entry || entry.parsedNameTags !== undefined) continue;
+      if (!entry.isFile) {
+        entry.parsedNameTags = [];
+        continue;
+      }
+      const loc = entry.locationID ? findLocation(entry.locationID) : undefined;
+      const dirSep = loc?.getDirSeparator() ?? AppConfig.dirSeparator;
+      try {
+        entry.parsedNameTags = extractTagsAsObjects(
+          entry.name,
+          tagDelimiter,
+          dirSep,
+        );
+      } catch {
+        entry.parsedNameTags = [];
+      }
+    }
+    return dirEntries;
+  }
+
   function setCurrentDirectoryEntries(dirEntries: TS.FileSystemEntry[]) {
     cancelAbort();
     if (dirEntries && dirEntries.length > 0) {
-      currentDirectoryEntries.current = dirEntries; //[...dirEntries];
+      currentDirectoryEntries.current = ensureParsedNameTags(dirEntries);
       forceUpdate();
     } else if (currentDirectoryEntries.current.length > 0) {
       currentDirectoryEntries.current = [];

@@ -16,7 +16,7 @@
  *
  */
 
-import React, { useEffect, useReducer } from 'react';
+import React from 'react';
 
 import AppConfig from '-/AppConfig';
 
@@ -28,11 +28,9 @@ import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsC
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { PerspectiveIDs } from '-/perspectives';
 import { SortedDirContextProvider } from '-/perspectives/grid/hooks/SortedDirContextProvider';
 import { Pro } from '-/pro';
-import useFirstRender from '-/utils/useFirstRender';
 import { NativeTypes } from 'react-dnd-html5-backend';
 
 const GridPerspective = React.lazy(
@@ -175,26 +173,8 @@ interface Props {}
 function RenderPerspective(props: Props) {
   const { currentLocationId } = useCurrentLocationContext();
   const { currentPerspective } = useDirectoryContentContext();
-  const { metaActions } = useEditedEntryMetaContext();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const firstRender = useFirstRender();
-
-  useEffect(() => {
-    if (!firstRender && metaActions && metaActions.length > 0) {
-      for (const action of metaActions) {
-        if (action.action === 'perspectiveChange') {
-          forceUpdate();
-        }
-      }
-    }
-  }, [metaActions]);
 
   const showWelcomePanel = !currentLocationId;
-  //!currentDirectoryPath && currentDirectoryEntries.length < 1;
-
-  if (showWelcomePanel) {
-    return AppConfig.ExtShowWelcomePanel ? <WelcomePanelAsync /> : null;
-  }
 
   function getPerspectiveComponent() {
     if (currentPerspective === PerspectiveIDs.LIST) {
@@ -215,9 +195,13 @@ function RenderPerspective(props: Props) {
     if (Pro && currentPerspective === PerspectiveIDs.CALENDAR) {
       return <CalendarPerspectiveAsync />;
     }
-
     return <GridPerspectiveAsync />;
   }
+
+  if (showWelcomePanel) {
+    return AppConfig.ExtShowWelcomePanel ? <WelcomePanelAsync /> : null;
+  }
+
   const { FILE } = NativeTypes;
   return (
     <TargetFileBox style={{ height: '100%' }} accepts={[FILE]}>

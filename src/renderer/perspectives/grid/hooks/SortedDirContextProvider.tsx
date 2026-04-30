@@ -100,9 +100,9 @@ export const SortedDirContextProvider = ({
 
   const sortedDirContent = useMemo(() => {
     if (searchFilter) {
+      const needle = searchFilter.toLowerCase();
       return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).filter(
-        (entry) =>
-          entry.name.toLowerCase().includes(searchFilter.toLowerCase()),
+        (entry) => entry.name.toLowerCase().includes(needle),
       );
     }
     if (sortBy === 'byRelevance') {
@@ -114,9 +114,7 @@ export const SortedDirContextProvider = ({
       }
     }
     // not in search mode
-    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).map(
-      (o) => o,
-    );
+    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy);
   }, [currentDirectoryEntries, searchFilter, sortBy, orderBy]);
 
   const context = useMemo(() => {

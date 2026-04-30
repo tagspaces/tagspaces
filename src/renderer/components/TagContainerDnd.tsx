@@ -27,6 +27,7 @@ import TagContainer from './TagContainer';
 import { TS } from '-/tagspaces.namespace';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useSelectedEntriesRef } from '-/hooks/useSelectedEntriesRef';
 import { useSelector } from 'react-redux';
 import { getTagDelimiter } from '-/reducers/settings';
 
@@ -56,7 +57,6 @@ interface Props {
   ) => void;
   editTagForEntry?: (path: string, tag: TS.Tag) => void;
   deleteIcon?: Object;
-  selectedEntries: Array<TS.FileSystemEntry>;
   reorderTags?: boolean;
 }
 
@@ -74,11 +74,14 @@ const TagContainerDnd = (props: Props) => {
     changeTagOrder,
     editTagForEntry,
     moveTag,
-    selectedEntries,
   } = props;
 
   const { addTags } = useTaggingActionsContext();
   const { currentLocation } = useCurrentLocationContext();
+  // Read latest selectedEntries on demand from a ref so this component does
+  // not subscribe to selection re-renders. The drop handler fires on user
+  // gesture, not on render — reading ref.current at gesture time is correct.
+  const selectedEntriesRef = useSelectedEntriesRef();
   const tagContainerRef = useRef<HTMLSpanElement>(null);
   const tagDelimiter: string = useSelector(getTagDelimiter);
 
@@ -102,6 +105,7 @@ const TagContainerDnd = (props: Props) => {
       }
     } else if (dropResult && dropResult.entry) {
       // console.log(`Dropped item: ${item.tag.title} onto file: ${dropResult.entry.path}!`);
+      const selectedEntries = selectedEntriesRef.current ?? [];
       if (
         selectedEntries.some((entry) => entry.path === dropResult.entry.path)
       ) {

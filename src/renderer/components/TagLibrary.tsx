@@ -226,7 +226,6 @@ function TagLibrary({ reduceHeightBy }: Props) {
                       handleTagMenu={handleTagMenu}
                       moveTag={moveTag}
                       changeTagOrder={changeTagOrder}
-                      selectedEntries={selectedEntries}
                     />
                   );
                 })}

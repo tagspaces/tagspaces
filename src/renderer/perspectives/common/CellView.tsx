@@ -30,6 +30,7 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
+import { useSelectedEntriesRef } from '-/hooks/useSelectedEntriesRef';
 import {
   fileOperationsEnabled,
   folderOperationsEnabled,
@@ -50,9 +51,16 @@ import { useSelector } from 'react-redux';
 interface Props {
   fsEntry: TS.FileSystemEntry;
   index: number;
+  // Per-cell selection state computed once by the parent (GridPagination /
+  // List MainContainer). Passing booleans here — instead of the full
+  // selectedEntries array — lets the surrounding `memo()` actually skip
+  // re-renders when the global selection changes for some other entry.
+  selected: boolean;
+  selectionMode: boolean;
   cellContent: (
     fsEntry: TS.FileSystemEntry,
-    selectedEntries: Array<TS.FileSystemEntry>,
+    selected: boolean,
+    selectionMode: boolean,
     index: number,
     handleGridContextMenu: (
       event: React.MouseEvent<HTMLDivElement>,
@@ -68,7 +76,16 @@ interface Props {
 }
 
 function CellView(props: Props) {
-  const { fsEntry, index, cellContent, isLast, orderTop, orderBottom } = props;
+  const {
+    fsEntry,
+    index,
+    cellContent,
+    selected,
+    selectionMode,
+    isLast,
+    orderTop,
+    orderBottom,
+  } = props;
   const { showDirectories, singleClickAction } =
     usePerspectiveSettingsContext();
   const theme = useTheme();
@@ -79,12 +96,12 @@ function CellView(props: Props) {
   const { openDirectory } = useDirectoryContentContext();
   const { openFileNatively } = useIOActionsContext();
   const { currentLocationId, currentLocation } = useCurrentLocationContext();
-  const {
-    selectedEntries,
-    setSelectedEntries,
-    addToSelection,
-    lastSelectedEntry,
-  } = useSelectedEntriesContext();
+  // Read latest selectedEntries on demand from a ref so this memoised
+  // component does not re-render on every selection change. Click handlers
+  // (shift-range, ctrl-toggle, drag selection) read .current at gesture time.
+  const { setSelectedEntries, addToSelection, lastSelectedEntry } =
+    useSelectedEntriesContext();
+  const selectedEntriesRef = useSelectedEntriesRef();
   const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
   const { showNotification } = useNotificationContext();
   const selectedTabName = useSelector(getEntryContainerTab);
@@ -96,6 +113,7 @@ function CellView(props: Props) {
   const handleGridContextMenu = (event, fsEntry: TS.FileSystemEntry) => {
     event.preventDefault();
     event.stopPropagation();
+    const selectedEntries = selectedEntriesRef.current ?? [];
     const isEntryExist = selectedEntries.some(
       (entry) => entry.uuid === fsEntry.uuid,
     );
@@ -139,6 +157,7 @@ function CellView(props: Props) {
 
   const handleGridCellClick = (event, fsEntry: TS.FileSystemEntry) => {
     const selectHelperKey = AppConfig.isMacLike ? event.metaKey : event.ctrlKey;
+    const selectedEntries = selectedEntriesRef.current ?? [];
     if (event.shiftKey) {
       let lastSelectedIndex = -1;
       if (lastSelectedEntry) {
@@ -223,9 +242,9 @@ function CellView(props: Props) {
     }
     if (item) {
       const { entry } = item;
+      const selectedEntries = selectedEntriesRef.current ?? [];
       let arrEntries;
       if (
-        selectedEntries &&
         selectedEntries.length > 0 &&
         selectedEntries.some((e) => e.path === entry.path)
       ) {
@@ -275,7 +294,8 @@ function CellView(props: Props) {
 
         {cellContent(
           fsEntry,
-          selectedEntries,
+          selected,
+          selectionMode,
           index,
           handleGridContextMenu,
           handleGridCellClick,
@@ -303,7 +323,8 @@ function CellView(props: Props) {
         >
           {cellContent(
             fsEntry,
-            selectedEntries,
+            selected,
+            selectionMode,
             index,
             handleGridContextMenu,
             handleGridCellClick,
