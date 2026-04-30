@@ -91,6 +91,7 @@ resources/license_en.txt
 src/.env
 src/main/config
 extconfig*
+!scripts/extconfig-*.js
 !web/extconfig.js
 !web/extconfig.tmpl.js
 
