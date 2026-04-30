@@ -220,26 +220,41 @@ function OnboardingDialog(props: Props) {
   }, [open]);
 
   // Drive the tags-demo video play/pause based on slide visibility.
-  // Swiper hides non-active slides, so Chromium's autoplay policy may have
-  // declined the initial autoplay (offscreen/hidden video, plus React's
-  // `muted` prop sometimes lands on the DOM property after autoplay is
-  // evaluated). When slide 3 (index 2) becomes active we force `muted`
-  // imperatively and explicitly call play(); we pause when leaving so
-  // the loop doesn't keep running in the background.
+  // Swiper hides inactive slides (display:none / visibility:hidden), so
+  // Chromium delays preload — when slide 3 first becomes active the
+  // element's readyState is still 0 and a bare play() rejects with an
+  // AbortError (no media data). We force load(), wait for canplay, then
+  // call play(). React's `muted` prop also occasionally lands on the DOM
+  // property after autoplay is evaluated, so set it imperatively too.
   useEffect(() => {
     const video = tagsVideoRef.current;
     if (!video) return;
-    if (open && activeIndex === 2) {
-      video.muted = true;
+    if (!(open && activeIndex === 2)) {
+      video.pause();
+      return;
+    }
+    video.muted = true;
+    if (video.readyState === 0) video.load();
+    const tryPlay = () => {
       const result = video.play();
       if (result && typeof result.catch === 'function') {
-        result.catch(() => {
-          /* autoplay still declined — ignore, leave the static frame */
+        result.catch((err) => {
+          // Surface the rejection reason so future regressions are
+          // diagnosable; the static poster frame remains as fallback.
+          console.warn(
+            'Onboarding video play declined:',
+            err?.name,
+            err?.message,
+          );
         });
       }
-    } else {
-      video.pause();
+    };
+    if (video.readyState >= 2) {
+      tryPlay();
+      return;
     }
+    video.addEventListener('canplay', tryPlay, { once: true });
+    return () => video.removeEventListener('canplay', tryPlay);
   }, [open, activeIndex]);
 
   // Apply a theme by clicking a tile on slide 4. Switches the light/dark
@@ -580,7 +595,7 @@ function OnboardingDialog(props: Props) {
                 >
                   <video
                     ref={tagsVideoRef}
-                    autoPlay
+                    src={TagsDemoVideo}
                     loop
                     muted
                     playsInline
@@ -593,9 +608,7 @@ function OnboardingDialog(props: Props) {
                       borderRadius: 8,
                       display: 'block',
                     }}
-                  >
-                    <source src={TagsDemoVideo} type="video/mp4" />
-                  </video>
+                  />
                 </Box>
                 <Typography variant="body1">
                   {t('core:obSlide3Body')}
