@@ -21,7 +21,7 @@ import TagsPoster from '-/assets/images/abacus.svg';
 import WizardFinished from '-/assets/images/computer-desk.svg';
 import NewLook from '-/assets/images/desktop.svg';
 import LocationConcept from '-/assets/images/organize.svg';
-import TagsDemoVideo from '-/assets/videos/tags-demo.webm';
+import TagsDemoVideo from '-/assets/videos/tags-demo.mp4';
 import TooltipTS from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
@@ -594,7 +594,7 @@ function OnboardingDialog(props: Props) {
                       display: 'block',
                     }}
                   >
-                    <source src={TagsDemoVideo} type="video/webm" />
+                    <source src={TagsDemoVideo} type="video/mp4" />
                   </video>
                 </Box>
                 <Typography variant="body1">
