@@ -433,10 +433,16 @@ export const DirectoryContentContextProvider = ({
               ),
           );
           if (index !== -1) {
-            currentDirectoryEntries.current[index] = {
+            const merged = {
               ...currentDirectoryEntries.current[index],
               ...action.entry,
             };
+            // The old entry's parsedNameTags would be stale after a rename
+            // (filename-tag add/remove). Always recompute on update — the
+            // shallow merge above would otherwise carry the old value forward
+            // because action.entry doesn't include parsedNameTags.
+            refreshParsedNameTags(merged);
+            currentDirectoryEntries.current[index] = merged;
           }
           if (
             action.entry &&
@@ -650,30 +656,35 @@ export const DirectoryContentContextProvider = ({
 
   // Parse filename-encoded tags once per entry at load time. Cells used to
   // call extractTagsAsObjects() in their render path; doing it here means
-  // 100 rendered cells skip 100 regex passes per re-render cycle. We keep the
-  // existing array reference for unchanged entries — we only mutate when an
-  // entry is missing parsedNameTags (first time we see it).
+  // 100 rendered cells skip 100 regex passes per re-render cycle.
+  function parseEntryNameTags(entry: TS.FileSystemEntry): TS.Tag[] {
+    if (!entry.isFile) return [];
+    const loc = entry.locationID ? findLocation(entry.locationID) : undefined;
+    const dirSep = loc?.getDirSeparator() ?? AppConfig.dirSeparator;
+    try {
+      return extractTagsAsObjects(entry.name, tagDelimiter, dirSep);
+    } catch {
+      return [];
+    }
+  }
+
+  // Set/refresh parsedNameTags on a single entry. Always recomputes — used
+  // when an entry's `name` may have changed (rename / filename-tag update),
+  // where caching the old value would be stale.
+  function refreshParsedNameTags(entry: TS.FileSystemEntry): void {
+    if (!entry) return;
+    entry.parsedNameTags = parseEntryNameTags(entry);
+  }
+
+  // Enrich an array of entries with parsedNameTags (only computes for entries
+  // that don't have it yet — keep existing values untouched).
   function ensureParsedNameTags(
     dirEntries: TS.FileSystemEntry[],
   ): TS.FileSystemEntry[] {
     if (!dirEntries || dirEntries.length === 0) return dirEntries;
     for (const entry of dirEntries) {
       if (!entry || entry.parsedNameTags !== undefined) continue;
-      if (!entry.isFile) {
-        entry.parsedNameTags = [];
-        continue;
-      }
-      const loc = entry.locationID ? findLocation(entry.locationID) : undefined;
-      const dirSep = loc?.getDirSeparator() ?? AppConfig.dirSeparator;
-      try {
-        entry.parsedNameTags = extractTagsAsObjects(
-          entry.name,
-          tagDelimiter,
-          dirSep,
-        );
-      } catch {
-        entry.parsedNameTags = [];
-      }
+      entry.parsedNameTags = parseEntryNameTags(entry);
     }
     return dirEntries;
   }
