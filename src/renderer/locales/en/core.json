@@ -106,6 +106,7 @@
   "openInApp": "Open in {{appName}}",
   "showUnixHiddenFiles": "Show files/folders with a dot(.) in front of the name (e.g. Unix, Linux, OS X hidden files)",
   "checkForNewVersionOnStartup": "Check for new version on startup",
+  "closeToTray": "Close to tray",
   "reorderTags": "Enable changing the tag order with drag and drop",
   "calculateTag": "Extracts the tags used in the current folder",
   "prefixTagContainer": "Prefix for the tag container",

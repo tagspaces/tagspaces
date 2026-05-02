@@ -800,6 +800,12 @@ export function setGlobalShortcuts(globalShortcutsEnabled) {
   }
 }
 
+export function syncCloseToTray(closeToTray) {
+  if (AppConfig.isElectron) {
+    window.electronIO.ipcRenderer.sendMessage('set-close-to-tray', closeToTray);
+  }
+}
+
 export function loadExtensions() {
   if (AppConfig.isElectron) {
     window.electronIO.ipcRenderer.sendMessage('load-extensions');

@@ -79,6 +79,7 @@ export default {
   entryContainerTab: 0,
   entryPropertiesHeight: 100,
   checkForUpdates,
+  closeToTray: false,
   reorderTags: false,
   coloredFileExtension: false,
   loadsLocationMetaData: false,

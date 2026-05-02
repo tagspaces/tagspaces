@@ -48,6 +48,7 @@ export const types = {
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
   SET_MAX_SEARCH_RESULT: 'SETTINGS/SET_MAX_SEARCH_RESULT',
   SET_CHECKFORUPDATES: 'SETTINGS/SET_CHECKFORUPDATES',
+  SET_CLOSE_TO_TRAY: 'SETTINGS/SET_CLOSE_TO_TRAY',
   SET_REORDER_TAGS: 'SETTINGS/SET_REORDER_TAGS',
   SET_DEFAULTPERSPECTIVE: 'SETTINGS/SET_DEFAULTPERSPECTIVE',
   SET_USEDEFAULTLOCATION: 'SETTINGS/SET_USEDEFAULTLOCATION',
@@ -220,6 +221,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_CHECKFORUPDATES: {
       return { ...state, checkForUpdates: action.checkForUpdates };
+    }
+    case types.SET_CLOSE_TO_TRAY: {
+      return { ...state, closeToTray: action.closeToTray };
     }
     case types.SET_REORDER_TAGS: {
       return { ...state, reorderTags: action.reorderTags };
@@ -681,6 +685,10 @@ export const actions = {
     type: types.SET_CHECKFORUPDATES,
     checkForUpdates,
   }),
+  setCloseToTray: (closeToTray: boolean) => ({
+    type: types.SET_CLOSE_TO_TRAY,
+    closeToTray,
+  }),
   reorderTags: (reorderTags: boolean) => ({
     type: types.SET_REORDER_TAGS,
     reorderTags,
@@ -985,6 +993,7 @@ export const getCheckForUpdateOnStartup = (state: any) =>
   AppConfig.ExtCheckForUpdatesOnStartup !== undefined
     ? AppConfig.ExtCheckForUpdatesOnStartup
     : state.settings.checkForUpdates;
+export const getCloseToTray = (state: any) => state.settings.closeToTray;
 export const getLastPublishedVersion = (state: any) =>
   state.settings.lastPublishedVersion;
 export const getShowUnixHiddenEntries = (state: any) =>
