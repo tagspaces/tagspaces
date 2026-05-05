@@ -70,6 +70,7 @@ function GridSettingsDialog(props: Props) {
     thumbnailMode,
     singleClickAction,
     gridPageLimit,
+    maxVisibleTags,
     haveLocalSetting,
     resetLocalSetting,
     setSettings,
@@ -358,6 +359,25 @@ function GridSettingsDialog(props: Props) {
             <MenuItem value={1000}>1000</MenuItem>
           </TsSelect>
           {/* <FormHelperText>{t('core:pageLimitHelp')}</FormHelperText> */}
+        </FormControl>
+        <FormControl fullWidth={true} sx={{ marginTop: 1 }}>
+          <TsSelect
+            label={t('core:maxVisibleTags')}
+            name="maxVisibleTags"
+            defaultValue={maxVisibleTags ?? 4}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              const parsed = parseInt(event.target.value, 10);
+              setSettings({
+                maxVisibleTags: Number.isNaN(parsed) ? 0 : parsed,
+              });
+            }}
+          >
+            <MenuItem value={0}>{t('core:noLimit')}</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={6}>6</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+          </TsSelect>
         </FormControl>
       </DialogContent>
       <TsDialogActions sx={{ justifyContent: 'space-between' }}>

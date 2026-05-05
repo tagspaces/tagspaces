@@ -97,6 +97,9 @@ export const types = {
   SET_MAIN_VSPLIT_SIZE: 'SETTINGS/SET_MAIN_VSPLIT_SIZE',
   SET_LEFT_PANEL_WIDTH: 'SETTINGS/SET_LEFT_PANEL_WIDTH',
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
+  SET_ONBOARDING_COMPLETED: 'SETTINGS/SET_ONBOARDING_COMPLETED',
+  SET_HIDE_HOWTOSTART: 'SETTINGS/SET_HIDE_HOWTOSTART',
+  SET_ONBOARDING_VERSION: 'SETTINGS/SET_ONBOARDING_VERSION',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
   EDIT_MAPTILE_SERVER: 'EDIT_MAPTILE_SERVER',
@@ -108,6 +111,10 @@ export const types = {
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
   SET_HIDE_PRO_FEATURES: 'SETTINGS/SET_HIDE_PRO_FEATURES',
   SET_AUTO_SAVE_DESCRIPTION: 'SETTINGS/SET_AUTO_SAVE_DESCRIPTION',
+  SET_PERSPECTIVE_ENABLED: 'SETTINGS/SET_PERSPECTIVE_ENABLED',
+  SET_ENABLED_PERSPECTIVES: 'SETTINGS/SET_ENABLED_PERSPECTIVES',
+  MARK_PERSPECTIVE_ONBOARDING_SEEN: 'SETTINGS/MARK_PERSPECTIVE_ONBOARDING_SEEN',
+  RESET_PERSPECTIVE_ONBOARDING: 'SETTINGS/RESET_PERSPECTIVE_ONBOARDING',
 };
 
 function generateUniqueName(array: Array<any>, baseName: string): string {
@@ -242,6 +249,15 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_FIRST_RUN: {
       return { ...state, firstRun: action.firstRun };
+    }
+    case types.SET_ONBOARDING_COMPLETED: {
+      return { ...state, onboardingCompleted: action.onboardingCompleted };
+    }
+    case types.SET_HIDE_HOWTOSTART: {
+      return { ...state, hideHowToStart: action.hideHowToStart };
+    }
+    case types.SET_ONBOARDING_VERSION: {
+      return { ...state, onboardingVersion: action.onboardingVersion };
     }
     case types.SET_LANGUAGE: {
       return { ...state, interfaceLanguage: action.language };
@@ -528,6 +544,42 @@ export default (state: any = defaultSettings, action: any) => {
         fileEditHistory: action.fileEditHistory,
       };
     }
+    case types.SET_PERSPECTIVE_ENABLED: {
+      const current: string[] = Array.isArray(state.enabledPerspectives)
+        ? state.enabledPerspectives
+        : [];
+      const isEnabled = current.includes(action.perspectiveId);
+      let next: string[];
+      if (action.enabled && !isEnabled) {
+        next = [...current, action.perspectiveId];
+      } else if (!action.enabled && isEnabled) {
+        next = current.filter((id) => id !== action.perspectiveId);
+      } else {
+        return state;
+      }
+      return { ...state, enabledPerspectives: next };
+    }
+    case types.SET_ENABLED_PERSPECTIVES: {
+      return { ...state, enabledPerspectives: action.enabledPerspectives };
+    }
+    case types.MARK_PERSPECTIVE_ONBOARDING_SEEN: {
+      const seen = state.seenPerspectiveOnboardings || {};
+      if (seen[action.perspectiveId] === true) {
+        return state;
+      }
+      return {
+        ...state,
+        seenPerspectiveOnboardings: {
+          ...seen,
+          [action.perspectiveId]: true,
+        },
+      };
+    }
+    case types.RESET_PERSPECTIVE_ONBOARDING: {
+      const seen = { ...(state.seenPerspectiveOnboardings || {}) };
+      delete seen[action.perspectiveId];
+      return { ...state, seenPerspectiveOnboardings: seen };
+    }
     case types.TOGGLE_TAGGROUP: {
       let tagGroupCollapsed;
       if (state.tagGroupCollapsed) {
@@ -692,6 +744,23 @@ export const actions = {
     type: types.SET_DEFAULTPERSPECTIVE,
     defaultPerspective,
   }),
+  setPerspectiveEnabled: (perspectiveId: string, enabled: boolean) => ({
+    type: types.SET_PERSPECTIVE_ENABLED,
+    perspectiveId,
+    enabled,
+  }),
+  setEnabledPerspectives: (enabledPerspectives: string[]) => ({
+    type: types.SET_ENABLED_PERSPECTIVES,
+    enabledPerspectives,
+  }),
+  markPerspectiveOnboardingSeen: (perspectiveId: string) => ({
+    type: types.MARK_PERSPECTIVE_ONBOARDING_SEEN,
+    perspectiveId,
+  }),
+  resetPerspectiveOnboarding: (perspectiveId: string) => ({
+    type: types.RESET_PERSPECTIVE_ONBOARDING,
+    perspectiveId,
+  }),
   setColoredFileExtension: (coloredFileExtension: boolean) => ({
     type: types.SET_COLOREDFILEEXTENSION,
     coloredFileExtension,
@@ -852,6 +921,18 @@ export const actions = {
     type: types.SET_FIRST_RUN,
     firstRun,
   }),
+  setOnboardingCompleted: (onboardingCompleted: boolean) => ({
+    type: types.SET_ONBOARDING_COMPLETED,
+    onboardingCompleted,
+  }),
+  setHideHowToStart: (hideHowToStart: boolean) => ({
+    type: types.SET_HIDE_HOWTOSTART,
+    hideHowToStart,
+  }),
+  setOnboardingVersion: (onboardingVersion: number) => ({
+    type: types.SET_ONBOARDING_VERSION,
+    onboardingVersion,
+  }),
   upgradeSettings: () => ({
     type: types.UPGRADE_SETTINGS,
   }),
@@ -989,7 +1070,25 @@ export const getEntryContainerTab = (state: any) =>
 export const getUseDefaultLocation = (state: any) =>
   state.settings.useDefaultLocation;
 export const getDefaultPerspective = (state: any) =>
-  state.settings.defaultPerspective;
+  AppConfig.ExtDefaultPerspective ?? state.settings.defaultPerspective;
+// Precedence: when extconfig.json defines ExtEnabledPerspectives, it is
+// authoritative on every app load — the user's persisted toggles in
+// state.settings.enabledPerspectives are ignored. Distributors / admins win
+// over end-user preference; the Settings tab reflects this by rendering the
+// rows read-only (see isEnabledPerspectivesLocked).
+export const getEnabledPerspectives = (state: any): string[] => {
+  if (Array.isArray(AppConfig.ExtEnabledPerspectives)) {
+    return AppConfig.ExtEnabledPerspectives;
+  }
+  return Array.isArray(state.settings.enabledPerspectives)
+    ? state.settings.enabledPerspectives
+    : [];
+};
+export const isEnabledPerspectivesLocked = (): boolean =>
+  Array.isArray(AppConfig.ExtEnabledPerspectives);
+export const getSeenPerspectiveOnboardings = (
+  state: any,
+): Record<string, boolean> => state.settings.seenPerspectiveOnboardings || {};
 export const getColoredFileExtension = (state: any) =>
   state.settings.coloredFileExtension;
 export const getShowTagAreaOnStartup = (state: any) =>
@@ -1069,6 +1168,12 @@ export const isFirstRun = (state: any) => {
   }
   return AppConfig.ExtIsFirstRun;
 };
+export const isOnboardingCompleted = (state: any) =>
+  state.settings.onboardingCompleted === true;
+export const isHowToStartHidden = (state: any) =>
+  state.settings.hideHowToStart === true;
+export const getOnboardingVersion = (state: any) =>
+  state.settings.onboardingVersion || 0;
 
 const kbObject: any = {};
 function generateKeyBindingObject(keyBindings: Array<Object>) {

@@ -26,15 +26,13 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 
 type PaginationContextData = {
   page: number;
-  //pageFiles: TS.FileSystemEntry[];
-  getResentPageFiles: () => TS.FileSystemEntry[];
+  pageFiles: TS.FileSystemEntry[];
   setCurrentPage: (page?: number) => void;
 };
 
 export const PaginationContext = createContext<PaginationContextData>({
   page: 1,
-  //pageFiles: [],
-  getResentPageFiles: undefined,
+  pageFiles: undefined,
   setCurrentPage: undefined,
 });
 
@@ -67,14 +65,6 @@ export const PaginationContextProvider = ({
     }*/
   }, [currentDirectoryPath, searchQuery, settings]); //, isSearchMode isMetaFolderExist]);
 
-  /*const pageFiles: TS.FileSystemEntry[] = useMemo(() => {
-    return getPageFiles(page, sortedDirContent);
-  }, [page, sortedDirContent, settings]);*/
-
-  function getResentPageFiles() {
-    return getPageFiles(page, sortedDirContent);
-  }
-
   function getPageFiles(currentPage: number, dirContent: TS.FileSystemEntry[]) {
     const gridPageLimit =
       settings && settings.gridPageLimit
@@ -97,6 +87,11 @@ export const PaginationContextProvider = ({
     return files;
   }
 
+  const pageFiles = useMemo(
+    () => getPageFiles(page, sortedDirContent),
+    [page, sortedDirContent, settings, showDirectories],
+  );
+
   function setCurrentPage(currentPage?: number) {
     const cPage = currentPage ? currentPage : initPage;
     if (page !== cPage) {
@@ -112,13 +107,14 @@ export const PaginationContextProvider = ({
     }
   }
 
-  const context = useMemo(() => {
-    return {
+  const context = useMemo(
+    () => ({
       page,
-      getResentPageFiles,
+      pageFiles,
       setCurrentPage,
-    };
-  }, [page, currentDirectoryPath, sortedDirContent, settings]);
+    }),
+    [page, pageFiles],
+  );
 
   return (
     <PaginationContext.Provider value={context}>

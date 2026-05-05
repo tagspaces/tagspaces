@@ -45,6 +45,7 @@ type PerspectiveSettingsContextData = {
   showEntriesDescription: boolean;
   showTags: boolean;
   gridPageLimit: number;
+  maxVisibleTags: number;
   folderVizType: TS.FolderVizType;
   calendarType?: TS.CalendarType;
   calendarGroupByDateTags?: boolean;
@@ -75,6 +76,7 @@ export const PerspectiveSettingsContext =
     showEntriesDescription: true,
     showTags: true,
     gridPageLimit: 100,
+    maxVisibleTags: 4,
     showFolderContent: false,
     layoutType: 'grid',
     folderVizType: 'tree',
@@ -120,7 +122,10 @@ export const PerspectiveSettingsContextProvider = ({
       settings.current = getSettings(currentPerspective, directoryMeta);
       forceUpdate();
     }
-  }, [currentDirectoryPath, directoryMeta]);
+    // currentPerspective is in deps so per-perspective settings reload on
+    // perspective switch directly, instead of relying on the outer
+    // RenderPerspective forceUpdate/remount cascade we removed.
+  }, [currentDirectoryPath, directoryMeta, currentPerspective]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
@@ -195,6 +200,14 @@ export const PerspectiveSettingsContextProvider = ({
   function saveSettings(isDefaultSetting = undefined) {
     if (isDefaultSetting === undefined) {
       isDefaultSetting = !haveLocalSetting();
+    }
+    // Read-only locations can't persist perspective settings — any write
+    // would surface as an "Error: read only Location" toast from
+    // saveFsEntryMeta's error handler. Keep the in-memory settings (already
+    // applied by setSettings) and skip the disk write.
+    const loc = findLocation();
+    if (loc?.isReadOnly) {
+      return;
     }
     const { settingsKey, ...cleanSettings } = settings.current;
     if (Pro && !isDefaultSetting) {
@@ -310,6 +323,7 @@ export const PerspectiveSettingsContextProvider = ({
       entrySize: settings.current.entrySize,
       thumbnailMode: settings.current.thumbnailMode,
       gridPageLimit: settings.current.gridPageLimit,
+      maxVisibleTags: settings.current.maxVisibleTags,
       folderVizType: settings.current.folderVizType,
       calendarType: settings.current.calendarType,
       calendarGroupByDateTags: settings.current.calendarGroupByDateTags,

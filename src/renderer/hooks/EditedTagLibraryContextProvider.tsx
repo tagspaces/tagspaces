@@ -88,14 +88,19 @@ export const EditedTagLibraryContextProvider = ({
     if (Pro && saveTagInLocation) {
       getTagsFromLocations().then((locationTagGroups) => {
         if (locationTagGroups && Object.keys(locationTagGroups).length > 0) {
-          // rebuild the flattened array
-          const fresh: TS.TagGroup[] = [
-            ...getTagLibrary(),
-            ...Object.entries(locationTagGroups).flatMap(([uuid, groups]) =>
-              groups.map((g) => ({ ...g, locationId: uuid })),
-            ),
-          ];
-          setTagGroups(fresh);
+          // Dedup by uuid: location copy wins over the main-library copy,
+          // since saveTagInLocation means the location is the source of truth.
+          // getTagsFromLocations already stamps locationId + workSpaceId.
+          const byUuid = new Map<string, TS.TagGroup>();
+          for (const g of getTagLibrary()) {
+            if (g.uuid) byUuid.set(g.uuid, g);
+          }
+          for (const groups of Object.values(locationTagGroups)) {
+            for (const g of groups) {
+              if (g.uuid) byUuid.set(g.uuid, g);
+            }
+          }
+          setTagGroups(Array.from(byUuid.values()));
         }
       });
     } else if (force) {

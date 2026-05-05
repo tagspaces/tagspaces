@@ -32,11 +32,13 @@ import SettingsExtensions from '-/components/dialogs/components/SettingsExtensio
 import SettingsFileTypes from '-/components/dialogs/components/SettingsFileTypes';
 import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
 import SettingsKeyBindings from '-/components/dialogs/components/SettingsKeyBindings';
+import SettingsPerspectives from '-/components/dialogs/components/SettingsPerspectives';
 import SettingsTemplates from '-/components/dialogs/components/SettingsTemplates';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { openURLExternally } from '-/services/utils-io';
 import ArticleIcon from '@mui/icons-material/Article';
+import GridViewIcon from '@mui/icons-material/GridView';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
@@ -54,6 +56,7 @@ export enum SettingsTab {
   Templates = 'templates',
   KeyBindings = 'keyBindings',
   Extensions = 'extensions',
+  Perspectives = 'perspectives',
   Advanced = 'advanced',
   AI = 'ai',
 }
@@ -174,6 +177,17 @@ function SettingsDialog(props: Props) {
           label={t('core:extensionsTab')}
         />
         <Tab
+          value={SettingsTab.Perspectives}
+          sx={{
+            textTransform: 'unset',
+            justifyContent: 'flex-start',
+          }}
+          iconPosition="start"
+          icon={smallScreen ? '' : <GridViewIcon />}
+          data-tid="perspectivesSettingsDialog"
+          label={t('core:perspectivesSettingsTab')}
+        />
+        <Tab
           value={SettingsTab.Advanced}
           sx={{
             textTransform: 'unset',
@@ -214,6 +228,7 @@ function SettingsDialog(props: Props) {
         {currentTab === SettingsTab.Templates && <SettingsTemplates />}
         {currentTab === SettingsTab.KeyBindings && <SettingsKeyBindings />}
         {currentTab === SettingsTab.Extensions && <SettingsExtensions />}
+        {currentTab === SettingsTab.Perspectives && <SettingsPerspectives />}
         {currentTab === SettingsTab.Advanced && <SettingsAdvanced />}
         {currentTab === SettingsTab.AI && (
           <SettingsAI closeSettings={onClose} />

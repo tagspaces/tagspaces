@@ -294,8 +294,8 @@ test.describe('TST49 - Perspective KanBan', () => {
   });
 
   test('TST4910 - prev/next button [web,s3,electron,_pro]', async () => {
-    const fileName = 'sample.3gp';
-    const nextFileName = 'sample.avif';
+    const fileName = 'sample.bmp';
+    const nextFileName = 'sample.c';
     if (await isDisplayed('[data-tid=showFolderContentTID]')) {
       await clickOn('[data-tid=showFolderContentTID]');
     }

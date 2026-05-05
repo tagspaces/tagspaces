@@ -39,7 +39,7 @@ import { useLinkDialogContext } from '-/components/dialogs/hooks/useLinkDialogCo
 import { useNewFileDialogContext } from '-/components/dialogs/hooks/useNewFileDialogContext';
 import { historyKeys } from '-/hooks/HistoryContextProvider';
 import { useHistoryContext } from '-/hooks/useHistoryContext';
-import { getDesktopMode } from '-/reducers/settings';
+import { getDesktopMode, isHowToStartHidden } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -93,6 +93,7 @@ function WelcomePanel() {
   const { fileOpenHistory, fileEditHistory, folderOpenHistory } =
     useHistoryContext();
   const desktopMode = useSelector(getDesktopMode);
+  const howToStartHidden = useSelector(isHowToStartHidden);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -365,7 +366,7 @@ function WelcomePanel() {
         <Grid sx={{ height: '100%', zIndex: 1, minWidth: '300px' }}>
           {renderQuickLinks()}
         </Grid>
-        {desktopMode && (
+        {desktopMode && !howToStartHidden && (
           <Grid sx={{ height: '100%' }}>
             <Box
               sx={{

@@ -456,30 +456,39 @@ function SettingsGeneral() {
         {
           label: t('core:checkForNewVersionOnStartup'),
           jsx: (
-            <ListItem
-              title={
-                AppConfig.ExtCheckForUpdatesOnStartup !== undefined
-                  ? t('core:settingExternallyConfigured')
-                  : ''
-              }
-            >
+            <ListItem>
               <ListItemText primary={t('core:checkForNewVersionOnStartup')} />
-              <Switch
-                disabled={AppConfig.ExtCheckForUpdatesOnStartup !== undefined}
-                data-tid="settingsSetCheckForUpdates"
-                onClick={() =>
-                  dispatch(
-                    SettingsActions.setCheckForUpdates(
-                      !settings.checkForUpdates,
-                    ),
-                  )
-                }
-                checked={
+              <TooltipTS
+                title={
                   AppConfig.ExtCheckForUpdatesOnStartup !== undefined
-                    ? AppConfig.ExtCheckForUpdatesOnStartup
-                    : settings.checkForUpdates
+                    ? t('core:settingExternallyConfigured')
+                    : ''
                 }
-              />
+              >
+                {/* span wrapper lets the Tooltip listen to events even
+                    when the Switch is disabled (disabled controls don't
+                    fire pointer events). */}
+                <span>
+                  <Switch
+                    disabled={
+                      AppConfig.ExtCheckForUpdatesOnStartup !== undefined
+                    }
+                    data-tid="settingsSetCheckForUpdates"
+                    onClick={() =>
+                      dispatch(
+                        SettingsActions.setCheckForUpdates(
+                          !settings.checkForUpdates,
+                        ),
+                      )
+                    }
+                    checked={
+                      AppConfig.ExtCheckForUpdatesOnStartup !== undefined
+                        ? AppConfig.ExtCheckForUpdatesOnStartup
+                        : settings.checkForUpdates
+                    }
+                  />
+                </span>
+              </TooltipTS>
             </ListItem>
           ),
         },

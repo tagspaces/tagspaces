@@ -207,6 +207,11 @@ export namespace TS {
     url?: string;
     meta?: FileSystemEntryMeta;
     links?: Link[];
+    // Filename-encoded tags parsed once at load time. Cells read this instead
+    // of running extractTagsAsObjects() on every render. Optional because
+    // entries that flow through other paths (e.g. legacy callers, search
+    // results pre-enrichment) may not have it set yet.
+    parsedNameTags?: TS.Tag[];
   }
 
   interface SearchIndex extends FileSystemEntry {
@@ -451,6 +456,8 @@ export namespace TS {
     entrySize?: EntrySizes;
     thumbnailMode?: ThumbnailMode;
     gridPageLimit?: number;
+    // Cap of visible tag chips per cell in Grid/List perspectives. 0 disables.
+    maxVisibleTags?: number;
     galleryTypeGroup?: string[];
     // isLocal?: boolean;
   }

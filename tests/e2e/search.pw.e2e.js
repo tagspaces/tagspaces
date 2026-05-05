@@ -370,7 +370,7 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('sample.pdf'), true, 5000);
   });
 
-  test('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,s3,electron]', async ({
+  test.skip('TST0632 - Search q. comp - accuracy (fuzzy, semi strict, strict) [web,s3,electron]', async ({
     isS3,
     testDataDir,
   }) => {

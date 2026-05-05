@@ -1,36 +1,66 @@
 import { ProSign } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
+import { AppDispatch } from '-/reducers/app';
+import { actions as SettingsActions } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Step from '@mui/material/Step';
 import StepContent from '@mui/material/StepContent';
 import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import Links from 'assets/links';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
 const selectByTID: any = (tid) =>
   document.querySelector('[data-tid="' + tid + '"]');
 
-function clearHighlights() {
-  selectByTID('locationManager')?.classList.remove('highlighterOn');
-  selectByTID('tagLibrary')?.classList.remove('highlighterOn');
-  selectByTID('settings')?.classList.remove('highlighterOn');
-  selectByTID('createNewDropdownButtonTID')?.classList.remove('highlighterOn');
-  selectByTID('locationList')?.classList.remove('highlighterOn');
-  selectByTID('tagLibraryTagGroupList')?.classList.remove('highlighterOn');
-  selectByTID('quickAccessButton')?.classList.remove('highlighterOn');
-  selectByTID('quickAccessArea')?.classList.remove('highlighterOn');
-  selectByTID('floatingPerspectiveSwitcher')?.classList.remove('highlighterOn');
-}
+const HIGHLIGHTED_TIDS = [
+  'locationManager',
+  'tagLibrary',
+  'settings',
+  'createNewDropdownButtonTID',
+  'locationList',
+  'tagLibraryTagGroupList',
+  'quickAccessButton',
+  'quickAccessArea',
+  'floatingPerspectiveSwitcher',
+];
 
 function HowToStart() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const dispatch: AppDispatch = useDispatch();
+  // Track pending setTimeout handles so navigating away (Next/Back) cancels
+  // them — otherwise a deferred .add('highlighterOn') can fire after
+  // clearHighlights() and leave a stale glow on a previous step's element.
+  const pendingTimeouts = React.useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  function scheduleHighlight(fn: () => void, delayMs: number) {
+    const handle = setTimeout(() => {
+      pendingTimeouts.current = pendingTimeouts.current.filter(
+        (h) => h !== handle,
+      );
+      fn();
+    }, delayMs);
+    pendingTimeouts.current.push(handle);
+  }
+
+  function clearHighlights() {
+    pendingTimeouts.current.forEach(clearTimeout);
+    pendingTimeouts.current = [];
+    HIGHLIGHTED_TIDS.forEach((tid) => {
+      selectByTID(tid)?.classList.remove('highlighterOn');
+    });
+  }
+
   const steps = [
     {
       label: t('htsIntroTitle'),
@@ -84,8 +114,8 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('tagLibrary').click();
-        setTimeout(() => {
+        selectByTID('tagLibrary')?.click();
+        scheduleHighlight(() => {
           selectByTID('tagLibrary')?.classList.add('highlighterOn');
           selectByTID('tagLibraryTagGroupList')?.classList.add('highlighterOn');
         }, 2000);
@@ -118,8 +148,8 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('quickAccessButton').click();
-        setTimeout(() => {
+        selectByTID('quickAccessButton')?.click();
+        scheduleHighlight(() => {
           selectByTID('quickAccessButton')?.classList.add('highlighterOn');
           selectByTID('quickAccessArea')?.classList.add('highlighterOn');
         }, 2000);
@@ -205,7 +235,9 @@ function HowToStart() {
         </>
       ),
       action: () => {
-        selectByTID('locationManager')?.click();
+        // Settings lives outside the Location Manager panel — don't click
+        // locationManager here; it dismisses the panel that contains the
+        // settings button on small layouts and confuses the highlight.
         selectByTID('settings')?.classList.add('highlighterOn');
       },
     },
@@ -281,18 +313,40 @@ function HowToStart() {
         }
         `}
       </style>
-      <Typography
-        variant="inherit"
+      <Box
         sx={{
-          color: 'text.primary',
-          textTransform: 'uppercase',
-          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           paddingTop: '20px',
+          position: 'relative',
         }}
-        noWrap
       >
-        {t('core:htsGetStarted')}
-      </Typography>
+        <Typography
+          variant="inherit"
+          sx={{
+            color: 'text.primary',
+            textTransform: 'uppercase',
+            textAlign: 'center',
+          }}
+          noWrap
+        >
+          {t('core:htsGetStarted')}
+        </Typography>
+        <Tooltip title={t('core:htsHideGuide')}>
+          <IconButton
+            size="small"
+            data-tid="hideHowToStartTID"
+            sx={{ position: 'absolute', right: 0 }}
+            onClick={() => {
+              clearHighlights();
+              dispatch(SettingsActions.setHideHowToStart(true));
+            }}
+          >
+            <VisibilityOffIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map((step, index) => (
           <Step key={step.label}>
@@ -317,7 +371,7 @@ function HowToStart() {
                   >
                     {index === steps.length - 1
                       ? t('core:finish')
-                      : t('core:goforward')}
+                      : t('core:next')}
                   </TsButton>
                 </div>
               </Box>
@@ -331,7 +385,7 @@ function HowToStart() {
           elevation={0}
           sx={{ p: 3, backgroundColor: 'transparent' }}
         >
-          <Typography>All steps completed!</Typography>
+          <Typography>{t('core:htsAllStepsCompleted')}</Typography>
           <TsButton onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             {t('core:resetBtn')}
           </TsButton>

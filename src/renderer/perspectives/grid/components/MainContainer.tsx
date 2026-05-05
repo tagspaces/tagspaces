@@ -278,7 +278,8 @@ function GridPerspective(props: Props) {
   const getCellContent = useCallback(
     (
       fsEntry: TS.FileSystemEntry,
-      selectedEntries: Array<TS.FileSystemEntry>,
+      selected: boolean,
+      selectionMode: boolean,
       index: number,
       handleGridContextMenu: (
         event: React.MouseEvent<HTMLDivElement>,
@@ -288,15 +289,6 @@ function GridPerspective(props: Props) {
       handleGridCellDblClick,
       isLast?: boolean,
     ) => {
-      let selected = false;
-      if (
-        selectedEntries &&
-        selectedEntries.some((entry) => entry.path === fsEntry.path)
-      ) {
-        selected = true;
-      }
-
-      const selectionMode = selectedEntries.length > 1;
       return (
         <FileSourceDnd entry={fsEntry}>
           <TagDropContainer entry={fsEntry}>

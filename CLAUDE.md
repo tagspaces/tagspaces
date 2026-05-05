@@ -122,6 +122,7 @@ tagspaces-common-node (Node.js fs implementation, injected as IO provider)
 - **Caches** (`enhancedIndex.current`, `fuseInstance.current`, `fullTextMap.current`) must all be invalidated together in `setIndex`. Missing any one causes stale search results.
 - **Progress feedback**: `createIndex` and `createIncrementalIndex` accept an `onProgress({count, entry})` callback. The renderer throttles updates to 250ms to avoid flooding React with re-renders.
 - **Index path shape**: `index.current` holds the **enhanced** (absolute-path) form returned by `enhanceDirectoryIndex`. `tsi.json` / `tsft.jsonl` on disk hold **relative** paths. The renderer's `persistIndex` runs `cleanRootPath(entry.path, directoryPath, sep)` on every entry before writing, so it is safe to call with either shape. This matters because `reflectCreateEntry` / `reflectDeleteEntry` / `reflectUpdateEntry` / `reflectUpdateSidecarMeta` / `clearDirectoryIndex(true)` all pass `index.current` (absolute) straight into `persistIndex`. If you add a new code path that writes the index directly (bypassing `persistIndex`), you must strip the root prefix yourself — otherwise `enhanceDirectoryIndex` double-joins on the next load and search misses everything.
+- **Comparing enhanced paths to `location.path` / `currentDirectory.path`**: `enhanceDirectoryIndex` prepends a separator via `joinPaths(sep, folderPath, relPath)`, so entries look like `/my-folder/subdir/file.txt`. `location.path` / `currentDirectory.path` typically have **no** leading slash and may have a trailing one (`'my-folder/'`). Naive `item.path.startsWith(location.path)` or `.substring(location.path.length)` breaks for S3 locations with a path prefix — this bit the perspective filters in `listToTree`, `listToDays`, `TagsGraphVizOptions`, and `LinksGraphVizOptions`. Normalize both sides with `cleanTrailingDirSeparator(cleanFrontDirSeparator(p).replaceAll('\\', '/'))` and gate comparisons with `rootNorm && (item === root || item.startsWith(root + '/'))` so bucket-root (empty `location.path`) still passes.
 
 ### Local dev: syncing changes to node_modules
 
@@ -158,6 +159,15 @@ The app runs on multiple platforms and storage backends. When working with file/
 - **S3/cloud**: Forward-slash paths, often without a leading `/` (e.g., `bucket-name/folder/`). No drive letter, no OS-specific separator.
 
 When comparing paths (e.g., `startsWith`, equality checks), normalize **both** sides with the same functions. A common bug pattern: applying `cleanFrontDirSeparator` (strips leading `/`) to one path but not the other, breaking the comparison on Mac/Linux where absolute paths start with `/`. Path utilities live in `@tagspaces/tagspaces-common/paths.js`.
+
+## Read-only Locations
+
+`CommonLocation.isReadOnly` gates all writes: index/fulltext files, sidecar meta, thumbnails, tag-in-filename renames, `.ts/tsm.json`. Write primitives (`saveTextFilePromise`, `saveBinaryFilePromise`, `renameFilePromise`) reject with `Error('read only Location')`, but callers often swallow that into a sentinel (`false` / `undefined` / `[]`).
+
+- **Classic bug**: caller does `setState(result)` without checking — the sentinel wipes previously good state. Null-check before assigning into shared refs (`index.current`, etc.); prefer `Array.isArray(x) && x.length > 0`.
+- **In-memory work is fine; serialization isn't**: follow the `createNotWorkerIndex` split — compute the fresh index, but wrap the persist call in `if (!loc.isReadOnly)`.
+- **Short-circuit automatic writes** when readonly + usable data already exists (see `searchLocationIndex` in `LocationIndexContextProvider.tsx`).
+- **Disable user-triggered write buttons** with `disabled={currentLocation?.isReadOnly}` and swap the tooltip to `t('core:readOnlyLocationIndexDisabled')`. Silent no-op on click is bad UX. Pattern: FolderViz/Calendar `MainToolbar.tsx`.
 
 ## Translations / i18n
 

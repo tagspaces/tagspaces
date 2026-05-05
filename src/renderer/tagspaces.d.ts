@@ -23,6 +23,8 @@ declare module '*.png';
 declare module '*.jpg';
 declare module '*.avif';
 declare module '*.svg';
+declare module '*.mp4';
+declare module '*.webm';
 declare module '*.woff';
 declare module '*.woff2';
 declare module '*.xml';

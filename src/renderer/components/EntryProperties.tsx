@@ -58,6 +58,7 @@ import {
   fileNameValidation,
   getAllTags,
   openUrl,
+  sanitizeAttribution,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { generateClipboardLink } from '-/utils/dom';
@@ -605,7 +606,7 @@ function EntryProperties({ tileServer }: Props) {
             >
               {tileServer ? (
                 <ElectronTileLayer
-                  attribution={tileServer.serverInfo}
+                  attribution={sanitizeAttribution(tileServer.serverInfo)}
                   url={tileServer.serverURL}
                 />
               ) : (

@@ -4,9 +4,17 @@
     "runAsNode": false,
     "resetAdHocDarwinSignature": true
   },
+  "afterPack": "scripts/swap-ffmpeg.js",
   "asar": true,
   "asarUnpack": ["**\\*.{node,dll}", "**/node_modules/wasm-vips/**/*"],
-  "files": ["dist/", "node_modules/", "package.json", ".env", "extconfig.js"],
+  "files": [
+    "dist/",
+    "node_modules/",
+    "!node_modules/@napi-rs/**",
+    "package.json",
+    ".env",
+    "extconfig.js"
+  ],
   "fileAssociations": [
     {
       "ext": "md",
@@ -53,8 +61,7 @@
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,
-    "include": "resources/installer.nsh",
-    "license": null
+    "include": "resources/installer.nsh"
   },
   "mac": {
     "target": ["pkg", "dmg"],
@@ -68,15 +75,32 @@
     "sign": false
   },
   "pkg": {
-    "license": "assets/license_en.txt"
+    "license": "resources/license_en.txt"
   },
   "linux": {
-    "target": ["deb", "tar.gz", "appImage"],
+    "target": [
+      { "target": "deb", "arch": ["x64", "arm64"] },
+      { "target": "tar.gz", "arch": ["x64", "arm64"] },
+      { "target": "appImage", "arch": ["x64"] }
+    ],
     "category": "Office",
     "icon": "assets/icon.icns"
   },
+  "deb": {
+    "depends": [
+      "libgtk-3-0 | libgtk-4-1",
+      "libnotify4",
+      "libnss3",
+      "libxss1",
+      "libxtst6",
+      "xdg-utils",
+      "libatspi2.0-0",
+      "libsecret-1-0",
+      "libuuid1"
+    ]
+  },
   "appImage": {
-    "license": "assets/license_en.txt"
+    "license": "resources/license_en.txt"
   },
 
   "directories": {

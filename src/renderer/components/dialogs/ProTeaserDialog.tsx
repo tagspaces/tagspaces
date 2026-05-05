@@ -24,15 +24,16 @@ import { getProTeaserSlides } from '-/content/ProTeaserSlides';
 import { openURLExternally } from '-/services/utils-io';
 import { Box, ButtonGroup } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigation } from 'swiper/modules';
+import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 interface Props {
@@ -162,6 +163,8 @@ function ProTeaserDialog(props: Props) {
   const swiperRef = useRef(null);
 
   const slidesEN = getProTeaserSlides(t);
+  const slideEntries = Object.values(slidesEN);
+  const totalSlides = slideEntries.length;
 
   const { open, onClose, slideIndex } = props;
 
@@ -169,6 +172,13 @@ function ProTeaserDialog(props: Props) {
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const initialSlide = slideIndex && slideIndex > -1 ? Number(slideIndex) : 0;
+  const [activeIndex, setActiveIndex] = useState<number>(initialSlide);
+
+  // Sync activeIndex when the dialog is re-opened on a different slide
+  // (e.g. user clicks a Pro feature → dialog opens at that slide's index).
+  useEffect(() => {
+    if (open) setActiveIndex(initialSlide);
+  }, [open, initialSlide]);
 
   return (
     <Dialog
@@ -188,6 +198,7 @@ function ProTeaserDialog(props: Props) {
       <DialogContent
         sx={{
           padding: 0,
+          paddingBottom: 0,
         }}
       >
         {open && (
@@ -198,27 +209,50 @@ function ProTeaserDialog(props: Props) {
                   width: 100%;
                   height: 100%;
                 }
-                .swiper-slide {
+                .pro-teaser-swiper .swiper-slide {
+                  box-sizing: border-box;
                   height: auto;
                 }
-                .swiper-button-next,
-                .swiper-button-prev {
-                  color: ${theme.palette.primary.main} !important;
+                .proteaser-pagination {
+                  display: flex;
+                  justify-content: center;
+                  flex: 1;
+                  gap: 8px;
+                }
+                .proteaser-pagination .swiper-pagination-bullet {
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 50%;
+                  background: ${theme.palette.text.secondary};
+                  opacity: 0.35;
+                  cursor: pointer;
+                  transition: opacity 0.2s, transform 0.2s;
+                }
+                .proteaser-pagination .swiper-pagination-bullet:hover {
+                  opacity: 0.6;
+                }
+                .proteaser-pagination .swiper-pagination-bullet-active {
+                  background: ${theme.palette.primary.main};
+                  opacity: 1;
+                  transform: scale(1.2);
                 }
               `}
             </style>
             <Swiper
               ref={swiperRef}
-              modules={[Navigation]}
-              navigation
-              pagination={{ clickable: true }}
+              modules={[Pagination]}
+              pagination={{
+                clickable: true,
+                el: '.proteaser-pagination',
+              }}
               slidesPerView={1}
               speed={500}
               initialSlide={initialSlide}
               loop={false}
+              onSlideChange={(s) => setActiveIndex(s.activeIndex)}
               className="pro-teaser-swiper"
             >
-              {Object.values(slidesEN).map((slideData, index) => (
+              {slideEntries.map((slideData, index) => (
                 <SwiperSlide key={index}>
                   <Slide {...slideData} />
                 </SwiperSlide>
@@ -227,6 +261,51 @@ function ProTeaserDialog(props: Props) {
           </>
         )}
       </DialogContent>
+      <DialogActions
+        sx={{
+          // env(safe-area-inset-*) handles the iPhone home indicator and
+          // the curved-screen edges on fullScreen dialogs. The max() keeps
+          // a comfortable buffer even when env() resolves to 0 (older
+          // browsers, missing viewport-fit=cover) so the buttons never
+          // sit flush against the rounded display.
+          paddingLeft: 'max(16px, env(safe-area-inset-left))',
+          paddingRight: 'max(16px, env(safe-area-inset-right))',
+          paddingTop: 1,
+          paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          gap: 1,
+        }}
+      >
+        <TsButton
+          data-tid="proTeaserBackTID"
+          onClick={() => (swiperRef.current as any)?.swiper?.slidePrev()}
+          disabled={activeIndex === 0}
+          sx={{ minWidth: 80 }}
+        >
+          {t('core:goback')}
+        </TsButton>
+        <Box className="proteaser-pagination" />
+        {activeIndex < totalSlides - 1 ? (
+          <TsButton
+            variant="contained"
+            data-tid="proTeaserNextTID"
+            onClick={() => (swiperRef.current as any)?.swiper?.slideNext()}
+            sx={{ minWidth: 80 }}
+          >
+            {t('core:next')}
+          </TsButton>
+        ) : (
+          <TsButton
+            variant="contained"
+            data-tid="proTeaserCloseTID"
+            onClick={onClose}
+            sx={{ minWidth: 80 }}
+          >
+            {t('core:closeButton')}
+          </TsButton>
+        )}
+      </DialogActions>
     </Dialog>
   );
 }

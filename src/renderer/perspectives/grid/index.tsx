@@ -27,5 +27,10 @@ export const defaultSettings = {
   showEntriesDescription: true,
   showTags: true,
   gridPageLimit: 100,
+  // Cap the number of tag chips rendered per cell. Files with more tags show
+  // the first N + a "+M more" chip that opens the rest in a popover. Reduces
+  // worst-case per-cell render cost on heavily-tagged files. 0 disables the
+  // cap (render all tags inline).
+  maxVisibleTags: 4,
   maxDescriptionPreviewLength: 100,
 };

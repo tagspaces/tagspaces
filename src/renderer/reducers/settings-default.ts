@@ -18,9 +18,8 @@
 
 import AppConfig from '-/AppConfig';
 import { extensionsFound, supportedFileTypes } from '-/extension-config';
-import { PerspectiveIDs } from '-/perspectives';
+import { DefaultEnabledPerspectives, PerspectiveIDs } from '-/perspectives';
 import keyBindings from '-/reducers/keybindings-default';
-import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 
 let desktopMode = !AppConfig.isMobile;
 if (AppConfig.ExtDisplayMode === 'mobile') {
@@ -85,6 +84,9 @@ export default {
   searchInSubfolders: true,
   watchCurrentDirectory: false,
   firstRun: true,
+  onboardingCompleted: false,
+  hideHowToStart: false,
+  onboardingVersion: 0,
   lastOpenedDirectory: '',
   showWarningRecursiveScan: true,
   calculateTags: false,
@@ -275,20 +277,7 @@ export default {
     ? [...extensionsFound, ...AppConfig.ExtExtensionsFound]
     : extensionsFound,
   enabledExtensions: [],
-  mapTileServers: [
-    {
-      uuid: getUuid(),
-      name: 'Standard',
-      serverURL: 'https://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      serverInfo:
-        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors',
-    },
-    {
-      uuid: getUuid(),
-      name: 'Topographic',
-      serverURL: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-      serverInfo:
-        '<b>Leaflet</b> | Map data: &copy; <b>https://openstreetmap.org/copyright</b> contributors, SRTM | Map style: &copy; <b>https://opentopomap.org</b> - OpenTopoMap (<b>https://creativecommons.org/licenses/by-sa/3.0/</b> - CC-BY-SA',
-    },
-  ],
+  enabledPerspectives: DefaultEnabledPerspectives,
+  seenPerspectiveOnboardings: {} as Record<string, boolean>,
+  mapTileServers: [],
 };

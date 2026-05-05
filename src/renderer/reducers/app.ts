@@ -183,10 +183,6 @@ export const actions = {
     if (getCheckForUpdateOnStartup(state)) {
       dispatch(SettingsActions.checkForUpdate());
     }
-    /*if (isFirstRun(state)) {
-      dispatch(actions.toggleOnboardingDialog());
-      dispatch(actions.toggleLicenseDialog());
-    }*/
     setTimeout(() => {
       setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
       loadExtensions();

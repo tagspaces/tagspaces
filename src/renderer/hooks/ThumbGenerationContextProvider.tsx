@@ -145,7 +145,7 @@ export const ThumbGenerationContextProvider = ({
     setFolderThumbnailPromise,
   } = usePlatformFacadeContext();
   const { metaActions } = useEditedEntryMetaContext();
-  const { getResentPageFiles } = usePaginationContext();
+  const { pageFiles } = usePaginationContext();
   const { setGeneratingThumbs } = useNotificationContext();
   const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const enableWS = useSelector(getEnableWS);
@@ -212,7 +212,7 @@ export const ThumbGenerationContextProvider = ({
       }
       if (genThumbs) {
         let genEntries;
-        const pageFiles = getResentPageFiles ? getResentPageFiles() : undefined; //in KanBan PaginationContext is not injected
+        // pageFiles is undefined in KanBan, where PaginationContext is not injected
         if (entries.length > 0) {
           genEntries = entries;
         } else if (pageFiles && pageFiles.length > 0) {

@@ -18,26 +18,35 @@ export async function clearDataStorage(isWeb) {
 }
 
 export async function closeWelcomePlaywright() {
+  // Order matters since the onboarding redesign: the License dialog now
+  // opens alone first, and the Onboarding wizard is chained from the
+  // license-accept handler. Dismiss them in that order. Each step is best-
+  // effort — if the user already accepted the license in a prior test in
+  // the same worker, the wait will timeout harmlessly.
+  let licenseFound = false;
   try {
-    const el = await global.client.waitForSelector(
-      '[data-tid=closeOnboardingDialog]',
-      {
-        timeout: 3000,
-        state: 'visible',
-      },
+    const license = await global.client.waitForSelector(
+      '[data-tid=agreeLicenseDialog]',
+      { timeout: 3000, state: 'visible' },
     );
-    if (el) {
-      await el.click();
-      /*
-      await global.client.click('[data-tid=nextStepOnboarding]');
-      await global.client.click('[data-tid=nextStepOnboarding]');
-      await global.client.click('[data-tid=nextStepOnboarding]');
-      await global.client.click('[data-tid=nextStepOnboarding]');
-      await global.client.click('[data-tid=startTagSpacesAfterOnboarding]');
-      */
-      await global.client.click('[data-tid=agreeLicenseDialog]');
+    if (license) {
+      await license.click();
+      licenseFound = true;
     }
   } catch (e) {
-    //console.log('closeOnboardingDialog not exist');
+    // license dialog not present — nothing to accept
+  }
+  // Onboarding only chains in if the license was just accepted. Skip the
+  // wait otherwise to avoid penalising tests where neither dialog is up.
+  if (licenseFound) {
+    try {
+      const onboarding = await global.client.waitForSelector(
+        '[data-tid=closeOnboardingDialog]',
+        { timeout: 3000, state: 'visible' },
+      );
+      if (onboarding) await onboarding.click();
+    } catch (e) {
+      // onboarding wizard not present (e.g., onboardingCompleted already)
+    }
   }
 }

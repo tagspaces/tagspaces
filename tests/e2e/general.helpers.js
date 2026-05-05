@@ -593,10 +593,30 @@ export async function extractTags(selectorElement) {
 }
 
 export async function removeTagFromTagMenu(tagName) {
-  await clickOn('[data-tid=tagMoreButton_' + tagName + ']');
+  const moreSelector = '[data-tid=tagMoreButton_' + tagName + ']';
+  // The tag chip in PropertiesTagsSelectTID can take a moment to render
+  // after the input-Enter add path. In sidecar mode the file path does
+  // not change, so the properties panel does not get a full re-render
+  // and the more-button may attach to the DOM slightly later than the
+  // grid tag chip. Wait for attachment first (cheaper than visible
+  // check), then scroll it into the viewport — on smaller CI runners
+  // the chip can render below the fold of the properties panel.
+  const handle = await global.client.waitForSelector(moreSelector, {
+    state: 'attached',
+    timeout: 15000,
+  });
+  if (handle && handle.scrollIntoViewIfNeeded) {
+    try {
+      await handle.scrollIntoViewIfNeeded();
+    } catch {
+      /* element may have detached during scroll — clickOn below will
+         retry/wait or report the real error */
+    }
+  }
+  await clickOn(moreSelector);
   await clickOn('[data-tid=deleteTagMenu]');
   // await clickOn('[data-tid=confirmRemoveTagFromFile]');
-  await isDisplayed('[data-tid=tagMoreButton_' + tagName + ']', false, 4000);
+  await isDisplayed(moreSelector, false, 4000);
 }
 
 export async function showFilesWithTag(tagName) {

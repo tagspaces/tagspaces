@@ -33,6 +33,7 @@ import { usePaginationContext } from '-/hooks/usePaginationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import CellView from '-/perspectives/common/CellView';
+import { CellVisibilityProvider } from '-/perspectives/grid/hooks/CellVisibilityContext';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { Pro } from '-/pro';
 import { dataTidFormat } from '-/services/test';
@@ -71,13 +72,14 @@ interface Props {
   desktopMode: boolean;
   getCellContent: (
     fsEntry: TS.FileSystemEntry,
-    selectedEntries: Array<TS.FileSystemEntry>,
+    selected: boolean,
+    selectionMode: boolean,
     index: number,
     handleGridContextMenu,
     handleGridCellClick,
     handleGridCellDblClick,
     isLast?: boolean,
-  ) => void;
+  ) => any;
   currentDirectoryPath: string;
   onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
   setSelectedEntries: (selectedEntries: Array<TS.FileSystemEntry>) => void;
@@ -101,7 +103,7 @@ function GridPagination(props: Props) {
   const { directoryMeta, getAllPropertiesPromise } =
     useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
-  const { page, getResentPageFiles, setCurrentPage } = usePaginationContext();
+  const { page, pageFiles, setCurrentPage } = usePaginationContext();
   const { openEntry } = useOpenedEntryContext();
   const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
     ? useContext<TS.ThumbDialogContextData>(
@@ -111,7 +113,18 @@ function GridPagination(props: Props) {
 
   const currentLocation = findLocation();
   const theme = useTheme();
-  const pageFiles = useMemo(() => getResentPageFiles(), [getResentPageFiles]);
+
+  // O(1) per-cell selection lookup. CellViews are memoised on the `selected`
+  // boolean alone, so swapping a Set in here means a single click only
+  // re-renders the previously-selected and the newly-selected cells.
+  const selectedUuidSet = useMemo(() => {
+    const s = new Set<string>();
+    if (selectedEntries) {
+      for (const e of selectedEntries) s.add(e.uuid);
+    }
+    return s;
+  }, [selectedEntries]);
+  const selectionMode = (selectedEntries?.length ?? 0) > 1;
 
   // Memoize derived values for performance
   const showPagination = useMemo(
@@ -436,29 +449,33 @@ function GridPagination(props: Props) {
           </Grid>
           <SelectionDragLayer />
           <SelectionArea onSelect={handleSelect}>
-            <GridCellsContainer>
-              {pageFiles.length < 1 &&
-                renderEmptyState(t('core:noFileFolderFound'))}
-              {fileCount < 1 &&
-                dirCount >= 1 &&
-                !showDirectories &&
-                renderEmptyState(t('core:noFileButFoldersFound'))}
-              {pageFiles.map((entry, index) => (
-                <CellView
-                  key={entry.uuid}
-                  fsEntry={entry}
-                  index={index}
-                  cellContent={getCellContent}
-                  isLast={index === pageFiles.length - 1}
-                />
-              ))}
-              {pageFiles.length > 0 && (
-                <>
-                  <Box sx={{ flexGrow: 1 }} />
-                  <Box sx={{ flexGrow: 1 }} />
-                </>
-              )}
-            </GridCellsContainer>
+            <CellVisibilityProvider scrollRoot={containerEl}>
+              <GridCellsContainer>
+                {pageFiles.length < 1 &&
+                  renderEmptyState(t('core:noFileFolderFound'))}
+                {fileCount < 1 &&
+                  dirCount >= 1 &&
+                  !showDirectories &&
+                  renderEmptyState(t('core:noFileButFoldersFound'))}
+                {pageFiles.map((entry, index) => (
+                  <CellView
+                    key={entry.uuid}
+                    fsEntry={entry}
+                    index={index}
+                    selected={selectedUuidSet.has(entry.uuid)}
+                    selectionMode={selectionMode}
+                    cellContent={getCellContent}
+                    isLast={index === pageFiles.length - 1}
+                  />
+                ))}
+                {pageFiles.length > 0 && (
+                  <>
+                    <Box sx={{ flexGrow: 1 }} />
+                    <Box sx={{ flexGrow: 1 }} />
+                  </>
+                )}
+              </GridCellsContainer>
+            </CellVisibilityProvider>
             {showPagination && (
               <TooltipTS title={folderSummary}>
                 <Pagination

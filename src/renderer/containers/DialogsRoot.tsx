@@ -32,6 +32,7 @@ import { MoveOrCopyFilesDialogContextProvider } from '-/components/dialogs/hooks
 import { NewAudioDialogContextProvider } from '-/components/dialogs/hooks/NewAudioDialogContextProvider';
 import { NewFileDialogContextProvider } from '-/components/dialogs/hooks/NewFileDialogContextProvider';
 import { OnboardingDialogContextProvider } from '-/components/dialogs/hooks/OnboardingDialogContextProvider';
+import { PerspectiveOnboardingContextProvider } from '-/components/dialogs/hooks/PerspectiveOnboardingContextProvider';
 import { ProTeaserDialogContextProvider } from '-/components/dialogs/hooks/ProTeaserDialogContextProvider';
 import { ProgressDialogContextProvider } from '-/components/dialogs/hooks/ProgressDialogContextProvider';
 import { ResolveConflictContextProvider } from '-/components/dialogs/hooks/ResolveConflictContextProvider';
@@ -51,13 +52,21 @@ const providers = [
   MoveOrCopyFilesDialogContextProvider,
   CreateDirectoryDialogContextProvider,
   ProgressDialogContextProvider,
+  // PerspectiveOnboardingContextProvider must wrap SettingsDialogContextProvider
+  // so the "Show intro" button rendered inside the Settings dialog can call
+  // openPerspectiveOnboarding(). React Context respects the React tree (not
+  // the DOM), and the Settings dialog's children are descendants of whichever
+  // providers wrap it from the outside.
+  PerspectiveOnboardingContextProvider,
   SettingsDialogContextProvider,
   NewFileDialogContextProvider,
   NewAudioDialogContextProvider,
+  // OnboardingDialogContextProvider must wrap LicenseDialogContextProvider
+  // so the license-accept handler can chain into openOnboardingDialog().
+  OnboardingDialogContextProvider,
   LicenseDialogContextProvider,
   ThirdPartyLibsDialogContextProvider,
   AboutDialogContextProvider,
-  OnboardingDialogContextProvider,
   KeyboardDialogContextProvider,
   LinkDialogContextProvider,
   ProTeaserDialogContextProvider,

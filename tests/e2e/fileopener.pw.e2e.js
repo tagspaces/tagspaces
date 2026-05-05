@@ -383,7 +383,7 @@ test.describe('TST08 - File folder properties', () => {
   }) => {
     if (isWin) {
       // open fileProperties
-      await clickOn(getGridFileSelector('sample.mp4'));
+      await clickOn(getGridFileSelector('sample.webm'));
       await clickOn('[data-tid=propsActionsMenuTID]');
       await clickOn('[data-tid=fileContainerSwitchToFullScreen]');
     }

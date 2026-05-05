@@ -56,7 +56,22 @@ const configuration: webpack.Configuration = {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     modules: [webpackPaths.srcPath, 'node_modules'],
-    // There is no need to add aliases here, the paths in tsconfig get mirrored
+    // Pin react / react-dom to the renderer's own copies. Without this, an
+    // external perspective package symlinked into release/app/node_modules
+    // (via `npm run link4dev` from extensions-pro) would walk up looking
+    // for react from outside the tagspaces tree and either fail or — worse
+    // — load a duplicate React instance, breaking hooks. The aliases force
+    // every `require('react')` / `require('react-dom')` in symlinked
+    // packages to resolve to the host renderer's copy, guaranteeing a
+    // single React runtime across all dynamically imported chunks.
+    alias: {
+      react: path.resolve(webpackPaths.rootPath, 'node_modules', 'react'),
+      'react-dom': path.resolve(
+        webpackPaths.rootPath,
+        'node_modules',
+        'react-dom',
+      ),
+    },
     plugins: [new TsconfigPathsPlugins()],
   },
 

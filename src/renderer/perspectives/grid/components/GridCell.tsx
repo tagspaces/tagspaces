@@ -27,6 +27,7 @@ import EntryIcon from '-/components/EntryIcon';
 import FileExtBadge from '-/components/FileExtBadge';
 import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
+import TagsOverflowChip from '-/components/TagsOverflowChip';
 import TagsPreview from '-/components/TagsPreview';
 import Tooltip from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
@@ -35,6 +36,7 @@ import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import { useCellVisibility } from '-/perspectives/grid/hooks/CellVisibilityContext';
 import {
   getSupportedFileTypes,
   getTagDelimiter,
@@ -68,7 +70,13 @@ import {
   extractTitle,
   getThumbFileLocationForFile,
 } from '@tagspaces/tagspaces-common/paths';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { defaultSettings } from '../index';
@@ -123,10 +131,18 @@ function GridCell(props: Props) {
 
   const { t } = useTranslation();
   const theme = useTheme();
-  const { entrySize, showEntriesDescription, showTags, thumbnailMode } =
-    usePerspectiveSettingsContext();
+  const {
+    entrySize,
+    showEntriesDescription,
+    showTags,
+    thumbnailMode,
+    maxVisibleTags,
+  } = usePerspectiveSettingsContext();
   const { metaActions } = useEditedEntryMetaContext();
-  const { selectedEntries, selectEntry } = useSelectedEntriesContext();
+  // Intentionally do not subscribe to selectedEntries here. The cell receives
+  // its own `selected` boolean from the parent; selectEntry is only used in
+  // event handlers, where reading the latest selection from a ref is fine.
+  const { selectEntry } = useSelectedEntriesContext();
   const { addTag, editTagForEntry } = useTaggingActionsContext();
   const { findLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -145,6 +161,12 @@ function GridCell(props: Props) {
 
   // Thumbnail state and helpers
   const [thumbSrc, setThumbSrc] = useState<string | undefined>(undefined);
+  // Visibility-driven loading: defer setThumbPath until the cell scrolls
+  // close to the viewport. The visibility context owns one shared
+  // IntersectionObserver for the whole page.
+  const cellRootRef = useRef<HTMLElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const visibility = useCellVisibility();
 
   const getThumbUrl = useCallback(async (): Promise<string | undefined> => {
     if (!gridCellLocation) return undefined;
@@ -189,8 +211,24 @@ function GridCell(props: Props) {
   }, [gridCellLocation, fsEntry.path, fsEntry.meta, getThumbUrl]);
 
   useEffect(() => {
-    setThumbPath();
-  }, [setThumbPath]);
+    if (isVisible) setThumbPath();
+  }, [isVisible, setThumbPath]);
+
+  // Subscribe the cell root to the shared IntersectionObserver. We only flip
+  // isVisible on first transition to true — once a cell has loaded its thumb
+  // we don't need to react further (the WeakSet inside the provider keeps
+  // visibility state for any future scroll-back re-render). Cells that go
+  // off-screen and come back will already have thumbSrc cached.
+  useEffect(() => {
+    const el = cellRootRef.current;
+    if (!el) return;
+    const cb = (visible: boolean) => {
+      if (visible) setIsVisible(true);
+    };
+    const initial = visibility.observe(el, cb);
+    if (initial) setIsVisible(true);
+    return () => visibility.unobserve(el, cb);
+  }, [visibility]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
@@ -257,14 +295,24 @@ function GridCell(props: Props) {
     return desc;
   }, [showEntriesDescription, fsEntry.meta?.description]);
 
+  // Prefer the value pre-parsed at load time by DirectoryContentContextProvider.
+  // Fallback to a fresh parse if the entry came in through a path that did not
+  // enrich it (defensive — should not normally happen for cells in the grid).
   const fileNameTags = useMemo(() => {
     if (!fsEntry.isFile) return [];
+    if (fsEntry.parsedNameTags !== undefined) return fsEntry.parsedNameTags;
     return extractTagsAsObjects(
       fsEntry.name,
       tagDelimiter,
       gridCellLocation?.getDirSeparator(),
     );
-  }, [fsEntry.isFile, fsEntry.name, tagDelimiter, gridCellLocation]);
+  }, [
+    fsEntry.isFile,
+    fsEntry.name,
+    fsEntry.parsedNameTags,
+    tagDelimiter,
+    gridCellLocation,
+  ]);
 
   const fileSystemEntryTags: TS.Tag[] = fsEntry.meta?.tags ?? [];
 
@@ -276,10 +324,25 @@ function GridCell(props: Props) {
     ];
   }, [fileSystemEntryTags, fileNameTags]);
 
+  // In multi-select (selectionMode) the drag operation is on the cell, not on
+  // the tag (file move, not tag reorder). Skip the per-tag DnD wiring in that
+  // mode — same logic as on read-only locations. Drops 2× useDrag/useDrop per
+  // tag × N tags × M cells of overhead during multi-select.
+  const useStaticTags = gridCellLocation.isReadOnly || selectionMode;
+  // Cap the number of inline tag chips. Files with more get a "+N" chip that
+  // opens the rest in a popover. 0 disables the cap.
+  const cap =
+    typeof maxVisibleTags === 'number' && maxVisibleTags > 0
+      ? maxVisibleTags
+      : Infinity;
+  const visibleTags =
+    entryTags.length > cap ? entryTags.slice(0, cap) : entryTags;
+  const overflowTags =
+    entryTags.length > cap ? entryTags.slice(cap) : undefined;
   const renderTags = useCallback(() => {
     let sideCarLength = 0;
-    return entryTags.map((tag: TS.Tag, index) => {
-      const tagContainer = gridCellLocation.isReadOnly ? (
+    return visibleTags.map((tag: TS.Tag, index) => {
+      const tagContainer = useStaticTags ? (
         <TagContainer
           tag={tag}
           key={entryPath + tag.title}
@@ -294,7 +357,6 @@ function GridCell(props: Props) {
           entry={fsEntry}
           addTag={handleAddTag}
           handleTagMenu={handleTagMenu}
-          selectedEntries={selectedEntries}
           editTagForEntry={handleEditTag}
           reorderTags={reorderTags}
         />
@@ -305,13 +367,12 @@ function GridCell(props: Props) {
       return tagContainer;
     });
   }, [
-    entryTags,
-    gridCellLocation,
+    visibleTags,
+    useStaticTags,
     entryPath,
     fsEntry,
     handleTagMenu,
     handleAddTag,
-    selectedEntries,
     handleEditTag,
     reorderTags,
   ]);
@@ -398,6 +459,9 @@ function GridCell(props: Props) {
 
   return (
     <Card
+      ref={(node: HTMLElement | null) => {
+        cellRootRef.current = node;
+      }}
       data-entry-id={fsEntry.uuid}
       data-tid={`fsEntryName_${dataTidFormat(fsEntry.name)}`}
       data-selected={selected}
@@ -429,7 +493,16 @@ function GridCell(props: Props) {
       >
         <Box sx={{ position: 'absolute' }}>
           {showTags && entryTags.length > 0 ? (
-            renderTags()
+            <>
+              {renderTags()}
+              {overflowTags && (
+                <TagsOverflowChip
+                  remaining={overflowTags}
+                  entry={fsEntry}
+                  handleTagMenu={handleTagMenu}
+                />
+              )}
+            </>
           ) : (
             <TagsPreview tags={entryTags} />
           )}
@@ -526,4 +599,19 @@ function GridCell(props: Props) {
   );
 }
 
-export default GridCell;
+// Custom comparator: re-render only when something the cell actually displays
+// changes. This makes single-file selection cheap — only the previously- and
+// newly-selected cells repaint.
+export default React.memo(GridCell, (prev, next) => {
+  return (
+    prev.selected === next.selected &&
+    prev.selectionMode === next.selectionMode &&
+    prev.fsEntry === next.fsEntry &&
+    prev.fsEntry.meta === next.fsEntry.meta &&
+    prev.isLast === next.isLast &&
+    prev.handleTagMenu === next.handleTagMenu &&
+    prev.handleGridContextMenu === next.handleGridContextMenu &&
+    prev.handleGridCellClick === next.handleGridCellClick &&
+    prev.handleGridCellDblClick === next.handleGridCellDblClick
+  );
+});

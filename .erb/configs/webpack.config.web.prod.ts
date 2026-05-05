@@ -78,7 +78,7 @@ const configuration: webpack.Configuration = {
       },
       // Common Image Formats
       {
-        test: /\.(?:ico|gif|png|jpg|jpeg|webp|avif)$/,
+        test: /\.(?:ico|gif|png|jpg|jpeg|webp|avif|mp4|webm)$/,
         type: 'asset/resource',
       },
       {

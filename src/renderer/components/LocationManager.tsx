@@ -24,8 +24,10 @@ import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
 import { getLocations } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
-import { Box, List } from '@mui/material';
+import { Box, List, Typography } from '@mui/material';
+import TsButton from '-/components/TsButton';
 import { useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useSelector } from 'react-redux';
 
@@ -36,6 +38,7 @@ interface Props {
 }
 
 function LocationManager(props: Props) {
+  const { t } = useTranslation();
   const {
     findLocation,
     moveLocation,
@@ -165,6 +168,30 @@ function LocationManager(props: Props) {
           overflowY: 'auto',
         }}
       >
+        {wSpaceLocations.length === 0 && (
+          <Box
+            data-tid="locationsEmptyState"
+            sx={{
+              padding: '16px',
+              textAlign: 'center',
+              color: 'text.secondary',
+            }}
+          >
+            <Typography variant="body2" sx={{ marginBottom: '12px' }}>
+              {t('core:noLocationsYet')}
+            </Typography>
+            <TsButton
+              variant="contained"
+              data-tid="createFirstLocationTID"
+              onClick={() => {
+                setSelectedLocation(undefined);
+                openCreateEditLocationDialog();
+              }}
+            >
+              {t('core:createYourFirstLocation')}
+            </TsButton>
+          </Box>
+        )}
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
