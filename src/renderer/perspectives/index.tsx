@@ -99,11 +99,41 @@ export const CalendarPerspectiveMeta = {
   title: 'Calendar Perspective',
 };
 
-export const AvailablePerspectives = [];
-AvailablePerspectives.push(GridPerspectiveMeta);
-AvailablePerspectives.push(ListPerspectiveMeta);
-AvailablePerspectives.push(GalleryPerspectiveMeta);
-AvailablePerspectives.push(MapiquePerspectiveMeta);
-AvailablePerspectives.push(KanbanPerspectiveMeta);
-AvailablePerspectives.push(FolderVizPerspectiveMeta);
-AvailablePerspectives.push(CalendarPerspectiveMeta);
+export type PerspectiveMeta = {
+  id: string;
+  key: string;
+  pro: boolean;
+  beta: boolean;
+  icon: React.ReactNode;
+  title: string;
+};
+
+export const AvailablePerspectives: PerspectiveMeta[] = [
+  GridPerspectiveMeta,
+  ListPerspectiveMeta,
+  GalleryPerspectiveMeta,
+  MapiquePerspectiveMeta,
+  KanbanPerspectiveMeta,
+  FolderVizPerspectiveMeta,
+  CalendarPerspectiveMeta,
+];
+
+export const DefaultEnabledPerspectives: string[] = AvailablePerspectives.map(
+  (p) => p.id,
+);
+
+export function getVisiblePerspectives(
+  enabledPerspectives: string[],
+  hideProFeatures: boolean,
+  pro: any,
+): PerspectiveMeta[] {
+  return AvailablePerspectives.filter((p) => {
+    if (!enabledPerspectives.includes(p.id)) {
+      return false;
+    }
+    if (hideProFeatures && !pro && p.pro === true) {
+      return false;
+    }
+    return true;
+  });
+}

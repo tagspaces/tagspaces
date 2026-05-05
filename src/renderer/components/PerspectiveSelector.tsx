@@ -19,9 +19,10 @@
 import AppConfig from '-/AppConfig';
 import { BetaLabel } from '-/components/HelperComponents';
 import TsSelect from '-/components/TsSelect';
-import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
+import { getVisiblePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
 import {
+  getEnabledPerspectives,
   isDesktopMode,
   isDevMode,
   isHideProFeatures,
@@ -47,7 +48,14 @@ function PerspectiveSelector(props: Props) {
   const devMode: boolean = useSelector(isDevMode);
   const desktopMode = useSelector(isDesktopMode);
   const hideProFeatures: boolean = useSelector(isHideProFeatures);
+  const enabledPerspectives: string[] = useSelector(getEnabledPerspectives);
   const { t } = useTranslation();
+
+  const visiblePerspectives = getVisiblePerspectives(
+    enabledPerspectives,
+    hideProFeatures,
+    Pro,
+  );
 
   const perspectiveSelectorMenuItems = [];
   perspectiveSelectorMenuItems.push(
@@ -64,24 +72,18 @@ function PerspectiveSelector(props: Props) {
     </MenuItem>,
   );
 
-  AvailablePerspectives.forEach((perspective) => {
-    let includePerspective = true;
-    if (hideProFeatures && !Pro && perspective.pro === true) {
-      includePerspective = false;
-    }
-    if (includePerspective) {
-      perspectiveSelectorMenuItems.push(
-        <MenuItem key={perspective.key} value={perspective.id}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <ListItemIcon>{perspective.icon}</ListItemIcon>
-            <ListItemText>
-              {perspective.title}&nbsp;
-              {perspective.beta && <BetaLabel />}
-            </ListItemText>
-          </Box>
-        </MenuItem>,
-      );
-    }
+  visiblePerspectives.forEach((perspective) => {
+    perspectiveSelectorMenuItems.push(
+      <MenuItem key={perspective.key} value={perspective.id}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <ListItemIcon>{perspective.icon}</ListItemIcon>
+          <ListItemText>
+            {perspective.title}&nbsp;
+            {perspective.beta && <BetaLabel />}
+          </ListItemText>
+        </Box>
+      </MenuItem>,
+    );
   });
 
   return (

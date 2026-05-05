@@ -18,7 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import { extensionsFound, supportedFileTypes } from '-/extension-config';
-import { PerspectiveIDs } from '-/perspectives';
+import { DefaultEnabledPerspectives, PerspectiveIDs } from '-/perspectives';
 import keyBindings from '-/reducers/keybindings-default';
 
 let desktopMode = !AppConfig.isMobile;
@@ -277,5 +277,7 @@ export default {
     ? [...extensionsFound, ...AppConfig.ExtExtensionsFound]
     : extensionsFound,
   enabledExtensions: [],
+  enabledPerspectives: DefaultEnabledPerspectives,
+  seenPerspectiveOnboardings: {} as Record<string, boolean>,
   mapTileServers: [],
 };

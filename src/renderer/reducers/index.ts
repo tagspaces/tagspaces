@@ -86,7 +86,15 @@ function configureApp(extConfigObj) {
     extConfigObj.ExtHideProFeatures ?? AppConfig.ExtHideProFeatures;
   AppConfig.ExtTheme = extConfigObj.ExtTheme ?? AppConfig.ExtTheme;
   AppConfig.ExtDefaultPerspective =
-    extConfigObj.ExtDefaultPerspective ?? AppConfig.ExtDefaultPerspective; // currently not implemented
+    extConfigObj.ExtDefaultPerspective ?? AppConfig.ExtDefaultPerspective;
+  // ExtEnabledPerspectives: array of perspective IDs to expose to the user.
+  // When set, this is authoritative on every app load — the Settings tab
+  // toggles become read-only and end-user preferences in
+  // state.settings.enabledPerspectives are ignored. Unknown IDs are silently
+  // dropped by getVisiblePerspectives at render time.
+  if (Array.isArray(extConfigObj.ExtEnabledPerspectives)) {
+    AppConfig.ExtEnabledPerspectives = extConfigObj.ExtEnabledPerspectives;
+  }
   AppConfig.ExtLightThemeLightColor =
     extConfigObj.ExtLightThemeLightColor ?? AppConfig.ExtLightThemeLightColor; // do not apply currently
   AppConfig.ExtLightThemeMainColor =

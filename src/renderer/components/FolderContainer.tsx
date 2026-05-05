@@ -34,12 +34,13 @@ import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { AvailablePerspectives, PerspectiveIDs } from '-/perspectives';
+import { getVisiblePerspectives, PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
 import { getProgress } from '-/reducers/app';
 import {
   getDefaultAIProvider,
   getDesktopMode,
+  getEnabledPerspectives,
   getKeyBindingObject,
   isDevMode,
   isHideProFeatures,
@@ -94,7 +95,13 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
 
   const isDesktopMode = useSelector(getDesktopMode);
   const hideProFeatures: boolean = useSelector(isHideProFeatures);
+  const enabledPerspectives: string[] = useSelector(getEnabledPerspectives);
   const progress = useSelector(getProgress);
+
+  const visiblePerspectives = useMemo(
+    () => getVisiblePerspectives(enabledPerspectives, hideProFeatures, Pro),
+    [enabledPerspectives, hideProFeatures],
+  );
 
   const [perspectiveMenuAnchorEl, setPerspectiveMenuAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -106,6 +113,22 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
       .then((hasChat) => setHasAIChat(hasChat))
       .catch(() => setHasAIChat(false));
   }, [currentDirectory?.path]);
+
+  // Fallback when the active perspective is no longer in the visible set:
+  // route to the first visible one (typically Grid). Per-folder preference in
+  // tsm.json is left untouched — if the perspective is re-enabled later, the
+  // folder reverts to it on next open.
+  useEffect(() => {
+    if (!currentPerspective || currentPerspective === PerspectiveIDs.UNSPECIFIED) {
+      return;
+    }
+    const stillVisible = visiblePerspectives.some(
+      (p) => p.id === currentPerspective,
+    );
+    if (!stillVisible && visiblePerspectives.length > 0) {
+      setManualDirectoryPerspective(visiblePerspectives[0].id);
+    }
+  }, [currentPerspective, visiblePerspectives, setManualDirectoryPerspective]);
 
   const openPerspectiveMenu = useCallback(
     (event: React.MouseEvent<HTMLElement>) =>
@@ -154,74 +177,63 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   // Memoized toggle buttons for perspectives
   const perspectiveToggleButtons = useMemo(
     () =>
-      AvailablePerspectives.map((perspective) => {
-        let includePerspective = true;
-        if (hideProFeatures && !Pro && perspective.pro === true) {
-          includePerspective = false;
-        }
-        return (
-          includePerspective && (
-            <TsToggleButton
-              value={perspective.id}
-              aria-label={perspective.id}
-              key={perspective.id}
-              data-tid={perspective.key}
-              onClick={() => switchPerspective(perspective.id)}
-              sx={{
-                opacity: 0.9,
-                backgroundColor: theme.palette.background.default,
-                border: `1px solid ${theme.palette.divider}`,
-              }}
-            >
-              <Tooltip
-                title={
-                  perspective.title +
-                  (perspective.beta
-                    ? ' ' + t('core:betaStatus').toUpperCase()
-                    : '')
-                }
-              >
-                <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>
-              </Tooltip>
-            </TsToggleButton>
-          )
-        );
-      }),
-    [theme.palette.background.default, theme.palette.divider, t],
+      visiblePerspectives.map((perspective) => (
+        <TsToggleButton
+          value={perspective.id}
+          aria-label={perspective.id}
+          key={perspective.id}
+          data-tid={perspective.key}
+          onClick={() => switchPerspective(perspective.id)}
+          sx={{
+            opacity: 0.9,
+            backgroundColor: theme.palette.background.default,
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Tooltip
+            title={
+              perspective.title +
+              (perspective.beta
+                ? ' ' + t('core:betaStatus').toUpperCase()
+                : '')
+            }
+          >
+            <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>
+          </Tooltip>
+        </TsToggleButton>
+      )),
+    [
+      visiblePerspectives,
+      theme.palette.background.default,
+      theme.palette.divider,
+      t,
+    ],
   );
 
   // Memoized menu items for perspectives
   const perspectiveMenuItems = useMemo(
     () =>
-      AvailablePerspectives.map((perspective) => {
-        let includePerspective = true;
-        if (hideProFeatures && !Pro && perspective.pro === true) {
-          includePerspective = false;
-        }
-        return (
-          includePerspective && (
-            <MenuItem
-              key={perspective.key}
-              data-tid={perspective.key}
-              onClick={() => {
-                handlePerspectiveMenuClose();
-                switchPerspective(perspective.id);
-              }}
-            >
-              <ListItemIcon>{perspective.icon}</ListItemIcon>
-              <ListItemText
-                primary={
-                  <>
-                    {perspective.title}
-                    {perspective.beta && <BetaLabel />}
-                  </>
-                }
-              />
-            </MenuItem>
-          )
-        );
-      }),
-    [handlePerspectiveMenuClose],
+      visiblePerspectives.map((perspective) => (
+        <MenuItem
+          key={perspective.key}
+          data-tid={perspective.key}
+          onClick={() => {
+            handlePerspectiveMenuClose();
+            switchPerspective(perspective.id);
+          }}
+        >
+          <ListItemIcon>{perspective.icon}</ListItemIcon>
+          <ListItemText
+            primary={
+              <>
+                {perspective.title}
+                {perspective.beta && <BetaLabel />}
+              </>
+            }
+          />
+        </MenuItem>
+      )),
+    [visiblePerspectives, handlePerspectiveMenuClose],
   );
 
   // Memoized CircularProgress with label
