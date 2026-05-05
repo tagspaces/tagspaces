@@ -91,9 +91,12 @@ function configureApp(extConfigObj) {
   // When set, this is authoritative on every app load — the Settings tab
   // toggles become read-only and end-user preferences in
   // state.settings.enabledPerspectives are ignored. Unknown IDs are silently
-  // dropped by getVisiblePerspectives at render time.
+  // dropped by getVisiblePerspectives at render time. Frozen so a buggy
+  // reducer or component can't mutate the deployer-pinned whitelist —
+  // matches how externalLocations / externalSearches are treated below.
   if (Array.isArray(extConfigObj.ExtEnabledPerspectives)) {
     AppConfig.ExtEnabledPerspectives = extConfigObj.ExtEnabledPerspectives;
+    Object.freeze(AppConfig.ExtEnabledPerspectives);
   }
   AppConfig.ExtLightThemeLightColor =
     extConfigObj.ExtLightThemeLightColor ?? AppConfig.ExtLightThemeLightColor; // do not apply currently

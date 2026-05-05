@@ -43,6 +43,90 @@ function writeExtensions(extensions, supportedFileTypes) {
     color: '#ac21f3',
     viewer: '@tagspacespro/extensions/font-viewer',
   });*/
+
+  // Pull perspectives out of the generic extensions list. They drive the
+  // perspective registry (id, title, icon name, beta/pro flags) and the
+  // dynamic-import loader map below — both consumed at runtime by
+  // src/renderer/perspectives/index.tsx and RenderPerspective.tsx.
+  //
+  // Identifier fields (id, componentExport, onboardingExport) are emitted
+  // verbatim into a webpackChunkName comment and used as JS identifier
+  // accessors at runtime. Validate them up-front so a typo in a manifest
+  // (or a malformed string with `*/`, quotes, or other syntax-breaking
+  // characters) fails the generation step with a clear warning instead of
+  // producing broken extension-config.ts source.
+  const IDENT_RE = /^[A-Za-z_][A-Za-z0-9_-]*$/;
+  const PACKAGE_RE = /^@?[A-Za-z0-9_./-]+$/;
+
+  const perspectives = extensions
+    .filter((ext) => {
+      if (
+        !Array.isArray(ext.extensionTypes) ||
+        !ext.extensionTypes.includes('perspective')
+      ) {
+        return false;
+      }
+      if (!ext.id || !ext.packageName) {
+        console.warn(
+          `generateExtensionsConfig: perspective skipped — missing id or packageName: ${ext.extensionId || ext.extensionName}`,
+        );
+        return false;
+      }
+      if (!IDENT_RE.test(ext.id)) {
+        console.warn(
+          `generateExtensionsConfig: perspective skipped — id "${ext.id}" must match ${IDENT_RE}`,
+        );
+        return false;
+      }
+      if (!PACKAGE_RE.test(ext.packageName)) {
+        console.warn(
+          `generateExtensionsConfig: perspective skipped — packageName "${ext.packageName}" must match ${PACKAGE_RE}`,
+        );
+        return false;
+      }
+      const componentExport = ext.componentExport || 'default';
+      if (!IDENT_RE.test(componentExport)) {
+        console.warn(
+          `generateExtensionsConfig: perspective "${ext.id}" skipped — componentExport "${componentExport}" must match ${IDENT_RE}`,
+        );
+        return false;
+      }
+      if (ext.onboardingExport && !IDENT_RE.test(ext.onboardingExport)) {
+        console.warn(
+          `generateExtensionsConfig: perspective "${ext.id}" skipped — onboardingExport "${ext.onboardingExport}" must match ${IDENT_RE}`,
+        );
+        return false;
+      }
+      return true;
+    })
+    .map((ext) => ({
+      id: ext.id,
+      packageName: ext.packageName,
+      title: ext.title || ext.extensionName,
+      key: ext.key || 'open' + ext.id + 'Perspective',
+      pro: ext.pro === true,
+      beta: ext.beta === true,
+      iconName: ext.iconName || 'Extension',
+      componentExport: ext.componentExport || 'default',
+      onboardingExport: ext.onboardingExport || null,
+    }));
+
+  // Loader map — emitted as real source so webpack statically analyses each
+  // dynamic import() and produces a separate code-split chunk per
+  // perspective package.
+  const loaderEntries = perspectives
+    .map((p) => {
+      const chunk = JSON.stringify('Perspective_' + p.id);
+      return `  ${JSON.stringify(p.id)}: () => import(/* webpackChunkName: ${chunk} */ ${JSON.stringify(p.packageName)}),`;
+    })
+    .join('\n');
+  const loaderMapSrc =
+    perspectives.length > 0
+      ? 'export const externalPerspectiveLoaders: Record<string, () => Promise<any>> = {\n' +
+        loaderEntries +
+        '\n};\n'
+      : 'export const externalPerspectiveLoaders: Record<string, () => Promise<any>> = {};\n';
+
   const generated =
     '/** GENERATED CODE - DO NOT MODIFY: This source file was generated automatically and any changes made to it may be overwritten */\n' +
     'export const extensionsFound = ' +
@@ -50,7 +134,11 @@ function writeExtensions(extensions, supportedFileTypes) {
     ';\n' +
     'export const supportedFileTypes = ' +
     JSON.stringify(supportedFileTypes, null, 2) +
-    ';';
+    ';\n' +
+    'export const externalPerspectives = ' +
+    JSON.stringify(perspectives, null, 2) +
+    ';\n' +
+    loaderMapSrc;
   let outputFile = path.join(
     __dirname,
     '..',

@@ -119,7 +119,10 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   // tsm.json is left untouched — if the perspective is re-enabled later, the
   // folder reverts to it on next open.
   useEffect(() => {
-    if (!currentPerspective || currentPerspective === PerspectiveIDs.UNSPECIFIED) {
+    if (
+      !currentPerspective ||
+      currentPerspective === PerspectiveIDs.UNSPECIFIED
+    ) {
       return;
     }
     const stillVisible = visiblePerspectives.some(
@@ -193,9 +196,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
           <Tooltip
             title={
               perspective.title +
-              (perspective.beta
-                ? ' ' + t('core:betaStatus').toUpperCase()
-                : '')
+              (perspective.beta ? ' ' + t('core:betaStatus').toUpperCase() : '')
             }
           >
             <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>

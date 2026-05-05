@@ -80,6 +80,7 @@
   "perspectivesSettingsHelp": "Choose which perspectives are available in the perspective switcher. Disabled perspectives stay hidden until you re-enable them here.",
   "perspectivesConfiguredByExtConfig": "The available perspectives are configured by your administrator and cannot be changed here.",
   "cannotDisableLastPerspective": "At least one perspective must remain enabled.",
+  "showPerspectiveIntro": "Show intro",
   "enableDevMode": "Enable Developer Mode",
   "hideProFeatures": "Hide Pro Features",
   "autoSaveDescription": "Auto-save description changes",

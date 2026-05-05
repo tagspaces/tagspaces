@@ -16,22 +16,32 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import AppConfig from '-/AppConfig';
 
 import CustomDragLayer from '-/components/CustomDragLayer';
 import LoadingLazy from '-/components/LoadingLazy';
 import TargetFileBox from '-/components/TargetFileBox';
+import { usePerspectiveOnboardingContext } from '-/components/dialogs/hooks/usePerspectiveOnboardingContext';
 import { PaginationContextProvider } from '-/hooks/PaginationContextProvider';
 import { PerspectiveSettingsContextProvider } from '-/hooks/PerspectiveSettingsContextProvider';
 import { ThumbGenerationContextProvider } from '-/hooks/ThumbGenerationContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { PerspectiveIDs } from '-/perspectives';
+import {
+  AvailablePerspectives,
+  hasExternalPerspectiveComponent,
+  loadExternalPerspectiveComponent,
+  PerspectiveIDs,
+  perspectiveHasOnboarding,
+} from '-/perspectives';
+import PerspectiveErrorBoundary from '-/perspectives/PerspectiveErrorBoundary';
 import { SortedDirContextProvider } from '-/perspectives/grid/hooks/SortedDirContextProvider';
 import { Pro } from '-/pro';
+import { getSeenPerspectiveOnboardings } from '-/reducers/settings';
 import { NativeTypes } from 'react-dnd-html5-backend';
+import { useSelector } from 'react-redux';
 
 const GridPerspective = React.lazy(
   () =>
@@ -157,6 +167,54 @@ function CalendarPerspectiveAsync(props) {
   );
 }
 
+// Cache of lazy components for external (package-shipped) perspectives.
+// Each entry is created on first render of that perspective and reused on
+// subsequent switches so the chunk is only fetched once.
+const externalLazyCache: Record<string, React.LazyExoticComponent<any>> = {};
+
+function getExternalPerspectiveLazy(
+  perspectiveId: string,
+): React.LazyExoticComponent<any> | undefined {
+  if (externalLazyCache[perspectiveId]) {
+    return externalLazyCache[perspectiveId];
+  }
+  // Predicate-based gate so we don't kick off the dynamic import twice
+  // (once to probe, once inside React.lazy) — the discarded probe promise
+  // would otherwise leak as an unhandled rejection if the chunk failed.
+  if (!hasExternalPerspectiveComponent(perspectiveId)) return undefined;
+  externalLazyCache[perspectiveId] = React.lazy(
+    () => loadExternalPerspectiveComponent(perspectiveId)!,
+  );
+  return externalLazyCache[perspectiveId];
+}
+
+function ExternalPerspectiveAsync({
+  perspectiveId,
+}: {
+  perspectiveId: string;
+}) {
+  const Comp = getExternalPerspectiveLazy(perspectiveId);
+  if (!Comp) return null;
+  // Error boundary isolates failures in package-shipped code (chunk-load
+  // errors, render-time exceptions in the perspective module) so a crash
+  // shows an inline error instead of taking down the directory pane.
+  return (
+    <PerspectiveErrorBoundary perspectiveId={perspectiveId} context="render">
+      <React.Suspense fallback={<LoadingLazy />}>
+        <PerspectiveSettingsContextProvider>
+          <SortedDirContextProvider>
+            <PaginationContextProvider>
+              <ThumbGenerationContextProvider>
+                <Comp />
+              </ThumbGenerationContextProvider>
+            </PaginationContextProvider>
+          </SortedDirContextProvider>
+        </PerspectiveSettingsContextProvider>
+      </React.Suspense>
+    </PerspectiveErrorBoundary>
+  );
+}
+
 const WelcomePanel = React.lazy(
   () => import(/* webpackChunkName: "WelcomePanel" */ './WelcomePanel'),
 );
@@ -173,6 +231,24 @@ interface Props {}
 function RenderPerspective(props: Props) {
   const { currentLocationId } = useCurrentLocationContext();
   const { currentPerspective } = useDirectoryContentContext();
+  const { openPerspectiveOnboarding } = usePerspectiveOnboardingContext();
+  const seenOnboardings = useSelector(getSeenPerspectiveOnboardings);
+
+  // Auto-open the perspective's onboarding dialog the first time the user
+  // switches into it. Only runs for perspectives that ship an
+  // onboardingExport in their tsextension manifest. The "seen" flag is
+  // persisted in Redux and cleared by the "Show intro" button in Settings
+  // for manual re-runs.
+  useEffect(() => {
+    if (!currentPerspective || !currentLocationId) return;
+    if (seenOnboardings[currentPerspective]) return;
+    if (!perspectiveHasOnboarding(currentPerspective)) return;
+    openPerspectiveOnboarding(currentPerspective);
+    // We intentionally depend on currentPerspective only — re-running on
+    // seenOnboardings changes would re-open the dialog after the user marks
+    // it seen by closing it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPerspective, currentLocationId]);
 
   const showWelcomePanel = !currentLocationId;
 
@@ -194,6 +270,16 @@ function RenderPerspective(props: Props) {
     }
     if (Pro && currentPerspective === PerspectiveIDs.CALENDAR) {
       return <CalendarPerspectiveAsync />;
+    }
+    // External perspective from a package — resolved via the build-time
+    // generated loader map. Returns null silently if the perspective ID
+    // doesn't match any built-in or external entry; the fallback effect in
+    // FolderContainer.tsx will route to the first enabled perspective.
+    const externalMeta = AvailablePerspectives.find(
+      (p) => p.external && p.id === currentPerspective,
+    );
+    if (externalMeta) {
+      return <ExternalPerspectiveAsync perspectiveId={externalMeta.id} />;
     }
     return <GridPerspectiveAsync />;
   }

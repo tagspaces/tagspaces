@@ -96,9 +96,21 @@ function processDirs(
           ...props
         } = packageJsonObj['tsextension'];
 
+        const isPerspective =
+          Array.isArray(types) && types.includes('perspective');
+
+        // For perspective extensions, manifest `id` is the perspective
+        // registry key (e.g. "timeline") — never the package import path —
+        // so derive extensionId from the directory only. For viewer/editor
+        // extensions, keep the historical behavior where `id` (if set)
+        // overrides the auto-generated package path.
         const extensionId =
-          (id || '@tagspaces/extensions/' + dir.name) +
+          (isPerspective || !id ? '@tagspaces/extensions/' + dir.name : id) +
           (buildFolder ? '/' + buildFolder : '');
+        // Package name to import() at runtime (perspectives only). Webpack
+        // resolves the `main` field of the package's package.json, so we
+        // don't append buildFolder here.
+        const packageName = packagePath + '/' + dir.name;
 
         if (fileTypes) {
           fileTypes.forEach((fileType) => {
@@ -148,6 +160,7 @@ function processDirs(
           ...(isExternal && { extensionExternal: true }),
           extensionEnabled: enabled !== undefined ? enabled : !isExternal,
           version: version,
+          ...(isPerspective && id ? { id, packageName } : {}),
           ...props,
         };
       }

@@ -17,8 +17,13 @@
  */
 
 import { BetaLabel } from '-/components/HelperComponents';
+import TsButton from '-/components/TsButton';
+import { usePerspectiveOnboardingContext } from '-/components/dialogs/hooks/usePerspectiveOnboardingContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
-import { AvailablePerspectives } from '-/perspectives';
+import {
+  AvailablePerspectives,
+  perspectiveHasOnboarding,
+} from '-/perspectives';
 import { Pro } from '-/pro';
 import {
   actions as SettingsActions,
@@ -43,10 +48,16 @@ function SettingsPerspectives() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { showNotification } = useNotificationContext();
+  const { openPerspectiveOnboarding } = usePerspectiveOnboardingContext();
   const enabledPerspectives: string[] = useSelector(getEnabledPerspectives);
   const hideProFeatures: boolean = useSelector(isHideProFeatures);
   const configLocked: boolean = isEnabledPerspectivesLocked();
   const hasPro = Pro ? true : false;
+
+  const handleShowIntro = (perspectiveId: string) => () => {
+    dispatch(SettingsActions.resetPerspectiveOnboarding(perspectiveId));
+    openPerspectiveOnboarding(perspectiveId);
+  };
 
   const handleToggle =
     (perspectiveId: string, currentlyEnabled: boolean) =>
@@ -115,11 +126,25 @@ function SettingsPerspectives() {
               </Tooltip>
             );
           }
+          const hasOnboarding = perspectiveHasOnboarding(perspective.id);
           return (
             <ListItem
               key={perspective.id}
               data-tid={'perspectiveRow_' + perspective.id}
-              secondaryAction={wrappedSwitch}
+              secondaryAction={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {hasOnboarding && (
+                    <TsButton
+                      data-tid={'showPerspectiveIntro_' + perspective.id}
+                      onClick={handleShowIntro(perspective.id)}
+                      size="small"
+                    >
+                      {t('core:showPerspectiveIntro')}
+                    </TsButton>
+                  )}
+                  {wrappedSwitch}
+                </Box>
+              }
             >
               <ListItemIcon>{perspective.icon}</ListItemIcon>
               <ListItemText
