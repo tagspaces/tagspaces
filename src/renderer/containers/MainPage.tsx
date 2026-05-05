@@ -347,7 +347,14 @@ function MainPage() {
           {isDesktopMode || (AppConfig.ExtIsAmplify && !isLoggedIn()) ? (
             <>
               <Drawer
-                sx={{ backgroundColor: 'unset' }}
+                sx={{
+                  backgroundColor: 'unset',
+                  // The DrawerResizeHandle's hit area extends 6.5px past the
+                  // drawer's right edge (SplitterGutter's invisible hit zone).
+                  // Without this, the Paper allows a few pixels of horizontal
+                  // scroll into that empty overflow.
+                  '& .MuiDrawer-paper': { overflowX: 'hidden' },
+                }}
                 variant="persistent"
                 anchor="left"
                 open={drawerOpened}

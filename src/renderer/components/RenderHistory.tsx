@@ -172,7 +172,7 @@ function RenderHistory({
         return (
           <ListItem
             dense
-            sx={{ paddingLeft: 0, height: 40 }}
+            sx={{ paddingLeft: 0, height: 40, gap: '4px' }}
             key={item.creationTimeStamp}
           >
             <TsButton
@@ -182,8 +182,8 @@ function RenderHistory({
                 textTransform: 'none',
                 fontWeight: 'normal',
                 justifyContent: 'start',
-                minWidth: 260,
-                maxWidth: 260,
+                flex: 1,
+                minWidth: 0,
               }}
               onClick={() => openHistoryItem(item as TS.HistoryItem)}
             >
@@ -213,8 +213,10 @@ function RenderHistory({
                     whiteSpace: 'nowrap',
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
-                    maxWidth: 220,
+                    flex: 1,
+                    minWidth: 0,
                     marginLeft: '5px',
+                    textAlign: 'left',
                   }}
                 >
                   {itemName}

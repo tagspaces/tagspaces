@@ -279,7 +279,7 @@ function TagLibrary({ reduceHeightBy }: Props) {
       sx={{
         height: '100%',
         paddingLeft: '5px',
-        paddingRight: 0,
+        paddingRight: '5px',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -371,7 +371,7 @@ function TagLibrary({ reduceHeightBy }: Props) {
           marginTop: 0,
           borderRadius: '5px',
           height: `calc(100% - ${reduceHeightBy}px)`,
-          width: 310,
+          width: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
         }}
