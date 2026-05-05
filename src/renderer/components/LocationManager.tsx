@@ -17,6 +17,7 @@
  */
 
 import LocationView from '-/components/LocationView';
+import TsButton from '-/components/TsButton';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
@@ -25,10 +26,9 @@ import { Pro } from '-/pro';
 import { getLocations } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import { Box, List, Typography } from '@mui/material';
-import TsButton from '-/components/TsButton';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 interface Props {
@@ -117,7 +117,8 @@ function LocationManager(props: Props) {
         flexDirection: 'column',
         height: '100%',
         paddingLeft: '5px',
-        paddingRight: 0,
+        paddingRight: '5px',
+        position: 'relative',
       }}
     >
       {currentLocation &&
@@ -139,7 +140,8 @@ function LocationManager(props: Props) {
                 position: 'absolute',
                 zIndex: 1000,
                 height: 'calc(100% - 150px)',
-                width: 310,
+                left: 0,
+                right: 0,
                 backdropFilter: 'grayscale(1)',
                 animation: 'hide 1ms linear 5s 1 forwards',
               }}
@@ -161,7 +163,7 @@ function LocationManager(props: Props) {
         data-tid="locationList"
         sx={{
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          width: '310px',
+          width: '100%',
           borderRadius: '5px',
           paddingTop: 0,
           marginTop: 0,

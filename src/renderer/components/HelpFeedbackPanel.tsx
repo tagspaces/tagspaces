@@ -81,7 +81,7 @@ function HelpFeedbackPanel(props: Props) {
         display: 'flex',
         flexDirection: 'column',
         paddingLeft: '5px',
-        paddingRight: 0,
+        paddingRight: '5px',
         height: '100%',
       }}
     >

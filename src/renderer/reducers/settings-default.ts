@@ -77,7 +77,6 @@ export default {
     '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body></body></html>',
   showUnixHiddenEntries: false,
   entryContainerTab: 0,
-  entryPropertiesHeight: 100,
   checkForUpdates,
   reorderTags: false,
   coloredFileExtension: false,
@@ -114,8 +113,9 @@ export default {
   enableGlobalKeyboardShortcuts: false,
   zoomFactor: 1,
   lastPublishedVersion: '',
-  entrySplitSize: '45%', // AppConfig.isElectron ? '560px' : '360px',
+  entrySplitSize: 200, // px — height of the title+tabs pane inside EntryContainer
   mainVSplitSize: '50%',
+  leftPanelWidth: 320, // px — desktop drawer width (bounds 250–600)
   supportedGeoTagging: ['pluscodes', 'mgrs'],
   supportedThemes: ['light', 'dark', 'system'],
   tsLastOpenedFilesHistory: 10,

@@ -153,7 +153,7 @@ function StoredSearches(props: Props) {
           paddingTop: 0,
           marginTop: 0,
           height: 'calc(100% - ' + reduceHeightBy + 'px)',
-          width: 305,
+          width: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
         }}
@@ -232,6 +232,8 @@ function StoredSearches(props: Props) {
                       textTransform: 'none',
                       fontWeight: 'normal',
                       justifyContent: 'start',
+                      width: '100%',
+                      minWidth: 0,
                     }}
                     onClick={() => findFromSavedSearch(search.uuid)}
                   >
@@ -242,7 +244,9 @@ function StoredSearches(props: Props) {
                         whiteSpace: 'nowrap',
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
-                        maxWidth: 220,
+                        flex: 1,
+                        minWidth: 0,
+                        textAlign: 'left',
                       }}
                     >
                       {search.title}

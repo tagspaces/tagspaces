@@ -29,59 +29,50 @@ import { Box, useMediaQuery } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { styled, useTheme } from '@mui/material/styles';
-import { buffer } from '@tagspaces/tagspaces-common/misc';
 import clsx from 'clsx';
 import React, {
   useCallback,
   useEffect,
   useMemo,
-  useReducer,
   useRef,
   useState,
 } from 'react';
 import { GlobalHotKeys } from 'react-hotkeys';
 import { useDispatch, useSelector } from 'react-redux';
-import { Split } from 'ts-react-splitter';
 import EntryContainer from '../components/EntryContainer';
 import FolderContainer from '../components/FolderContainer';
 import MobileNavigation from '../components/MobileNavigation';
+import { Splitter, SplitterGutter } from '../components/Splitter';
 import {
   actions as SettingsActions,
   getDesktopMode,
   getKeyBindingObject,
+  getLeftPanelWidth,
   getMainVerticalSplitSize,
 } from '../reducers/settings';
 
-const drawerWidth = 320;
-const bufferedLeftSplitResize = buffer({
-  timeout: 300,
-  id: 'buffered-leftsplit-resize',
-});
+const DRAWER_MIN_WIDTH = 310;
+const DRAWER_MAX_WIDTH = 600;
+const DRAWER_DEFAULT_WIDTH = 320;
+const MOBILE_DRAWER_WIDTH = 320;
+const DRAWER_WIDTH_VAR = '--tagspaces-drawer-width';
 
 const classes = {
   content: `MainPage-content`,
   contentShift: `MainPage-contentShift`,
 };
 
-const Root = styled('div')(({ theme }) => ({
+const Root = styled('div')(() => ({
   height: '100%',
   [`& .${classes.content}`]: {
     height: '100%',
     flexGrow: 1,
     padding: 0,
-    paddingLeft: drawerWidth,
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
+    paddingLeft: 'var(--tagspaces-drawer-width, 320px)',
   },
   [`& .${classes.contentShift}`]: {
     height: '100%',
     padding: 0,
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
     marginLeft: 0,
   },
 }));
@@ -102,13 +93,14 @@ function MainPage() {
   } = useDirectoryContentContext();
   const { showPanel } = usePanelsContext();
   const { isLoggedIn } = useUserContext();
-  const percent = useRef<number | undefined>(undefined);
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const mainSplitContainerRef = useRef<HTMLDivElement>(null);
+  const [sizePx, setSizePx] = useState<number>(0);
 
   const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
   const isDesktopMode: boolean = useSelector(getDesktopMode);
   const keyBindings = useSelector(getKeyBindingObject);
   const mainSplitSize = useSelector(getMainVerticalSplitSize);
+  const drawerWidth = useSelector(getLeftPanelWidth);
 
   // Redux actions as callbacks
   const toggleShowUnixHiddenEntries = useCallback(
@@ -118,6 +110,10 @@ function MainPage() {
   const setMainVerticalSplitSize = useCallback(
     (splitSize: string) =>
       dispatch(SettingsActions.setMainVerticalSplitSize(splitSize)),
+    [dispatch],
+  );
+  const setLeftPanelWidth = useCallback(
+    (w: number) => dispatch(SettingsActions.setLeftPanelWidth(w)),
     [dispatch],
   );
 
@@ -149,6 +145,22 @@ function MainPage() {
       setDrawerOpened(false);
     }
   }, [isEntryInFullWidth]);
+
+  // Expose desktop drawer width to CSS so the main content's paddingLeft
+  // tracks the drawer size without re-creating the styled component on every drag.
+  // The .contentShift class zeroes padding when the drawer is closed, so the
+  // var stays at the live width regardless of drawerOpened. The drag handler
+  // also writes this var directly during drag — keep it consistent on commit.
+  useEffect(() => {
+    if (!isDesktopMode) {
+      document.documentElement.style.removeProperty(DRAWER_WIDTH_VAR);
+      return;
+    }
+    document.documentElement.style.setProperty(
+      DRAWER_WIDTH_VAR,
+      drawerWidth + 'px',
+    );
+  }, [drawerWidth, isDesktopMode]);
 
   useEffect(() => {
     updateDimensions();
@@ -234,39 +246,42 @@ function MainPage() {
     [keyBindings],
   );
 
-  const setPercent = useCallback(
-    (p: number | undefined) => {
-      percent.current = p;
-      if (p !== undefined) {
-        bufferedLeftSplitResize(() => {
-          if (mainSplitSize !== p + '%') {
-            setMainVerticalSplitSize(p + '%');
-          }
-        });
+  const hideSplit = !openedEntry || isEntryInFullWidth;
+
+  // Keep sizePx in sync with persisted percentage and container width.
+  useEffect(() => {
+    const el = mainSplitContainerRef.current;
+    if (!el || hideSplit) return;
+    const pct = parseFloat(mainSplitSize);
+    if (!isFinite(pct)) return;
+    const next = Math.round((el.clientWidth * pct) / 100);
+    setSizePx(next);
+  }, [mainSplitSize, hideSplit]);
+
+  // Recompute sizePx on window resize to preserve the persisted percentage.
+  useEventListener('resize', () => {
+    const el = mainSplitContainerRef.current;
+    if (!el || hideSplit) return;
+    const pct = parseFloat(mainSplitSize);
+    if (!isFinite(pct)) return;
+    setSizePx(Math.round((el.clientWidth * pct) / 100));
+  });
+
+  const onMainSplitChange = useCallback(
+    (px: number) => {
+      setSizePx(px);
+      const el = mainSplitContainerRef.current;
+      if (!el || el.clientWidth === 0) return;
+      const pct = Math.round((px / el.clientWidth) * 100);
+      const next = pct + '%';
+      if (mainSplitSize !== next) {
+        setMainVerticalSplitSize(next);
       }
-      forceUpdate();
     },
     [mainSplitSize, setMainVerticalSplitSize],
   );
 
   function renderContainers() {
-    let initialPrimarySize = mainSplitSize;
-    let minPrimarySize = '250px';
-    let minSecondarySize = '250px';
-    let renderSplitter: (() => React.ReactNode) | undefined;
-
-    if (!openedEntry) {
-      percent.current = undefined;
-      initialPrimarySize = '100%';
-      minSecondarySize = '0%';
-      renderSplitter = () => null;
-    }
-    if (isEntryInFullWidth) {
-      percent.current = undefined;
-      initialPrimarySize = '0%';
-      minPrimarySize = '0%';
-      renderSplitter = () => null;
-    }
     if (smallScreen && openedEntry) {
       return (
         <>
@@ -284,26 +299,31 @@ function MainPage() {
       );
     }
     return (
-      <Split
-        initialPrimarySize={initialPrimarySize}
-        minPrimarySize={minPrimarySize}
-        minSecondarySize={minSecondarySize}
-        renderSplitter={renderSplitter}
-        percent={percent.current}
-        setPercent={setPercent}
-      >
-        <FolderContainer
-          toggleDrawer={toggleDrawer}
-          drawerOpened={drawerOpened}
-        />
-        <FilePropertiesContextProvider>
-          {openedEntry && (
-            <FullScreenContextProvider>
-              <EntryContainer key="EntryContainerID" />
-            </FullScreenContextProvider>
-          )}
-        </FilePropertiesContextProvider>
-      </Split>
+      <div ref={mainSplitContainerRef} style={{ height: '100%' }}>
+        <Splitter
+          direction="vertical"
+          size={sizePx}
+          min={400}
+          hidden={hideSplit}
+          hiddenTake={isEntryInFullWidth ? 'secondary' : 'primary'}
+          onChange={onMainSplitChange}
+          ariaLabel="Resize file list and preview"
+        >
+          <FolderContainer
+            toggleDrawer={toggleDrawer}
+            drawerOpened={drawerOpened}
+          />
+          <FilePropertiesContextProvider>
+            {openedEntry ? (
+              <FullScreenContextProvider>
+                <EntryContainer key="EntryContainerID" />
+              </FullScreenContextProvider>
+            ) : (
+              <div />
+            )}
+          </FilePropertiesContextProvider>
+        </Splitter>
+      </div>
     );
   }
 
@@ -322,43 +342,31 @@ function MainPage() {
               body { background-color: ${
                 theme.palette.background.default
               } !important;}
-              .default-splitter {
-                --default-splitter-line-margin: 2px !important;
-                --default-splitter-line-size: 1px !important;
-                --default-splitter-line-color: ${
-                  theme.palette.divider
-                } !important;
-              }
-
-              .react-split .split-container.vertical .splitter {
-                background-color: ${theme.palette.background.default};
-              }
-
-              .react-split .split-container {
-                --react-split-splitter: ${
-                  !openedEntry || isEntryInFullWidth ? '0' : '3px'
-                } !important;
-              }
-              .react-split .secondary .full-content {
-                display: flex;
-                flex-direction: column;
-                overflow: clip;
-              }
-
-              .react-split > .split-container.vertical > .splitter {
-               z-index: 1;
-              }
           `}
           </style>
           {isDesktopMode || (AppConfig.ExtIsAmplify && !isLoggedIn()) ? (
             <>
               <Drawer
-                sx={{ backgroundColor: 'unset' }}
+                sx={{
+                  backgroundColor: 'unset',
+                  // The DrawerResizeHandle's hit area extends 6.5px past the
+                  // drawer's right edge (SplitterGutter's invisible hit zone).
+                  // Without this, the Paper allows a few pixels of horizontal
+                  // scroll into that empty overflow.
+                  '& .MuiDrawer-paper': { overflowX: 'hidden' },
+                }}
                 variant="persistent"
                 anchor="left"
                 open={drawerOpened}
               >
-                <MobileNavigation width={drawerWidth} />
+                <MobileNavigation
+                  width={drawerWidth}
+                  widthVar={DRAWER_WIDTH_VAR}
+                />
+                <DrawerResizeHandle
+                  width={drawerWidth}
+                  onChange={setLeftPanelWidth}
+                />
               </Drawer>
               <main
                 className={clsx(classes.content, {
@@ -379,7 +387,7 @@ function MainPage() {
                 disableDiscovery={AppConfig.isIOS}
               >
                 <MobileNavigation
-                  width={drawerWidth}
+                  width={MOBILE_DRAWER_WIDTH}
                   hideDrawer={() => setDrawerOpened(false)}
                 />
               </SwipeableDrawer>
@@ -389,6 +397,103 @@ function MainPage() {
         </Box>
       </GlobalHotKeys>
     </Root>
+  );
+}
+
+interface DrawerResizeHandleProps {
+  width: number;
+  onChange: (w: number) => void;
+}
+
+function DrawerResizeHandle({ width, onChange }: DrawerResizeHandleProps) {
+  const dragRef = useRef<{ sx: number; sw: number } | null>(null);
+  const liveRef = useRef<number>(width);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    liveRef.current = width;
+  }, [width]);
+
+  const clamp = (v: number) =>
+    Math.max(DRAWER_MIN_WIDTH, Math.min(DRAWER_MAX_WIDTH, v));
+
+  // During drag we bypass Redux entirely and write straight to the CSS var
+  // that both the main content's paddingLeft and MobileNavigation's width
+  // resolve from. This avoids a per-frame store update / re-render of the
+  // (heavy) MobileNavigation tree.
+  const writeLive = (v: number) => {
+    liveRef.current = clamp(v);
+    if (rafRef.current != null) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      document.documentElement.style.setProperty(
+        DRAWER_WIDTH_VAR,
+        liveRef.current + 'px',
+      );
+    });
+  };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    dragRef.current = { sx: e.clientX, sw: liveRef.current };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = dragRef.current;
+    if (!d) return;
+    writeLive(d.sw + (e.clientX - d.sx));
+  };
+  const finish = (e: React.PointerEvent) => {
+    if (!dragRef.current) return;
+    dragRef.current = null;
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {
+      /* already released */
+    }
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    onChange(liveRef.current);
+  };
+  const onDoubleClick = () => onChange(DRAWER_DEFAULT_WIDTH);
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const step = e.shiftKey ? 40 : 8;
+    if (e.key === 'ArrowRight') {
+      onChange(clamp(width + step));
+      e.preventDefault();
+    } else if (e.key === 'ArrowLeft') {
+      onChange(clamp(width - step));
+      e.preventDefault();
+    } else if (e.key === 'Home') {
+      onChange(DRAWER_MIN_WIDTH);
+      e.preventDefault();
+    } else if (e.key === 'End') {
+      onChange(DRAWER_MAX_WIDTH);
+      e.preventDefault();
+    }
+  };
+
+  return (
+    <SplitterGutter
+      direction="vertical"
+      ariaLabel="Resize navigation panel"
+      ariaValueNow={width}
+      ariaValueMin={DRAWER_MIN_WIDTH}
+      ariaValueMax={DRAWER_MAX_WIDTH}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={finish}
+      onDoubleClick={onDoubleClick}
+      onKeyDown={onKeyDown}
+      style={{
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        height: '100%',
+        zIndex: 1300,
+      }}
+    />
   );
 }
 

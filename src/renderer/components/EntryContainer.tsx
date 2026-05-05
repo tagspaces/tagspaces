@@ -21,6 +21,7 @@ import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
 import FileView from '-/components/FileView';
+import { Splitter } from '-/components/Splitter';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -33,14 +34,16 @@ import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsConte
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { AppDispatch } from '-/reducers/app';
 import {
+  actions as SettingsActions,
   getEntryContainerTab,
+  getEntrySplitSize,
   getKeyBindingObject,
   isDesktopMode,
 } from '-/reducers/settings';
 import { getResizedImageThumbnail } from '-/services/thumbsgenerator';
 import { TS } from '-/tagspaces.namespace';
 import { base64ToUint8Array } from '-/utils/dom';
-import { Tooltip, useMediaQuery } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
@@ -82,19 +85,18 @@ function EntryContainer() {
   const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const timer = useRef<NodeJS.Timeout>(null);
-  const isDraggingRef = useRef<boolean>(false);
-  const startYRef = useRef<number>(0);
-  const startHeightRef = useRef<number>(0);
-  const storageBufferRef = useRef<number | null>(null);
-  const storageTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const [entryPropertiesHeight, setEntryPropertiesHeight] = useState<number>(
-    parseFloat(localStorage.getItem('tsEntryPropertiesHeight') || '200'),
-  );
+  const propsSize = useSelector(getEntrySplitSize);
+  const setPropsSize = (size: number) =>
+    dispatch(SettingsActions.setEntryPropertiesSplitSize(size));
 
-  const openedPanelStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-  };
+  // One-shot cleanup: the old localStorage key stored a broken "flex-basis %"
+  // value interpolated as e.g. `flex: '1 1 200%'`. New storage is pixels in Redux.
+  useEffect(() => {
+    if (localStorage.getItem('tsEntryPropertiesHeight') != null) {
+      localStorage.removeItem('tsEntryPropertiesHeight');
+    }
+  }, []);
+
   const [isPanelOpened, setPanelOpened] = useState<boolean>(
     tabIndex !== TabNames.closedTabs,
   );
@@ -514,89 +516,6 @@ function EntryContainer() {
     setActions(action);
   };
 
-  const toggleEntryPropertiesHeight = () => {
-    if (desktopMode) return;
-    let newHeight: number;
-    if (entryPropertiesHeight === 100) {
-      newHeight = 200;
-    } else if (entryPropertiesHeight === 200) {
-      newHeight = 350;
-    } else if (entryPropertiesHeight === 350) {
-      newHeight = 50;
-    } else if (entryPropertiesHeight === 50) {
-      newHeight = 100;
-    } else {
-      newHeight = 200;
-    }
-    setEntryPropertiesHeight(newHeight);
-    localStorage.setItem('tsEntryPropertiesHeight', newHeight.toString());
-  };
-
-  const handleSeparatorMouseDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!desktopMode) return;
-    const target = e.currentTarget as HTMLDivElement;
-    isDraggingRef.current = true;
-    startYRef.current = e.clientY;
-    startHeightRef.current = entryPropertiesHeight;
-    target.setPointerCapture(e.pointerId);
-
-    const handleGlobalPointerMove = (moveEvent: PointerEvent) => {
-      if (!isDraggingRef.current) return;
-
-      const delta = moveEvent.clientY - startYRef.current;
-      const containerHeight =
-        fileViewerContainer.current?.parentElement?.clientHeight ||
-        window.innerHeight;
-      const newHeightPercent = Math.max(
-        10,
-        Math.min(200, startHeightRef.current + (delta / containerHeight) * 100),
-      );
-      setEntryPropertiesHeight(newHeightPercent);
-
-      // Buffer the localStorage write
-      storageBufferRef.current = newHeightPercent;
-
-      // Clear existing timer
-      if (storageTimerRef.current) {
-        clearTimeout(storageTimerRef.current);
-      }
-
-      // Debounce localStorage write by 100ms
-      storageTimerRef.current = setTimeout(flushStorageBuffer, 100);
-    };
-
-    document.addEventListener('pointermove', handleGlobalPointerMove);
-
-    const handlePointerUp = () => {
-      document.removeEventListener('pointermove', handleGlobalPointerMove);
-      document.removeEventListener('pointerup', handlePointerUp);
-    };
-
-    document.addEventListener('pointerup', handlePointerUp);
-  };
-
-  const flushStorageBuffer = () => {
-    if (storageBufferRef.current !== null) {
-      localStorage.setItem(
-        'tsEntryPropertiesHeight',
-        storageBufferRef.current.toString(),
-      );
-      storageBufferRef.current = null;
-    }
-  };
-
-  const handleSeparatorMouseUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    isDraggingRef.current = false;
-    const target = e.currentTarget as HTMLDivElement;
-    target.releasePointerCapture(e.pointerId);
-
-    // Flush any pending buffer on mouse up
-    if (storageTimerRef.current) {
-      clearTimeout(storageTimerRef.current);
-    }
-    flushStorageBuffer();
-  };
-
   const tabsElement = useMemo(
     () => (
       <EntryContainerTabs
@@ -639,93 +558,91 @@ function EntryContainer() {
         toggleFullScreen: keyBindings.toggleFullScreen,
       }}
     >
-      <Box
-        sx={{
-          height: '100%',
-          ...(isPanelOpened && openedPanelStyle),
-        }}
-      >
-        <Box
-          sx={{
-            width: '100%',
-            flexDirection: 'column',
-            flex: '1 1 ' + entryPropertiesHeight + '%',
-            display: 'flex',
-            backgroundColor: theme.palette.background.default,
-            overflow: 'hidden',
-            marginBottom: '1px',
-          }}
-        >
+      {(() => {
+        const topPane = (
           <Box
             sx={{
-              paddingLeft: 0,
-              paddingRight: '55px',
-              paddingTop: 0,
-              minHeight: '48px',
+              width: '100%',
               display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
+              flexDirection: 'column',
+              height: '100%',
+              backgroundColor: theme.palette.background.default,
+              overflow: 'hidden',
             }}
           >
-            <EntryContainerTitle
-              reloadDocument={reloadDocument}
-              startClosingEntry={startClosingEntry}
-              isEntryInFullWidth={isEntryInFullWidth}
-              fileViewerContainer={fileViewerContainer.current}
-              desktopMode={desktopMode}
-              smallScreen={smallScreen}
-            />
-            <EntryContainerNav
-              isFile={openedEntry.isFile}
-              startClosingEntry={startClosingEntry}
-              smallScreen={smallScreen}
-            />
+            <Box
+              sx={{
+                paddingLeft: 0,
+                paddingRight: '55px',
+                paddingTop: 0,
+                minHeight: '48px',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+              }}
+            >
+              <EntryContainerTitle
+                reloadDocument={reloadDocument}
+                startClosingEntry={startClosingEntry}
+                isEntryInFullWidth={isEntryInFullWidth}
+                fileViewerContainer={fileViewerContainer.current}
+                desktopMode={desktopMode}
+                smallScreen={smallScreen}
+              />
+              <EntryContainerNav
+                isFile={openedEntry.isFile}
+                startClosingEntry={startClosingEntry}
+                smallScreen={smallScreen}
+              />
+            </Box>
+            {tabsElement}
           </Box>
-          {tabsElement}
-          {openedEntry.isFile && isPanelOpened && (
-            <Tooltip title={desktopMode ? '' : t('core:togglePreviewSize')}>
-              <Box
-                sx={{
-                  textAlign: 'center',
-                  minHeight: '8px',
-                  paddingTop: '2px',
-                  backgroundColor: 'background.default',
-                  borderBottom: '1px solid ' + theme.palette.divider,
-                  cursor: 'row-resize',
-                  userSelect: 'none',
-                  '&:hover': {
-                    backgroundColor: theme.palette.action.hover,
-                  },
-                }}
-                onClick={toggleEntryPropertiesHeight}
-                onPointerDown={handleSeparatorMouseDown}
-                onPointerUp={handleSeparatorMouseUp}
-                onPointerCancel={handleSeparatorMouseUp}
-              >
-                <Box
-                  sx={{
-                    width: '10%',
-                    border: '1px dashed ' + theme.palette.text.secondary,
-                    margin: '2px auto',
-                    pointerEvents: 'none',
-                  }}
-                ></Box>
-              </Box>
-            </Tooltip>
-          )}
-        </Box>
-        {openedEntry.isFile && (
+        );
+
+        const fileView = openedEntry.isFile ? (
           <FileView
             key="FileViewID"
             fileViewer={fileViewer}
             fileViewerContainer={fileViewerContainer}
-            height={
-              tabIndex !== TabNames.closedTabs ? '100%' : 'calc(100% - 100px)'
-            }
+            height="100%"
             handleMessage={handleMessage}
           />
-        )}
-      </Box>
+        ) : null;
+
+        if (openedEntry.isFile && isPanelOpened) {
+          return (
+            <Box sx={{ height: '100%' }}>
+              <Splitter
+                direction="horizontal"
+                size={propsSize}
+                min={150}
+                defaultSize={200}
+                onChange={setPropsSize}
+                ariaLabel={t('core:togglePreviewSize')}
+              >
+                {topPane}
+                {fileView}
+              </Splitter>
+            </Box>
+          );
+        }
+
+        // Panel closed or folder entry — simple column layout, no splitter.
+        return (
+          <Box
+            sx={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Box sx={{ flex: '0 0 auto' }}>{topPane}</Box>
+            {fileView && (
+              <Box sx={{ flex: '1 1 auto', minHeight: 0 }}>{fileView}</Box>
+            )}
+          </Box>
+        );
+      })()}
     </GlobalHotKeys>
   );
 }
