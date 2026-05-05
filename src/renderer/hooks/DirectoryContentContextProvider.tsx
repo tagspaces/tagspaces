@@ -27,7 +27,11 @@ import { PerspectiveIDs } from '-/perspectives';
 import { defaultSettings as defaultGridSettings } from '-/perspectives/grid';
 import { defaultSettings as defaultListSettings } from '-/perspectives/list';
 import { Pro } from '-/pro';
-import { actions as AppActions, AppDispatch } from '-/reducers/app';
+import {
+  actions as AppActions,
+  AppDispatch,
+  isOnline as getIsOnline,
+} from '-/reducers/app';
 import {
   actions as SettingsActions,
   getDefaultPerspective,
@@ -46,6 +50,7 @@ import {
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { arrayBufferToDataURL, updateHistory } from '-/utils/dom';
+import { isOfflineError } from '-/utils/OfflineError';
 import {
   makeCancelable,
   useCancelablePerLocation,
@@ -247,6 +252,7 @@ export const DirectoryContentContextProvider = ({
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const defaultPerspective = useSelector(getDefaultPerspective);
   const tagDelimiter: string = useSelector(getTagDelimiter);
+  const isOnline = useSelector(getIsOnline);
 
   const currentDirectoryEntries = useRef<TS.FileSystemEntry[]>([]);
   const { signal, abort, cancelAbort } =
@@ -355,6 +361,27 @@ export const DirectoryContentContextProvider = ({
       cancelled = true;
     };
   }, [currentLocation]);
+
+  // When the device transitions to offline, abort any in-flight directory
+  // listing so the user doesn't sit through the AWS SDK timeout. Per the V1
+  // plan, only listings subscribe to this signal — in-flight saves keep
+  // running (S3 PutObject is atomic; cancelling defensively could discard
+  // work that the SDK's internal retry would have committed).
+  const wasOnline = useRef<boolean>(isOnline);
+  useEffect(() => {
+    if (wasOnline.current && !isOnline) {
+      // Only abort when the current location is remote — local listings
+      // don't care about network state.
+      if (
+        currentLocation &&
+        (currentLocation.haveObjectStoreSupport() ||
+          currentLocation.haveWebDavSupport())
+      ) {
+        abort();
+      }
+    }
+    wasOnline.current = isOnline;
+  }, [isOnline, currentLocation, abort]);
 
   useEffect(() => {
     if (!firstRender && metaActions && metaActions.length > 0) {
@@ -1031,6 +1058,15 @@ export const DirectoryContentContextProvider = ({
         .catch((err) => {
           if (err.name === 'AbortError') {
             console.log('cancelableFetch was canceled');
+            // If we aborted because the device went offline, surface that
+            // explicitly — otherwise the user just sees a silent empty list.
+            if (typeof navigator !== 'undefined' && !navigator.onLine) {
+              showNotification(
+                t('core:offlineLocationUnavailable'),
+                'warning',
+                true,
+              );
+            }
           } else {
             console.error('Other error:', err);
           }
@@ -1142,6 +1178,13 @@ export const DirectoryContentContextProvider = ({
   function loadDirectoryFailure(error?: any) {
     console.log('Error loading directory: ', error);
     //hideNotifications();
+
+    // OfflineError: don't close locations — they'll be usable again when the
+    // device reconnects. Show a clear offline-specific message instead.
+    if (isOfflineError(error)) {
+      showNotification(t('core:offlineLocationUnavailable'), 'warning', true);
+      return [];
+    }
 
     showNotification(
       t('core:errorLoadingFolder') + ': ' + error.message,

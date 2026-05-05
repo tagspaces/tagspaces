@@ -29,6 +29,7 @@ import {
   setLanguage,
 } from '-/services/utils-io';
 import { getURLParameter } from '-/utils/dom';
+import { deriveInitialOnline } from '-/utils/OfflineError';
 import { cleanFrontDirSeparator } from '@tagspaces/tagspaces-common/paths';
 import i18n from '../services/i18n';
 
@@ -78,7 +79,7 @@ if (AppConfig.ExtDefaultVerticalPanel === 'none') {
 export const initialState = {
   error: null,
   loggedIn: false,
-  isOnline: false,
+  isOnline: deriveInitialOnline(),
   lastError: '',
   progress: [],
   isUpdateInProgress: false,

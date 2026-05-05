@@ -18,6 +18,7 @@ import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import { Pro } from '-/pro';
 import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import { offlineRejectionIfRemote } from '-/utils/OfflineError';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
 
 // Capacitor IO is loaded dynamically to avoid breaking Electron/web builds
@@ -383,6 +384,8 @@ export class CommonLocation implements TS.Location {
     ignorePatterns: Array<string> = [],
     resultsLimit: any = {},
   ): Promise<Array<any>> => {
+    const offlineReject = offlineRejectionIfRemote(this, 'list directory');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.listDirectoryPromise(
@@ -418,6 +421,8 @@ export class CommonLocation implements TS.Location {
   };
 
   listMetaDirectoryPromise = (param: any): Promise<Array<any>> => {
+    const offlineReject = offlineRejectionIfRemote(this, 'list metadata');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.listMetaDirectoryPromise({
@@ -439,6 +444,8 @@ export class CommonLocation implements TS.Location {
   };
 
   checkFileEncryptedPromise = (path: string): Promise<boolean> => {
+    const offlineReject = offlineRejectionIfRemote(this, 'check encryption');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport() && this.encryptionKey) {
         return this.ioAPI
@@ -462,6 +469,8 @@ export class CommonLocation implements TS.Location {
     useEncryption: boolean = true,
     extractLinks: boolean = false,
   ): Promise<any> => {
+    const offlineReject = offlineRejectionIfRemote(this, 'get properties');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.getPropertiesPromise({
@@ -487,6 +496,8 @@ export class CommonLocation implements TS.Location {
     if (file === undefined) {
       return Promise.resolve(false);
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'check file');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.isFileExist({
@@ -509,6 +520,8 @@ export class CommonLocation implements TS.Location {
   };
 
   checkDirExist = (dir: string): Promise<boolean> => {
+    const offlineReject = offlineRejectionIfRemote(this, 'check directory');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI
@@ -554,6 +567,8 @@ export class CommonLocation implements TS.Location {
   };
 
   generateURLforPath = async (path, expirationInSeconds) => {
+    const offlineReject = offlineRejectionIfRemote(this, 'sign URL');
+    if (offlineReject) return offlineReject;
     let url;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
@@ -612,6 +627,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'create directory');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.createDirectoryPromise({
@@ -636,6 +653,10 @@ export class CommonLocation implements TS.Location {
   ): Promise<any> => {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
+    }
+    const offlineReject = offlineRejectionIfRemote(this, 'copy file');
+    if (offlineReject) {
+      return offlineReject;
     }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
@@ -671,6 +692,10 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'rename file');
+    if (offlineReject) {
+      return offlineReject;
+    }
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.renameFilePromise(
@@ -704,6 +729,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'rename directory');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.renameDirectoryPromise(
@@ -735,6 +762,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'copy directory');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.copyDirectoryPromise(
@@ -768,6 +797,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'move directory');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.moveDirectoryPromise(
@@ -801,6 +832,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'save file');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.saveFilePromise(
@@ -834,6 +867,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'save file');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.saveTextFilePromise(
@@ -871,6 +906,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'save file');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.saveBinaryFilePromise(
@@ -919,6 +956,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'delete file');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.deleteFilePromise({
@@ -942,6 +981,8 @@ export class CommonLocation implements TS.Location {
     if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
     }
+    const offlineReject = offlineRejectionIfRemote(this, 'delete directory');
+    if (offlineReject) return offlineReject;
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {
         return this.ioAPI.deleteDirectoryPromise({
@@ -987,6 +1028,8 @@ export class CommonLocation implements TS.Location {
     isPreview?: boolean,
     useEncryption: boolean = true,
   ): Promise<string> => {
+    const offlineReject = offlineRejectionIfRemote(this, 'load file');
+    if (offlineReject) return offlineReject;
     let filePath = this.getPath(param);
     try {
       filePath = decodeURIComponent(filePath);
@@ -1033,6 +1076,8 @@ export class CommonLocation implements TS.Location {
   };
 
   getFileContentPromise = (param: any, type?: string): Promise<any> => {
+    const offlineReject = offlineRejectionIfRemote(this, 'load file content');
+    if (offlineReject) return offlineReject;
     const filePath = this.getPath(param);
     if (this.ioAPI) {
       if (this.haveObjectStoreSupport()) {

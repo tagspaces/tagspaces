@@ -43,7 +43,7 @@ import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsConte
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { Box, ListItemText } from '@mui/material';
+import { Badge, Box, ListItemText } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -53,8 +53,12 @@ import { locationType } from '@tagspaces/tagspaces-common/misc';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { actions as AppActions, AppDispatch } from '../reducers/app';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  actions as AppActions,
+  AppDispatch,
+  isOnline as getIsOnline,
+} from '../reducers/app';
 import DragItemTypes from './DragItemTypes';
 import TargetMoveFileBox from './TargetMoveFileBox';
 
@@ -92,6 +96,10 @@ function LocationView(props: Props) {
   const { location, hideDrawer, workspace } = props;
   const subFolderLocation = findLocation(location.locationID);
   const isCloudLocation = subFolderLocation?.type === locationType.TYPE_CLOUD;
+  const isWebDavLocation = subFolderLocation?.type === locationType.TYPE_WEBDAV;
+  const isRemoteLocation = isCloudLocation || isWebDavLocation;
+  const isOnline = useSelector(getIsOnline);
+  const showOfflineIndicator = isRemoteLocation && !isOnline;
 
   const handleLocationIconClick = useCallback(
     (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
@@ -105,6 +113,10 @@ function LocationView(props: Props) {
   );
 
   const handleLocationClick = useCallback(() => {
+    if (showOfflineIndicator) {
+      showNotification(t('core:cannotOpenRemoteOffline'), 'warning', true);
+      return;
+    }
     if (currentLocation && location.locationID === currentLocation.uuid) {
       // the same location click
       openDirectory(currentLocationPath).then(() => {
@@ -118,6 +130,9 @@ function LocationView(props: Props) {
       }
     }
   }, [
+    showOfflineIndicator,
+    showNotification,
+    t,
     currentLocation,
     location,
     openDirectory,
@@ -323,6 +338,7 @@ function LocationView(props: Props) {
               padding: 0,
               paddingRight: '15px',
               borderRadius: AppConfig.defaultCSSRadius,
+              opacity: showOfflineIndicator ? 0.6 : 1,
             }}
           >
             <ListItemIcon
@@ -332,22 +348,31 @@ function LocationView(props: Props) {
               }}
               onClick={handleLocationIconClick}
             >
-              <Tooltip title={t('clickToExpand')}>
-                {isCloudLocation ? (
-                  <CloudLocationIcon
-                    sx={{
-                      cursor: 'pointer',
-                      margin: 1,
-                    }}
-                  />
-                ) : (
-                  <LocalLocationIcon
-                    sx={{
-                      cursor: 'pointer',
-                      margin: 1,
-                    }}
-                  />
-                )}
+              <Tooltip
+                title={
+                  showOfflineIndicator
+                    ? t('core:remoteLocationOfflineTooltip')
+                    : t('clickToExpand')
+                }
+              >
+                <Badge
+                  color="warning"
+                  variant="dot"
+                  overlap="circular"
+                  invisible={!showOfflineIndicator}
+                  data-tid={
+                    showOfflineIndicator
+                      ? 'locationOfflineBadge_' + location.name
+                      : undefined
+                  }
+                  sx={{ margin: 1 }}
+                >
+                  {isCloudLocation ? (
+                    <CloudLocationIcon sx={{ cursor: 'pointer' }} />
+                  ) : (
+                    <LocalLocationIcon sx={{ cursor: 'pointer' }} />
+                  )}
+                </Badge>
               </Tooltip>
             </ListItemIcon>
             <ListItemText>
