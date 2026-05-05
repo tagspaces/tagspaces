@@ -40,7 +40,6 @@ interface Props {
 function LocationManager(props: Props) {
   const { t } = useTranslation();
   const {
-    findLocation,
     moveLocation,
     setSelectedLocation,
     locationDirectoryContextMenuAnchorEl,
@@ -98,7 +97,6 @@ function LocationManager(props: Props) {
   };
 
   const { reduceHeightBy, show } = props;
-  const currentLocation = findLocation();
 
   function getWorkSpace(l) {
     if (l.workSpaceId) {
@@ -121,33 +119,6 @@ function LocationManager(props: Props) {
         position: 'relative',
       }}
     >
-      {currentLocation &&
-        (currentLocation.haveObjectStoreSupport() ||
-          currentLocation.haveWebDavSupport()) && (
-          <>
-            <style>
-              {`
-                @keyframes hide {
-                  to {
-                      width: 0;
-                  }
-                }
-              }
-            `}
-            </style>
-            <div
-              style={{
-                position: 'absolute',
-                zIndex: 1000,
-                height: 'calc(100% - 150px)',
-                left: 0,
-                right: 0,
-                backdropFilter: 'grayscale(1)',
-                animation: 'hide 1ms linear 5s 1 forwards',
-              }}
-            />
-          </>
-        )}
       <LocationManagerMenu
         importLocations={() => {
           fileInputRef.current.click();

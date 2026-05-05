@@ -324,33 +324,36 @@ export const DirectoryContentContextProvider = ({
   }, []);
 
   useEffect(() => {
-    if (currentLocation) {
-      // check for relative path for Location
-      getLocationPath(currentLocation).then((locationPath) => {
-        currentLocationPath.current = locationPath;
-        if (!skipInitialDirList) {
-          /*if (isLoading.current) {
-            //cancel loading KanBan S3 folders on location-folder change
-            abort();
-          }
-          isLoading.current = true;*/
-          openDirectory(locationPath)
-            .then((success) => {
-              manualPerspective.current = 'unspecified';
-              //isLoading.current = false;
-              return success;
-            })
-            .catch((ex) => {
-              //isLoading.current = false;
-              console.log('Error openDirectory:', ex);
-            });
-        }
-      });
-    } else {
+    if (!currentLocation) {
       currentLocationPath.current = '';
       clearDirectoryContent();
       exitSearchMode();
+      return;
     }
+    // Latest-wins guard: if the user switches locations before this load
+    // settles, drop the stale resolution so a slow S3/WebDAV response can't
+    // overwrite the newly-active location's state. The AbortController in
+    // useCancelablePerLocation already aborts the inner network calls; this
+    // flag covers the outer chain (getLocationPath → openDirectory).
+    let cancelled = false;
+    getLocationPath(currentLocation).then((locationPath) => {
+      if (cancelled) return;
+      currentLocationPath.current = locationPath;
+      if (skipInitialDirList) return;
+      openDirectory(locationPath)
+        .then((success) => {
+          if (cancelled) return success;
+          manualPerspective.current = 'unspecified';
+          return success;
+        })
+        .catch((ex) => {
+          if (cancelled) return;
+          console.log('Error openDirectory:', ex);
+        });
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [currentLocation]);
 
   useEffect(() => {
@@ -956,6 +959,9 @@ export const DirectoryContentContextProvider = ({
             currentLocation,
             showHiddenEntries,
           ).then((entries) => {
+            // Don't commit results from a load that was aborted because
+            // the user switched locations — would clear the newer location.
+            if (signal?.aborted) return entries;
             setCurrentDirectoryEntries(entries);
             return entries;
           });
@@ -968,6 +974,7 @@ export const DirectoryContentContextProvider = ({
           currentLocation,
           showHiddenEntries,
         ).then((entries) => {
+          if (signal?.aborted) return entries;
           setCurrentDirectoryEntries(entries);
           return entries;
         });
