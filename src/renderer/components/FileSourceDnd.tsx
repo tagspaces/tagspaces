@@ -28,9 +28,6 @@ interface Props {
 }
 
 const FileSourceDnd: React.FC<Props> = ({ entry, children }) => {
-  //const childProps = children as React.ReactElement<ChildProps>;
-  //const entry = childProps.props.entry;
-
   const [collected, drag, preview] = useDrag({
     type: DragItemTypes.FILE,
     item: { entry: entry },

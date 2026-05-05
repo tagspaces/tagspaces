@@ -102,7 +102,7 @@ function CellView(props: Props) {
   const { setSelectedEntries, addToSelection, lastSelectedEntry } =
     useSelectedEntriesContext();
   const selectedEntriesRef = useSelectedEntriesRef();
-  const { sortedDirContent, nativeDragModeEnabled } = useSortedDirContext();
+  const { sortedDirContent } = useSortedDirContext();
   const { showNotification } = useNotificationContext();
   const selectedTabName = useSelector(getEntryContainerTab);
 
@@ -266,32 +266,49 @@ function CellView(props: Props) {
   const key = fsEntry.path;
 
   if (fsEntry.isFile) {
+    // Drag-out to Finder/Explorer goes through this small handle: a separate
+    // native draggable element that calls Electron's webContents.startDrag
+    // with preventDefault, so the OS drag is the only thing the user sees.
+    // The card body is wrapped by FileSourceDnd → react-dnd, which handles
+    // in-app DnD (Move/Copy dialog on folder drop). The two stacks can't
+    // share one gesture, hence the dedicated handle.
+    const showNativeDragHandle =
+      AppConfig.isElectron &&
+      currentLocation &&
+      !currentLocation.haveObjectStoreSupport() &&
+      !currentLocation.haveWebDavSupport();
     return (
       <div>
-        {nativeDragModeEnabled &&
-          AppConfig.isElectron &&
-          currentLocation &&
-          !currentLocation.haveObjectStoreSupport() && (
-            <Box
-              sx={{
-                display: 'flex',
-              }}
-              draggable="true"
-              onDragStart={(e) => {
-                e.preventDefault();
-                window.electronIO.ipcRenderer.startDrag(fsEntry.path);
-              }}
+        {showNativeDragHandle && (
+          <Box
+            sx={{
+              display: 'flex',
+            }}
+            draggable="true"
+            onDragStart={(e) => {
+              e.preventDefault();
+              const selectedNow = selectedEntriesRef.current ?? [];
+              const dragSelection =
+                selectedNow.length > 1 &&
+                selectedNow.some((s) => s.path === fsEntry.path)
+                  ? selectedNow
+                      .filter((s) => s.isFile && s.path)
+                      .map((s) => s.path)
+                  : [fsEntry.path];
+              window.electronIO.ipcRenderer.startDrag(
+                dragSelection.length === 1 ? dragSelection[0] : dragSelection,
+              );
+            }}
+          >
+            <DragHandleIcon sx={{ color: theme.palette.text.primary }} />
+            <Typography
+              variant="caption"
+              sx={{ alignSelf: 'center', opacity: 0.5, marginLeft: '5px' }}
             >
-              <DragHandleIcon sx={{ color: theme.palette.text.primary }} />
-              <Typography
-                variant="caption"
-                sx={{ alignSelf: 'center', opacity: 0.5, marginLeft: '5px' }}
-              >
-                {i18n.t('dragOutsideApp')}
-              </Typography>
-            </Box>
-          )}
-
+              {i18n.t('core:dragOutsideApp')}
+            </Typography>
+          </Box>
+        )}
         {cellContent(
           fsEntry,
           selected,

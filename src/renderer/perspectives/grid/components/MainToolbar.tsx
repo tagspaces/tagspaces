@@ -22,8 +22,6 @@ import {
   CopyMoveIcon,
   DeleteIcon,
   DownloadIcon,
-  DragOffIcon,
-  DragOnIcon,
   EntryPropertiesIcon,
   ExportIcon,
   ParentFolderIcon,
@@ -46,7 +44,6 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { Pro } from '-/pro';
 import { getKeyBindingObject, isHideProFeatures } from '-/reducers/settings';
 import { Box, Divider, Toolbar } from '@mui/material';
@@ -80,8 +77,6 @@ function MainToolbar(props: Props) {
   const { showNotification } = useNotificationContext();
   const { haveLocalSetting } = usePerspectiveSettingsContext();
   const { openAiGenerationDialog } = useAiGenerationDialogContext();
-  const { nativeDragModeEnabled, setNativeDragModeEnabled } =
-    useSortedDirContext();
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -302,22 +297,6 @@ function MainToolbar(props: Props) {
             <ExportIcon />
           </TsToolbarButton>
         )}
-      {AppConfig.isElectron && !currentLocation?.haveObjectStoreSupport() && (
-        <TsToolbarButton
-          tooltip={t('core:dragMode')}
-          data-tid={prefixDataTID + 'PerspectiveDragNative'}
-          onClick={() => {
-            setNativeDragModeEnabled(!nativeDragModeEnabled);
-          }}
-          title={t('core:dragModeCaption')}
-        >
-          {nativeDragModeEnabled ? (
-            <DragOnIcon color="primary" />
-          ) : (
-            <DragOffIcon />
-          )}
-        </TsToolbarButton>
-      )}
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ display: 'flex' }}>
         <TsToolbarButton

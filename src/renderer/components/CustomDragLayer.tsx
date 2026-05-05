@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { XYCoord, useDragLayer } from 'react-dnd';
 import { FilesDragPreview } from './FilesDragPreview';
 import TagDragPreview from './TagDragPreview';
@@ -71,12 +72,18 @@ const CustomDragLayer: React.FC<CustomDragLayerProps> = (props) => {
   if (!isDragging) {
     return null;
   }
-  return (
+  // Render into document.body so position:fixed is anchored to the viewport,
+  // not to a transformed ancestor (e.g. the MobileNavigation drawer or other
+  // panels using CSS transforms). Without the portal, the layer is confined
+  // to its containing block and the chip appears offset / duplicated when
+  // multiple instances of CustomDragLayer are mounted in different subtrees.
+  return createPortal(
     <div style={layerStyles}>
       <div style={getItemStyles(initialOffset, currentOffset, clientOffset)}>
         {renderItem()}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
