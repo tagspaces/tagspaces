@@ -98,6 +98,7 @@ import UserDetailsPopover from './UserDetailsPopover';
 interface Props {
   hideDrawer?: () => void;
   width?: number;
+  widthVar?: string;
 }
 
 function MobileNavigation(props: Props) {
@@ -123,7 +124,10 @@ function MobileNavigation(props: Props) {
   const [showTeaserBanner, setShowTeaserBanner] = useState(true);
   const [anchorUser, setAnchorUser] = useState<HTMLButtonElement | null>(null);
   const showProTeaser = !hideProFeatures && !Pro && showTeaserBanner;
-  const { hideDrawer, width } = props;
+  const { hideDrawer, width, widthVar } = props;
+  const widthValue = widthVar
+    ? `var(${widthVar}, ${width || 320}px)`
+    : width || 320;
   const switchTheme = useCallback(
     () => dispatch(SettingsActions.switchTheme()),
     [dispatch],
@@ -207,8 +211,8 @@ function MobileNavigation(props: Props) {
         backdropFilter: 'blur(5px)',
         height: '100%',
         overflow: 'hidden',
-        width: width || 320,
-        maxWidth: width || 320,
+        width: widthValue,
+        maxWidth: widthValue,
       }}
     >
       <Box

@@ -29,7 +29,6 @@ import { Box, useMediaQuery } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { styled, useTheme } from '@mui/material/styles';
-import { buffer } from '@tagspaces/tagspaces-common/misc';
 import clsx from 'clsx';
 import React, {
   useCallback,
@@ -52,15 +51,11 @@ import {
   getMainVerticalSplitSize,
 } from '../reducers/settings';
 
-const DRAWER_MIN_WIDTH = 250;
+const DRAWER_MIN_WIDTH = 310;
 const DRAWER_MAX_WIDTH = 600;
 const DRAWER_DEFAULT_WIDTH = 320;
 const MOBILE_DRAWER_WIDTH = 320;
-
-const bufferedDrawerResize = buffer({
-  timeout: 100,
-  id: 'buffered-drawer-resize',
-});
+const DRAWER_WIDTH_VAR = '--tagspaces-drawer-width';
 
 const classes = {
   content: `MainPage-content`,
@@ -153,14 +148,19 @@ function MainPage() {
 
   // Expose desktop drawer width to CSS so the main content's paddingLeft
   // tracks the drawer size without re-creating the styled component on every drag.
-  // Mobile uses SwipeableDrawer which overlays; main content does not shift.
+  // The .contentShift class zeroes padding when the drawer is closed, so the
+  // var stays at the live width regardless of drawerOpened. The drag handler
+  // also writes this var directly during drag — keep it consistent on commit.
   useEffect(() => {
-    const paddingLeft = isDesktopMode && drawerOpened ? drawerWidth : 0;
+    if (!isDesktopMode) {
+      document.documentElement.style.removeProperty(DRAWER_WIDTH_VAR);
+      return;
+    }
     document.documentElement.style.setProperty(
-      '--tagspaces-drawer-width',
-      paddingLeft + 'px',
+      DRAWER_WIDTH_VAR,
+      drawerWidth + 'px',
     );
-  }, [drawerWidth, drawerOpened, isDesktopMode]);
+  }, [drawerWidth, isDesktopMode]);
 
   useEffect(() => {
     updateDimensions();
@@ -352,7 +352,10 @@ function MainPage() {
                 anchor="left"
                 open={drawerOpened}
               >
-                <MobileNavigation width={drawerWidth} />
+                <MobileNavigation
+                  width={drawerWidth}
+                  widthVar={DRAWER_WIDTH_VAR}
+                />
                 <DrawerResizeHandle
                   width={drawerWidth}
                   onChange={setLeftPanelWidth}
@@ -407,13 +410,19 @@ function DrawerResizeHandle({ width, onChange }: DrawerResizeHandleProps) {
   const clamp = (v: number) =>
     Math.max(DRAWER_MIN_WIDTH, Math.min(DRAWER_MAX_WIDTH, v));
 
-  const commit = (v: number) => {
-    const clamped = clamp(v);
-    liveRef.current = clamped;
+  // During drag we bypass Redux entirely and write straight to the CSS var
+  // that both the main content's paddingLeft and MobileNavigation's width
+  // resolve from. This avoids a per-frame store update / re-render of the
+  // (heavy) MobileNavigation tree.
+  const writeLive = (v: number) => {
+    liveRef.current = clamp(v);
     if (rafRef.current != null) return;
     rafRef.current = requestAnimationFrame(() => {
       rafRef.current = null;
-      bufferedDrawerResize(() => onChange(liveRef.current));
+      document.documentElement.style.setProperty(
+        DRAWER_WIDTH_VAR,
+        liveRef.current + 'px',
+      );
     });
   };
 
@@ -426,7 +435,7 @@ function DrawerResizeHandle({ width, onChange }: DrawerResizeHandleProps) {
   const onPointerMove = (e: React.PointerEvent) => {
     const d = dragRef.current;
     if (!d) return;
-    commit(d.sw + (e.clientX - d.sx));
+    writeLive(d.sw + (e.clientX - d.sx));
   };
   const finish = (e: React.PointerEvent) => {
     if (!dragRef.current) return;
