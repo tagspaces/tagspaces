@@ -30,7 +30,11 @@ import TooltipTS from '-/components/Tooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { getSupportedFileTypes, getTagDelimiter } from '-/reducers/settings';
+import {
+  getDefaultFolderColor,
+  getSupportedFileTypes,
+  getTagDelimiter,
+} from '-/reducers/settings';
 import { dataTidFormat } from '-/services/test';
 import { findColorForEntry, getAllTags } from '-/services/utils-io';
 import Box from '@mui/material/Box';
@@ -72,10 +76,12 @@ function EntryContainerTitle(props: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const defaultFolderColor = useSelector(getDefaultFolderColor);
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const fileSystemEntryColor = findColorForEntry(
     openedEntry,
     supportedFileTypes,
+    defaultFolderColor,
   );
 
   const currentLocation = findLocation(openedEntry.locationID);
@@ -200,7 +206,7 @@ function EntryContainerTitle(props: Props) {
           }}
           sx={
             {
-              backgroundColor: AppConfig.defaultFolderColor,
+              backgroundColor: defaultFolderColor,
               paddingLeft: '10px',
               WebkitAppRegion: 'no-drag',
             } as React.CSSProperties & { WebkitAppRegion?: string }

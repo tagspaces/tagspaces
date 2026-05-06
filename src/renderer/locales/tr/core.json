@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Açılışta etiket alanını her zaman göster",
   "tagBackgroundColor": "Varsayılan etiket arka plan rengi",
   "tagForegroundColor": "Varsayılan etiket metin rengi",
+  "defaultFolderColor": "Varsayılan klasör rengi",
   "colorChangesToAllTags": "Renk değişikliklerini grubun tüm etiketlerine uygula",
   "delete": "Sil",
   "enableGlobalKeyboardShortcuts": "Genel klavye kısayollarını etkinleştir",

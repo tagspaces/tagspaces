@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "הצגת אזור התגיות בעת ההפעלה",
   "tagBackgroundColor": "צבע רקע של תגית",
   "tagForegroundColor": "צבע טקסט של תגית",
+  "defaultFolderColor": "צבע ברירת מחדל לתיקייה",
   "colorChangesToAllTags": "שינוי צבע לכל התגיות",
   "delete": "מחיקה",
   "enableGlobalKeyboardShortcuts": "הפעלת קיצורי מקשים גלובליים",

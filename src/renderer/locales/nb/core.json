@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "Alltid vis stikkordsområde på oppstart",
   "tagBackgroundColor": "Standard bakgrunnsfarge på stikkord",
   "tagForegroundColor": "Standard farge på stikkord",
+  "defaultFolderColor": "Standard mappefarge",
   "colorChangesToAllTags": "Angi fargeendring til alle stikkord i gruppen",
   "delete": "Slett",
   "enableGlobalKeyboardShortcuts": "Aktiver globale hurtigtaster",

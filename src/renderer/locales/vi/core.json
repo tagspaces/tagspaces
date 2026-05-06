@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Luôn hiển thị khu vực quản lý đuôi khi khởi chạy",
   "tagBackgroundColor": "Màu nền mặc định cho đuôi",
   "tagForegroundColor": "Màu chữ mặc định cho đuôi",
+  "defaultFolderColor": "Màu thư mục mặc định",
   "colorChangesToAllTags": "Áp dụng thay đổi màu cho tất cả đuôi trong nhóm",
   "delete": "Xoá",
   "enableGlobalKeyboardShortcuts": "Bật phím tắt bàn phím toàn cục",

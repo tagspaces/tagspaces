@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "總是在啟動時顯示標籤庫",
   "tagBackgroundColor": "預設標籤底色",
   "tagForegroundColor": "預設標籤文字顏色",
+  "defaultFolderColor": "預設資料夾顏色",
   "colorChangesToAllTags": "應用顏色變更組裡的所有標籤",
   "delete": "刪除",
   "enableGlobalKeyboardShortcuts": "啟用全局快捷鍵",

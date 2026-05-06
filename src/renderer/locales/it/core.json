@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Mostra sempre la sezione etichette all'avvio",
   "tagBackgroundColor": "Colore sfondo etichetta predefinito",
   "tagForegroundColor": "Colore testo etichetta predefinito",
+  "defaultFolderColor": "Colore cartella predefinito",
   "colorChangesToAllTags": "Applica le modifiche di colore a tutte le etichette del gruppo",
   "delete": "Elimina",
   "enableGlobalKeyboardShortcuts": "Abilita le combinazioni di tasti globali",

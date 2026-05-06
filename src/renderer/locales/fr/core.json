@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Toujours afficher la zone d'étiquette au démarrage",
   "tagBackgroundColor": "Couleur des étiquettes par défaut",
   "tagForegroundColor": "Couleur des textes d'étiquette par défaut ",
+  "defaultFolderColor": "Couleur des dossiers par défaut",
   "colorChangesToAllTags": "Appliquer ces couleurs à toutes les étiquettes du groupe",
   "delete": "Supprimer",
   "enableGlobalKeyboardShortcuts": "Activer les raccourcis clavier globaux",

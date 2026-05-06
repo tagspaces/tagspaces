@@ -329,9 +329,10 @@ export function findBackgroundColorForFolder(fsEntry: TS.FileSystemEntry) {
 export function findColorForEntry(
   fsEntry: TS.FileSystemEntry,
   supportedFileTypes: Array<any>,
+  defaultFolderColor: string,
 ): string {
   if (!fsEntry.isFile) {
-    return AppConfig.defaultFolderColor;
+    return defaultFolderColor;
   }
   if (fsEntry.extension !== undefined) {
     return findColorForFileExt(fsEntry.extension, supportedFileTypes);

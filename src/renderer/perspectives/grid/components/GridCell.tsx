@@ -38,6 +38,7 @@ import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { useCellVisibility } from '-/perspectives/grid/hooks/CellVisibilityContext';
 import {
+  getDefaultFolderColor,
   getSupportedFileTypes,
   getTagDelimiter,
   isReorderTags,
@@ -146,13 +147,14 @@ function GridCell(props: Props) {
   const { addTag, editTagForEntry } = useTaggingActionsContext();
   const { findLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const defaultFolderColor = useSelector(getDefaultFolderColor);
   const reorderTags: boolean = useSelector(isReorderTags);
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const firstRender = useFirstRender();
 
   const fileSystemEntryColor = useMemo(
-    () => findColorForEntry(fsEntry, supportedFileTypes),
-    [fsEntry, supportedFileTypes],
+    () => findColorForEntry(fsEntry, supportedFileTypes, defaultFolderColor),
+    [fsEntry, supportedFileTypes, defaultFolderColor],
   );
   const maxHeight = calculateEntryHeight(entrySize);
   const entryPath = fsEntry.path;

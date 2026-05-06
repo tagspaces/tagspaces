@@ -77,6 +77,7 @@ export const types = {
   SET_USEGENERATETHUMBNAILS: 'SETTINGS/SET_USEGENERATETHUMBNAILS',
   SET_TAGCOLOR: 'SETTINGS/SET_TAGCOLOR',
   SET_TAGTEXTCOLOR: 'SETTINGS/SET_TAGTEXTCOLOR',
+  SET_DEFAULT_FOLDER_COLOR: 'SETTINGS/SET_DEFAULT_FOLDER_COLOR',
   SET_CURRENTTHEME: 'SETTINGS/SET_CURRENTTHEME',
   SET_CURRENT_REGULAR_THEME: 'SETTINGS/SET_CURRENT_REGULAR_THEME',
   SET_CURRENT_DARK_THEME: 'SETTINGS/SET_CURRENT_DARK_THEME',
@@ -358,6 +359,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_TAGTEXTCOLOR: {
       return { ...state, tagTextColor: action.tagTextColor };
+    }
+    case types.SET_DEFAULT_FOLDER_COLOR: {
+      return { ...state, defaultFolderColor: action.color };
     }
     case types.SET_CURRENTTHEME: {
       return { ...state, currentTheme: action.currentTheme };
@@ -858,6 +862,10 @@ export const actions = {
     type: types.SET_TAGTEXTCOLOR,
     tagTextColor,
   }),
+  setDefaultFolderColor: (color: string) => ({
+    type: types.SET_DEFAULT_FOLDER_COLOR,
+    color,
+  }),
   setCurrentTheme: (currentTheme: string) => ({
     type: types.SET_CURRENTTHEME,
     currentTheme,
@@ -1128,6 +1136,8 @@ export const getExtensionsFound = (state: any) =>
   state.settings.extensionsFound;
 export const getTagColor = (state: any) => state.settings.tagBackgroundColor;
 export const getTagTextColor = (state: any) => state.settings.tagTextColor;
+export const getDefaultFolderColor = (state: any) =>
+  AppConfig.ExtDefaultFolderColor ?? state.settings.defaultFolderColor;
 export const getCurrentTheme = (state: any) => state.settings.currentTheme;
 export const getDefaultRegularTheme = (state: any) =>
   state.settings.currentRegularTheme;

@@ -155,6 +155,8 @@ function configureApp(extConfigObj) {
     extConfigObj.ExtExtensionsFound ?? AppConfig.ExtExtensionsFound; // not documented
   AppConfig.ExtUseGenerateThumbnails =
     extConfigObj.ExtUseGenerateThumbnails ?? AppConfig.ExtUseGenerateThumbnails; // not documented
+  AppConfig.ExtDefaultFolderColor =
+    extConfigObj.ExtDefaultFolderColor ?? AppConfig.ExtDefaultFolderColor;
   AppConfig.ExtSaveLocationsInBrowser =
     extConfigObj.ExtSaveLocationsInBrowser ?? false;
   AppConfig.ExtLocationsReadOnly = // computed value

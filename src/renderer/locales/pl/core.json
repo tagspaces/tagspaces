@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "Zawsze pokazuj obszar tagów przy starcie",
   "tagBackgroundColor": "Domyślny kolor tła tagów",
   "tagForegroundColor": "Domyślny kolor tekstu tagów",
+  "defaultFolderColor": "Domyślny kolor folderu",
   "colorChangesToAllTags": "Zastosuj zmiany kolorów do wszystkich tagów w grupie",
   "delete": "Usuń",
   "enableGlobalKeyboardShortcuts": "Włącz globalne skróty klawiszowe",

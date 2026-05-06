@@ -73,6 +73,8 @@ function SettingsGeneral() {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
   const [displayTextColorPicker, setDisplayTextColorPicker] =
     useState<boolean>(false);
+  const [displayFolderColorPicker, setDisplayFolderColorPicker] =
+    useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>('');
   const dispatch: AppDispatch = useDispatch();
   const settings = useSelector(getSettings);
@@ -108,6 +110,10 @@ function SettingsGeneral() {
 
   const toggleDefaultTagTextColorPicker = () => {
     setDisplayTextColorPicker(!displayTextColorPicker);
+  };
+
+  const toggleDefaultFolderColorPicker = () => {
+    setDisplayFolderColorPicker(!displayFolderColorPicker);
   };
 
   const handleMaxSearchResult = (event) => {
@@ -654,6 +660,39 @@ function SettingsGeneral() {
             </ListItem>
           ),
         },
+        {
+          label: t('core:defaultFolderColor'),
+          jsx: (
+            <ListItem>
+              <ListItemText primary={t('core:defaultFolderColor')} />
+              <TransparentBackground>
+                <TooltipTS
+                  title={
+                    AppConfig.ExtDefaultFolderColor !== undefined
+                      ? t('core:settingExternallyConfigured')
+                      : ''
+                  }
+                >
+                  <span>
+                    <TsButton
+                      data-tid="settingsToggleDefaultFolderColor"
+                      disabled={AppConfig.ExtDefaultFolderColor !== undefined}
+                      sx={{
+                        backgroundColor:
+                          AppConfig.ExtDefaultFolderColor ??
+                          settings.defaultFolderColor,
+                        border: '1px solid lightgray',
+                      }}
+                      onClick={toggleDefaultFolderColorPicker}
+                    >
+                      &nbsp;
+                    </TsButton>
+                  </span>
+                </TooltipTS>
+              </TransparentBackground>
+            </ListItem>
+          ),
+        },
         AppConfig.isElectron && {
           label: t('core:useTrashCan'),
           jsx: (
@@ -1048,6 +1087,16 @@ function SettingsGeneral() {
             }
             onClose={() => setDisplayTextColorPicker(false)}
             color={settings.tagTextColor}
+          />
+        )}
+        {displayFolderColorPicker && (
+          <ColorPickerDialog
+            open={displayFolderColorPicker}
+            setColor={(color) =>
+              dispatch(SettingsActions.setDefaultFolderColor(color))
+            }
+            onClose={() => setDisplayFolderColorPicker(false)}
+            color={settings.defaultFolderColor}
           />
         )}
         {tileServerDialog && (

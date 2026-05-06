@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Πάντα εμφάνιση περιοχής ετικετών κατά την εκκίνηση",
   "tagBackgroundColor": "Προεπιλεγμένο χρώμα φόντου ετικέτας",
   "tagForegroundColor": "Προεπιλεγμένο χρώμα κειμένου ετικέτας",
+  "defaultFolderColor": "Προεπιλεγμένο χρώμα φακέλου",
   "colorChangesToAllTags": "Εφαρμογή αλλαγών χρώματος σε όλες τις ετικέτες της ομάδας",
   "delete": "Διαγραφή",
   "enableGlobalKeyboardShortcuts": "Ενεργοποίηση καθολικών συντομεύσεων πληκτρολογίου",

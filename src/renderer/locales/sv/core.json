@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Visa alltid taggområdet vid start",
   "tagBackgroundColor": "Standardbakgrundsfärg för taggar",
   "tagForegroundColor": "Standardtextfärg för taggar",
+  "defaultFolderColor": "Standardfärg för mapp",
   "colorChangesToAllTags": "Tillämpa färgändringar på alla taggar i gruppen",
   "delete": "Radera",
   "enableGlobalKeyboardShortcuts": "Aktivera globala tangentbordsgenvägar",

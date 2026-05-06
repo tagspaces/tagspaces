@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "总是在启动时显示标签库",
   "tagBackgroundColor": "默认标签背景色",
   "tagForegroundColor": "默认标签文本颜色",
+  "defaultFolderColor": "默认文件夹颜色",
   "colorChangesToAllTags": "应用颜色更改到组里的所有标签",
   "delete": "删除",
   "enableGlobalKeyboardShortcuts": "启用全局快捷键",

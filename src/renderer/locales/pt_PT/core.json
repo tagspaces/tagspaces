@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "Mostrar sempre a área de etiquetas ao arranque",
   "tagBackgroundColor": "Cor de fundo predefinida das etiquetas",
   "tagForegroundColor": "Cor de texto predefinida das etiquetas",
+  "defaultFolderColor": "Cor predefinida da pasta",
   "colorChangesToAllTags": "Aplicar alterações de cor a todas as etiquetas do grupo",
   "delete": "Apagar",
   "enableGlobalKeyboardShortcuts": "Activar atalhos de teclado globais",

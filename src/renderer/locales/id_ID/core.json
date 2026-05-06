@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Selalu tampilkan area tag saat mulai",
   "tagBackgroundColor": "Warna latar belakang  tag default",
   "tagForegroundColor": "Warna teks tag default",
+  "defaultFolderColor": "Warna folder default",
   "colorChangesToAllTags": "Terapkan perubahan warna ke semua tag dari grup",
   "delete": "Hapus",
   "enableGlobalKeyboardShortcuts": "Aktifkan pintasan keyboard global",

@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "Taggebied altijd tonen bij opstarten",
   "tagBackgroundColor": "Standaard achtergrondkleur van tag",
   "tagForegroundColor": "Standaard tekstkleur van tag",
+  "defaultFolderColor": "Standaard mapkleur",
   "colorChangesToAllTags": "Kleurwijzigingen toepassen op alle tags van de groep",
   "delete": "Verwijder",
   "enableGlobalKeyboardShortcuts": "Globale sneltoetsen inschakelen",

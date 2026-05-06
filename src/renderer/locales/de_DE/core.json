@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "Tag-Bereich beim Start immer anzeigen",
   "tagBackgroundColor": "Standard Tag-Hintergrundfarbe",
   "tagForegroundColor": "Standard Tag-Textfarbe",
+  "defaultFolderColor": "Standard Ordnerfarbe",
   "colorChangesToAllTags": "Farbänderungen für alle Tags der Gruppe übernehmen",
   "delete": "Löschen",
   "enableGlobalKeyboardShortcuts": "Globale Tastenkombinationen aktivieren",

@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Po startu vždy zobrazit oblast štítků",
   "tagBackgroundColor": "Výchozí barva pozadí štítku",
   "tagForegroundColor": "Výchozí barva textu štítku",
+  "defaultFolderColor": "Výchozí barva složky",
   "colorChangesToAllTags": "Použít změny barev na všechny štítky ve skupině",
   "delete": "Smazat",
   "enableGlobalKeyboardShortcuts": "Povolit globální klávesové zkratky",

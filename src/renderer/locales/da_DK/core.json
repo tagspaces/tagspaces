@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Vis altid mærkeområde ved opstart",
   "tagBackgroundColor": "Standard baggrundsfarve for mærker",
   "tagForegroundColor": "Standard tekstfarve for mærker",
+  "defaultFolderColor": "Standard mappefarve",
   "colorChangesToAllTags": "Anvend farveændringer på alle mærker i gruppen",
   "delete": "Slet",
   "enableGlobalKeyboardShortcuts": "Aktiver globale tastaturgenveje",

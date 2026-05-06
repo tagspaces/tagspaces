@@ -35,6 +35,7 @@ import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsCon
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import {
+  getDefaultFolderColor,
   getSupportedFileTypes,
   getTagDelimiter,
   isReorderTags,
@@ -121,6 +122,7 @@ function RowCell(props: Props) {
   const { addTag, editTagForEntry } = useTaggingActionsContext();
   const { currentLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const defaultFolderColor = useSelector(getDefaultFolderColor);
   const reorderTags: boolean = useSelector(isReorderTags);
   const tagDelimiter: string = useSelector(getTagDelimiter);
 
@@ -151,8 +153,8 @@ function RowCell(props: Props) {
   }, [showEntriesDescription, fsEntry.meta?.description, fsEntry.isFile]);
 
   const fileSystemEntryColor = useMemo(
-    () => findColorForEntry(fsEntry, supportedFileTypes),
-    [fsEntry, supportedFileTypes],
+    () => findColorForEntry(fsEntry, supportedFileTypes, defaultFolderColor),
+    [fsEntry, supportedFileTypes, defaultFolderColor],
   );
   const fileSystemEntryBgColor = useMemo(
     () => findBackgroundColorForFolder(fsEntry),

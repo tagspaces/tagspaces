@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "Vždy zobraziť oblasť značiek pri spustení",
   "tagBackgroundColor": "Predvolená farba pozadia značky",
   "tagForegroundColor": "Predvolená farba textu značky",
+  "defaultFolderColor": "Predvolená farba priečinka",
   "colorChangesToAllTags": "Použiť zmeny farieb na všetky značky skupiny",
   "delete": "Odstrániť",
   "enableGlobalKeyboardShortcuts": "Zapnúť globálne klávesové skratky",

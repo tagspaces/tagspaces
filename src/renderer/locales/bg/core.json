@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Винаги показвай областта с етикети при стартиране",
   "tagBackgroundColor": "Цвят на фона на етикета по подразбиране",
   "tagForegroundColor": "Цвят на текста на етикета по подразбиране",
+  "defaultFolderColor": "Цвят на папката по подразбиране",
   "colorChangesToAllTags": "Приложи промени в цвета на всички етикети от групата",
   "delete": "Изтрий",
   "enableGlobalKeyboardShortcuts": "Активирай глобални клавишни комбинации",

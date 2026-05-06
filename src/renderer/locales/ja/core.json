@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "起動時にタグ領域を常に表示する",
   "tagBackgroundColor": "デフォルトのタグ背景色",
   "tagForegroundColor": "デフォルトのタグテキスト色",
+  "defaultFolderColor": "デフォルトのフォルダー色",
   "colorChangesToAllTags": "タググループのすべてのタグに色の変更を適用する",
   "delete": "削除",
   "enableGlobalKeyboardShortcuts": "グローバルキーボードショートカットを有効にする",

@@ -105,6 +105,7 @@ export default {
   useOnlyTagsFromTagLibrary,
   tagTextColor: 'white',
   tagBackgroundColor: '#61DD61',
+  defaultFolderColor: '#a466aa',
   currentTheme: 'light',
   currentRegularTheme: 'legacy',
   currentDarkTheme: 'darklegacy',

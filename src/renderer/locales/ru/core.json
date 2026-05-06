@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "Всегда показывать область тегов при запуске",
   "tagBackgroundColor": "Цвет фона тега по умолчанию",
   "tagForegroundColor": "Цвет текста тега по-умолчанию",
+  "defaultFolderColor": "Цвет папки по умолчанию",
   "colorChangesToAllTags": "Применить изменения цвета ко всем тегам группы",
   "delete": "Удалить",
   "enableGlobalKeyboardShortcuts": "Включить глобальные сочетания клавиш",

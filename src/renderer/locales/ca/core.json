@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Mostra sempre l'àrea d'etiquetes en iniciar",
   "tagBackgroundColor": "Color de fons predeterminat de l'etiqueta",
   "tagForegroundColor": "Color de text predeterminat de l'etiqueta",
+  "defaultFolderColor": "Color de carpeta predeterminat",
   "colorChangesToAllTags": "Aplica els canvis de color a totes les etiquetes del grup",
   "delete": "Elimina",
   "enableGlobalKeyboardShortcuts": "Activa les dreceres de teclat globals",

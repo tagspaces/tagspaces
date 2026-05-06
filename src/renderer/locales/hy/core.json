@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Մեկնարկին միշտ ցույց տալ պիտակների տարածքը",
   "tagBackgroundColor": "Պիտակի խորքի լռելյայն գույն",
   "tagForegroundColor": "Պիտակի գրվածքի լռելյայն գույն",
+  "defaultFolderColor": "Թղթապանակի լռելյայն գույն",
   "colorChangesToAllTags": "Գույնը գործածել խմբի բոլոր պիտակների համար",
   "delete": "Ջնջել",
   "enableGlobalKeyboardShortcuts": "Միացնել բոլոր ստեղնային կարճատները",

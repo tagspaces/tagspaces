@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Mindig mutassa a címke sávot induláskor",
   "tagBackgroundColor": "Alapértelmezett címke háttérszín",
   "tagForegroundColor": "Alapértelmezett címke betűszín",
+  "defaultFolderColor": "Alapértelmezett mappaszín",
   "colorChangesToAllTags": "Alkalmazzuk az összes címkére a csoportban a színváltoztatásokat",
   "delete": "Törlés",
   "enableGlobalKeyboardShortcuts": "Rendszerszintű gyorsbillentyűk engedélyezése",

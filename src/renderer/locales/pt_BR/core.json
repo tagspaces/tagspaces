@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "Sempre mostrar área de tags ao iniciar",
   "tagBackgroundColor": "Cor de fundo padrão das tags",
   "tagForegroundColor": "Cor de texto padrão das tags",
+  "defaultFolderColor": "Cor padrão de pasta",
   "colorChangesToAllTags": "Aplicar mudanças de cor para todas as tags do grupo",
   "delete": "Excluir",
   "enableGlobalKeyboardShortcuts": "Habilitar atalhos de teclado globais",

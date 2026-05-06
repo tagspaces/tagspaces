@@ -146,6 +146,7 @@
   "showTagAreaOnStartup": "Завжди показувати область міток при запуску",
   "tagBackgroundColor": "Колір фону мітки за замовчуванням",
   "tagForegroundColor": "Колір тексту мітки за замовчуванням",
+  "defaultFolderColor": "Колір теки за замовчуванням",
   "colorChangesToAllTags": "Застосувати зміни кольору до всіх міток групи",
   "delete": "Видалити",
   "enableGlobalKeyboardShortcuts": "Увімкнути глобальні гарячі клавіші",

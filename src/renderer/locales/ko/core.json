@@ -145,6 +145,7 @@
   "showTagAreaOnStartup": "시작시 항상 태그 영역 표시",
   "tagBackgroundColor": "기본 태그 배경 색",
   "tagForegroundColor": "기본 태그 문자 색",
+  "defaultFolderColor": "기본 폴더 색",
   "colorChangesToAllTags": "그룹의 모든 태그에 색상 변경 사항 적용",
   "delete": "삭제",
   "enableGlobalKeyboardShortcuts": "전역 키보드 단축키 사용",

@@ -150,6 +150,7 @@
   "showTagAreaOnStartup": "Always show tag area on startup",
   "tagBackgroundColor": "Default tag background color",
   "tagForegroundColor": "Default tag text color",
+  "defaultFolderColor": "Default folder color",
   "colorChangesToAllTags": "Apply color changes to all tags of the group",
   "delete": "Delete",
   "enableGlobalKeyboardShortcuts": "Enable global keyboard shortcuts",
