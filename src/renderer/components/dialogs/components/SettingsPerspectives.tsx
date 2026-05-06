@@ -59,6 +59,18 @@ function SettingsPerspectives() {
     openPerspectiveOnboarding(perspectiveId);
   };
 
+  // A perspective only "counts" as a fallback for the guard if the user
+  // can actually use it — Pro entries on a Lite build are perpetually
+  // enabled in redux (defaults add them all) but the user can never reach
+  // them through the switcher, so they shouldn't suppress the
+  // last-enabled warning when the user disables Grid or List.
+  const isUserUsable = (id: string): boolean => {
+    const meta = AvailablePerspectives.find((p) => p.id === id);
+    if (!meta) return false;
+    if (meta.pro === true && !hasPro) return false;
+    return true;
+  };
+
   const handleToggle =
     (perspectiveId: string, currentlyEnabled: boolean) =>
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +80,7 @@ function SettingsPerspectives() {
       const next = event.target.checked;
       if (!next) {
         const remaining = enabledPerspectives.filter(
-          (id) => id !== perspectiveId,
+          (id) => id !== perspectiveId && isUserUsable(id),
         );
         if (remaining.length === 0) {
           showNotification(
