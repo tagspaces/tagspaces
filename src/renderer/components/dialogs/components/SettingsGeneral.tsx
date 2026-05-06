@@ -21,6 +21,7 @@ import { CheckIcon, CloseIcon, ReloadIcon } from '-/components/CommonIcons';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
+import TooltipTS from '-/components/Tooltip';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -53,7 +54,6 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Switch from '@mui/material/Switch';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import TooltipTS from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import {
   useContext,
