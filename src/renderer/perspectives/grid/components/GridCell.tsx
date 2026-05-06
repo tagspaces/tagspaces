@@ -538,7 +538,6 @@ function GridCell(props: Props) {
           </Box>
         )}
       </Box>
-
       <CardContent sx={{ padding: '1px 5px 0px 5px', flexGrow: 1 }}>
         <Typography
           title={fsEntry.name}
@@ -556,9 +555,9 @@ function GridCell(props: Props) {
             title={description}
             data-tid="gridCellDescription"
             variant="caption"
-            display="block"
             gutterBottom
             sx={{
+              display: 'block',
               lineHeight: '12px',
               paddingRight: '4px',
               overflowX: 'clip',

@@ -218,8 +218,8 @@ function TagsSelect(props: Props) {
         value={tags}
         onChange={handleTagChange}
         onInputChange={handleInputChange}
-        renderTags={(value: readonly TS.Tag[], getTagProps) =>
-          value.map((option: TS.Tag, index: number) => (
+        renderValue={(value, getItemProps) =>
+          (value as TS.Tag[]).map((option: TS.Tag, index: number) => (
             <TagContainer
               key={selectedEntry?.path + option + index}
               tag={option}
@@ -245,7 +245,7 @@ function TagsSelect(props: Props) {
               sx={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
               slotProps={{
                 input: {
-                  ...params.InputProps,
+                  ...params.slotProps.input,
                   endAdornment: generateButton && (
                     <InputAdornment position="end">
                       <AiGenTagsButton variant="text" />

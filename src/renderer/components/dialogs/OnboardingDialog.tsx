@@ -355,7 +355,9 @@ function OnboardingDialog(props: Props) {
       keepMounted
       fullScreen={smallScreen}
       scroll="paper"
-      PaperProps={{ sx: { minHeight: smallScreen ? undefined : 560 } }}
+      slotProps={{
+        paper: { sx: { minHeight: smallScreen ? undefined : 560 } },
+      }}
     >
       <TsDialogTitle
         dialogTitle={''}
@@ -563,14 +565,17 @@ function OnboardingDialog(props: Props) {
                           <ListItemText
                             primary={row.name}
                             secondary={row.path}
-                            primaryTypographyProps={{ variant: 'body2' }}
-                            secondaryTypographyProps={{
-                              variant: 'caption',
-                              sx: {
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                display: 'block',
+                            slotProps={{
+                              primary: { variant: 'body2' },
+
+                              secondary: {
+                                variant: 'caption',
+                                sx: {
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  display: 'block',
+                                },
                               },
                             }}
                           />

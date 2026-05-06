@@ -28,8 +28,10 @@ function MenuKeyBinding(props: Props) {
   return (
     <Typography
       variant="body2"
-      color="text.secondary"
-      sx={{ textTransform: 'uppercase' }}
+      sx={{
+        color: 'text.secondary',
+        textTransform: 'uppercase',
+      }}
     >
       {adjustKeyBinding(keyBinding)}
     </Typography>

@@ -210,10 +210,20 @@ function EditSearchQuery(props: Props) {
                 <TooltipTS
                   title={
                     <>
-                      <Typography variant="subtitle1" color="inherit">
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          color: 'inherit',
+                        }}
+                      >
                         Tips for the extended search
                       </Typography>
-                      <Typography variant="subtitle2" color="inherit">
+                      <Typography
+                        variant="subtitle2"
+                        sx={{
+                          color: 'inherit',
+                        }}
+                      >
                         💡 <b>{'sun'}</b> - will match entries having the word
                         sun but also san or sum in the name
                         <br />
@@ -631,7 +641,12 @@ function EditSearchQuery(props: Props) {
       <FormControl>
         <TooltipTS title={t('enterTimePeriodTooltip')}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <Box position="relative" display="inline-flex">
+            <Box
+              sx={{
+                position: 'relative',
+                display: 'inline-flex',
+              }}
+            >
               <div style={{ maxWidth: 180 }}>
                 <FormHelperText sx={{ marginLeft: 0, marginTop: 0 }}>
                   {t('core:enterTagTimePeriodFrom')}

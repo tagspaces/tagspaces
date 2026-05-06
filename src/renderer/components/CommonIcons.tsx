@@ -49,7 +49,7 @@ export const MarkdownFileIcon = (props) => (
   <MarkdownRawIcon sx={{ transform: 'scaleX(-1)' }} {...props} />
 );
 
-export { default as WorkspacesIcon } from '@mui/icons-material/WorkspacesOutline';
+export { default as WorkspacesIcon } from '@mui/icons-material/WorkspacesOutlined';
 
 export const NavigateToFolderIcon = (props) => (
   <KeyboardReturnIcon {...props} />
@@ -87,7 +87,7 @@ export { default as CreateFileIcon } from '@mui/icons-material/AddCircleOutlineO
 
 export { default as AddIcon } from '@mui/icons-material/AddCircleOutlineOutlined';
 
-export { default as LocalLocationIcon } from '@mui/icons-material/WorkOutline';
+export { default as LocalLocationIcon } from '@mui/icons-material/WorkOutlineOutlined';
 
 export { default as CloudLocationIcon } from '@mui/icons-material/CloudQueue';
 
@@ -117,7 +117,7 @@ export { default as BookmarkIcon } from '@mui/icons-material/BookmarkBorder';
 
 export { default as BookIcon } from '@mui/icons-material/MenuBook';
 
-export { default as EmailIcon } from '@mui/icons-material/MailOutline';
+export { default as EmailIcon } from '@mui/icons-material/MailOutlined';
 
 export { default as DateIcon } from '@mui/icons-material/DateRange';
 
@@ -334,7 +334,7 @@ export { default as ChatIcon } from '@mui/icons-material/Chat';
 
 export { default as ZoomInIcon } from '@mui/icons-material/ControlPoint';
 
-export { default as ZoomOutIcon } from '@mui/icons-material/RemoveCircleOutline';
+export { default as ZoomOutIcon } from '@mui/icons-material/RemoveCircleOutlineOutlined';
 
 export { default as ZoomLevelIcon } from '@mui/icons-material/Loupe';
 
