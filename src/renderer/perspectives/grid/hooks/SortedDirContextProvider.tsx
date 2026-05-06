@@ -39,7 +39,7 @@ export const SortedDirContext = createContext<SortedDirContextData>({
   sortedDirContent: undefined,
   sortBy: undefined,
   orderBy: undefined,
-  nativeDragModeEnabled: undefined,
+  nativeDragModeEnabled: false,
   setSortBy: undefined,
   setOrderBy: undefined,
   setNativeDragModeEnabled: undefined,

@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { XYCoord, useDragLayer } from 'react-dnd';
 import { FilesDragPreview } from './FilesDragPreview';
 import TagDragPreview from './TagDragPreview';
@@ -71,12 +72,19 @@ const CustomDragLayer: React.FC<CustomDragLayerProps> = (props) => {
   if (!isDragging) {
     return null;
   }
-  return (
+  // Render into document.body so position:fixed resolves against the viewport
+  // rather than the nearest containing block. The Splitter panes use
+  // `contain: layout paint` (and other panels apply CSS transforms), both of
+  // which establish containing blocks for fixed descendants — without this
+  // portal, the layer is confined to its ancestor pane and the drag preview
+  // appears shifted right by the drawer width / other layout offsets.
+  return createPortal(
     <div style={layerStyles}>
       <div style={getItemStyles(initialOffset, currentOffset, clientOffset)}>
         {renderItem()}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

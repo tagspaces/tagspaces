@@ -27,6 +27,7 @@
 import DragItemTypes from '-/components/DragItemTypes';
 import { alpha, useTheme } from '@mui/material/styles';
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { useDragLayer } from 'react-dnd';
 
 const SelectionDragLayer: React.FC = () => {
@@ -66,7 +67,12 @@ const SelectionDragLayer: React.FC = () => {
     zIndex: 1000,
   };
 
-  return (
+  // Portal to document.body so position:fixed resolves against the viewport.
+  // The Splitter panes use `contain: layout paint`, which establishes a
+  // containing block for fixed descendants — without this portal the
+  // selection rectangle is offset by the drawer width (and any other layout
+  // padding between the viewport and the contained ancestor).
+  return createPortal(
     <div style={layerStyle}>
       <div
         style={{
@@ -79,7 +85,8 @@ const SelectionDragLayer: React.FC = () => {
           backgroundColor: alpha(theme.palette.primary.main, 0.2),
         }}
       />
-    </div>
+    </div>,
+    document.body,
   );
 };
 
