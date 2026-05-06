@@ -22,6 +22,7 @@ import {
   FileIcon,
   KeyboardIcon,
   OptionsIcon,
+  PerspectiveIcon,
 } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import { BetaLabel } from '-/components/HelperComponents';
@@ -38,7 +39,6 @@ import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { openURLExternally } from '-/services/utils-io';
 import ArticleIcon from '@mui/icons-material/Article';
-import GridViewIcon from '@mui/icons-material/GridView';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Paper from '@mui/material/Paper';
@@ -183,7 +183,7 @@ function SettingsDialog(props: Props) {
             justifyContent: 'flex-start',
           }}
           iconPosition="start"
-          icon={smallScreen ? '' : <GridViewIcon />}
+          icon={smallScreen ? '' : <PerspectiveIcon />}
           data-tid="perspectivesSettingsDialog"
           label={t('core:perspectivesSettingsTab')}
         />

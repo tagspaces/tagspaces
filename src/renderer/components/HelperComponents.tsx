@@ -17,20 +17,22 @@
  */
 
 import { Pro } from '-/pro';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
+import TooltipTS from './Tooltip';
 
 export function BetaLabel() {
   const { t } = useTranslation();
   return (
-    <Tooltip title={t('featureInBetaStatus')}>
+    <TooltipTS title={t('featureInBetaStatus')}>
       <Typography sx={{ display: 'initial' }}>
-        <sup style={{ marginLeft: 5, textTransform: 'uppercase' }}>
+        <sup
+          style={{ marginLeft: 5, textTransform: 'uppercase', fontSize: 11 }}
+        >
           {t('betaStatus')}
         </sup>
       </Typography>
-    </Tooltip>
+    </TooltipTS>
   );
 }
 
@@ -38,11 +40,11 @@ export function ProLabel() {
   const { t } = useTranslation();
   return (
     !Pro && (
-      <Tooltip placement="top" title={t('thisFunctionalityIsAvailableInPro')}>
+      <TooltipTS title={t('thisFunctionalityIsAvailableInPro')}>
         <Typography sx={{ display: 'initial' }}>
-          <sup style={{ marginLeft: 5 }}>PRO</sup>
+          <sup style={{ marginLeft: 5, fontSize: 11 }}>PRO</sup>
         </Typography>
-      </Tooltip>
+      </TooltipTS>
     )
   );
 }
@@ -51,20 +53,20 @@ export function ProSign() {
   const { t } = useTranslation();
   return (
     !Pro && (
-      <Tooltip placement="top" title={t('thisFunctionalityIsAvailableInPro')}>
+      <TooltipTS title={t('thisFunctionalityIsAvailableInPro')}>
         <Typography sx={{ display: 'initial' }}>
           <sup
             style={{
               fontSize: 10,
-              borderRadius: 4,
+              borderRadius: 8,
               backgroundColor: '#1dd19f',
-              padding: 3,
+              padding: '3px 5px',
             }}
           >
             PRO
           </sup>
         </Typography>
-      </Tooltip>
+      </TooltipTS>
     )
   );
 }
@@ -78,12 +80,12 @@ export function ProTooltip(props) {
     ? tooltip + ' - ' + t('thisFunctionalityIsAvailableInPro')
     : t('thisFunctionalityIsAvailableInPro');
   return (
-    <Tooltip
+    <TooltipTS
       arrow
       placement={tooltipPlacement}
       title={Pro ? proTooltip : noProTooltip}
     >
       <div style={{ display: 'flex' }} children={children}></div>
-    </Tooltip>
+    </TooltipTS>
   );
 }

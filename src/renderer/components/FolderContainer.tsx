@@ -46,7 +46,6 @@ import {
   isHideProFeatures,
 } from '-/reducers/settings';
 import { CommonLocation } from '-/utils/CommonLocation';
-import BlurOnIcon from '@mui/icons-material/BlurOn';
 import { Fab, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -62,6 +61,7 @@ import {
   GoBackIcon,
   GoForwardIcon,
   MainMenuIcon,
+  PerspectiveIcon,
   SearchIcon,
 } from './CommonIcons';
 import TsToggleButton from './TsToggleButton';
@@ -500,7 +500,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
             }}
             onClick={openPerspectiveMenu}
           >
-            <BlurOnIcon />
+            <PerspectiveIcon />
           </Fab>
           <Menu
             id="demo-positioned-menu"

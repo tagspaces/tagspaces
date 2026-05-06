@@ -352,6 +352,8 @@ export { default as VisibilityOffIcon } from '@mui/icons-material/VisibilityOff'
 
 export { default as PasswordIcon } from '@mui/icons-material/Password';
 
+export { default as PerspectiveIcon } from '@mui/icons-material/BlurOn';
+
 export const MastodonIcon = (props) => (
   <SvgIcon {...props}>
     <svg

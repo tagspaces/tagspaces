@@ -16,7 +16,7 @@
  *
  */
 
-import { BetaLabel } from '-/components/HelperComponents';
+import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
 import { usePerspectiveOnboardingContext } from '-/components/dialogs/hooks/usePerspectiveOnboardingContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -32,7 +32,6 @@ import {
   isHideProFeatures,
 } from '-/reducers/settings';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -163,10 +162,8 @@ function SettingsPerspectives() {
                 primary={
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     {perspective.title}
-                    {perspective.pro && (
-                      <Chip size="small" color="primary" label="PRO" />
-                    )}
                     {perspective.beta && <BetaLabel />}
+                    {perspective.pro && <ProLabel />}
                   </Box>
                 }
               />
