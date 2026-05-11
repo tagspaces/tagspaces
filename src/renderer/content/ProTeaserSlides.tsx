@@ -48,19 +48,19 @@ export const slidesNames = [
 export function getProTeaserSlides(t) {
   const slidesEN = [];
   slidesEN[slidesNames[0]] = {
-    title: t('ptsWhyTitle'),
+    title: t('peri:ptsWhyTitle'),
     description: (
       <>
-        <p>{t('ptsWhySection1')}</p>
-        <p>{t('ptsWhySection2')}</p>
+        <p>{t('peri:ptsWhySection1')}</p>
+        <p>{t('peri:ptsWhySection2')}</p>
       </>
     ),
     pictureURL: ProTeaserImage,
     pictureHeight: 150,
   };
   slidesEN[slidesNames[1]] = {
-    title: t('ptsKanbanTitle'),
-    description: t('ptsKanban'),
+    title: t('peri:ptsKanbanTitle'),
+    description: t('peri:ptsKanban'),
     ctaURL: Links.documentationLinks.kanbanPerspective,
     ctaTitle: t('showMeMore'),
     pictureURL: KanbanImage,
@@ -68,16 +68,16 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[2]] = {
-    title: t('core:ptsFolderVizTitle'),
+    title: t('peri:ptsFolderVizTitle'),
     description: (
       <>
-        <p>{t('core:ptsFolderViz')}</p>
+        <p>{t('peri:ptsFolderViz')}</p>
         <ul style={{ marginTop: -10 }}>
-          <li>{t('core:ptsFolderVizTagGraph')}</li>
-          <li>{t('core:ptsFolderVizLinksGraph')}</li>
-          <li>{t('core:ptsFolderVizFolderTree')}</li>
-          <li>{t('core:ptsFolderVizCircularFolderTree')}</li>
-          <li>{t('core:ptsFolderVizTreeMap')}</li>
+          <li>{t('peri:ptsFolderVizTagGraph')}</li>
+          <li>{t('peri:ptsFolderVizLinksGraph')}</li>
+          <li>{t('peri:ptsFolderVizFolderTree')}</li>
+          <li>{t('peri:ptsFolderVizCircularFolderTree')}</li>
+          <li>{t('peri:ptsFolderVizTreeMap')}</li>
         </ul>
       </>
     ),
@@ -117,11 +117,11 @@ export function getProTeaserSlides(t) {
     pictureHeight: 350,
   };
   slidesEN[slidesNames[4]] = {
-    title: t('core:ptsMapiqueTitle'),
+    title: t('peri:ptsMapiqueTitle'),
     description: (
       <>
-        <p>{t('core:ptsMapiqueSection1')}</p>
-        <p>{t('core:ptsMapiqueSection2')}</p>
+        <p>{t('peri:ptsMapiqueSection1')}</p>
+        <p>{t('peri:ptsMapiqueSection2')}</p>
       </>
     ),
     ctaURL: Links.documentationLinks.mapiquePerspective,
@@ -131,8 +131,8 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[5]] = {
-    title: t('core:ptsGalleryTitle'),
-    description: t('core:ptsGallery'),
+    title: t('peri:ptsGalleryTitle'),
+    description: t('peri:ptsGallery'),
     ctaURL: Links.documentationLinks.galleryPerspective,
     ctaTitle: t('showMeMore'),
     pictureURL: GalleryImage,
@@ -140,17 +140,17 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[6]] = {
-    title: t('core:ptsAITitle'),
+    title: t('peri:ptsAITitle'),
     description: (
       <>
-        <p>{t('core:ptsAI')}</p>
+        <p>{t('peri:ptsAI')}</p>
         <ul style={{ marginTop: -10 }}>
-          <li>{t('core:ptsAISection1')}</li>
-          <li>{t('core:ptsAISection2')}</li>
-          <li>{t('core:ptsAISection3')}</li>
-          <li>{t('core:ptsAISection4')}</li>
+          <li>{t('peri:ptsAISection1')}</li>
+          <li>{t('peri:ptsAISection2')}</li>
+          <li>{t('peri:ptsAISection3')}</li>
+          <li>{t('peri:ptsAISection4')}</li>
         </ul>
-        <small>{t('core:ptsAINote')}</small>
+        <small>{t('peri:ptsAINote')}</small>
       </>
     ),
     ctaURL: Links.links.emailContact,
@@ -159,14 +159,14 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[7]] = {
-    title: t('core:ptsAnnotateLinkTitle'),
-    description: t('core:ptsAnnotateLink'),
+    title: t('peri:ptsAnnotateLinkTitle'),
+    description: t('peri:ptsAnnotateLink'),
     items: [
-      <>{t('core:ptsAnnotateLinkSection1')}</>,
-      <>{t('core:ptsAnnotateLinkSection2')}</>,
-      <>{t('core:ptsAnnotateLinkSection3')}</>,
-      <>{t('core:ptsAnnotateLinkSection4')}</>,
-      <>{t('core:ptsAnnotateLinkSection5')}</>,
+      <>{t('peri:ptsAnnotateLinkSection1')}</>,
+      <>{t('peri:ptsAnnotateLinkSection2')}</>,
+      <>{t('peri:ptsAnnotateLinkSection3')}</>,
+      <>{t('peri:ptsAnnotateLinkSection4')}</>,
+      <>{t('peri:ptsAnnotateLinkSection5')}</>,
     ],
     ctaURL: Links.links.productProFileFolderMeta,
     ctaTitle: t('showMeMore'),
@@ -175,11 +175,11 @@ export function getProTeaserSlides(t) {
     pictureHeight: 300,
   };
   slidesEN[slidesNames[8]] = {
-    title: t('core:ptsRevisionsTitle'),
+    title: t('peri:ptsRevisionsTitle'),
     description: (
       <>
-        <p>{t('core:ptsRevisionsTitleSection1')}</p>
-        <p>{t('core:ptsRevisionsTitleSection2')}</p>
+        <p>{t('peri:ptsRevisionsTitleSection1')}</p>
+        <p>{t('peri:ptsRevisionsTitleSection2')}</p>
       </>
     ),
     ctaURL: Links.documentationLinks.revisions,
@@ -189,8 +189,8 @@ export function getProTeaserSlides(t) {
     pictureHeight: 400,
   };
   slidesEN[slidesNames[9]] = {
-    title: t('core:ptsCustomBackgroundTitle'),
-    description: t('core:ptsCustomBackground'),
+    title: t('peri:ptsCustomBackgroundTitle'),
+    description: t('peri:ptsCustomBackground'),
     ctaURL: Links.links.productProFolderColor,
     ctaTitle: t('showMeMore'),
     pictureURL: CustomFolderColor,
@@ -199,14 +199,14 @@ export function getProTeaserSlides(t) {
   };
   slidesEN[slidesNames[10]] = {
     title: 'TagSpaces Pro Web',
-    description: t('core:ptsProWeb'),
+    description: t('peri:ptsProWeb'),
     items: [
-      <>{t('core:ptsProWebSection1')}</>,
-      <>{t('core:ptsProWebSection2')}</>,
-      <>{t('core:ptsProWebSection3')}</>,
-      <>{t('core:ptsProWebSection4')}</>,
-      <>{t('core:ptsProWebSection5')}</>,
-      <>{t('core:ptsProWebSection6')}</>,
+      <>{t('peri:ptsProWebSection1')}</>,
+      <>{t('peri:ptsProWebSection2')}</>,
+      <>{t('peri:ptsProWebSection3')}</>,
+      <>{t('peri:ptsProWebSection4')}</>,
+      <>{t('peri:ptsProWebSection5')}</>,
+      <>{t('peri:ptsProWebSection6')}</>,
     ],
     ctaURL: Links.links.emailContact,
     ctaTitle: t('contactUs'),

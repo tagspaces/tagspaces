@@ -171,8 +171,9 @@ When comparing paths (e.g., `startsWith`, equality checks), normalize **both** s
 
 ## Translations / i18n
 
-- English source: `src/renderer/locales/en/core.json`
-- All translation keys use the `core:` namespace prefix in code (e.g., `t('core:achieveMore')`)
+- English sources: `src/renderer/locales/en/core.json` (default namespace) and `src/renderer/locales/en/peri.json` (peripheral / onboarding / teaser content)
+- Two namespaces are registered (`core`, `peri`); `core` is the default. Most keys use `t('core:someKey')`. The `peri` namespace holds onboarding (`ob*`, `noLocationsYet`, `createYourFirstLocation`), help-tour (`hts*`), Pro teaser slides (`pts*`), month / weekday names + abbreviations, and `proTeaser*Headline`/`Subtext` keys — call these with `t('peri:someKey')`.
+- The loader in `src/renderer/services/i18nOptions.ts` resolves `{{lng}}/{{ns}}` to `src/renderer/locales/{lng}/{ns}.json`. Adding another namespace = add it to `ns`, eager-import its English file for the fallback, and create `{lng}/{newns}.json` per locale.
 - When translating, preserve template variables exactly: `{{fileName}}`, `{{version}}`, etc.
 - Technical terms stay in English across all locales: TagSpaces, Kanban, Markdown, HTML, S3, WebDAV, AI, URL, QR, EXIF, FolderViz, Mapique
 - **German (de_DE)**: Use "Tags" for tags, NOT "Schlagwort/Schlagwörter". The English loanword "Tags" is the project standard for German.

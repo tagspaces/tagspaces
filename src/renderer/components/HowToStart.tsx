@@ -81,17 +81,17 @@ function HowToStart() {
 
   const steps = [
     {
-      label: t('htsIntroTitle'),
-      description: t('htsIntro'),
+      label: t('peri:htsIntroTitle'),
+      description: t('peri:htsIntro'),
     },
     {
       label: t('locationManager'),
       description: (
         <>
-          {t('htsLocationManager')}
+          {t('peri:htsLocationManager')}
           <br />
           <SlideButton
-            title={t('htsFindOutMore')}
+            title={t('peri:htsFindOutMore')}
             link={Links.documentationLinks.locations}
           />
         </>
@@ -102,13 +102,13 @@ function HowToStart() {
       },
     },
     {
-      label: t('htsCreatingLocationTitle'),
+      label: t('peri:htsCreatingLocationTitle'),
       description: (
         <>
-          {t('htsCreatingLocation')}
+          {t('peri:htsCreatingLocation')}
           <br />
           <SlideButton
-            title={t('htsFindOutMore')}
+            title={t('peri:htsFindOutMore')}
             link={Links.links.howToStart + '#locationsLocal'}
           />
         </>
@@ -123,10 +123,10 @@ function HowToStart() {
       label: t('tagLibrary'),
       description: (
         <>
-          {t('htsTagLibrary')}
+          {t('peri:htsTagLibrary')}
           <br />
           <SlideButton
-            title={t('htsFindOutMore')}
+            title={t('peri:htsFindOutMore')}
             link={Links.links.howToStart + '#taglibrary'}
           />
         </>
@@ -143,23 +143,23 @@ function HowToStart() {
       label: t('quickAccess'),
       description: (
         <>
-          {t('htsQuickAccess')}
+          {t('peri:htsQuickAccess')}
           <ul>
-            <li>{t('htsQuickAccessSection1')}</li>
+            <li>{t('peri:htsQuickAccessSection1')}</li>
             <li>
-              {t('htsQuickAccessSection2')}&nbsp;
+              {t('peri:htsQuickAccessSection2')}&nbsp;
               <ProSign />
             </li>
             <li>
-              {t('htsQuickAccessSection3')}&nbsp;
+              {t('peri:htsQuickAccessSection3')}&nbsp;
               <ProSign />
             </li>
             <li>
-              {t('htsQuickAccessSection4')}&nbsp;
+              {t('peri:htsQuickAccessSection4')}&nbsp;
               <ProSign />
             </li>
             <li>
-              {t('htsQuickAccessSection5')}&nbsp;
+              {t('peri:htsQuickAccessSection5')}&nbsp;
               <ProSign />
             </li>
           </ul>
@@ -177,29 +177,29 @@ function HowToStart() {
       label: t('perspectiveSwitch'),
       description: (
         <>
-          {t('htsPerspectiveSwitch')}
+          {t('peri:htsPerspectiveSwitch')}
           <ul>
-            <li>{t('htsPerspectiveGrid')}</li>
-            <li>{t('htsPerspectiveList')}</li>
+            <li>{t('peri:htsPerspectiveGrid')}</li>
+            <li>{t('peri:htsPerspectiveList')}</li>
             <li>
-              {t('htsPerspectiveGallery')}&nbsp;
+              {t('peri:htsPerspectiveGallery')}&nbsp;
               <ProSign />
             </li>
             <li>
-              {t('htsPerspectiveMapique')}&nbsp;
+              {t('peri:htsPerspectiveMapique')}&nbsp;
               <ProSign />
             </li>
             <li>
-              {t('htsPerspectiveKanban')}&nbsp;
+              {t('peri:htsPerspectiveKanban')}&nbsp;
               <ProSign />
             </li>
             <li>
-              {t('htsPerspectiveFolderViz')}&nbsp;
+              {t('peri:htsPerspectiveFolderViz')}&nbsp;
               <ProSign />
             </li>
           </ul>
           <SlideButton
-            title={t('htsFindOutMore')}
+            title={t('peri:htsFindOutMore')}
             link={Links.documentationLinks.perspectives}
           />
         </>
@@ -211,25 +211,25 @@ function HowToStart() {
       },
     },
     {
-      label: t('htsCreatingFilesTitle'),
+      label: t('peri:htsCreatingFilesTitle'),
       description: (
         <>
-          {t('htsCreatingFiles')}
+          {t('peri:htsCreatingFiles')}
           <ul>
-            <li>{t('htsCreatingFilesMD')}</li>
-            <li>{t('htsCreatingFilesHTML')}</li>
-            <li>{t('htsCreatingFilesText')}</li>
+            <li>{t('peri:htsCreatingFilesMD')}</li>
+            <li>{t('peri:htsCreatingFilesHTML')}</li>
+            <li>{t('peri:htsCreatingFilesText')}</li>
             <li>
-              {t('htsCreatingFilesAudio')}&nbsp;
+              {t('peri:htsCreatingFilesAudio')}&nbsp;
               <ProSign />
             </li>
             <li>
-              {t('htsCreatingFilesTemplates')}&nbsp;
+              {t('peri:htsCreatingFilesTemplates')}&nbsp;
               <ProSign />
             </li>
           </ul>
           <SlideButton
-            title={t('htsFindOutMore')}
+            title={t('peri:htsFindOutMore')}
             link={Links.documentationLinks.creatingFiles}
           />
         </>
@@ -244,10 +244,10 @@ function HowToStart() {
       label: t('settings'),
       description: (
         <>
-          {t('htsSettings')}
+          {t('peri:htsSettings')}
           <br />
           <SlideButton
-            title={t('htsFindOutMore')}
+            title={t('peri:htsFindOutMore')}
             link={Links.documentationLinks.settings}
           />
         </>
@@ -261,7 +261,7 @@ function HowToStart() {
     },
     {
       label: t('startUsingTagSpaces'),
-      description: t('htsStartUsingTS'),
+      description: t('peri:htsStartUsingTS'),
       action: () => {
         selectByTID('createNewDropdownButtonTID')?.classList.add(
           'highlighterOn',
@@ -349,9 +349,9 @@ function HowToStart() {
           }}
           noWrap
         >
-          {t('core:htsGetStarted')}
+          {t('peri:htsGetStarted')}
         </Typography>
-        <TsTooltip title={t('core:htsHideGuide')}>
+        <TsTooltip title={t('peri:htsHideGuide')}>
           <IconButton
             size="small"
             data-tid="hideHowToStartTID"
@@ -403,7 +403,7 @@ function HowToStart() {
           elevation={0}
           sx={{ p: 3, backgroundColor: 'transparent' }}
         >
-          <Typography>{t('core:htsAllStepsCompleted')}</Typography>
+          <Typography>{t('peri:htsAllStepsCompleted')}</Typography>
           <TsButton onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
             {t('core:resetBtn')}
           </TsButton>

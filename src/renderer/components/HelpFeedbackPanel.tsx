@@ -154,7 +154,7 @@ function HelpFeedbackPanel(props: Props) {
               <ListItemIcon>
                 <VisibilityIcon />
               </ListItemIcon>
-              <ListItemText>{t('core:htsShowGuide')}</ListItemText>
+              <ListItemText>{t('peri:htsShowGuide')}</ListItemText>
             </ListItemButton>
           </ListItem>
         )}

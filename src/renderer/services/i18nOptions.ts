@@ -16,17 +16,19 @@
  *
  */
 import { InitOptions } from 'i18next';
-import en from '../locales/en/core.json';
+import enCore from '../locales/en/core.json';
+import enPeri from '../locales/en/peri.json';
 
-let defaultLanguage: any = en;
+const defaults: Record<string, any> = { core: enCore, peri: enPeri };
 
 async function loadLocales(options, url: string, payload, callback) {
+  const [lng, ns = 'core'] = url.split('/');
   try {
-    const locale = await import('../locales/' + url + '/core.json');
+    const locale = await import(`../locales/${lng}/${ns}.json`);
     callback(null, { status: 200, data: locale });
   } catch (e) {
     console.log(`Unable to load locale at ${url}\n`, e);
-    callback(null, { status: 200, data: defaultLanguage });
+    callback(null, { status: 200, data: defaults[ns] ?? defaults.core });
   }
 }
 
@@ -36,12 +38,12 @@ const options: InitOptions = {
   returnNull: false,
   fallbackLng: 'en',
   // load: 'all', // ['en', 'de'], // we only provide en, de -> no region specific locals like en-US, de-DE
-  ns: ['core'],
+  ns: ['core', 'peri'],
   defaultNS: 'core',
   // attributes: ['t', 'i18n'],
   keySeparator: false,
   backend: {
-    loadPath: '{{lng}}',
+    loadPath: '{{lng}}/{{ns}}',
     // parse: data => data, // comment to have working i18n switch
     request: loadLocales, // comment to have working i18n switch
   }, // as HttpBackendOptions

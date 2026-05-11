@@ -447,7 +447,7 @@ function OnboardingDialog(props: Props) {
                   alt=""
                 />
                 <Typography variant="body1" sx={{ marginTop: '12px' }}>
-                  {t('core:obWelcomeBody')}
+                  {t('peri:obWelcomeBody')}
                 </Typography>
                 <Box
                   sx={{
@@ -489,7 +489,7 @@ function OnboardingDialog(props: Props) {
               {/* Slide 2 — What is a Location? + bootstrap consent */}
               <SwiperSlide>
                 <Typography variant="h5" sx={{ marginBottom: '12px' }}>
-                  {t('core:obSlide2Title')}
+                  {t('peri:obSlide2Title')}
                 </Typography>
                 <img
                   style={{
@@ -502,7 +502,7 @@ function OnboardingDialog(props: Props) {
                   alt=""
                 />
                 <Typography variant="body1">
-                  {t('core:obSlide2Body')}
+                  {t('peri:obSlide2Body')}
                 </Typography>
                 {folderRows.length > 0 && (
                   <>
@@ -510,7 +510,7 @@ function OnboardingDialog(props: Props) {
                       variant="subtitle2"
                       sx={{ marginTop: '16px', textAlign: 'left' }}
                     >
-                      {t('core:obBootstrappedFolders')}
+                      {t('peri:obBootstrappedFolders')}
                     </Typography>
                     <List
                       dense
@@ -589,7 +589,7 @@ function OnboardingDialog(props: Props) {
               {/* Slide 3 — What is a Tag? */}
               <SwiperSlide>
                 <Typography variant="h5" sx={{ marginBottom: '12px' }}>
-                  {t('core:obSlide3Title')}
+                  {t('peri:obSlide3Title')}
                 </Typography>
                 <Box
                   sx={{
@@ -616,26 +616,26 @@ function OnboardingDialog(props: Props) {
                   />
                 </Box>
                 <Typography variant="body1">
-                  {t('core:obSlide3Body')}
+                  {t('peri:obSlide3Body')}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{ marginTop: '12px', color: 'text.secondary' }}
                 >
-                  {t('core:obSlide3DefaultGroups')}
+                  {t('peri:obSlide3DefaultGroups')}
                 </Typography>
               </SwiperSlide>
 
               {/* Slide 4 — Preferences (theme + auto-update) */}
               <SwiperSlide>
                 <Typography variant="h5" sx={{ marginBottom: '8px' }}>
-                  {t('core:obPreferencesTitle')}
+                  {t('peri:obPreferencesTitle')}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{ color: 'text.secondary', marginBottom: '20px' }}
                 >
-                  {t('core:obTryThemes')}
+                  {t('peri:obTryThemes')}
                 </Typography>
 
                 <Typography
@@ -740,7 +740,7 @@ function OnboardingDialog(props: Props) {
 
               {/* Slide 5 — You're all set */}
               <SwiperSlide>
-                <Typography variant="h5">{t('core:obSlide4Title')}</Typography>
+                <Typography variant="h5">{t('peri:obSlide4Title')}</Typography>
                 <img
                   style={{
                     maxHeight: 220,
@@ -753,7 +753,7 @@ function OnboardingDialog(props: Props) {
                   alt=""
                 />
                 <Typography variant="body1" sx={{ marginTop: '12px' }}>
-                  {t('core:obSlide4Body')}
+                  {t('peri:obSlide4Body')}
                 </Typography>
                 {primaryLocation && (
                   <Box sx={{ marginTop: '16px' }}>
@@ -763,7 +763,7 @@ function OnboardingDialog(props: Props) {
                       onClick={() => finish('choose-other')}
                       data-tid="onboardingChooseFolderTID"
                     >
-                      {t('core:obChooseDifferent')}
+                      {t('peri:obChooseDifferent')}
                     </TsButton>
                   </Box>
                 )}
@@ -813,7 +813,7 @@ function OnboardingDialog(props: Props) {
             onClick={() => finish('open-primary')}
             sx={{ minWidth: 80 }}
           >
-            {t('core:obOpenDocuments', {
+            {t('peri:obOpenDocuments', {
               folderName: primaryLocation.name,
             })}
           </TsButton>
@@ -824,7 +824,7 @@ function OnboardingDialog(props: Props) {
             onClick={() => finish('choose-other')}
             sx={{ minWidth: 80 }}
           >
-            {t('core:obChooseFolderToStart')}
+            {t('peri:obChooseFolderToStart')}
           </TsButton>
         )}
       </DialogActions>

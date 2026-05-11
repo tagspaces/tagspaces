@@ -151,7 +151,7 @@ function LocationManager(props: Props) {
             }}
           >
             <Typography variant="body2" sx={{ marginBottom: '12px' }}>
-              {t('core:noLocationsYet')}
+              {t('peri:noLocationsYet')}
             </Typography>
             <TsButton
               variant="contained"
@@ -161,7 +161,7 @@ function LocationManager(props: Props) {
                 openCreateEditLocationDialog();
               }}
             >
-              {t('core:createYourFirstLocation')}
+              {t('peri:createYourFirstLocation')}
             </TsButton>
           </Box>
         )}
