@@ -53,7 +53,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import Switch from '@mui/material/Switch';
+import TsSwitch from '-/components/TsSwitch';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -712,8 +712,9 @@ function OnboardingDialog(props: Props) {
                         don't fire pointer events). */}
                     <span>
                       <FormControlLabel
+                        labelPlacement="start"
                         control={
-                          <Switch
+                          <TsSwitch
                             data-tid="onboardingCheckForUpdatesTID"
                             disabled={checkForUpdatesExternallyConfigured}
                             checked={

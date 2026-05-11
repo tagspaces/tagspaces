@@ -50,7 +50,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import Switch from '@mui/material/Switch';
+import TsSwitch from '-/components/TsSwitch';
 import { useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -383,7 +383,7 @@ function SettingsAdvanced(props: Props) {
           }
         >
           <ListItemText primary={t('core:hideProFeatures')} />
-          <Switch
+          <TsSwitch
             data-tid="settingsHideProFeatures"
             disabled={AppConfig.ExtHideProFeatures !== undefined}
             onClick={() =>
@@ -406,7 +406,7 @@ function SettingsAdvanced(props: Props) {
             </>
           }
         />
-        <Switch
+        <TsSwitch
           data-tid="settingsEnableDevMode"
           disabled={AppConfig?.ExtDevMode === true}
           onClick={() => setDevMode(!devMode)}

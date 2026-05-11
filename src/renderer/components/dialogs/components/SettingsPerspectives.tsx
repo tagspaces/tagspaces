@@ -37,7 +37,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Switch from '@mui/material/Switch';
+import TsSwitch from '-/components/TsSwitch';
 import Typography from '@mui/material/Typography';
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -116,7 +116,7 @@ function SettingsPerspectives() {
           const proLocked = perspective.pro === true && !hasPro;
           const disabled = proLocked || configLocked;
           const switchControl = (
-            <Switch
+            <TsSwitch
               data-tid={'enablePerspective_' + perspective.id}
               checked={enabled}
               disabled={disabled}

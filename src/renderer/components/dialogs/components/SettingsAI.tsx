@@ -29,6 +29,7 @@ import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsMenuList from '-/components/TsMenuList';
 import TsSelect from '-/components/TsSelect';
+import TsSwitch from '-/components/TsSwitch';
 import TsTextField from '-/components/TsTextField';
 import { AIProvider, AIProviders } from '-/components/chat/ChatTypes';
 import SelectChatModel from '-/components/chat/SelectChatModel';
@@ -54,7 +55,6 @@ import {
   MenuItem,
   Paper,
   Popper,
-  Switch,
 } from '@mui/material';
 import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -500,7 +500,7 @@ function SettingsAI(props: Props) {
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
-                  <Switch
+                  <TsSwitch
                     data-tid="locationIsDefault"
                     name="isDefault"
                     checked={provider.enable}

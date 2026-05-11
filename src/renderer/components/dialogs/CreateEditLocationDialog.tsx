@@ -66,7 +66,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
-import Switch from '@mui/material/Switch';
+import TsSwitch from '-/components/TsSwitch';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -722,7 +722,7 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
-                  <Switch
+                  <TsSwitch
                     data-tid="locationIsDefault"
                     name="isDefault"
                     checked={isDefault}
@@ -737,7 +737,7 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
-                  <Switch
+                  <TsSwitch
                     disabled={!Pro}
                     data-tid="changeFullTextIndex"
                     name="fullTextIndex"
@@ -796,7 +796,7 @@ function CreateEditLocationDialog(props: Props) {
                   labelPlacement="start"
                   sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                   control={
-                    <Switch
+                    <TsSwitch
                       disabled={!Pro}
                       data-tid="extractLinksTID"
                       name="extractLinks"
@@ -818,7 +818,7 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
-                  <Switch
+                  <TsSwitch
                     // disabled={!Pro}
                     data-tid="reloadOnFocusTID"
                     name="reloadOnFocus"
@@ -858,7 +858,7 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
-                  <Switch
+                  <TsSwitch
                     disabled={!Pro}
                     data-tid="changeReadOnlyMode"
                     name="isReadOnly"
@@ -885,7 +885,7 @@ function CreateEditLocationDialog(props: Props) {
                   labelPlacement="start"
                   sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                   control={
-                    <Switch
+                    <TsSwitch
                       data-tid="changeWatchForChanges"
                       name="watchForChanges"
                       checked={watchForChanges}
@@ -906,7 +906,7 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
-                  <Switch
+                  <TsSwitch
                     data-tid="locationSettingsGenThumbsTID"
                     name="locationSettingsGenThumbs"
                     checked={disableThumbnailGeneration}
@@ -921,7 +921,7 @@ function CreateEditLocationDialog(props: Props) {
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
-                  <Switch
+                  <TsSwitch
                     disabled={!Pro}
                     data-tid="disableIndexingTID"
                     name="disableIndexing"
