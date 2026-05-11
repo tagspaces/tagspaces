@@ -40,6 +40,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
+  ListItemButton,
   MenuItem,
   Paper,
   Switch,
@@ -250,7 +251,7 @@ function GridSettingsDialog(props: Props) {
           )}
         </FormGroup>
         <Divider sx={{ marginTop: '8px', marginBottom: '8px' }} />
-        <MenuItem
+        <ListItemButton
           data-tid="gridPerspectiveToggleThumbnailsMode"
           title={t('core:toggleThumbnailModeTitle')}
           aria-label={t('core:toggleThumbnailMode')}
@@ -269,9 +270,9 @@ function GridSettingsDialog(props: Props) {
             )}
           </ListItemIcon>
           <ListItemText primary={t('core:toggleThumbnailMode')} />
-        </MenuItem>
+        </ListItemButton>
         <Divider sx={{ marginTop: '8px', marginBottom: '8px' }} />
-        <MenuItem
+        <ListItemButton
           data-tid="sortByMenuTID"
           title={t('core:sortBy')}
           aria-label={t('core:sortBy')}
@@ -288,9 +289,9 @@ function GridSettingsDialog(props: Props) {
               </>
             }
           />
-        </MenuItem>
+        </ListItemButton>
         <Divider />
-        <MenuItem
+        <ListItemButton
           data-tid="gridPerspectiveSingleClickOpenInternally"
           title={t('core:singleClickOpenInternally')}
           aria-label={t('core:singleClickOpenInternally')}
@@ -307,8 +308,8 @@ function GridSettingsDialog(props: Props) {
             )}
           </ListItemIcon>
           <ListItemText primary={t('core:singleClickOpenInternally')} />
-        </MenuItem>
-        <MenuItem
+        </ListItemButton>
+        <ListItemButton
           data-tid="gridPerspectiveSingleClickOpenExternally"
           title={t('core:singleClickOpenExternally')}
           aria-label={t('core:singleClickOpenExternally')}
@@ -325,8 +326,8 @@ function GridSettingsDialog(props: Props) {
             )}
           </ListItemIcon>
           <ListItemText primary={t('core:singleClickOpenExternally')} />
-        </MenuItem>
-        <MenuItem
+        </ListItemButton>
+        <ListItemButton
           data-tid="gridPerspectiveSingleClickSelects"
           title={t('core:singleClickSelects')}
           aria-label={t('core:singleClickSelects')}
@@ -343,7 +344,7 @@ function GridSettingsDialog(props: Props) {
             )}
           </ListItemIcon>
           <ListItemText primary={t('core:singleClickSelects')} />
-        </MenuItem>
+        </ListItemButton>
         <Divider />
         <FormControl fullWidth={true}>
           <TsSelect
