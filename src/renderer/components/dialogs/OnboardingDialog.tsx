@@ -22,7 +22,7 @@ import WizardFinished from '-/assets/images/computer-desk.svg';
 import NewLook from '-/assets/images/desktop.svg';
 import LocationConcept from '-/assets/images/organize.svg';
 import TagsDemoVideo from '-/assets/videos/tags-demo.mp4';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsSelect from '-/components/TsSelect';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
@@ -700,7 +700,7 @@ function OnboardingDialog(props: Props) {
                     justifyContent: 'center',
                   }}
                 >
-                  <TooltipTS
+                  <TsTooltip
                     title={
                       checkForUpdatesExternallyConfigured
                         ? t('core:settingExternallyConfigured')
@@ -734,7 +734,7 @@ function OnboardingDialog(props: Props) {
                         label={t('core:checkForNewVersionOnStartup')}
                       />
                     </span>
-                  </TooltipTS>
+                  </TsTooltip>
                 </Box>
               </SwiperSlide>
 

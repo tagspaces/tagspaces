@@ -16,7 +16,7 @@
  *
  */
 
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import { TS } from '-/tagspaces.namespace';
 import { useSelector } from 'react-redux';
 
@@ -80,7 +80,7 @@ function TagsPreview(props: Props) {
     }
   }
   return (
-    <Tooltip title={tagNames}>
+    <TsTooltip title={tagNames}>
       <Box
         sx={
           {
@@ -112,7 +112,7 @@ function TagsPreview(props: Props) {
       >
         {showFirstTag ? tags[0].title : moreThanOne ? tags.length : '1'}
       </Box>
-    </Tooltip>
+    </TsTooltip>
   );
 }
 export default TagsPreview;

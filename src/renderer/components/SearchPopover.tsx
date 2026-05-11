@@ -19,7 +19,7 @@
 import AppConfig from '-/AppConfig';
 import { CloseIcon, CreateFileIcon, EditIcon } from '-/components/CommonIcons';
 import EditSearchQuery from '-/components/EditSearchQuery';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
@@ -143,7 +143,7 @@ function SearchPopover(props: Props) {
           }}
         >
           <Grid size={9}>
-            <TooltipTS title={t('storedSearchQueriesTooltip')}>
+            <TsTooltip title={t('storedSearchQueriesTooltip')}>
               <FormControl
                 variant="outlined"
                 sx={{ width: '100%', marginTop: '6px' }}
@@ -172,7 +172,7 @@ function SearchPopover(props: Props) {
                   ))}
                 </TsSelect>
               </FormControl>
-            </TooltipTS>
+            </TsTooltip>
           </Grid>
           <Grid
             size={3}

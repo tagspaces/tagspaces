@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import { isDesktopMode } from '-/reducers/settings';
 import { ToggleButton } from '@mui/material';
 import { ButtonPropsVariantOverrides } from '@mui/material/Button';
@@ -66,7 +66,7 @@ function TsToggleButton(props: TSToggleButtonProps) {
     </ToggleButton>
   );
 
-  return tooltip ? <TooltipTS title={tooltip}>{button}</TooltipTS> : button;
+  return tooltip ? <TsTooltip title={tooltip}>{button}</TsTooltip> : button;
 }
 
 export default TsToggleButton;

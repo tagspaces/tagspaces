@@ -28,7 +28,7 @@ import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagsOverflowChip from '-/components/TagsOverflowChip';
 import TagsPreview from '-/components/TagsPreview';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
@@ -355,7 +355,7 @@ function RowCell(props: Props) {
             alignSelf: 'center',
           }}
         >
-          <Tooltip title={i18n.t('clickToSelect') + ': ' + fsEntry.name}>
+          <TsTooltip title={i18n.t('clickToSelect') + ': ' + fsEntry.name}>
             <FileExtBadge
               sx={{
                 backgroundColor: fileSystemEntryColor,
@@ -376,7 +376,7 @@ function RowCell(props: Props) {
                 <FolderOutlineIcon />
               )}
             </FileExtBadge>
-          </Tooltip>
+          </TsTooltip>
         </Grid>
         {isSmall ? (
           <Grid
@@ -432,10 +432,10 @@ function RowCell(props: Props) {
               sx={{ color: 'gray' }}
               variant="body2"
             >
-              <Tooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
-                {entrySizeFormatted}
-              </Tooltip>
-              <Tooltip
+              <TsTooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
+                <span>{entrySizeFormatted}</span>
+              </TsTooltip>
+              <TsTooltip
                 title={
                   t('core:modifiedDate') +
                   ': ' +
@@ -443,7 +443,7 @@ function RowCell(props: Props) {
                 }
               >
                 <span>{entryLMDTFormatted}</span>
-              </Tooltip>
+              </TsTooltip>
               <span>{description}</span>
             </Typography>
             {showTags && entryTags.length > 0 ? (

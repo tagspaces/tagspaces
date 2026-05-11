@@ -17,7 +17,7 @@
  */
 
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import { usePerspectiveOnboardingContext } from '-/components/dialogs/hooks/usePerspectiveOnboardingContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -126,15 +126,15 @@ function SettingsPerspectives() {
           let wrappedSwitch = switchControl;
           if (configLocked) {
             wrappedSwitch = (
-              <Tooltip title={t('core:perspectivesConfiguredByExtConfig')}>
+              <TsTooltip title={t('core:perspectivesConfiguredByExtConfig')}>
                 <span>{switchControl}</span>
-              </Tooltip>
+              </TsTooltip>
             );
           } else if (proLocked) {
             wrappedSwitch = (
-              <Tooltip title={t('core:thisFunctionalityIsAvailableInPro')}>
+              <TsTooltip title={t('core:thisFunctionalityIsAvailableInPro')}>
                 <span>{switchControl}</span>
-              </Tooltip>
+              </TsTooltip>
             );
           }
           const hasOnboarding = perspectiveHasOnboarding(perspective.id);

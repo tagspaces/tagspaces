@@ -17,7 +17,7 @@
  */
 
 import { ReactNode } from 'react';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import HelpOutlined from '@mui/icons-material/NotListedLocationOutlined';
 
 interface Props {
@@ -30,9 +30,9 @@ function InfoIcon(props: Props) {
     return <></>;
   }
   return (
-    <Tooltip title={tooltip}>
+    <TsTooltip title={tooltip}>
       <HelpOutlined fontSize="small" sx={{ opacity: '0.7' }} />
-    </Tooltip>
+    </TsTooltip>
   );
 }
 

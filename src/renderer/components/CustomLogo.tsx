@@ -19,7 +19,7 @@
 import AppConfig from '-/AppConfig';
 import LogoIcon from '-/assets/icons/icon.png';
 // import TextLogoIcon from '-/assets/images/text-logo.svg';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
 import { isUpdateAvailable } from '-/reducers/app';
@@ -59,7 +59,7 @@ function CustomLogo() {
         } as React.CSSProperties
       }
     >
-      <Tooltip
+      <TsTooltip
         title={updateAvailable ? t('core:newVersionAvailable') : tsAboutTitle}
         placeCloser
       >
@@ -142,7 +142,7 @@ function CustomLogo() {
             </>
           )}
         </Badge>
-      </Tooltip>
+      </TsTooltip>
     </Box>
   );
 }

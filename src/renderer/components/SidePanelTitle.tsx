@@ -19,7 +19,7 @@
 import { Typography } from '@mui/material';
 import { ButtonProps } from '@mui/material/Button';
 import React from 'react';
-import TooltipTS from './Tooltip';
+import TsTooltip from './TsTooltip';
 
 export type TSButtonProps = ButtonProps & {
   title: string;
@@ -36,7 +36,7 @@ function SidePanelTitle(props: TSButtonProps) {
         paddingRight: 5, //AppConfig.defaultSpaceBetweenButtons,
       }}
     >
-      <TooltipTS title={tooltip}>
+      <TsTooltip title={tooltip}>
         <Typography
           variant="subtitle1"
           sx={{
@@ -49,7 +49,7 @@ function SidePanelTitle(props: TSButtonProps) {
         >
           {title}
         </Typography>
-      </TooltipTS>
+      </TsTooltip>
       {menuButton && menuButton}
     </div>
   );

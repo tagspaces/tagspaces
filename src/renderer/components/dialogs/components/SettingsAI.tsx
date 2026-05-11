@@ -24,7 +24,7 @@ import {
   ReloadIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
-import { default as TooltipTS } from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsMenuList from '-/components/TsMenuList';
@@ -375,7 +375,7 @@ function SettingsAI(props: Props) {
           >
             <OllamaIcon />
             <Typography sx={{ marginLeft: '5px' }}>{provider.name}</Typography>
-            <TooltipTS
+            <TsTooltip
               title={
                 t('core:serviceStatus') +
                 ': ' +
@@ -397,7 +397,7 @@ function SettingsAI(props: Props) {
                   }}
                 />
               )}
-            </TooltipTS>
+            </TsTooltip>
             <TsIconButton
               aria-label="removeAIProvider"
               tooltip={t('core:remove')}

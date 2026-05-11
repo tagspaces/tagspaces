@@ -21,7 +21,7 @@ import { CheckIcon, CloseIcon, ReloadIcon } from '-/components/CommonIcons';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -464,7 +464,7 @@ function SettingsGeneral() {
           jsx: (
             <ListItem>
               <ListItemText primary={t('core:checkForNewVersionOnStartup')} />
-              <TooltipTS
+              <TsTooltip
                 title={
                   AppConfig.ExtCheckForUpdatesOnStartup !== undefined
                     ? t('core:settingExternallyConfigured')
@@ -494,7 +494,7 @@ function SettingsGeneral() {
                     }
                   />
                 </span>
-              </TooltipTS>
+              </TsTooltip>
             </ListItem>
           ),
         },
@@ -666,7 +666,7 @@ function SettingsGeneral() {
             <ListItem>
               <ListItemText primary={t('core:defaultFolderColor')} />
               <TransparentBackground>
-                <TooltipTS
+                <TsTooltip
                   title={
                     AppConfig.ExtDefaultFolderColor !== undefined
                       ? t('core:settingExternallyConfigured')
@@ -688,7 +688,7 @@ function SettingsGeneral() {
                       &nbsp;
                     </TsButton>
                   </span>
-                </TooltipTS>
+                </TsTooltip>
               </TransparentBackground>
             </ListItem>
           ),
@@ -768,7 +768,7 @@ function SettingsGeneral() {
             <ListItem>
               <ListItemText primary={t('enableWS')} />
               {AppConfig.isElectron && (
-                <TooltipTS
+                <TsTooltip
                   title={
                     t('core:serviceStatus') +
                     ': ' +
@@ -788,7 +788,7 @@ function SettingsGeneral() {
                       }}
                     />
                   )}
-                </TooltipTS>
+                </TsTooltip>
               )}
               <TsSwitch
                 data-tid="settingsEnableWS"
@@ -936,7 +936,7 @@ function SettingsGeneral() {
                   input: {
                     endAdornment: (
                       <InputAdornment position="end">
-                        <TooltipTS title={t('loadDefaultAuthor')}>
+                        <TsTooltip title={t('loadDefaultAuthor')}>
                           <TsIconButton
                             data-tid="loadDefaultAuthorTID"
                             disabled={AppConfig.ExtAuthor !== undefined}
@@ -946,7 +946,7 @@ function SettingsGeneral() {
                           >
                             <ReloadIcon />
                           </TsIconButton>
-                        </TooltipTS>
+                        </TsTooltip>
                       </InputAdornment>
                     ),
                   },

@@ -29,7 +29,7 @@ import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagsOverflowChip from '-/components/TagsOverflowChip';
 import TagsPreview from '-/components/TagsPreview';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
@@ -410,16 +410,16 @@ function GridCell(props: Props) {
       fsEntry.isFile &&
       fsEntry.lmdt && (
         <>
-          <Tooltip
+          <TsTooltip
             title={
               t('core:modifiedDate') + ': ' + formatDateTime(fsEntry.lmdt, true)
             }
           >
             {formatDateTime(fsEntry.lmdt, false)}
-          </Tooltip>
-          <Tooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
+          </TsTooltip>
+          <TsTooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
             <span>{' | ' + formatFileSize(fsEntry.size)}</span>
-          </Tooltip>
+          </TsTooltip>
         </>
       )
     );
@@ -427,7 +427,7 @@ function GridCell(props: Props) {
 
   function generateExtension() {
     return (
-      <Tooltip title={i18n.t('clickToSelect') + ': ' + fsEntry.name}>
+      <TsTooltip title={i18n.t('clickToSelect') + ': ' + fsEntry.name}>
         <FileExtBadge
           sx={{
             backgroundColor: fileSystemEntryColor,
@@ -455,7 +455,7 @@ function GridCell(props: Props) {
             <FolderOutlineIcon />
           )}
         </FileExtBadge>
-      </Tooltip>
+      </TsTooltip>
     );
   }
 

@@ -25,7 +25,7 @@ import {
 } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
@@ -348,12 +348,12 @@ function SettingsAdvanced(props: Props) {
                 <EditIcon />
               </TsIconButton>
               {index === 0 && (
-                <TooltipTS title={t('core:serverIsDefaultHelp')}>
+                <TsTooltip title={t('core:serverIsDefaultHelp')}>
                   <CheckIcon
                     data-tid="tileServerDefaultIndication"
                     sx={{ marginLeft: '10px' }}
                   />
-                </TooltipTS>
+                </TsTooltip>
               )}
             </ListItem>
           ))

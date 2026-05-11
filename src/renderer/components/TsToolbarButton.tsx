@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import { isDesktopMode } from '-/reducers/settings';
 import { Typography } from '@mui/material';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
@@ -83,9 +83,9 @@ function TsToolbarButton(props: TSIconButtonProps) {
     </IconButton>
   );
   return tooltip && !disabled ? (
-    <TooltipTS keyBinding={keyBinding} title={tooltip}>
+    <TsTooltip keyBinding={keyBinding} title={tooltip}>
       {iconButton}
-    </TooltipTS>
+    </TsTooltip>
   ) : (
     iconButton
   );

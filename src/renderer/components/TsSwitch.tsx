@@ -16,7 +16,7 @@
  *
  */
 
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import Switch, { SwitchProps } from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
 
@@ -87,7 +87,7 @@ const IOSSwitch = styled((props: SwitchProps) => (
 function TsSwitch(props: TsSwitchProps) {
   const { tooltip, ...rest } = props;
   const sw = <IOSSwitch {...rest} />;
-  return tooltip ? <TooltipTS title={tooltip}>{sw}</TooltipTS> : sw;
+  return tooltip ? <TsTooltip title={tooltip}>{sw}</TsTooltip> : sw;
 }
 
 export default TsSwitch;

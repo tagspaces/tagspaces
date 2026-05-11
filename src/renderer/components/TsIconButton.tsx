@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import { isDesktopMode } from '-/reducers/settings';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import React from 'react';
@@ -44,9 +44,9 @@ const TsIconButton = React.forwardRef<HTMLButtonElement, TSIconButtonProps>(
 
     if (tooltip && !disabled) {
       return (
-        <TooltipTS keyBinding={keyBinding} title={tooltip}>
+        <TsTooltip keyBinding={keyBinding} title={tooltip}>
           {iconButton}
-        </TooltipTS>
+        </TsTooltip>
       );
     }
     return iconButton;

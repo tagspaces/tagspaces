@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import EntryIcon from '-/components/EntryIcon';
 import TagContainer from '-/components/TagContainer';
 import TagsPreview from '-/components/TagsPreview';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { SelectionArea } from '-/components/drag/SelectionArea';
 import SelectionDragLayer from '-/components/drag/SelectionDragLayer';
@@ -238,7 +238,7 @@ function GridPagination(props: Props) {
             color: theme.palette.text.primary,
           }}
         >
-          <TooltipTS title={t('core:renameDirectory')}>
+          <TsTooltip title={t('core:renameDirectory')}>
             <ButtonBase
               data-tid={`currentDir_${dataTidFormat(folderName)}`}
               sx={{
@@ -252,7 +252,7 @@ function GridPagination(props: Props) {
             >
               {folderName}
             </ButtonBase>
-          </TooltipTS>
+          </TsTooltip>
           {showTags ? (
             <Box sx={{ paddingLeft: '5px' }}>
               {directoryMeta?.tags?.map((tag) => (
@@ -297,7 +297,7 @@ function GridPagination(props: Props) {
             </Typography>
           )}
         </Box>
-        <TooltipTS title={t('core:changeThumbnail')} placement="bottom">
+        <TsTooltip title={t('core:changeThumbnail')} placement="bottom">
           <Box
             sx={{
               ':hover': { border: '1px dashed gray !important' },
@@ -324,7 +324,7 @@ function GridPagination(props: Props) {
               }
             }}
           />
-        </TooltipTS>
+        </TsTooltip>
       </Grid>
     ),
     [
@@ -477,7 +477,7 @@ function GridPagination(props: Props) {
               </GridCellsContainer>
             </CellVisibilityProvider>
             {showPagination && (
-              <TooltipTS title={folderSummary}>
+              <TsTooltip title={folderSummary}>
                 <Pagination
                   sx={{
                     left: 15,
@@ -494,7 +494,7 @@ function GridPagination(props: Props) {
                   page={page}
                   onChange={handleChange}
                 />
-              </TooltipTS>
+              </TsTooltip>
             )}
             {!showDetails && !showPagination && pageFiles.length > 0 && (
               <Box sx={{ padding: '15px', bottom: '10px' }}>

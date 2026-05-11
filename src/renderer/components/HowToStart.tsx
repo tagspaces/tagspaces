@@ -17,7 +17,7 @@
  */
 
 import { ProSign } from '-/components/HelperComponents';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
@@ -351,7 +351,7 @@ function HowToStart() {
         >
           {t('core:htsGetStarted')}
         </Typography>
-        <Tooltip title={t('core:htsHideGuide')}>
+        <TsTooltip title={t('core:htsHideGuide')}>
           <IconButton
             size="small"
             data-tid="hideHowToStartTID"
@@ -363,7 +363,7 @@ function HowToStart() {
           >
             <VisibilityOffIcon fontSize="small" />
           </IconButton>
-        </Tooltip>
+        </TsTooltip>
       </Box>
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map((step, index) => (

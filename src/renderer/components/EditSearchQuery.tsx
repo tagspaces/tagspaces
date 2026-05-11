@@ -33,7 +33,7 @@ import {
   VideoIcon,
 } from '-/components/CommonIcons';
 import TagsSelect from '-/components/TagsSelect';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsDatePicker from '-/components/TsDatePicker';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
@@ -207,7 +207,7 @@ function EditSearchQuery(props: Props) {
           input: {
             endAdornment: (
               <InputAdornment position="end">
-                <TooltipTS
+                <TsTooltip
                   title={
                     <>
                       <Typography
@@ -256,7 +256,7 @@ function EditSearchQuery(props: Props) {
                   }
                 >
                   <InfoTooltipIcon />
-                </TooltipTS>
+                </TsTooltip>
               </InputAdornment>
             ),
           },
@@ -639,7 +639,7 @@ function EditSearchQuery(props: Props) {
         </TsSelect>
       </FormControl>
       <FormControl>
-        <TooltipTS title={t('enterTimePeriodTooltip')}>
+        <TsTooltip title={t('enterTimePeriodTooltip')}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box
               sx={{
@@ -689,7 +689,7 @@ function EditSearchQuery(props: Props) {
               </div>
             </Box>
           </LocalizationProvider>
-        </TooltipTS>
+        </TsTooltip>
       </FormControl>
     </Stack>
   );

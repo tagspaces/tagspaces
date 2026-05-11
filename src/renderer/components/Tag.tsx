@@ -16,7 +16,7 @@
  *
  */
 
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import Button from '@mui/material/Button';
 
 interface Props {
@@ -30,7 +30,7 @@ interface Props {
 function Tag(props: Props) {
   const { tagTitle, textColor, backgroundColor, isDragging, children } = props;
   return (
-    <Tooltip title={tagTitle}>
+    <TsTooltip title={tagTitle}>
       <Button
         size="small"
         sx={{
@@ -55,7 +55,7 @@ function Tag(props: Props) {
       >
         {children}
       </Button>
-    </Tooltip>
+    </TsTooltip>
   );
 }
 

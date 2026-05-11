@@ -19,12 +19,12 @@
 import { Pro } from '-/pro';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
-import TooltipTS from './Tooltip';
+import TsTooltip from './TsTooltip';
 
 export function BetaLabel() {
   const { t } = useTranslation();
   return (
-    <TooltipTS title={t('featureInBetaStatus')}>
+    <TsTooltip title={t('featureInBetaStatus')}>
       <Typography sx={{ display: 'initial' }}>
         <sup
           style={{ marginLeft: 5, textTransform: 'uppercase', fontSize: 11 }}
@@ -32,7 +32,7 @@ export function BetaLabel() {
           {t('betaStatus')}
         </sup>
       </Typography>
-    </TooltipTS>
+    </TsTooltip>
   );
 }
 
@@ -40,11 +40,11 @@ export function ProLabel() {
   const { t } = useTranslation();
   return (
     !Pro && (
-      <TooltipTS title={t('thisFunctionalityIsAvailableInPro')}>
+      <TsTooltip title={t('thisFunctionalityIsAvailableInPro')}>
         <Typography sx={{ display: 'initial' }}>
           <sup style={{ marginLeft: 5, fontSize: 11 }}>PRO</sup>
         </Typography>
-      </TooltipTS>
+      </TsTooltip>
     )
   );
 }
@@ -53,7 +53,7 @@ export function ProSign() {
   const { t } = useTranslation();
   return (
     !Pro && (
-      <TooltipTS title={t('thisFunctionalityIsAvailableInPro')}>
+      <TsTooltip title={t('thisFunctionalityIsAvailableInPro')}>
         <Typography sx={{ display: 'initial' }}>
           <sup
             style={{
@@ -66,7 +66,7 @@ export function ProSign() {
             PRO
           </sup>
         </Typography>
-      </TooltipTS>
+      </TsTooltip>
     )
   );
 }
@@ -80,12 +80,12 @@ export function ProTooltip(props) {
     ? tooltip + ' - ' + t('thisFunctionalityIsAvailableInPro')
     : t('thisFunctionalityIsAvailableInPro');
   return (
-    <TooltipTS
+    <TsTooltip
       arrow
       placement={tooltipPlacement}
       title={Pro ? proTooltip : noProTooltip}
     >
       <div style={{ display: 'flex' }} children={children}></div>
-    </TooltipTS>
+    </TsTooltip>
   );
 }

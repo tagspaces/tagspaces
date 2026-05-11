@@ -46,7 +46,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TooltipTS from './Tooltip';
+import TsTooltip from './TsTooltip';
 import TsMenuList from './TsMenuList';
 
 interface Props {
@@ -187,7 +187,7 @@ function RenderHistory({
               }}
               onClick={() => openHistoryItem(item as TS.HistoryItem)}
             >
-              <TooltipTS
+              <TsTooltip
                 title={
                   <span>
                     <b>{t('core:filePath')}:</b> {item.path}
@@ -206,8 +206,8 @@ function RenderHistory({
                 ) : (
                   <HistoryIcon />
                 )}
-              </TooltipTS>
-              <TooltipTS title={itemName}>
+              </TsTooltip>
+              <TsTooltip title={itemName}>
                 <Box
                   sx={{
                     whiteSpace: 'nowrap',
@@ -221,7 +221,7 @@ function RenderHistory({
                 >
                   {itemName}
                 </Box>
-              </TooltipTS>
+              </TsTooltip>
             </TsButton>
             {showMenu && (
               <TsIconButton

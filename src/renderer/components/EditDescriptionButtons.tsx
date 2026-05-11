@@ -19,7 +19,7 @@
 import AppConfig from '-/AppConfig';
 import { MoreMenuIcon } from '-/components/CommonIcons';
 import { ProTooltip } from '-/components/HelperComponents';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';
@@ -127,7 +127,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
   };
 
   const descrChangedMarker = isDescriptionChanged ? (
-    <Tooltip title={t('core:fileChanged')}>
+    <TsTooltip title={t('core:fileChanged')}>
       <span
         data-tid="descriptionChangedTID"
         style={{
@@ -138,7 +138,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
       >
         {String.fromCharCode(0x25cf)}
       </span>
-    </Tooltip>
+    </TsTooltip>
   ) : null;
 
   return (
@@ -166,7 +166,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
             {t('core:cancel')}
           </TsButton>
         )}
-        <Tooltip
+        <TsTooltip
           arrow
           placement="top"
           title={!isEditDescriptionMode ? t('core:editDescription') : ''}
@@ -209,7 +209,7 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
               t('core:editDescription')
             )}
           </TsButton>
-        </Tooltip>
+        </TsTooltip>
       </ButtonGroup>
       <ProTooltip
         tooltip={'Add AI generated description based on the file content'}

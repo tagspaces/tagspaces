@@ -32,7 +32,8 @@ import {
   getProgress,
 } from '-/reducers/app';
 import { uploadAbort } from '-/services/utils-io';
-import { Grid, LinearProgress, Tooltip } from '@mui/material';
+import { Grid, LinearProgress } from '@mui/material';
+import TsTooltip from '-/components/TsTooltip';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -252,7 +253,7 @@ function FileUploadDialog(props: Props) {
                           currentLocation?.getDirSeparator(),
                         )}
                     {percentage === -1 && (
-                      <Tooltip
+                      <TsTooltip
                         title={
                           abort && typeof abort === 'string'
                             ? abort
@@ -260,7 +261,7 @@ function FileUploadDialog(props: Props) {
                         }
                       >
                         <WarningIcon color="warning" />
-                      </Tooltip>
+                      </TsTooltip>
                     )}
                   </Grid>
                   <Grid size={{ xs: 2 }}>

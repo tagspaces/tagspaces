@@ -18,43 +18,26 @@
 
 import AppConfig from '-/AppConfig';
 import { adjustKeyBinding } from '-/components/dialogs/KeyboardDialog';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip, { TooltipProps } from '@mui/material/Tooltip';
 
-interface Props {
-  title: any;
+export type TsTooltipProps = Omit<TooltipProps, 'title'> & {
+  title: React.ReactNode;
   keyBinding?: string;
-  children: any;
-  classes?: any;
   placeCloser?: boolean;
-  arrow?: boolean;
-  placement?:
-    | 'bottom-end'
-    | 'bottom-start'
-    | 'bottom'
-    | 'left-end'
-    | 'left-start'
-    | 'left'
-    | 'right-end'
-    | 'right-start'
-    | 'right'
-    | 'top-end'
-    | 'top-start'
-    | 'top';
-}
+};
 
-function TooltipTS(props: Props) {
+function TsTooltip(props: TsTooltipProps) {
   const {
     title,
     placement = 'top',
     keyBinding,
     placeCloser = false,
     arrow = true,
-    ...restProps
+    ...rest
   } = props;
-  let tooltipText = title;
-  if (keyBinding) {
-    tooltipText = title + ' (' + adjustKeyBinding(keyBinding) + ')';
-  }
+  const tooltipText = keyBinding
+    ? `${title} (${adjustKeyBinding(keyBinding)})`
+    : title;
   return (
     <Tooltip
       arrow={arrow}
@@ -78,9 +61,9 @@ function TooltipTS(props: Props) {
           ],
         },
       }}
-      {...restProps}
+      {...rest}
     />
   );
 }
 
-export default TooltipTS;
+export default TsTooltip;

@@ -40,7 +40,7 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import InfoIcon from './InfoIcon';
-import TooltipTS from './Tooltip';
+import TsTooltip from './TsTooltip';
 
 interface Props {}
 
@@ -147,9 +147,9 @@ function LinksTab(props: Props) {
           onClick={() => openLink(url, { fullWidth: false })}
           variant="text"
           startIcon={
-            <TooltipTS title={link.type}>
+            <TsTooltip title={link.type}>
               <LinkIcon />
-            </TooltipTS>
+            </TsTooltip>
           }
           sx={{
             marginRight: AppConfig.defaultSpaceBetweenButtons,
@@ -188,9 +188,9 @@ function LinksTab(props: Props) {
           onClick={() => openLink(sharingLink, { fullWidth: false })}
           variant="text"
           startIcon={
-            <TooltipTS title={fsEntry.path}>
+            <TsTooltip title={fsEntry.path}>
               <LinkIcon />
-            </TooltipTS>
+            </TsTooltip>
           }
           sx={{
             marginRight: AppConfig.defaultSpaceBetweenButtons,

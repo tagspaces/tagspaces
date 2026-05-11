@@ -27,7 +27,8 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import TsSwitch from '-/components/TsSwitch';
 import { Pro } from '-/pro';
 import { isDesktopMode, isRevisionsEnabled } from '-/reducers/settings';
-import { Box, ButtonGroup, Tooltip } from '@mui/material';
+import { Box, ButtonGroup } from '@mui/material';
+import TsTooltip from '-/components/TsTooltip';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -71,7 +72,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
   };
 
   const autoSave = isEditable(openedEntry) && revisionsEnabled && (
-    <Tooltip
+    <TsTooltip
       title={
         t('core:autosave') +
         (!Pro ? ' - ' + t('core:thisFunctionalityIsAvailableInPro') : '')
@@ -87,7 +88,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
           disabled={!Pro}
         />
       </span>
-    </Tooltip>
+    </TsTooltip>
   );
 
   const startSavingFile = () => {
@@ -142,7 +143,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
           </TsButton>
 
           {fileChanged && (
-            <Tooltip
+            <TsTooltip
               title={
                 t('core:saveFile') +
                 ' (' +
@@ -165,7 +166,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
               >
                 {t('core:save')}
               </TsButton>
-            </Tooltip>
+            </TsTooltip>
           )}
         </ButtonGroup>
       );

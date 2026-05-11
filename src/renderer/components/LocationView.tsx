@@ -29,7 +29,7 @@ import DirectoryTreeView, {
   SubFolder,
 } from '-/components/DirectoryTreeView';
 import TargetFileBox from '-/components/TargetFileBox';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
@@ -290,13 +290,13 @@ function LocationView(props: Props) {
         data-tid="locationTitleElement"
         noWrap
       >
-        <Tooltip title={locationNameTitle}>
+        <TsTooltip title={locationNameTitle}>
           <>{location.name}</>
-        </Tooltip>
+        </TsTooltip>
         {workspace && (
-          <Tooltip title={t('core:workspace') + ': ' + workspace.fullName}>
+          <TsTooltip title={t('core:workspace') + ': ' + workspace.fullName}>
             <>{' - ' + workspace.shortName}</>
-          </Tooltip>
+          </TsTooltip>
         )}
       </Typography>
     </Box>
@@ -348,7 +348,7 @@ function LocationView(props: Props) {
               }}
               onClick={handleLocationIconClick}
             >
-              <Tooltip
+              <TsTooltip
                 title={
                   showOfflineIndicator
                     ? t('core:remoteLocationOfflineTooltip')
@@ -373,7 +373,7 @@ function LocationView(props: Props) {
                     <LocalLocationIcon sx={{ cursor: 'pointer' }} />
                   )}
                 </Badge>
-              </Tooltip>
+              </TsTooltip>
             </ListItemIcon>
             <ListItemText>
               {isCloudLocation && !AppConfig.isElectron ? (
@@ -390,9 +390,9 @@ function LocationView(props: Props) {
               )}
             </ListItemText>
             {subFolderLocation?.isDefault && (
-              <Tooltip title={t('core:thisIsStartupLocation')}>
+              <TsTooltip title={t('core:thisIsStartupLocation')}>
                 <DefaultLocationIcon data-tid="startupIndication" />
-              </Tooltip>
+              </TsTooltip>
             )}
             <TsIconButton
               aria-label={t('core:options')}

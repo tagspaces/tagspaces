@@ -38,7 +38,7 @@ import {
   scope,
 } from '-/components/SearchOptions';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
@@ -461,7 +461,7 @@ function SearchAutocomplete(props: Props) {
 
   function HelpTooltip(hClasses) {
     return (
-      <Tooltip
+      <TsTooltip
         title={
           <Box sx={{ fontSize: '14px' }}>
             The search query consists of a tag part and a search term. This term
@@ -497,7 +497,7 @@ function SearchAutocomplete(props: Props) {
         <TsIconButton edge="end">
           <HelpOutlineIcon sx={{ color: 'lightgray' }} />
         </TsIconButton>
-      </Tooltip>
+      </TsTooltip>
     );
   }
 

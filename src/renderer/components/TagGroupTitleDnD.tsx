@@ -23,7 +23,7 @@ import {
   SmallArrowRightIcon,
 } from '-/components/CommonIcons';
 import DragItemTypes from '-/components/DragItemTypes';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsIconButton from '-/components/TsIconButton';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { Pro } from '-/pro';
@@ -149,9 +149,9 @@ function TagGroupTitleDnD(props: Props) {
     tagGroup.workSpaceId,
   );
   const taggroupWorkspace = tagGroup.workSpaceId ? (
-    <TooltipTS title={t('core:workspace') + ': ' + currentWorkspace?.fullName}>
+    <TsTooltip title={t('core:workspace') + ': ' + currentWorkspace?.fullName}>
       <span> - {currentWorkspace?.shortName}</span>
-    </TooltipTS>
+    </TsTooltip>
   ) : (
     ''
   );
@@ -203,7 +203,7 @@ function TagGroupTitleDnD(props: Props) {
             noWrap
             onClick={(event: any) => handleTagGroupTitleClick(event, tagGroup)}
           >
-            <TooltipTS
+            <TsTooltip
               title={
                 'Number of tags in this ' +
                 readOnly +
@@ -211,8 +211,10 @@ function TagGroupTitleDnD(props: Props) {
                 tagGroup.children.length
               }
             >
-              {tagGroup.title + getLocationName(tagGroup.locationId)}
-            </TooltipTS>
+              <span>
+                {tagGroup.title + getLocationName(tagGroup.locationId)}
+              </span>
+            </TsTooltip>
             {taggroupWorkspace}
             {!expanded && (
               <Box

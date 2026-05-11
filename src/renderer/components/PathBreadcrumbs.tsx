@@ -22,7 +22,7 @@ import {
   LocalLocationIcon,
   MoreMenuIcon,
 } from '-/components/CommonIcons';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -166,7 +166,10 @@ function PathBreadcrumbs(props: Props) {
         );
         const icon = index === 0 ? locationTypeIcon : undefined;
         return (
-          <Tooltip key={pathPart} title={t('core:navigateTo') + ' ' + pathPart}>
+          <TsTooltip
+            key={pathPart}
+            title={t('core:navigateTo') + ' ' + pathPart}
+          >
             <StyledBreadcrumb
               component="a"
               href="#"
@@ -174,13 +177,13 @@ function PathBreadcrumbs(props: Props) {
               icon={icon}
               onClick={() => openDirectory(pathPart)}
             />
-          </Tooltip>
+          </TsTooltip>
         );
       });
     }
     if (currentLocation) {
       const curDirBreadcrumb = (
-        <Tooltip
+        <TsTooltip
           key="lastBreadcrumb"
           title={
             t('core:openDirectoryMenu') + ' - ' + (currentDirectory?.path || '')
@@ -196,7 +199,7 @@ function PathBreadcrumbs(props: Props) {
             onContextMenu={openDirMenu}
             sx={{ marginRight: '2px' }}
           />
-        </Tooltip>
+        </TsTooltip>
       );
       return [...breadcrumbs, curDirBreadcrumb];
     }

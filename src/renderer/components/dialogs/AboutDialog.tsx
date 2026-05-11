@@ -20,7 +20,7 @@ import AppConfig from '-/AppConfig';
 import LogoIcon from '-/assets/icons/icon.png';
 import TextLogoIcon from '-/assets/images/text-logo.svg';
 import DraggablePaper from '-/components/DraggablePaper';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TranslucentDialog from '-/components/dialogs/components/TranslucentDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
@@ -150,7 +150,7 @@ function AboutDialog(props: Props) {
           src={LogoIcon}
           style={{ float: 'left', marginRight: 10, width: 120, height: 120 }}
         />
-        <TooltipTS
+        <TsTooltip
           placement="top"
           title={
             'Build on: ' +
@@ -165,7 +165,7 @@ function AboutDialog(props: Props) {
             &nbsp;Build ID:&nbsp;
             {buildID}
           </Typography>
-        </TooltipTS>
+        </TsTooltip>
         <br />
         <br />
         <Typography id="aboutContent" variant="body1">

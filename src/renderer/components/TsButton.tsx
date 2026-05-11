@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import TooltipTS from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import { isDesktopMode } from '-/reducers/settings';
 import Button, {
   ButtonProps,
@@ -61,7 +61,7 @@ const TsButton = React.forwardRef<HTMLButtonElement, TSButtonProps>(
         {children}
       </Button>
     );
-    return tooltip ? <TooltipTS title={tooltip}>{button}</TooltipTS> : button;
+    return tooltip ? <TsTooltip title={tooltip}>{button}</TsTooltip> : button;
   },
 );
 

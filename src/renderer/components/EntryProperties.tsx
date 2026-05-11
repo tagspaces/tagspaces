@@ -38,7 +38,7 @@ import NoTileServer from '-/components/NoTileServer';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TagDropContainer from '-/components/TagDropContainer';
 import TagsSelect from '-/components/TagsSelect';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
@@ -703,7 +703,7 @@ function EntryProperties({ tileServer }: Props) {
         )}
 
         <Grid size={12}>
-          <Tooltip
+          <TsTooltip
             title={
               !location?.haveObjectStoreSupport() &&
               dirProps.current &&
@@ -747,7 +747,7 @@ function EntryProperties({ tileServer }: Props) {
                 },
               }}
             />
-          </Tooltip>
+          </TsTooltip>
         </Grid>
 
         <Grid size={12}>

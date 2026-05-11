@@ -21,7 +21,7 @@ import { BetaLabel } from '-/components/HelperComponents';
 import PathBreadcrumbs from '-/components/PathBreadcrumbs';
 import RenderPerspective from '-/components/RenderPerspective';
 import SearchBox from '-/components/SearchBox';
-import Tooltip from '-/components/Tooltip';
+import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsMenuList from '-/components/TsMenuList';
@@ -193,14 +193,14 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
             border: `1px solid ${theme.palette.divider}`,
           }}
         >
-          <Tooltip
+          <TsTooltip
             title={
               perspective.title +
               (perspective.beta ? ' ' + t('core:betaStatus').toUpperCase() : '')
             }
           >
             <Box sx={{ display: 'flex' }}>{perspective.icon}</Box>
-          </Tooltip>
+          </TsTooltip>
         </TsToggleButton>
       )),
     [
