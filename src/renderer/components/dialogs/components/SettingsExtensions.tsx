@@ -34,7 +34,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Switch from '@mui/material/Switch';
+import TsSwitch from '-/components/TsSwitch';
 import Typography from '@mui/material/Typography';
 import { ChangeEvent, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -180,7 +180,7 @@ function SettingsExtensions() {
                   <ListItem key={ext.extensionId} disablePadding>
                     {ext.extensionName}{' '}
                     <small style={{ marginLeft: 5 }}>v{ext.version}</small>
-                    <Switch
+                    <TsSwitch
                       data-tid="enableExtensionTID"
                       name="enableExtension"
                       checked={ext.extensionEnabled}

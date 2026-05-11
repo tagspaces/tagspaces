@@ -60,9 +60,11 @@ function LicenseDialog(props: Props) {
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={(_event, reason) => {
+        if (reason === 'escapeKeyDown') return;
+        onClose();
+      }}
       keepMounted
-      disableEscapeKeyDown
       fullScreen={smallScreen}
       scroll="paper"
     >

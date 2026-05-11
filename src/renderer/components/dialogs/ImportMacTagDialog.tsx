@@ -24,9 +24,10 @@ import { useProgressDialogContext } from '-/components/dialogs/hooks/useProgress
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
+import TsSwitch from '-/components/TsSwitch';
 import { Pro } from '-/pro';
 import { readMacOSTags } from '-/services/utils-io';
-import { Box, Switch } from '@mui/material';
+import { Box } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -132,7 +133,7 @@ Do you want to continue?`)
         <FormControlLabel
           labelPlacement="start"
           control={
-            <Switch
+            <TsSwitch
               data-tid="importTagsRecursiveTID"
               checked={recursive.current}
               onChange={toggleRecursive}

@@ -240,17 +240,24 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
   // Memoized CircularProgress with label
   const CircularProgressWithLabel = useCallback(
     (prop: { value: number }) => (
-      <Box position="relative" display="inline-flex">
+      <Box
+        sx={{
+          position: 'relative',
+          display: 'inline-flex',
+        }}
+      >
         <CircularProgress size={24} variant="determinate" {...prop} />
         <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+          sx={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
           <Typography
             variant="caption"

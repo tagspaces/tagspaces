@@ -218,47 +218,59 @@ function TagsSelect(props: Props) {
         value={tags}
         onChange={handleTagChange}
         onInputChange={handleInputChange}
-        renderTags={(value: readonly TS.Tag[], getTagProps) =>
-          value.map((option: TS.Tag, index: number) => (
-            <TagContainer
-              key={selectedEntry?.path + option + index}
-              tag={option}
-              tagMode={tagMode}
-              handleTagMenu={handleTagMenu}
-              handleRemoveTag={handleRemoveTag}
-            />
-          ))
+        renderValue={(values) =>
+          (values as Array<TS.Tag | string>).flatMap((value, index) => {
+            // freeSolo + autoSelect can briefly surface the raw typed string
+            // here before onChange (createOption) replaces it with a Tag.
+            // Guard against rendering TagContainer with a string `tag`.
+            if (typeof value === 'string') return [];
+            return [
+              <TagContainer
+                key={(selectedEntry?.path ?? '') + value.id + index}
+                tag={value}
+                tagMode={tagMode}
+                handleTagMenu={handleTagMenu}
+                handleRemoveTag={handleRemoveTag}
+              />,
+            ];
+          })
         }
         renderOption={(props, option) => (
           <Box component="li" {...props}>
             <TagContainer tag={option} tagMode={tagMode} />
           </Box>
         )}
-        renderInput={(params) => (
-          <>
-            <TsTextField
-              {...params}
-              label={label}
-              placeholder={placeholderText}
-              autoFocus={autoFocus}
-              error={tagsError.current}
-              sx={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
-              slotProps={{
-                input: {
-                  ...params.InputProps,
-                  endAdornment: generateButton && (
-                    <InputAdornment position="end">
-                      <AiGenTagsButton variant="text" />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-            {tagsError.current && (
-              <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>
-            )}
-          </>
-        )}
+        renderInput={(params) => {
+          // Append the AI gen button to MUI's default endAdornment instead of
+          // replacing it — overriding slotProps wholesale would drop
+          // params.slotProps.htmlInput (which carries the onKeyDown that
+          // commits freeSolo values on Enter).
+          if (generateButton) {
+            params.slotProps.input.endAdornment = (
+              <>
+                {params.slotProps.input.endAdornment}
+                <InputAdornment position="end">
+                  <AiGenTagsButton variant="text" />
+                </InputAdornment>
+              </>
+            );
+          }
+          return (
+            <>
+              <TsTextField
+                {...params}
+                label={label}
+                placeholder={placeholderText}
+                autoFocus={autoFocus}
+                error={tagsError.current}
+                sx={{ marginTop: 0, marginBottom: 0, whiteSpace: 'nowrap' }}
+              />
+              {tagsError.current && (
+                <FormHelperText>{t('core:tagTitleHelper')}</FormHelperText>
+              )}
+            </>
+          );
+        }}
       />
       {selectedEntry && (
         <EntryTagMenu

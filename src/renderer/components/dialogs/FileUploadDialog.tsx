@@ -83,11 +83,25 @@ function FileUploadDialog(props: Props) {
 
   function LinearProgressWithLabel(prop) {
     return (
-      <Box display="flex" alignItems="center">
-        <Box width="100%" mr={1}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            mr: 1,
+          }}
+        >
           <LinearProgress variant="determinate" {...prop} />
         </Box>
-        <Box minWidth={35}>
+        <Box
+          sx={{
+            minWidth: 35,
+          }}
+        >
           <Typography variant="body2">{`${prop.value}%`}</Typography>
         </Box>
       </Box>
@@ -218,8 +232,10 @@ function FileUploadDialog(props: Props) {
                 <Grid
                   key={path}
                   container
-                  justifyContent="center"
-                  alignItems="center"
+                  sx={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
                 >
                   <Grid
                     size={{ xs: 10 }}

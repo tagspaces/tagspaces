@@ -24,9 +24,10 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import TsSwitch from '-/components/TsSwitch';
 import { Pro } from '-/pro';
 import { isDesktopMode, isRevisionsEnabled } from '-/reducers/settings';
-import { Box, ButtonGroup, Switch, Tooltip } from '@mui/material';
+import { Box, ButtonGroup, Tooltip } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -77,7 +78,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
       }
     >
       <span>
-        <Switch
+        <TsSwitch
           data-tid="autoSaveTID"
           checked={openedEntry.meta && openedEntry.meta.autoSave}
           onChange={toggleAutoSave}

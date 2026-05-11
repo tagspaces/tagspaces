@@ -135,10 +135,12 @@ function SearchPopover(props: Props) {
         <Grid
           container
           spacing={2}
-          sx={{ marginBottom: '15px' }}
           direction="row"
-          justifyContent="center"
-          alignItems="flex-end"
+          sx={{
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+            marginBottom: '15px',
+          }}
         >
           <Grid size={9}>
             <TooltipTS title={t('storedSearchQueriesTooltip')}>

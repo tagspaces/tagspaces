@@ -26,6 +26,7 @@ import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
+import TsSwitch from '-/components/TsSwitch';
 import TsTextField from '-/components/TsTextField';
 import TsToggleButton from '-/components/TsToggleButton';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
@@ -52,7 +53,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import Switch from '@mui/material/Switch';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import {
@@ -475,7 +475,7 @@ function SettingsGeneral() {
                     when the Switch is disabled (disabled controls don't
                     fire pointer events). */}
                 <span>
-                  <Switch
+                  <TsSwitch
                     disabled={
                       AppConfig.ExtCheckForUpdatesOnStartup !== undefined
                     }
@@ -510,7 +510,7 @@ function SettingsGeneral() {
                   </>
                 }
               />
-              <Switch
+              <TsSwitch
                 data-tid="reorderTagsTID"
                 onClick={() =>
                   dispatch(SettingsActions.reorderTags(!settings.reorderTags))
@@ -525,7 +525,7 @@ function SettingsGeneral() {
           jsx: (
             <ListItem>
               <ListItemText primary={t('core:addTagsToLibrary')} />
-              <Switch
+              <TsSwitch
                 data-tid="settingsSetAddTagsToLibrary"
                 onClick={() =>
                   dispatch(
@@ -550,7 +550,7 @@ function SettingsGeneral() {
               }
             >
               <ListItemText primary={t('core:useOnlyTagsFromTagLibrary')} />
-              <Switch
+              <TsSwitch
                 disabled={AppConfig.ExtUseOnlyTagsFromTagLibrary !== undefined}
                 data-tid="useOnlyTagsFromTagLibraryTID"
                 onClick={() =>
@@ -574,7 +574,7 @@ function SettingsGeneral() {
           jsx: (
             <ListItem>
               <ListItemText primary={t('core:useGenerateThumbnails')} />
-              <Switch
+              <TsSwitch
                 disabled={AppConfig.ExtUseGenerateThumbnails !== undefined}
                 data-tid="settingsUseGenerateThumbnails"
                 onClick={() =>
@@ -605,7 +605,7 @@ function SettingsGeneral() {
                   </>
                 }
               />
-              <Switch
+              <TsSwitch
                 data-tid="settingsAutoSaveDescriptionTID"
                 disabled={!Pro}
                 onClick={() =>
@@ -705,7 +705,7 @@ function SettingsGeneral() {
                   </Typography>
                 }
               />
-              <Switch
+              <TsSwitch
                 data-tid="settingsSetUseTrashCan"
                 onClick={() =>
                   dispatch(
@@ -722,7 +722,7 @@ function SettingsGeneral() {
           jsx: (
             <ListItem>
               <ListItemText primary={t('core:showUnixHiddenFiles')} />
-              <Switch
+              <TsSwitch
                 data-tid="settingsSetShowUnixHiddenEntries"
                 onClick={() => {
                   dispatch(SettingsActions.toggleShowUnixHiddenEntries());
@@ -753,7 +753,7 @@ function SettingsGeneral() {
           jsx: (
             <ListItem>
               <ListItemText primary={t('enableMobileMode')} />
-              <Switch
+              <TsSwitch
                 data-tid="settingsSetDesktopMode"
                 disabled={!(typeof AppConfig.ExtDisplayMode === 'undefined')}
                 onClick={() => setDesktopMode(!settings.desktopMode)}
@@ -790,7 +790,7 @@ function SettingsGeneral() {
                   )}
                 </TooltipTS>
               )}
-              <Switch
+              <TsSwitch
                 data-tid="settingsEnableWS"
                 disabled={!AppConfig.isElectron}
                 onClick={() => setEnableWS(!settings.enableWS)}
@@ -804,7 +804,7 @@ function SettingsGeneral() {
           jsx: (
             <ListItem>
               <ListItemText primary={t('warningOpeningFilesExternally')} />
-              <Switch
+              <TsSwitch
                 data-tid="warningOpeningFilesExternally"
                 onClick={() =>
                   setWarningOpeningFilesExternally(
@@ -968,7 +968,7 @@ function SettingsGeneral() {
                   </>
                 }
               />
-              <Switch
+              <TsSwitch
                 data-tid="setRevisionsEnabledTID"
                 disabled={!Pro}
                 onClick={() =>
@@ -998,7 +998,7 @@ function SettingsGeneral() {
                   </>
                 }
               />
-              <Switch
+              <TsSwitch
                 data-tid="saveTagInLocationTID"
                 disabled={!Pro || AppConfig.ExtUseLocationTags !== undefined}
                 onClick={() => {

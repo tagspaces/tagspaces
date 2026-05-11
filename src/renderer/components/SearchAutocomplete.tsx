@@ -62,7 +62,7 @@ import { dataTidFormat } from '-/services/test';
 import { removePrefix } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutlined';
 import AdvancedSearchIcon from '@mui/icons-material/TuneOutlined';
 import { Autocomplete, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -1503,7 +1503,7 @@ function SearchAutocomplete(props: Props) {
             }
             return filteredOptions;
           }}
-          renderTags={(value) =>
+          renderValue={(value) =>
             value.map((option, index: number) => {
               const action = actionValues.current.find(
                 (a) => a.fullName === option || a.label === option,
@@ -1667,13 +1667,13 @@ function SearchAutocomplete(props: Props) {
           onKeyDown={onKeyDownHandler}
           disableClearable={true}
           renderInput={(params) => {
-            if (params.InputProps.endAdornment) {
-              params.InputProps.endAdornment = [
-                params.InputProps.endAdornment,
+            if (params.slotProps.input.endAdornment) {
+              params.slotProps.input.endAdornment = [
+                params.slotProps.input.endAdornment,
                 endAdornment,
               ];
             } else {
-              params.InputProps.endAdornment = [endAdornment];
+              params.slotProps.input.endAdornment = [endAdornment];
             }
             return (
               <TsTextField

@@ -37,7 +37,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
+import TsSwitch from '-/components/TsSwitch';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
@@ -183,7 +183,7 @@ function MapTileServerDialog(props: Props) {
       </FormControl>
       <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('core:serverIsDefaultHelp')} />
-        <Switch
+        <TsSwitch
           data-tid="serverIsDefaultTID"
           onClick={() => {
             isDefault.current = !isDefault.current;

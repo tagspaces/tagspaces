@@ -30,7 +30,7 @@ import { setGlobalShortcuts } from '-/services/utils-io';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Switch from '@mui/material/Switch';
+import TsSwitch from '-/components/TsSwitch';
 import Typography from '@mui/material/Typography';
 import { isStr } from '@tagspaces/tagspaces-common/misc';
 import { useTranslation } from 'react-i18next';
@@ -78,7 +78,7 @@ function SettingsKeyBindings() {
               </>
             }
           />
-          <Switch
+          <TsSwitch
             onClick={() => {
               setGlobalKeyBinding(!globalKeyBindingEnabled);
             }}

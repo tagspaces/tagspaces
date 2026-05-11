@@ -180,9 +180,12 @@ function TagGroupTitleDnD(props: Props) {
       <Grid
         container
         direction="row"
-        alignItems="stretch"
-        alignContent="center"
-        sx={{ flexWrap: 'nowrap', cursor: 'grab' }}
+        sx={{
+          alignItems: 'stretch',
+          alignContent: 'center',
+          flexWrap: 'nowrap',
+          cursor: 'grab',
+        }}
       >
         <Grid size={2} sx={{ maxWidth: 40 }}>
           <TsIconButton

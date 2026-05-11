@@ -209,7 +209,11 @@ function LinksTab(props: Props) {
 
   const listView = (
     <>
-      <Box display="block">
+      <Box
+        sx={{
+          display: 'block',
+        }}
+      >
         {links.current && links.current.length > 0 && (
           <>
             <Typography variant="body2">
@@ -224,7 +228,11 @@ function LinksTab(props: Props) {
           </>
         )}
       </Box>
-      <Box display="block">
+      <Box
+        sx={{
+          display: 'block',
+        }}
+      >
         <Typography variant="body2">
           <b>{t('core:incomingLinks')}</b> (
           {t('from content and description of other files and folders')})

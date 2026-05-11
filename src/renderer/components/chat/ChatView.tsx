@@ -434,9 +434,9 @@ function ChatView() {
       <Grid
         container
         spacing={1}
-        direction="column"
         wrap="nowrap"
         sx={{
+          flexDirection: 'column',
           height: '100%',
           overflow: 'hidden',
         }}
@@ -498,14 +498,16 @@ function ChatView() {
           </MilkdownProvider>
         </Grid>
         {/* Images and chat input */}
-        <Grid container spacing={1} direction="column">
+        <Grid container spacing={1} sx={{ flexDirection: 'column' }}>
           {images.length > 0 && (
             <Grid>
               {images.map((image, index) => (
                 <Box
                   key={image.uuid}
-                  position="relative"
-                  sx={{ float: 'right' }}
+                  sx={{
+                    position: 'relative',
+                    float: 'right',
+                  }}
                 >
                   <img
                     src={
@@ -716,7 +718,6 @@ function ChatView() {
           </Grid>
         </Grid>
       </Grid>
-
       {/* Edit/Create Prompt Dialog */}
       <PromptEditDialog
         open={dialogOpen}
@@ -729,7 +730,6 @@ function ChatView() {
         onClose={handleCloseDialog}
         onDelete={handleOpenDeleteConfirm}
       />
-
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         open={deleteConfirmOpen}

@@ -43,7 +43,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import Switch from '@mui/material/Switch';
+import TsSwitch from '-/components/TsSwitch';
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -325,7 +325,7 @@ function EditTagGroupDialog(props: Props) {
       </ListItem>
       <ListItem sx={{ paddingLeft: 0, paddingRight: 0 }}>
         <ListItemText primary={t('core:colorChangesToAllTags')} />
-        <Switch
+        <TsSwitch
           data-tid="editTagGroupSwitch"
           onClick={() => setApplyChanges(!applyChanges)}
           checked={applyChanges}
