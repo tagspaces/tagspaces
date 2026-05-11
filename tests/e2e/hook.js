@@ -1,4 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
+import fs from 'fs';
 import fse from 'fs-extra';
 import os from 'os';
 import pathLib from 'path';
@@ -346,9 +347,16 @@ export async function testDataRefresh(isS3, testDataDir) {
       'file-structure',
       'supported-filestypes',
     );
-    //let newPath = pathLib.join(testDataDir, pathLib.basename(src));
-    //console.log('newPath:'+testDataDir);
-    await fse.copy(src, testDataDir); //, { overwrite: true });
+    // Use Node's native recursive copy (not fs-extra's), since fs-extra's
+    // copy() does a non-recursive fs.mkdir(dest) per directory and races with
+    // the running Electron app's indexer recreating the .ts metafolder between
+    // our rm and copy — producing intermittent EEXIST mkdir '.ts' failures.
+    // fs.cp with { recursive: true, force: true } is idempotent w.r.t. existing
+    // destination dirs and overwrites files, so the race is harmless.
+    await fs.promises.cp(src, testDataDir, {
+      recursive: true,
+      force: true,
+    });
   }
 }
 
