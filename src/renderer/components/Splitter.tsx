@@ -23,6 +23,7 @@ import React, { useEffect, useRef } from 'react';
 /** Shared visual constants for every gutter in the app. */
 export const GUTTER_VISIBLE_SIZE = 1;
 export const GUTTER_HIT_SIZE = 14;
+export const GUTTER_HIT_SIZE_TOUCH = 44;
 export const GUTTER_HOVER_SIZE = 4;
 
 export interface SplitterGutterProps {
@@ -68,6 +69,7 @@ export function SplitterGutter(props: SplitterGutterProps) {
   const hoverColor = theme.palette.primary.main;
 
   const hitOverflow = (GUTTER_HIT_SIZE - GUTTER_VISIBLE_SIZE) / 2;
+  const hitOverflowTouch = (GUTTER_HIT_SIZE_TOUCH - GUTTER_VISIBLE_SIZE) / 2;
 
   return (
     <Box
@@ -88,17 +90,27 @@ export function SplitterGutter(props: SplitterGutterProps) {
       onKeyDown={onKeyDown}
       sx={{
         position: 'relative',
+        // Lift above sibling panes (which create stacking contexts via
+        // `contain: paint`) so the full hit area — and its resize cursor
+        // — is reachable, not just the 1 px visible line.
+        zIndex: 1,
         cursor: disabled ? 'default' : isVert ? 'col-resize' : 'row-resize',
         touchAction: 'none',
         outline: 'none',
+        WebkitTapHighlightColor: 'transparent',
+        WebkitTouchCallout: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
         ...(isVert
           ? { width: GUTTER_VISIBLE_SIZE + 'px', height: '100%' }
           : { height: GUTTER_VISIBLE_SIZE + 'px', width: '100%' }),
-        // invisible hit area via ::before
+        // invisible hit area via ::before — cursor set explicitly here
+        // because the visible 1 px element is too narrow to reliably hover.
         '&::before': {
           content: '""',
           position: 'absolute',
           background: 'transparent',
+          cursor: disabled ? 'default' : isVert ? 'col-resize' : 'row-resize',
           ...(isVert
             ? {
                 top: 0,
@@ -113,6 +125,19 @@ export function SplitterGutter(props: SplitterGutterProps) {
                 bottom: -hitOverflow + 'px',
               }),
         },
+        // Coarse pointers (touch) get a much larger hit area so a finger
+        // can grab the divider reliably.
+        '@media (pointer: coarse)': {
+          '&::before': isVert
+            ? {
+                left: -hitOverflowTouch + 'px',
+                right: -hitOverflowTouch + 'px',
+              }
+            : {
+                top: -hitOverflowTouch + 'px',
+                bottom: -hitOverflowTouch + 'px',
+              },
+        },
         // visible divider via ::after — animates to hoverColor/thicker
         '&::after': {
           content: '""',
@@ -123,7 +148,7 @@ export function SplitterGutter(props: SplitterGutterProps) {
           transition:
             'background-color 120ms ease, width 120ms ease, height 120ms ease, left 120ms ease, top 120ms ease',
         },
-        '&:hover::after, &:focus-visible::after, &[data-dragging="true"]::after':
+        '&:hover::after, &:focus-visible::after, &:active::after, &[data-dragging="true"]::after':
           {
             background: hoverColor,
             ...(isVert

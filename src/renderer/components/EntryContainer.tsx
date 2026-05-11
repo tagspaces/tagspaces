@@ -627,7 +627,14 @@ function EntryContainer() {
           );
         }
 
-        // Panel closed or folder entry — simple column layout, no splitter.
+        // Folder entry — no preview, topPane fills the container so
+        // EntryContainerTabs has a bounded height and TsTabPanel can scroll.
+        if (!openedEntry.isFile) {
+          return <Box sx={{ height: '100%' }}>{topPane}</Box>;
+        }
+
+        // File with panel closed — topPane sizes to its content (title +
+        // tab strip), fileView gets the remaining height.
         return (
           <Box
             sx={{

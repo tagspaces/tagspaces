@@ -1,6 +1,25 @@
+/**
+ * TagSpaces - universal file and folder organizer
+ * Copyright (C) 2017-present TagSpaces GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License (version 3) as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 import AppConfig from '-/AppConfig';
 import { MoreMenuIcon } from '-/components/CommonIcons';
 import { ProTooltip } from '-/components/HelperComponents';
+import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';
@@ -14,7 +33,7 @@ import {
   getMimeType,
   saveAsTextFile,
 } from '-/services/utils-io';
-import { ButtonGroup, Tooltip, useTheme } from '@mui/material';
+import { ButtonGroup, useTheme } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
 import { extractTitle } from '@tagspaces/tagspaces-common/paths';
 import React from 'react';

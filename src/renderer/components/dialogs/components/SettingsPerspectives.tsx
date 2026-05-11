@@ -17,6 +17,7 @@
  */
 
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
+import Tooltip from '-/components/Tooltip';
 import TsButton from '-/components/TsButton';
 import { usePerspectiveOnboardingContext } from '-/components/dialogs/hooks/usePerspectiveOnboardingContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -37,7 +38,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Switch from '@mui/material/Switch';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
