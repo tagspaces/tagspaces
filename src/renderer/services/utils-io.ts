@@ -16,6 +16,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import defaultSettings from '-/reducers/settings-default';
 import { TS } from '-/tagspaces.namespace';
@@ -733,9 +734,7 @@ export function sanitizeAttribution(html: string | undefined): string {
 export function openURLExternally(url: string, skipConfirmation = false) {
   if (skipConfirmation) {
     openUrl(url);
-  } else if (
-    window.confirm('Do you really want to open this url: ' + url + ' ?')
-  ) {
+  } else if (window.confirm(i18n.t('core:confirmOpenUrl', { url }))) {
     openUrl(url);
   }
 }
@@ -892,11 +891,7 @@ export function openFileMessage(
   if (
     !warningOpeningFilesExternally ||
     // eslint-disable-next-line no-restricted-globals
-    confirm(
-      'Do you really want to open "' +
-        filePath +
-        '"? Execution of some files can be potentially dangerous!',
-    )
+    confirm(i18n.t('core:confirmOpenFile', { path: filePath }))
   ) {
     if (AppConfig.isElectron) {
       window.electronIO.ipcRenderer.sendMessage('openFile', filePath);

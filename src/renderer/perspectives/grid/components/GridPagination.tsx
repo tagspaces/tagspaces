@@ -192,10 +192,12 @@ function GridPagination(props: Props) {
 
   const folderSummary = useMemo(() => {
     if (selectedEntries && selectedEntries.length > 0) {
-      return `${selectedEntries.length} entries selected`;
+      return t('core:entriesSelected', { count: selectedEntries.length });
     }
-    return `${dirCount > 0 ? `${dirCount} folder(s) and ` : ''}${fileCount} file(s) found`;
-  }, [selectedEntries, dirCount, fileCount]);
+    return dirCount > 0
+      ? t('core:foldersAndFilesFound', { folders: dirCount, files: fileCount })
+      : t('core:filesFound', { files: fileCount });
+  }, [selectedEntries, dirCount, fileCount, t]);
 
   // Called when a selection drag ends. We look for any item elements whose
   // bounding rectangle intersects the drag rectangle.

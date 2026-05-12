@@ -335,7 +335,7 @@ function SettingsTemplates(props: Props) {
                 value={currentTemplate(template).type}
                 exclusive
                 sx={{ marginTop: '10px', marginBottom: '10px' }}
-                title="Template type"
+                title={t('core:templateTypeTitle')}
               >
                 <TsToggleButton
                   value={false}
@@ -405,7 +405,7 @@ function SettingsTemplates(props: Props) {
                 disabled={!Pro || !!AppConfig.ExtFileTemplates}
                 error={!currentTemplate(template).fileNameTmpl}
                 label={t('fileNameTmpl')}
-                placeholder="e.g.: note[{timestamp}] or {uuid}"
+                placeholder={t('core:templateFileNamePlaceholder')}
                 value={currentTemplate(template).fileNameTmpl}
                 onChange={(e) => {
                   if (fileTemplatesContext) {

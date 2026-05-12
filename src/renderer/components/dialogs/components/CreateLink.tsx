@@ -139,7 +139,7 @@ function CreateLink(props: Props) {
           autoFocus
           error={urlError || !!urlInputError}
           id="fileLinkID"
-          placeholder="e.g. https://wikipedia.org"
+          placeholder={t('core:createLinkPlaceholder')}
           label={t('core:linkURL')}
           onChange={handleUrlChange}
         />

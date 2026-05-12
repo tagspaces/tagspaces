@@ -88,25 +88,14 @@ export function getProTeaserSlides(t) {
     pictureHeight: 350,
   };
   slidesEN[slidesNames[3]] = {
-    title: t('Calendar Perspective – See Your Files in Time'),
+    title: t('peri:ptsCalendarTitle'),
     description: (
       <>
         <ul style={{ marginTop: 0 }}>
-          <li>
-            📅 <b>Organize files by date</b> using creation date, last modified
-            date, folder names, or date tags
-          </li>
-          <li>
-            🔎 <b>Quickly find what matters</b> by browsing your files day by
-            day, month by month, or year by year
-          </li>
-          <li>
-            🗂️ <b>Perfect for notes, projects, and logs</b> where time matters
-          </li>
-          <li>
-            ⚡ <b>Works instantly with your existing folders</b> — no setup
-            required
-          </li>
+          <li>{t('peri:ptsCalendarSection1')}</li>
+          <li>{t('peri:ptsCalendarSection2')}</li>
+          <li>{t('peri:ptsCalendarSection3')}</li>
+          <li>{t('peri:ptsCalendarSection4')}</li>
         </ul>
       </>
     ),

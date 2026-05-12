@@ -393,7 +393,7 @@ function EntryProperties({ tileServer }: Props) {
     (name: string, value: Array<TS.Tag>, action: string) => {
       if (openedEntry && fileChanged) {
         showNotification(
-          `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
+          t('core:cantEditTagsFileOpened', { path: openedEntry.path }),
           'default',
           true,
         );

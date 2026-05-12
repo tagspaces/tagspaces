@@ -16,6 +16,7 @@
  *
  */
 
+import i18n from '-/services/i18n';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -61,12 +62,12 @@ export class PerspectiveErrorBoundary extends React.Component<Props, State> {
         <Alert severity="error">
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
             {this.props.context === 'onboarding'
-              ? 'Onboarding failed to load'
-              : 'Perspective failed to load'}
+              ? i18n.t('core:onboardingFailedToLoad')
+              : i18n.t('core:perspectiveFailedToLoad')}
           </Typography>
           <Typography variant="body2">{message}</Typography>
           <Typography variant="caption" sx={{ display: 'block', marginTop: 1 }}>
-            Perspective: {this.props.perspectiveId}
+            {i18n.t('core:perspectiveLabel')} {this.props.perspectiveId}
           </Typography>
         </Alert>
       </Box>

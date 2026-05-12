@@ -117,7 +117,7 @@ function CreateDirectoryDialog(props: Props) {
             }
           });
         } else {
-          showNotification('Directory ' + dirPath + ' exist!');
+          showNotification(t('core:directoryExistsAlert', { path: dirPath }));
         }
       });
 

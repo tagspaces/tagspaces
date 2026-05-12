@@ -298,7 +298,7 @@ function CreateEditLocationDialog(props: Props) {
     if (!location) {
       setNewUuid(newId);
     } else {
-      showNotification('Location with this ID already exists', 'error');
+      showNotification(t('core:locationIdAlreadyExists'), 'error');
     }
   }
   /**
@@ -1169,7 +1169,7 @@ function CreateEditLocationDialog(props: Props) {
                   required
                   name="newuuid"
                   data-tid="newuuid"
-                  placeholder="Unique location identifier"
+                  placeholder={t('core:uniqueLocationIdentifier')}
                   onChange={(event) => setNewLocationID(event.target.value)}
                   value={newuuid}
                   label={t('core:locationId')}

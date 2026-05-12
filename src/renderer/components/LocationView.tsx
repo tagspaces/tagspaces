@@ -233,7 +233,7 @@ function LocationView(props: Props) {
               selectedEntries.length > 0 ? selectedEntries : [entry];
             openMoveCopyFilesDialog(entries, targetPath, targetLocation.uuid);
           } else {
-            showNotification(t('Moving file not possible'), 'error', true);
+            showNotification(t('core:movingFileNotPossible'), 'error', true);
             return;
           }
           setSelectedEntries([]);

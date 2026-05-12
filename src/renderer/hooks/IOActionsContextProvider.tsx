@@ -1761,10 +1761,12 @@ export const IOActionsContextProvider = ({
           return openDirectory(dirPath);
         })*/
         .catch((error) => {
-          showNotification('Error creating duplicate: ' + error.message);
+          showNotification(
+            t('core:errorCreatingDuplicate', { message: error.message }),
+          );
         });
     } else {
-      showNotification('Unable to duplicate, no file selected');
+      showNotification(t('core:unableToDuplicateNoFile'));
     }
   }
 
@@ -1863,7 +1865,11 @@ export const IOActionsContextProvider = ({
         })
         .catch((err) => {
           console.log('Error ' + entry.path + ' with ' + err);
-          showNotification('Error: ' + err.message, 'error', true);
+          showNotification(
+            t('core:genericError', { message: err.message }),
+            'error',
+            true,
+          );
           return undefined;
         });
     }

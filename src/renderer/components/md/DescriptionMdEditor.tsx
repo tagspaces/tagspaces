@@ -227,10 +227,10 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
     };
 
     const ctxItems = [
-      { label: 'Cut', shortcut: mod + 'X', cmd: 'cut' },
-      { label: 'Copy', shortcut: mod + 'C', cmd: 'copy' },
-      { label: 'Paste', shortcut: mod + 'V', cmd: 'paste' },
-      { label: 'Select All', shortcut: mod + 'A', cmd: 'selectAll' },
+      { label: t('core:cut'), shortcut: mod + 'X', cmd: 'cut' },
+      { label: t('core:copy'), shortcut: mod + 'C', cmd: 'copy' },
+      { label: t('core:paste'), shortcut: mod + 'V', cmd: 'paste' },
+      { label: t('core:selectAll'), shortcut: mod + 'A', cmd: 'selectAll' },
     ];
 
     return (

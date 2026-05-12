@@ -61,6 +61,11 @@
   "ptsFolderVizFolderTree": "Folder Tree – View the folder structure behind your search results.",
   "ptsFolderVizCircularFolderTree": "Circular Folder Tree – Quickly spot folders with a high number of files.",
   "ptsFolderVizTreeMap": "Treemap – Easily identify large files that take up space.",
+  "ptsCalendarTitle": "Calendar Perspective in TagSpaces Pro",
+  "ptsCalendarSection1": "Organize files by date – using creation date, last modified date, folder names, or date tags.",
+  "ptsCalendarSection2": "Quickly find what matters – browse your files day by day, month by month, or year by year.",
+  "ptsCalendarSection3": "Perfect for notes, projects, and logs – where time matters.",
+  "ptsCalendarSection4": "Works instantly with your existing folders – no setup required.",
   "ptsMapiqueTitle": "Mapique Perspective in TagSpaces Pro",
   "ptsMapiqueSection1": "The Mapique Perspective displays geo-tagged files and folders directly on an interactive map. It can automatically extract location data from JPEG  metadata, letting you place files where they belong geographically.",
   "ptsMapiqueSection2": "Add your own geo-tags to files and folders for powerful use cases such as trip planning, visualizing photo collections, or keeping private location-based notes.",
@@ -140,5 +145,11 @@
   "proTeaserRevisionsHeadline": "File history at your fingertips",
   "proTeaserRevisionsSubtext": "Auto-save & file revisions",
   "proTeaserFolderColorHeadline": "Color-code your folders",
-  "proTeaserFolderColorSubtext": "Custom colors & backgrounds"
+  "proTeaserFolderColorSubtext": "Custom colors & backgrounds",
+  "trelloImportStep1": "Go to a Trello board.",
+  "trelloImportStep2": "Open the board's menu by clicking the 3-dot button in the top right of the app.",
+  "trelloImportStep3": "Select 'More'.",
+  "trelloImportStep4": "Click on 'Print and export'.",
+  "trelloImportStep5": "Choose 'Export as JSON'.",
+  "trelloImportStep6": "Initiate the import by selecting the exported file with the help of the next button."
 }

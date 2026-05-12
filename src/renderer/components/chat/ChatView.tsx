@@ -490,11 +490,7 @@ function ChatView() {
             #chatMD .milkdown .ProseMirror a { color: ${theme.palette.primary.main}; }
           `}</style>
           <MilkdownProvider>
-            <ChatMdEditor
-              showCurrent={isLoading.current}
-              ref={editorRef}
-              placeholder="Test"
-            />
+            <ChatMdEditor showCurrent={isLoading.current} ref={editorRef} />
           </MilkdownProvider>
         </Grid>
         {/* Images and chat input */}
@@ -516,7 +512,7 @@ function ChatView() {
                       ';base64,' +
                       image.base64
                     }
-                    alt={`Image ${index + 1}`}
+                    alt={t('core:chatImageAlt', { number: index + 1 })}
                     style={{ maxHeight: 150, width: 'auto' }}
                   />
                   <TsIconButton

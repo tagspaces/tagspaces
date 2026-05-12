@@ -133,7 +133,11 @@ function DownloadUrlDialog(props: Props) {
                   t('core:errorCORS'),
                 ),
               );
-              showNotification('downloadFile error' + e.message, 'error', true);
+              showNotification(
+                t('core:downloadFileError', { message: e.message }),
+                'error',
+                true,
+              );
             });
         } else {
           saveAs(fileUrl.current, decodeURIComponent(fileName));

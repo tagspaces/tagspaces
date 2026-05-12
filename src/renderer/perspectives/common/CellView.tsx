@@ -233,11 +233,7 @@ function CellView(props: Props) {
 
   const handleFileMoveDrop = (item, monitor) => {
     if (currentLocation?.isReadOnly) {
-      showNotification(
-        'Importing files is disabled because the location is in read-only mode.',
-        'error',
-        true,
-      );
+      showNotification(i18n.t('core:dndDisabledReadOnlyMode'), 'error', true);
       return;
     }
     if (item) {

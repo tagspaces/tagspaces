@@ -286,7 +286,10 @@ function TagLibrary({ reduceHeightBy }: Props) {
     >
       <SidePanelTitle
         title={t('core:tagLibrary')}
-        tooltip={`Your tag library contains ${allTags.length} tags \ndistributed in ${wSpaceTagGroups.length} tag groups`}
+        tooltip={t('core:tagLibraryTooltip', {
+          tagCount: allTags.length,
+          groupCount: wSpaceTagGroups.length,
+        })}
         menuButton={
           (wSpaceTagGroups.some((tg) => !tg.readOnly) ||
             wSpaceTagGroups.length === 0) && (

@@ -244,7 +244,9 @@ function LinksTab(props: Props) {
           <>{inboundLinks.current.map((entry) => incomingLinkButton(entry))}</>
         ) : (
           <>
-            <Typography variant="caption">No incoming links found</Typography>
+            <Typography variant="caption">
+              {t('core:noIncomingLinksFound')}
+            </Typography>
             <br />
           </>
         )}

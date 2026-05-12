@@ -229,7 +229,7 @@ function FileMenu(props: Props) {
         return true;
       })
       .catch((error) => {
-        showNotification('Thumbnail creation failed.');
+        showNotification(t('core:thumbnailCreationFailed'));
         console.log(
           'Error setting Thumb for entry: ' + lastSelectedEntry.path,
           error,
@@ -263,11 +263,13 @@ function FileMenu(props: Props) {
       .then((dirPath: string) => getAllPropertiesPromise(dirPath))
       .then((fsEntry: TS.FileSystemEntry) => {
         setBackgroundImageChange(fsEntry);
-        showNotification('Background created for: ' + fsEntry.path);
+        showNotification(
+          t('core:backgroundCreatedFor', { path: fsEntry.path }),
+        );
         return true;
       })
       .catch((error) => {
-        showNotification('Background creation failed.');
+        showNotification(t('core:backgroundCreationFailed'));
         console.log(
           'Error setting Background for entry: ' + lastSelectedEntry.path,
           error,
@@ -285,7 +287,7 @@ function FileMenu(props: Props) {
       selectedEntries.some((e) => e.path === openedEntry.path)
     ) {
       showNotification(
-        `You can't edit tags, because '${openedEntry.path}' is opened for editing`,
+        t('core:cantEditTagsFileOpened', { path: openedEntry.path }),
         'default',
         true,
       );

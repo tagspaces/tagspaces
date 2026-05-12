@@ -912,11 +912,7 @@ function SettingsGeneral() {
                 primary={
                   <>
                     {t('core:author')}
-                    <InfoIcon
-                      tooltip={
-                        'The value of this text box can be used for example in the templates as {author} variable. If you do not want this, just leave the text box empty.'
-                      }
-                    />
+                    <InfoIcon tooltip={t('core:authorVariableTooltip')} />
                   </>
                 }
               />

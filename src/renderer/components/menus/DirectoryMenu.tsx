@@ -306,7 +306,7 @@ function DirectoryMenu(props: Props) {
           entry: newEntry,
         });
         showNotification(
-          'File ' + newFilePath + ' successfully imported.',
+          t('core:fileImportedSuccess', { path: newFilePath }),
           'default',
           true,
         );
@@ -316,7 +316,7 @@ function DirectoryMenu(props: Props) {
         // TODO showAlertDialog("Saving " + filePath + " failed.");
         console.log('Save to file ' + newFilePath + ' failed ' + error);
         showNotification(
-          'Importing file ' + newFilePath + ' failed.',
+          t('core:fileImportFailed', { path: newFilePath }),
           'error',
           true,
         );
@@ -377,14 +377,14 @@ function DirectoryMenu(props: Props) {
           meta: { id: entry.uuid, thumbPath: targetThumbPath },
         });
         showNotification(
-          'Thumbnail created for: ' + parentDirectoryPath,
+          t('core:thumbnailCreatedFor', { path: parentDirectoryPath }),
           'default',
           true,
         );
         return true;
       })
       .catch((error) => {
-        showNotification('Thumbnail creation failed.', 'default', true);
+        showNotification(t('core:thumbnailCreationFailed'), 'default', true);
         console.log('Error setting Thumb for entry: ' + directoryPath, error);
         return true;
       });

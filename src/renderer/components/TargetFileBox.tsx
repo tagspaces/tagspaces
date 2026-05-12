@@ -81,7 +81,7 @@ function TargetFileBox(props: Props) {
       console.log('Dropped files: ' + JSON.stringify(files));
       if (dirPath === undefined) {
         showNotification(
-          'Importing files failed, because no folder is opened in TagSpaces!',
+          t('core:importingFilesFailedNoFolderOpen'),
           'error',
           true,
         );

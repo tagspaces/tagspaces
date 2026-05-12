@@ -928,13 +928,17 @@ ${newHTMLFileContent.split('<body></body>')[1]}`;
     }
     saveFilePromise({ path: filePath }, fileContent, false, true)
       .then((fsEntry: TS.FileSystemEntry) => {
-        showNotification(`File '${fileNameAndExt}' created.`, 'default', true);
+        showNotification(
+          t('core:fileCreated', { name: fileNameAndExt }),
+          'default',
+          true,
+        );
         return true;
       })
       .catch((error) => {
         console.log('Error creating file: ' + error);
         showNotification(
-          `Error creating file '${fileNameAndExt}'`,
+          t('core:errorCreatingNamedFile', { name: fileNameAndExt }),
           'error',
           true,
         );

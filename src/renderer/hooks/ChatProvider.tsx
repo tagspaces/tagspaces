@@ -482,10 +482,12 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   function removeModel(modelName: string) {
     const model = findModel(modelName);
     if (model && defaultAiProvider) {
-      const result = confirm('Do you want to remove ' + model.name + ' model?');
+      const result = confirm(
+        t('core:confirmRemoveModel', { name: model.name }),
+      );
       if (result) {
         //addTimeLineRequest('deleting ' + model.name, 'system');
-        showNotification('deleting ' + model.name + ' succeeded');
+        showNotification(t('core:modelDeletedSuccess', { name: model.name }));
         deleteOllamaModel(ollamaClient.current, model.name).then((response) => {
           console.log('deleteOllamaModel response:' + response);
           if (response) {
@@ -928,7 +930,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
       isTyping.current = false;
       forceUpdate();
       if (apiResponse === undefined && stream === false) {
-        showNotification('Error check if Ollama service is alive');
+        showNotification(t('core:ollamaServiceNotAlive'));
         return undefined;
       }
       if (msg && includeHistory) {
@@ -1113,7 +1115,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         );
       }
     } else {
-      showNotification('Model not found, try pulling it first');
+      showNotification(t('core:modelNotFoundTryPull'));
     }
     return Promise.resolve(undefined);
   }
@@ -1158,9 +1160,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             );
           }
         } else {
-          showNotification(
-            'Error: there is a problem with Ollama service conection', //or Description generation not supported for:' + entry.name,
-          );
+          showNotification(t('core:ollamaConnectionError'));
           return Promise.resolve(undefined);
         }
         return Promise.resolve(entry);
@@ -1230,7 +1230,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
         );
       }
     } else {
-      showNotification('Tags generation not supported for:' + entry.name);
+      showNotification(
+        t('core:tagsGenerationNotSupportedFor', { name: entry.name }),
+      );
     }
 
     return Promise.resolve(false);

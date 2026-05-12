@@ -212,7 +212,9 @@ function SettingsExtensions() {
           </List>
           {extensions &&
             extensions.filter((ext) => ext.extensionExternal).length < 1 && (
-              <Typography variant="subtitle1">No extensions found</Typography>
+              <Typography variant="subtitle1">
+                {t('core:noExtensionsFound')}
+              </Typography>
             )}
           {devMode && AppConfig.isElectron && (
             <Box>

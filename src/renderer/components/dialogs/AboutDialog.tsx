@@ -249,7 +249,7 @@ function AboutDialog(props: Props) {
               }}
               sx={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}
             >
-              Upgrade to PRO
+              {t('core:upgradeToProButton')}
             </TsButton>
           )}
           <TsButton

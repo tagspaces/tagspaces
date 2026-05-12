@@ -34,6 +34,7 @@ import {
 import { Badge, Box, Tab, Tabs, TabsProps } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useEffect, useReducer, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 const TabProperties = React.lazy(
@@ -68,6 +69,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
     isSavingInProgress,
     savingFile,
   } = props;
+  const { t } = useTranslation();
   const { initHistory, checkOllamaModels } = useChatContext();
   const { getTabsArray } = useEntryPropsTabsContext();
   const theme = useTheme();
@@ -186,7 +188,7 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
           onChange={handleChange}
           variant="scrollable"
           scrollButtons={false}
-          aria-label="Switching among description, revisions entry properties"
+          aria-label={t('core:tabsSwitcherAriaLabel')}
         >
           {tabsArray.current.map((tab, index) => (
             <Tab
