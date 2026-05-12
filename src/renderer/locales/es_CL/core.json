@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} elementos en esta columna",
   "loadingKanbanBoard": "Cargando tablero Kanban…",
   "extractingContent": "Extrayendo contenido...",
+  "checkForUpdates": "Buscar actualizaciones",
+  "buildOnPlatformTooltip": "Compilado el: {{buildTime}}\nPlataforma: {{userAgent}}",
+  "versionLabel": "Versión:",
+  "buildIdLabel": "ID de compilación:",
+  "madePossibleByTagSpaces": "es posible gracias al proyecto TagSpaces y a otro software de código abierto listado en:",
+  "softwareAcknowledgements": "Agradecimientos de software",
+  "imprint": "Aviso legal",
+  "privacyPolicy": "Política de privacidad",
+  "changelog": "Registro de cambios",
+  "coreExtensionsTooltip": "Estas son extensiones que vienen incluidas con la versión actual de la aplicación",
+  "globalShortcutsTooltip": "Activa atajos globales para crear nuevos archivos, navegar por archivos, reproducir/pausar archivos de audio o abrir la búsqueda. Los atajos globales funcionan incluso si la ventana de la aplicación no está enfocada o visible.",
+  "devModeTooltip": "Activará algunas funciones experimentales y habilitará depuración adicional",
   "-": "-"
 }

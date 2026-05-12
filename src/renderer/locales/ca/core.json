@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} elements en aquesta columna",
   "loadingKanbanBoard": "Carregant el tauler Kanban…",
   "extractingContent": "Extraient el contingut...",
+  "checkForUpdates": "Comprova si hi ha actualitzacions",
+  "buildOnPlatformTooltip": "Compilat el: {{buildTime}}\nPlataforma: {{userAgent}}",
+  "versionLabel": "Versió:",
+  "buildIdLabel": "ID de compilació:",
+  "madePossibleByTagSpaces": "és possible gràcies al projecte TagSpaces i a altre programari de codi obert llistat a:",
+  "softwareAcknowledgements": "Agraïments de programari",
+  "imprint": "Avís legal",
+  "privacyPolicy": "Política de privacitat",
+  "changelog": "Registre de canvis",
+  "coreExtensionsTooltip": "Aquestes són les extensions empaquetades amb la versió actual de l'aplicació",
+  "globalShortcutsTooltip": "Activa la drecera global per crear fitxers nous, navegar pels fitxers, reproduir/pausar fitxers d'àudio o obrir la cerca. Les dreceres globals funcionen fins i tot si la finestra de l'aplicació no està enfocada o visible.",
+  "devModeTooltip": "Activarà algunes funcions experimentals i la depuració addicional",
   "-": "-"
 }

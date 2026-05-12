@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} položek v tomto sloupci",
   "loadingKanbanBoard": "Načítání tabule Kanban…",
   "extractingContent": "Extrahování obsahu...",
+  "checkForUpdates": "Zkontrolovat aktualizace",
+  "buildOnPlatformTooltip": "Sestaveno: {{buildTime}}\nPlatforma: {{userAgent}}",
+  "versionLabel": "Verze:",
+  "buildIdLabel": "ID sestavení:",
+  "madePossibleByTagSpaces": "je možný díky projektu TagSpaces a dalšímu open source softwaru uvedenému v:",
+  "softwareAcknowledgements": "Poděkování softwaru",
+  "imprint": "Tiráž",
+  "privacyPolicy": "Zásady ochrany osobních údajů",
+  "changelog": "Seznam změn",
+  "coreExtensionsTooltip": "Toto jsou rozšíření, která jsou součástí aktuální verze aplikace",
+  "globalShortcutsTooltip": "Povolí globální zkratky pro vytváření nových souborů, navigaci v souborech, přehrávání/pozastavení audio souborů nebo otevření vyhledávání. Globální zkratky fungují, i když okno aplikace není zaměřené nebo viditelné.",
+  "devModeTooltip": "Povolí některé experimentální funkce a zapne rozšířené ladění",
   "-": "-"
 }

@@ -151,5 +151,10 @@
   "trelloImportStep3": "בחר 'עוד'.",
   "trelloImportStep4": "לחץ על 'הדפס וייצא'.",
   "trelloImportStep5": "בחר 'ייצוא כ-JSON'.",
-  "trelloImportStep6": "התחל את הייבוא על ידי בחירת הקובץ המיוצא בעזרת הכפתור הבא."
+  "trelloImportStep6": "התחל את הייבוא על ידי בחירת הקובץ המיוצא בעזרת הכפתור הבא.",
+  "resetsToDefaultPrompt": "מאפס לפרומפט ברירת המחדל",
+  "ollamaIntroPrefix": "ל-TagSpaces אין מנוע AI או מודלים משלו, אלא היא מסתמכת לחלוטין על תוכנות חיצוניות כמו Ollama. אם אין לך Ollama, ניתן להוריד אותה בחינם מ-",
+  "ollamaIntroSuffix": "ולעקוב אחר הוראות ההתקנה כדי להגדיר אותה במחשב שלך.",
+  "aiFunctionalityDisabled": "כל פונקציונליות ה-AI מושבתת כעת. אנא הוסף והגדר מנוע AI כדי להשתמש ב-AI חיצוני ב-TagSpaces.",
+  "confirmRemoveAiConfig": "האם ברצונך להסיר את הגדרת ה-AI \"{{name}}\"?"
 }

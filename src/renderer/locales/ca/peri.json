@@ -151,5 +151,10 @@
   "trelloImportStep3": "Seleccioneu 'More'.",
   "trelloImportStep4": "Feu clic a 'Print and export'.",
   "trelloImportStep5": "Trieu 'Export as JSON'.",
-  "trelloImportStep6": "Inicieu la importació seleccionant el fitxer exportat amb l'ajuda del botó següent."
+  "trelloImportStep6": "Inicieu la importació seleccionant el fitxer exportat amb l'ajuda del botó següent.",
+  "resetsToDefaultPrompt": "Restableix la consigna predeterminada",
+  "ollamaIntroPrefix": "TagSpaces no disposa d'un motor d'IA ni de models propis, sinó que es basa íntegrament en programari extern com Ollama. Si no teniu Ollama, podeu descarregar-lo gratuïtament des de",
+  "ollamaIntroSuffix": "i seguir les instruccions d'instal·lació per configurar-lo al vostre ordinador.",
+  "aiFunctionalityDisabled": "Tota la funcionalitat d'IA està actualment desactivada. Afegiu i configureu un motor d'IA per utilitzar IAs externes a TagSpaces.",
+  "confirmRemoveAiConfig": "Voleu eliminar la configuració d'IA «{{name}}»?"
 }

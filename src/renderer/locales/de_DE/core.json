@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} Einträge in dieser Spalte",
   "loadingKanbanBoard": "Kanban-Board wird geladen…",
   "extractingContent": "Inhalt wird extrahiert...",
+  "checkForUpdates": "Nach Updates suchen",
+  "buildOnPlatformTooltip": "Erstellt am: {{buildTime}}\nPlattform: {{userAgent}}",
+  "versionLabel": "Version:",
+  "buildIdLabel": "Build-ID:",
+  "madePossibleByTagSpaces": "wird ermöglicht durch das TagSpaces-Projekt und andere Open-Source-Software, aufgeführt in den:",
+  "softwareAcknowledgements": "Software-Danksagungen",
+  "imprint": "Impressum",
+  "privacyPolicy": "Datenschutzerklärung",
+  "changelog": "Änderungsprotokoll",
+  "coreExtensionsTooltip": "Dies sind Erweiterungen, die mit der aktuellen Version der App ausgeliefert werden",
+  "globalShortcutsTooltip": "Aktiviert globale Tastenkombinationen zum Erstellen neuer Dateien, zur Dateinavigation, zum Abspielen/Pausieren von Audiodateien oder zum Öffnen der Suche. Globale Tastenkombinationen funktionieren auch, wenn das App-Fenster nicht im Fokus oder sichtbar ist.",
+  "devModeTooltip": "Aktiviert einige experimentelle Funktionen und schaltet zusätzliches Debugging ein",
   "-": "-"
 }

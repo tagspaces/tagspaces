@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} elem ebben az oszlopban",
   "loadingKanbanBoard": "Kanban tábla betöltése…",
   "extractingContent": "Tartalom kinyerése...",
+  "checkForUpdates": "Frissítések keresése",
+  "buildOnPlatformTooltip": "Készült: {{buildTime}}\nPlatform: {{userAgent}}",
+  "versionLabel": "Verzió:",
+  "buildIdLabel": "Build azonosító:",
+  "madePossibleByTagSpaces": "a TagSpaces projektnek és más nyílt forráskódú szoftvereknek köszönhetően valósulhatott meg, amelyek felsorolása itt található:",
+  "softwareAcknowledgements": "Szoftver közreműködők",
+  "imprint": "Impresszum",
+  "privacyPolicy": "Adatvédelmi szabályzat",
+  "changelog": "Változásnapló",
+  "coreExtensionsTooltip": "Ezek azok a kiterjesztések, amelyek az alkalmazás jelenlegi verziójával együtt kerülnek telepítésre",
+  "globalShortcutsTooltip": "Engedélyezi a globális gyorsbillentyűt új fájlok létrehozásához, fájlok közötti navigációhoz, hangfájlok lejátszásához/szüneteltetéséhez vagy a keresés megnyitásához. A globális gyorsbillentyűk akkor is működnek, ha az alkalmazás ablaka nincs fókuszban vagy nem látható.",
+  "devModeTooltip": "Engedélyez néhány kísérleti funkciót és bekapcsolja a kiegészítő hibakeresést",
   "-": "-"
 }

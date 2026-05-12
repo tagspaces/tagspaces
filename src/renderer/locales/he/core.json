@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} פריטים בעמודה זו",
   "loadingKanbanBoard": "טוען לוח קנבן…",
   "extractingContent": "מחלץ תוכן...",
+  "checkForUpdates": "בדוק עדכונים",
+  "buildOnPlatformTooltip": "נבנה ב: {{buildTime}}\nפלטפורמה: {{userAgent}}",
+  "versionLabel": "גרסה:",
+  "buildIdLabel": "מזהה בנייה:",
+  "madePossibleByTagSpaces": "נעשה אפשרי בזכות פרויקט TagSpaces ותוכנות קוד פתוח נוספות המפורטות ב:",
+  "softwareAcknowledgements": "קרדיטים לתוכנה",
+  "imprint": "פרטי המוציא לאור",
+  "privacyPolicy": "מדיניות פרטיות",
+  "changelog": "יומן שינויים",
+  "coreExtensionsTooltip": "אלו הן הרחבות המגיעות מוכללות בגרסה הנוכחית של היישום",
+  "globalShortcutsTooltip": "מאפשר קיצורי דרך גלובליים ליצירת קבצים חדשים, ניווט בקבצים, הפעלה/השהיה של קבצי שמע או פתיחת החיפוש. קיצורי דרך גלובליים פועלים גם אם חלון היישום אינו במוקד או אינו גלוי כעת.",
+  "devModeTooltip": "יפעיל כמה תכונות ניסיוניות ויפעיל ניפוי באגים נוסף",
   "-": "-"
 }

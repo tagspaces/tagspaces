@@ -151,5 +151,10 @@
   "trelloImportStep3": "Wählen Sie ‚Mehr‘ aus.",
   "trelloImportStep4": "Klicken Sie auf ‚Drucken und exportieren‘.",
   "trelloImportStep5": "Wählen Sie ‚Als JSON exportieren‘.",
-  "trelloImportStep6": "Starten Sie den Import, indem Sie die exportierte Datei mit Hilfe der Weiter-Schaltfläche auswählen."
+  "trelloImportStep6": "Starten Sie den Import, indem Sie die exportierte Datei mit Hilfe der Weiter-Schaltfläche auswählen.",
+  "resetsToDefaultPrompt": "Setzt auf den Standard-Prompt zurück",
+  "ollamaIntroPrefix": "TagSpaces verfügt nicht über eine eigene KI-Engine oder eigene Modelle, sondern stützt sich vollständig auf externe Software wie Ollama. Falls Sie Ollama nicht haben, können Sie es kostenlos herunterladen unter",
+  "ollamaIntroSuffix": "und folgen Sie der Installationsanleitung, um es auf Ihrem Computer einzurichten.",
+  "aiFunctionalityDisabled": "Alle KI-Funktionen sind derzeit deaktiviert. Bitte fügen Sie eine KI-Engine hinzu und konfigurieren Sie diese, um externe KIs in TagSpaces zu verwenden.",
+  "confirmRemoveAiConfig": "Möchten Sie die KI-Konfiguration „{{name}}“ entfernen?"
 }

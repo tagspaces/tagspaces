@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} elementer i denne kolonne",
   "loadingKanbanBoard": "Indlæser Kanban-tavle…",
   "extractingContent": "Udtrækker indhold...",
+  "checkForUpdates": "Søg efter opdateringer",
+  "buildOnPlatformTooltip": "Bygget den: {{buildTime}}\nPlatform: {{userAgent}}",
+  "versionLabel": "Version:",
+  "buildIdLabel": "Build-ID:",
+  "madePossibleByTagSpaces": "er muliggjort af TagSpaces-projektet og anden open source-software, der er angivet i:",
+  "softwareAcknowledgements": "Softwarekrediteringer",
+  "imprint": "Kolofon",
+  "privacyPolicy": "Privatlivspolitik",
+  "changelog": "Ændringslog",
+  "coreExtensionsTooltip": "Dette er udvidelser, der følger med den aktuelle version af appen",
+  "globalShortcutsTooltip": "Aktiverer globale genveje til oprettelse af nye filer, filnavigation, afspilning/pause af lydfiler eller åbning af søgning. Globale genveje fungerer, selv når appens vindue ikke er i fokus eller synligt.",
+  "devModeTooltip": "Aktiverer nogle eksperimentelle funktioner og slår ekstra fejlfinding til",
   "-": "-"
 }

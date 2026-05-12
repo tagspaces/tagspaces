@@ -151,5 +151,10 @@
   "trelloImportStep3": "Sélectionnez « Plus ».",
   "trelloImportStep4": "Cliquez sur « Imprimer et exporter ».",
   "trelloImportStep5": "Choisissez « Exporter en JSON ».",
-  "trelloImportStep6": "Lancez l'importation en sélectionnant le fichier exporté à l'aide du bouton suivant."
+  "trelloImportStep6": "Lancez l'importation en sélectionnant le fichier exporté à l'aide du bouton suivant.",
+  "resetsToDefaultPrompt": "Réinitialise à l'invite par défaut",
+  "ollamaIntroPrefix": "TagSpaces ne dispose pas de son propre moteur ou modèle d'IA, mais s'appuie entièrement sur des logiciels externes tels qu'Ollama. Si vous n'avez pas Ollama, vous pouvez le télécharger gratuitement depuis",
+  "ollamaIntroSuffix": "et suivez les instructions d'installation pour le configurer sur votre ordinateur.",
+  "aiFunctionalityDisabled": "Toutes les fonctionnalités d'IA sont actuellement désactivées. Veuillez ajouter et configurer un moteur d'IA pour utiliser des IA externes dans TagSpaces.",
+  "confirmRemoveAiConfig": "Voulez-vous supprimer la configuration IA « {{name}} » ?"
 }

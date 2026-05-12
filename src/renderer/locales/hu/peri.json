@@ -151,5 +151,10 @@
   "trelloImportStep3": "Válaszd a 'Több' lehetőséget.",
   "trelloImportStep4": "Kattints a 'Nyomtatás és exportálás' opcióra.",
   "trelloImportStep5": "Válaszd az 'Exportálás JSON-ként' lehetőséget.",
-  "trelloImportStep6": "Indítsd el az importálást az exportált fájl kiválasztásával a következő gomb segítségével."
+  "trelloImportStep6": "Indítsd el az importálást az exportált fájl kiválasztásával a következő gomb segítségével.",
+  "resetsToDefaultPrompt": "Visszaállítja az alapértelmezett promptra",
+  "ollamaIntroPrefix": "A TagSpaces nem rendelkezik saját AI motorral vagy modellekkel, hanem teljes mértékben olyan külső szoftverekre támaszkodik, mint az Ollama. Ha nincs Ollamád, ingyenesen letöltheted innen:",
+  "ollamaIntroSuffix": "és kövesd a telepítési utasításokat, hogy beállítsd a számítógépeden.",
+  "aiFunctionalityDisabled": "Minden AI funkció jelenleg le van tiltva. Kérlek adj hozzá és konfigurálj egy AI motort ahhoz, hogy külső AI-kat használhass a TagSpacesben.",
+  "confirmRemoveAiConfig": "Biztosan eltávolítod a(z) \"{{name}}\" AI konfigurációt?"
 }

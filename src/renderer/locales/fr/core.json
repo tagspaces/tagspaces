@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} éléments dans cette colonne",
   "loadingKanbanBoard": "Chargement du tableau kanban…",
   "extractingContent": "Extraction du contenu...",
+  "checkForUpdates": "Rechercher des mises à jour",
+  "buildOnPlatformTooltip": "Compilé le : {{buildTime}}\nPlateforme : {{userAgent}}",
+  "versionLabel": "Version :",
+  "buildIdLabel": "ID de compilation :",
+  "madePossibleByTagSpaces": "est rendu possible par le projet TagSpaces et d'autres logiciels open source listés dans :",
+  "softwareAcknowledgements": "Mentions logicielles",
+  "imprint": "Mentions légales",
+  "privacyPolicy": "Politique de confidentialité",
+  "changelog": "Journal des modifications",
+  "coreExtensionsTooltip": "Il s'agit des extensions intégrées à la version actuelle de l'application",
+  "globalShortcutsTooltip": "Active le raccourci global pour la création de nouveaux fichiers, la navigation dans les fichiers, la lecture/pause des fichiers audio ou l'ouverture de la recherche. Les raccourcis globaux fonctionnent même si la fenêtre de l'application n'est pas actuellement au premier plan ou visible.",
+  "devModeTooltip": "Active certaines fonctionnalités expérimentales et active le débogage supplémentaire",
   "-": "-"
 }

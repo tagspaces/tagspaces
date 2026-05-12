@@ -151,5 +151,10 @@
   "trelloImportStep3": "Vælg 'More'.",
   "trelloImportStep4": "Klik på 'Print and export'.",
   "trelloImportStep5": "Vælg 'Export as JSON'.",
-  "trelloImportStep6": "Start importen ved at vælge den eksporterede fil med næste-knappen."
+  "trelloImportStep6": "Start importen ved at vælge den eksporterede fil med næste-knappen.",
+  "resetsToDefaultPrompt": "Nulstiller til standardprompten",
+  "ollamaIntroPrefix": "TagSpaces har ikke sin egen AI-motor eller modeller, men er helt afhængig af ekstern software som Ollama. Hvis du ikke har Ollama, kan du downloade det gratis fra",
+  "ollamaIntroSuffix": "og følge installationsvejledningen for at få det sat op på din computer.",
+  "aiFunctionalityDisabled": "Al AI-funktionalitet er i øjeblikket deaktiveret. Tilføj og konfigurer en AI-motor for at bruge eksterne AI'er i TagSpaces.",
+  "confirmRemoveAiConfig": "Vil du fjerne AI-konfigurationen „{{name}}“?"
 }
