@@ -132,6 +132,7 @@
   "appName": "TagSpaces",
   "addRemoveTags": "Add / Remove Tags",
   "openFile": "Open File",
+  "openFileWith": "Open with…",
   "downloadFile": "Download File",
   "downloadFiles": "Download Files",
   "openFileNatively": "Open File Natively",

@@ -34,6 +34,7 @@ import {
   PictureIcon,
   RenameIcon,
   ShareIcon,
+  SmallArrowRightIcon,
   TagIcon,
 } from '-/components/CommonIcons';
 import TsMenuList from '-/components/TsMenuList';
@@ -49,10 +50,15 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { Pro } from '-/pro';
-import { getKeyBindingObject } from '-/reducers/settings';
+import {
+  getExtensionsFound,
+  getKeyBindingObject,
+  getSupportedFileTypes,
+} from '-/reducers/settings';
 import { supportedImgs } from '-/services/thumbsgenerator';
 import {
   createNewInstance,
+  findCandidateExtensionsForFile,
   getRelativeEntryPath,
   openDirectoryMessage,
 } from '-/services/utils-io';
@@ -68,7 +74,7 @@ import {
   extractTitle,
   generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
@@ -88,7 +94,12 @@ function FileMenu(props: Props) {
     props;
 
   const keyBindings = useSelector(getKeyBindingObject);
+  const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const extensionsFound = useSelector(getExtensionsFound);
   const { t } = useTranslation();
+  const [openWithAnchor, setOpenWithAnchor] = useState<HTMLElement | null>(
+    null,
+  );
   const {
     openAddRemoveTagsDialog,
     openMoveCopyFilesDialog,
@@ -323,6 +334,22 @@ function FileMenu(props: Props) {
     }
   }
 
+  function openFileWithExtension(
+    extensionId: string,
+    role: 'viewer' | 'editor',
+  ) {
+    setOpenWithAnchor(null);
+    onClose();
+    if (lastSelectedEntry) {
+      return openEntry(
+        lastSelectedEntry.path,
+        undefined,
+        extensionId,
+        role === 'editor',
+      );
+    }
+  }
+
   function openInNewWindow() {
     onClose();
     if (selectedEntries && selectedEntries.length === 1) {
@@ -348,6 +375,16 @@ function FileMenu(props: Props) {
     pathLowerCase?.endsWith('.' + ext),
   );
 
+  const openWithCandidates =
+    lastSelectedEntry && selectedEntries.length < 2
+      ? findCandidateExtensionsForFile(
+          lastSelectedEntry.path,
+          supportedFileTypes || [],
+          extensionsFound || [],
+          currentLocation?.getDirSeparator() || AppConfig.dirSeparator,
+        )
+      : [];
+
   if (selectedEntries.length < 2) {
     menuItems.push(
       <MenuItem
@@ -362,6 +399,52 @@ function FileMenu(props: Props) {
         <MenuKeyBinding keyBinding={keyBindings['openEntry']} />
       </MenuItem>,
     );
+    if (openWithCandidates.length > 0) {
+      menuItems.push(
+        <MenuItem
+          key="fileMenuOpenWith"
+          data-tid="fileMenuOpenWith"
+          onClick={(e) => setOpenWithAnchor(e.currentTarget)}
+          onMouseEnter={(e) => setOpenWithAnchor(e.currentTarget)}
+        >
+          <ListItemIcon>
+            <OpenFileIcon />
+          </ListItemIcon>
+          <ListItemText primary={t('core:openFileWith')} />
+          <SmallArrowRightIcon fontSize="small" />
+        </MenuItem>,
+      );
+      menuItems.push(
+        <Menu
+          key="fileMenuOpenWithSubmenu"
+          anchorEl={openWithAnchor}
+          open={Boolean(openWithAnchor)}
+          onClose={() => setOpenWithAnchor(null)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        >
+          <TsMenuList>
+            {openWithCandidates.map((c) => (
+              <MenuItem
+                key={`openWith-${c.extensionId}-${c.role}`}
+                data-tid={`openWith-${c.extensionId}-${c.role}`}
+                onClick={() => openFileWithExtension(c.extensionId, c.role)}
+              >
+                <ListItemText
+                  primary={
+                    c.extensionName +
+                    ' (' +
+                    c.role +
+                    (c.isDefault ? ', default' : '') +
+                    ')'
+                  }
+                />
+              </MenuItem>
+            ))}
+          </TsMenuList>
+        </Menu>,
+      );
+    }
     menuItems.push(
       <MenuItem
         key="fileMenuOpenFileNewWindow"

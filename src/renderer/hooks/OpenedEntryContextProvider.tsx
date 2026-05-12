@@ -93,10 +93,17 @@ type OpenedEntryContextData = {
     entryPath: string,
     fsEntryMeta: TS.FileSystemEntryMeta,
   ) => Promise<boolean>;*/
-  openEntry: (path?: string, tabSelected?: string) => Promise<boolean>;
+  openEntry: (
+    path?: string,
+    tabSelected?: string,
+    overrideExtensionId?: string,
+    openInEditMode?: boolean,
+  ) => Promise<boolean>;
   openFsEntry: (
     fsEntry?: TS.FileSystemEntry,
     tabSelected?: (typeof TabNames)[keyof typeof TabNames],
+    overrideExtensionId?: string,
+    openInEditMode?: boolean,
   ) => Promise<boolean>;
   openEntryInternal: (
     fsEntry: TS.FileSystemEntry,
@@ -502,12 +509,21 @@ export const OpenedEntryContextProvider = ({
   function openEntry(
     path?: string,
     tabSelected: string = undefined,
+    overrideExtensionId?: string,
+    openInEditMode?: boolean,
   ): Promise<boolean> {
     if (path === undefined) {
-      return openFsEntry(undefined, tabSelected);
+      return openFsEntry(
+        undefined,
+        tabSelected,
+        overrideExtensionId,
+        openInEditMode,
+      );
     }
     return getAllPropertiesPromise(path)
-      .then((fsEntry: TS.FileSystemEntry) => openFsEntry(fsEntry, tabSelected))
+      .then((fsEntry: TS.FileSystemEntry) =>
+        openFsEntry(fsEntry, tabSelected, overrideExtensionId, openInEditMode),
+      )
       .catch((error) => {
         console.log(
           'Error getting properties for entry: ' + path + ' - ' + error,
@@ -551,6 +567,8 @@ export const OpenedEntryContextProvider = ({
   async function openFsEntry(
     fsEntry?: TS.FileSystemEntry,
     tabSelected: (typeof TabNames)[keyof typeof TabNames] = undefined,
+    overrideExtensionId?: string,
+    openInEditMode?: boolean,
   ): Promise<boolean> {
     if (!fsEntry) {
       if (selectedEntries && selectedEntries.length > 0) {
@@ -580,7 +598,12 @@ export const OpenedEntryContextProvider = ({
       return Promise.resolve(false);
     }
 
-    entryForOpening = findExtensionsForEntry(fsEntry, supportedFileTypes);
+    entryForOpening = findExtensionsForEntry(
+      fsEntry,
+      supportedFileTypes,
+      overrideExtensionId,
+      openInEditMode,
+    );
     const loc = findLocation(fsEntry.locationID);
     if (loc?.haveObjectStoreSupport() || loc?.haveWebDavSupport()) {
       const cleanedPath = fsEntry.path.startsWith('/')
@@ -948,6 +971,8 @@ ${newHTMLFileContent.split('<body></body>')[1]}`;
   function addExtensionsForEntry(
     openedEntry: TS.OpenedEntry,
     supportedFileTypes: Array<TS.FileTypes>,
+    overrideExtensionId?: string,
+    openInEditMode?: boolean,
   ): TS.OpenedEntry {
     const fileExtension = extractFileExtension(
       openedEntry.path,
@@ -957,11 +982,30 @@ ${newHTMLFileContent.split('<body></body>')[1]}`;
     ).toLowerCase();
 
     const fileForOpening = { ...openedEntry };
+    if (openInEditMode) {
+      fileForOpening.openInEditMode = true;
+    }
     const fileType: TS.FileTypes = supportedFileTypes.find(
       (fileType) =>
         fileType.viewer && fileType.type.toLowerCase() === fileExtension,
     );
-    if (fileType) {
+    if (overrideExtensionId) {
+      fileForOpening.viewingExtensionId = overrideExtensionId;
+      fileForOpening.viewingExtensionPath = findExtensionPathForId(
+        overrideExtensionId,
+        fileType?.extensionExternalPath,
+      );
+      fileForOpening.editingExtensionId = overrideExtensionId;
+      fileForOpening.editingExtensionPath = findExtensionPathForId(
+        overrideExtensionId,
+        fileType?.extensionExternalPath,
+      );
+      if (fileType?.color) {
+        fileForOpening.meta = fileForOpening.meta
+          ? { ...fileForOpening.meta, color: fileType.color }
+          : { id: openedEntry.uuid, color: fileType.color };
+      }
+    } else if (fileType) {
       fileForOpening.viewingExtensionId = fileType.viewer;
       if (fileType.color) {
         fileForOpening.meta = fileForOpening.meta
@@ -993,6 +1037,8 @@ ${newHTMLFileContent.split('<body></body>')[1]}`;
   function findExtensionsForEntry(
     entry: TS.FileSystemEntry,
     supportedFileTypes: Array<any>,
+    overrideExtensionId?: string,
+    openInEditMode?: boolean,
   ): TS.OpenedEntry {
     return addExtensionsForEntry(
       {
@@ -1005,6 +1051,8 @@ ${newHTMLFileContent.split('<body></body>')[1]}`;
         tags: [],*/
       },
       supportedFileTypes,
+      overrideExtensionId,
+      openInEditMode,
     );
   }
 

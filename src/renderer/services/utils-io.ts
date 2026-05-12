@@ -26,6 +26,7 @@ import {
   baseName,
   cleanFrontDirSeparator,
   cleanTrailingDirSeparator,
+  extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
 } from '@tagspaces/tagspaces-common/paths';
@@ -128,6 +129,66 @@ export function orderByMetaArray(
     }
     return indexA - indexB;
   });
+}
+
+export interface CandidateExtension {
+  extensionId: string;
+  extensionName: string;
+  role: 'viewer' | 'editor';
+  isDefault: boolean;
+}
+
+const TEXT_EDITOR_ID = '@tagspaces/extensions/text-editor';
+
+export function findCandidateExtensionsForFile(
+  filePath: string,
+  supportedFileTypes: Array<TS.FileTypes>,
+  extensionsFound: Array<{
+    extensionId: string;
+    extensionName: string;
+    extensionTypes: string[];
+    extensionEnabled: boolean;
+  }>,
+  dirSeparator: string = AppConfig.dirSeparator,
+): CandidateExtension[] {
+  const fileExtension = extractFileExtension(
+    filePath,
+    dirSeparator,
+  ).toLowerCase();
+  const fileType = supportedFileTypes.find(
+    (ft) => ft.type && ft.type.toLowerCase() === fileExtension,
+  );
+  const defaultViewerId = fileType?.viewer;
+  const defaultEditorId = fileType?.editor;
+
+  const candidates: CandidateExtension[] = [];
+  const seenIds = new Set<string>();
+
+  const add = (
+    extensionId: string | undefined,
+    role: 'viewer' | 'editor',
+    isDefault: boolean,
+  ) => {
+    if (!extensionId) return;
+    if (seenIds.has(extensionId)) return;
+    const ext = extensionsFound.find((e) => e.extensionId === extensionId);
+    if (!ext || !ext.extensionEnabled) return;
+    if (!ext.extensionTypes?.includes(role)) return;
+    seenIds.add(extensionId);
+    candidates.push({
+      extensionId,
+      extensionName: ext.extensionName,
+      role,
+      isDefault,
+    });
+  };
+
+  add(defaultViewerId, 'viewer', true);
+  add(defaultEditorId, 'editor', true);
+  add(TEXT_EDITOR_ID, 'viewer', defaultViewerId === TEXT_EDITOR_ID);
+  add(TEXT_EDITOR_ID, 'editor', defaultEditorId === TEXT_EDITOR_ID);
+
+  return candidates;
 }
 
 export function findExtensionPathForId(

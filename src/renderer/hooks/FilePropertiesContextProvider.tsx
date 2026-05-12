@@ -109,10 +109,13 @@ export const FilePropertiesContextProvider = ({
             setSaveDescriptionConfirmOpened(true);
           } else {
             lastOpenedFile.current = { ...openedEntry };
-            setIsEditMode(false);
+            setIsEditMode(Boolean(openedEntry.openInEditMode));
           }
         } else {
           lastOpenedFile.current = { ...openedEntry };
+          if (openedEntry.openInEditMode && !isEditMode) {
+            setIsEditMode(true);
+          }
         }
 
         forceUpdate();
