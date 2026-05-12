@@ -61,6 +61,11 @@
   "ptsFolderVizFolderTree": "Mappetræ – vis mappestrukturen bag dine søgeresultater.",
   "ptsFolderVizCircularFolderTree": "Cirkulært mappetræ – spot hurtigt mapper med et højt antal filer.",
   "ptsFolderVizTreeMap": "Trækort – identificer nemt store filer der fylder.",
+  "ptsCalendarTitle": "Kalender-perspektiv i TagSpaces Pro",
+  "ptsCalendarSection1": "Organiser filer efter dato – ved hjælp af oprettelsesdato, sidste ændringsdato, mappenavne eller datomærker.",
+  "ptsCalendarSection2": "Find hurtigt det vigtige – gennemse dine filer dag for dag, måned for måned eller år for år.",
+  "ptsCalendarSection3": "Perfekt til noter, projekter og logfiler – hvor tid betyder noget.",
+  "ptsCalendarSection4": "Virker med det samme med dine eksisterende mapper – ingen opsætning nødvendig.",
   "ptsMapiqueTitle": "Mapique-perspektiv i TagSpaces Pro",
   "ptsMapiqueSection1": "Mapique-perspektivet viser geo-mærkede filer og mapper direkte på et interaktivt kort. Det kan automatisk udtrække lokationsdata fra JPEG-metadata, så du kan placere filer geografisk korrekt.",
   "ptsMapiqueSection2": "Tilføj dine egne geo-mærker til filer og mapper til kraftfulde brug som rejseplanlægning, visualisering af fotosamlinger eller private lokationsbaserede noter.",
@@ -140,5 +145,11 @@
   "proTeaserRevisionsHeadline": "Filhistorik altid ved hånden",
   "proTeaserRevisionsSubtext": "Autolagring og filrevisioner",
   "proTeaserFolderColorHeadline": "Farvekod dine mapper",
-  "proTeaserFolderColorSubtext": "Brugerdefinerede farver og baggrunde"
+  "proTeaserFolderColorSubtext": "Brugerdefinerede farver og baggrunde",
+  "trelloImportStep1": "Gå til en Trello-tavle.",
+  "trelloImportStep2": "Åbn tavlens menu ved at klikke på knappen med 3 prikker i øverste højre hjørne af appen.",
+  "trelloImportStep3": "Vælg 'More'.",
+  "trelloImportStep4": "Klik på 'Print and export'.",
+  "trelloImportStep5": "Vælg 'Export as JSON'.",
+  "trelloImportStep6": "Start importen ved at vælge den eksporterede fil med næste-knappen."
 }

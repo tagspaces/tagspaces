@@ -61,6 +61,11 @@
   "ptsFolderVizFolderTree": "Arbre de carpetes – Visualitza l'estructura de carpetes darrere dels vostres resultats de cerca.",
   "ptsFolderVizCircularFolderTree": "Arbre de carpetes circular – Identifiqueu ràpidament les carpetes amb un gran nombre de fitxers.",
   "ptsFolderVizTreeMap": "Mapa d'arbre – Identifiqueu fàcilment els fitxers grans que ocupen espai.",
+  "ptsCalendarTitle": "Perspectiva Calendari a TagSpaces Pro",
+  "ptsCalendarSection1": "Organitzeu els fitxers per data – usant la data de creació, l'última data de modificació, els noms de les carpetes o les etiquetes de data.",
+  "ptsCalendarSection2": "Trobeu ràpidament el que és important – navegueu pels fitxers dia a dia, mes a mes o any a any.",
+  "ptsCalendarSection3": "Perfecta per a notes, projectes i registres – on el temps importa.",
+  "ptsCalendarSection4": "Funciona immediatament amb les vostres carpetes existents – sense necessitat de configuració.",
   "ptsMapiqueTitle": "Perspectiva Mapique a TagSpaces Pro",
   "ptsMapiqueSection1": "La Perspectiva Mapique mostra els fitxers i carpetes geoetiquetats directament en un mapa interactiu. Pot extreure automàticament les dades de localització dels metadades JPEG, permetent-vos col·locar els fitxers on pertanyen geogràficament.",
   "ptsMapiqueSection2": "Afegiu les vostres pròpies etiquetes geogràfiques als fitxers i carpetes per a casos d'ús potents com la planificació de viatges, la visualització de col·leccions de fotos o el manteniment de notes privades basades en localització.",
@@ -140,5 +145,11 @@
   "proTeaserRevisionsHeadline": "Historial de fitxers sempre a mà",
   "proTeaserRevisionsSubtext": "Desament automàtic i revisions de fitxers",
   "proTeaserFolderColorHeadline": "Codifiqueu les carpetes per color",
-  "proTeaserFolderColorSubtext": "Colors i fons personalitzats"
+  "proTeaserFolderColorSubtext": "Colors i fons personalitzats",
+  "trelloImportStep1": "Aneu a un tauler de Trello.",
+  "trelloImportStep2": "Obriu el menú del tauler fent clic al botó dels 3 punts a la part superior dreta de l'aplicació.",
+  "trelloImportStep3": "Seleccioneu 'More'.",
+  "trelloImportStep4": "Feu clic a 'Print and export'.",
+  "trelloImportStep5": "Trieu 'Export as JSON'.",
+  "trelloImportStep6": "Inicieu la importació seleccionant el fitxer exportat amb l'ajuda del botó següent."
 }

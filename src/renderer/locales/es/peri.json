@@ -61,6 +61,11 @@
   "ptsFolderVizFolderTree": "Árbol de carpetas – Visualiza la estructura de carpetas detrás de tus resultados de búsqueda.",
   "ptsFolderVizCircularFolderTree": "Árbol circular de carpetas – Identifica rápidamente carpetas con un gran número de archivos.",
   "ptsFolderVizTreeMap": "Mapa de árbol – Identifica fácilmente archivos grandes que ocupan espacio.",
+  "ptsCalendarTitle": "Perspectiva Calendario en TagSpaces Pro",
+  "ptsCalendarSection1": "Organiza archivos por fecha – usando fecha de creación, fecha de última modificación, nombres de carpetas o etiquetas de fecha.",
+  "ptsCalendarSection2": "Encuentra rápidamente lo que importa – explora tus archivos día a día, mes a mes o año a año.",
+  "ptsCalendarSection3": "Perfecta para notas, proyectos y registros – donde el tiempo importa.",
+  "ptsCalendarSection4": "Funciona al instante con tus carpetas existentes – sin necesidad de configuración.",
   "ptsMapiqueTitle": "Perspectiva Mapique en TagSpaces Pro",
   "ptsMapiqueSection1": "La perspectiva Mapique muestra archivos y carpetas geoetiquetados directamente en un mapa interactivo. Puede extraer automáticamente datos de ubicación de los metadatos JPEG, permitiéndote situar archivos donde corresponden geográficamente.",
   "ptsMapiqueSection2": "Añade tus propias geoetiquetas a archivos y carpetas para casos de uso potentes como planificación de viajes, visualización de colecciones de fotos o mantenimiento de notas privadas basadas en ubicación.",
@@ -140,5 +145,11 @@
   "proTeaserRevisionsHeadline": "Historial de archivos al alcance de la mano",
   "proTeaserRevisionsSubtext": "Autoguardado y revisiones de archivos",
   "proTeaserFolderColorHeadline": "Codificar carpetas por color",
-  "proTeaserFolderColorSubtext": "Colores y fondos personalizados"
+  "proTeaserFolderColorSubtext": "Colores y fondos personalizados",
+  "trelloImportStep1": "Ve a un tablero de Trello.",
+  "trelloImportStep2": "Abre el menú del tablero haciendo clic en el botón de 3 puntos en la parte superior derecha de la aplicación.",
+  "trelloImportStep3": "Selecciona 'Más'.",
+  "trelloImportStep4": "Haz clic en 'Imprimir y exportar'.",
+  "trelloImportStep5": "Elige 'Exportar como JSON'.",
+  "trelloImportStep6": "Inicia la importación seleccionando el archivo exportado con la ayuda del botón siguiente."
 }

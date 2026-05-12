@@ -61,6 +61,11 @@
   "ptsFolderVizFolderTree": "Strom složek – zobrazuje strukturu složek za vašimi výsledky vyhledávání.",
   "ptsFolderVizCircularFolderTree": "Kruhový strom složek – rychle identifikujte složky s vysokým počtem souborů.",
   "ptsFolderVizTreeMap": "Treemap – snadno identifikujte velké soubory, které zabírají místo.",
+  "ptsCalendarTitle": "Kalendář perspektiva v TagSpaces Pro",
+  "ptsCalendarSection1": "Organizujte soubory podle data – pomocí data vytvoření, data poslední změny, názvů složek nebo datových štítků.",
+  "ptsCalendarSection2": "Rychle najděte, co je důležité – procházejte své soubory den po dni, měsíc po měsíci nebo rok po roce.",
+  "ptsCalendarSection3": "Ideální pro poznámky, projekty a deníky – tam, kde záleží na čase.",
+  "ptsCalendarSection4": "Funguje okamžitě s vašimi stávajícími složkami – bez nutnosti nastavení.",
   "ptsMapiqueTitle": "Mapique perspektiva v TagSpaces Pro",
   "ptsMapiqueSection1": "Perspektiva Mapique zobrazuje geo-tagované soubory a složky přímo na interaktivní mapě. Může automaticky extrahovat data o poloze z metadat JPEG a umožňuje vám umístit soubory tam, kam geograficky patří.",
   "ptsMapiqueSection2": "Přidejte vlastní geo-tagy k souborům a složkám pro výkonné případy použití, jako je plánování výletů, vizualizace fotografických kolekcí nebo vedení soukromých poznámek na základě polohy.",
@@ -140,5 +145,11 @@
   "proTeaserRevisionsHeadline": "Historie souborů na dosah ruky",
   "proTeaserRevisionsSubtext": "Automatické ukládání a revize souborů",
   "proTeaserFolderColorHeadline": "Barevně odlište své složky",
-  "proTeaserFolderColorSubtext": "Vlastní barvy a pozadí"
+  "proTeaserFolderColorSubtext": "Vlastní barvy a pozadí",
+  "trelloImportStep1": "Přejděte na nástěnku Trello.",
+  "trelloImportStep2": "Otevřete nabídku nástěnky kliknutím na tlačítko se třemi tečkami v pravém horním rohu aplikace.",
+  "trelloImportStep3": "Vyberte 'More'.",
+  "trelloImportStep4": "Klikněte na 'Print and export'.",
+  "trelloImportStep5": "Zvolte 'Export as JSON'.",
+  "trelloImportStep6": "Zahajte import výběrem exportovaného souboru pomocí dalšího tlačítka."
 }

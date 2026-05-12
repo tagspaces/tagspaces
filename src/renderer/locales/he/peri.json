@@ -61,6 +61,11 @@
   "ptsFolderVizFolderTree": "עץ תיקיות - צפה במבנה התיקיות מאחורי תוצאות החיפוש שלך.",
   "ptsFolderVizCircularFolderTree": "עץ תיקיות מעגלי - זהה במהירות תיקיות עם מספר גבוה של קבצים.",
   "ptsFolderVizTreeMap": "מפת עצים - זהה בקלות קבצים גדולים התופסים מקום.",
+  "ptsCalendarTitle": "תצוגת לוח שנה ב-TagSpaces Pro",
+  "ptsCalendarSection1": "ארגן קבצים לפי תאריך – באמצעות תאריך יצירה, תאריך שינוי אחרון, שמות תיקיות או תגיות תאריך.",
+  "ptsCalendarSection2": "מצא במהירות את מה שחשוב – עיין בקבצים שלך יום אחר יום, חודש אחר חודש או שנה אחר שנה.",
+  "ptsCalendarSection3": "מושלם להערות, פרויקטים ויומנים – כשהזמן חשוב.",
+  "ptsCalendarSection4": "פועל מיידית עם התיקיות הקיימות שלך – ללא צורך בהגדרות.",
   "ptsMapiqueTitle": "תצוגת Mapique ב-TagSpaces Pro",
   "ptsMapiqueSection1": "תצוגת Mapique מציגה קבצים ותיקיות עם גיאו-תגיות ישירות על מפה אינטראקטיבית. היא יכולה לחלץ אוטומטית נתוני מיקום ממטא-נתונים של JPEG, ומאפשרת למקם קבצים במיקומם הגיאוגרפי.",
   "ptsMapiqueSection2": "הוסף גיאו-תגיות משלך לקבצים ולתיקיות לתרחישי שימוש עוצמתיים כגון תכנון טיולים, הדמיית אוספי תמונות, או שמירת הערות מבוססות מיקום פרטיות.",
@@ -140,5 +145,11 @@
   "proTeaserRevisionsHeadline": "היסטוריית קבצים תמיד בהישג יד",
   "proTeaserRevisionsSubtext": "שמירה אוטומטית וגרסאות קבצים",
   "proTeaserFolderColorHeadline": "קוד את התיקיות בצבעים",
-  "proTeaserFolderColorSubtext": "צבעים ורקעים מותאמים אישית"
+  "proTeaserFolderColorSubtext": "צבעים ורקעים מותאמים אישית",
+  "trelloImportStep1": "עבור ללוח Trello.",
+  "trelloImportStep2": "פתח את תפריט הלוח על ידי לחיצה על כפתור 3 הנקודות בפינה הימנית העליונה של היישום.",
+  "trelloImportStep3": "בחר 'עוד'.",
+  "trelloImportStep4": "לחץ על 'הדפס וייצא'.",
+  "trelloImportStep5": "בחר 'ייצוא כ-JSON'.",
+  "trelloImportStep6": "התחל את הייבוא על ידי בחירת הקובץ המיוצא בעזרת הכפתור הבא."
 }

@@ -61,6 +61,11 @@
   "ptsFolderVizFolderTree": "Folder Tree – zeigt z.B. die Ordnerstruktur der Suchergebnisse",
   "ptsFolderVizCircularFolderTree": "Circular Folder Tree – Ordner mit vielen Dateien schnell erkennen",
   "ptsFolderVizTreeMap": "Treemap – Große Dateien, die Speicherplatz beanspruchen, leicht erkennen",
+  "ptsCalendarTitle": "Kalender-Perspektive in TagSpaces Pro",
+  "ptsCalendarSection1": "Dateien nach Datum organisieren – anhand von Erstellungsdatum, letztem Änderungsdatum, Ordnernamen oder Datums-Tags.",
+  "ptsCalendarSection2": "Schnell finden, was wichtig ist – durchsuchen Sie Ihre Dateien Tag für Tag, Monat für Monat oder Jahr für Jahr.",
+  "ptsCalendarSection3": "Ideal für Notizen, Projekte und Protokolle – wenn die Zeit eine Rolle spielt.",
+  "ptsCalendarSection4": "Funktioniert sofort mit Ihren bestehenden Ordnern – ohne Einrichtung.",
   "ptsMapiqueTitle": "Mapique-Perspektive in TagSpaces Pro",
   "ptsMapiqueSection1": "Die Mapique-Perspektive zeigt geo-getaggte Dateien und Ordner direkt auf einer interaktiven Karte an. Sie kann Standortdaten automatisch aus den Metadaten von JPEG-Dateien extrahieren, sodass Sie Dateien geografisch passend platzieren können.",
   "ptsMapiqueSection2": "Fügen Sie eigene Geo-Tags zu Dateien und Ordnern hinzu – für Anwendungsfälle wie Reiseplanung, die Visualisierung von Fotosammlungen oder das Erstellen privater, ortsbezogener Notizen.",
@@ -140,5 +145,11 @@
   "proTeaserRevisionsHeadline": "Dateiverlauf immer griffbereit",
   "proTeaserRevisionsSubtext": "Auto-Speichern & Dateirevisionen",
   "proTeaserFolderColorHeadline": "Ordner farblich kennzeichnen",
-  "proTeaserFolderColorSubtext": "Benutzerdefinierte Farben & Hintergründe"
+  "proTeaserFolderColorSubtext": "Benutzerdefinierte Farben & Hintergründe",
+  "trelloImportStep1": "Öffnen Sie ein Trello-Board.",
+  "trelloImportStep2": "Öffnen Sie das Menü des Boards, indem Sie auf die 3-Punkte-Schaltfläche oben rechts in der App klicken.",
+  "trelloImportStep3": "Wählen Sie ‚Mehr‘ aus.",
+  "trelloImportStep4": "Klicken Sie auf ‚Drucken und exportieren‘.",
+  "trelloImportStep5": "Wählen Sie ‚Als JSON exportieren‘.",
+  "trelloImportStep6": "Starten Sie den Import, indem Sie die exportierte Datei mit Hilfe der Weiter-Schaltfläche auswählen."
 }

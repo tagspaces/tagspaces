@@ -61,6 +61,11 @@
   "ptsFolderVizFolderTree": "Mappastruktúra – A keresési eredmények mögötti mappaszerkezet megtekintése.",
   "ptsFolderVizCircularFolderTree": "Körös mappastruktúra – Gyorsan észreveheted a sok fájlt tartalmazó mappákat.",
   "ptsFolderVizTreeMap": "Fastruktúra térkép – Egyszerűen azonosíthatod a helyet foglaló nagy fájlokat.",
+  "ptsCalendarTitle": "Naptár perspektíva a TagSpaces Pro-ban",
+  "ptsCalendarSection1": "Rendszerezd a fájlokat dátum szerint – létrehozás dátuma, utolsó módosítás dátuma, mappanevek vagy dátumcimkék alapján.",
+  "ptsCalendarSection2": "Gyorsan találd meg, ami fontos – böngészd a fájljaidat napról napra, hónapról hónapra vagy évről évre.",
+  "ptsCalendarSection3": "Tökéletes jegyzetekhez, projektekhez és naplókhoz – ahol az idő számít.",
+  "ptsCalendarSection4": "Azonnal működik a meglévő mappáiddal – nincs szükség beállításra.",
   "ptsMapiqueTitle": "Mapique perspektíva a TagSpaces Pro-ban",
   "ptsMapiqueSection1": "A Mapique perspektíva geo-cimkézett fájlokat és mappákat jelenít meg közvetlenül egy interaktív térképen. Automatikusan kinyerheti a helyadatokat a JPEG metaadatokból, lehetővé téve a fájlok elhelyezését a megfelelő földrajzi helyen.",
   "ptsMapiqueSection2": "Adj hozzá saját geo-cimkéket fájlokhoz és mappákhoz hatékony felhasználási esetekhez, például útitervek készítéséhez, fotógyűjtemények vizualizálásához vagy privát helyszínalapú jegyzetek megőrzéséhez.",
@@ -140,5 +145,11 @@
   "proTeaserRevisionsHeadline": "Fájlelőzmények mindig kéznél",
   "proTeaserRevisionsSubtext": "Automatikus mentés és fájlverziók",
   "proTeaserFolderColorHeadline": "Mappák színkódolása",
-  "proTeaserFolderColorSubtext": "Egyéni színek és háttérképek"
+  "proTeaserFolderColorSubtext": "Egyéni színek és háttérképek",
+  "trelloImportStep1": "Lépj be egy Trello táblára.",
+  "trelloImportStep2": "Nyisd meg a tábla menüjét az alkalmazás jobb felső sarkában lévő 3 pontos gombra kattintva.",
+  "trelloImportStep3": "Válaszd a 'Több' lehetőséget.",
+  "trelloImportStep4": "Kattints a 'Nyomtatás és exportálás' opcióra.",
+  "trelloImportStep5": "Válaszd az 'Exportálás JSON-ként' lehetőséget.",
+  "trelloImportStep6": "Indítsd el az importálást az exportált fájl kiválasztásával a következő gomb segítségével."
 }
