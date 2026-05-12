@@ -90,7 +90,7 @@ function AboutDialog(props: Props) {
     }
   }
 
-  let versionInfo = 'Check for updates';
+  let versionInfo = t('core:checkForUpdates');
   if (newVersion && newVersion.length > 1) {
     if (updateAvailable) {
       versionInfo = t('getNewVersion', { newVersion });
@@ -152,17 +152,15 @@ function AboutDialog(props: Props) {
         />
         <TsTooltip
           placement="top"
-          title={
-            'Build on: ' +
-            versionMeta.buildTime +
-            '\nPlatform: ' +
-            navigator.userAgent
-          }
+          title={t('core:buildOnPlatformTooltip', {
+            buildTime: versionMeta.buildTime,
+            userAgent: navigator.userAgent,
+          })}
         >
           <Typography component="span" variant="subtitle1">
-            Version:&nbsp;
+            {t('core:versionLabel')}&nbsp;
             {tsType}&nbsp;{versionMeta.version}
-            &nbsp;Build ID:&nbsp;
+            &nbsp;{t('core:buildIdLabel')}&nbsp;
             {buildID}
           </Typography>
         </TsTooltip>
@@ -173,14 +171,13 @@ function AboutDialog(props: Props) {
             {productName}
             &nbsp;
           </strong>
-          is made possible by the TagSpaces project and other open source
-          software listed in the:
+          {t('core:madePossibleByTagSpaces')}
           <br />
           <TsButton
             sx={{ marginTop: '5px' }}
             onClick={() => openThirdPartyLibsDialog()}
           >
-            Software Acknowledgements
+            {t('core:softwareAcknowledgements')}
           </TsButton>
           <br />
           {!Pro && (
@@ -205,7 +202,7 @@ function AboutDialog(props: Props) {
                 openURLExternally(imprintURL, true);
               }}
             >
-              Imprint
+              {t('core:imprint')}
             </TsButton>
           )}
           {privacyURL && (
@@ -216,7 +213,7 @@ function AboutDialog(props: Props) {
                 openURLExternally(privacyURL, true);
               }}
             >
-              Privacy Policy
+              {t('core:privacyPolicy')}
             </TsButton>
           )}
           <TsButton
@@ -226,7 +223,7 @@ function AboutDialog(props: Props) {
               openURLExternally(Links.links.changelogURL, true);
             }}
           >
-            Changelog
+            {t('core:changelog')}
           </TsButton>
           <TsButton
             sx={{ marginRight: AppConfig.defaultSpaceBetweenButtons }}

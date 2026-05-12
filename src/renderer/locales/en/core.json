@@ -1030,5 +1030,17 @@
   "itemsInColumn": "{{count}} items in this column",
   "loadingKanbanBoard": "Loading kanban board…",
   "extractingContent": "Extracting content...",
+  "checkForUpdates": "Check for updates",
+  "buildOnPlatformTooltip": "Build on: {{buildTime}}\nPlatform: {{userAgent}}",
+  "versionLabel": "Version:",
+  "buildIdLabel": "Build ID:",
+  "madePossibleByTagSpaces": "is made possible by the TagSpaces project and other open source software listed in the:",
+  "softwareAcknowledgements": "Software Acknowledgements",
+  "imprint": "Imprint",
+  "privacyPolicy": "Privacy Policy",
+  "changelog": "Changelog",
+  "coreExtensionsTooltip": "These are extensions which are packaged with the current version of the app",
+  "globalShortcutsTooltip": "Enables global shortcut for creating new files, file navigation, play/pause audio files or opening the search. Global shortcuts are working even if the app window is not currently in focus or visible.",
+  "devModeTooltip": "Will enable some experimental features and turn on extra debugging",
   "-": "-"
 }

@@ -144,7 +144,7 @@ function SettingsExtensions() {
           <Typography sx={{ fontWeight: 'bold' }}>
             {t('core:coreExtensions')}
           </Typography>
-          <InfoIcon tooltip="These are extensions which are packaged with the current version of the app" />
+          <InfoIcon tooltip={t('core:coreExtensionsTooltip')} />
         </AccordionSummary>
         <AccordionDetails>
           <List>

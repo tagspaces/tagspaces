@@ -398,11 +398,7 @@ function SettingsAdvanced(props: Props) {
           primary={
             <>
               {t('enableDevMode')}
-              <InfoIcon
-                tooltip={
-                  'Will enable some experimental features and turn on extra debugging'
-                }
-              />
+              <InfoIcon tooltip={t('core:devModeTooltip')} />
             </>
           }
         />

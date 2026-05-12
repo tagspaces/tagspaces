@@ -74,7 +74,7 @@ function SettingsKeyBindings() {
             primary={
               <>
                 {t('core:enableGlobalKeyboardShortcuts')}
-                <InfoIcon tooltip="Enables global shortcut for creating new files, file navigation, play/pause audio files or opening the search. Global shortcuts are working even if the app window is not currently in focus or visible." />
+                <InfoIcon tooltip={t('core:globalShortcutsTooltip')} />
               </>
             }
           />

@@ -201,7 +201,7 @@ function SettingsAI(props: Props) {
       </TsButton>
       <TsButton
         variant="text"
-        tooltip="Resets to the default prompt"
+        tooltip={t('peri:resetsToDefaultPrompt')}
         data-tid={'reset' + key + 'TID'}
         onClick={() => resetTemplate(key)}
       >
@@ -236,9 +236,7 @@ function SettingsAI(props: Props) {
             <Typography>{t('core:aiSettings')}</Typography>
             <br />
             <Typography variant="caption">
-              TagSpaces does not have its own AI engine or models, but relies
-              entirely on external software like Ollama. If you don't have
-              Ollama, you can download it for free from
+              {t('peri:ollamaIntroPrefix')}{' '}
               <TsButton
                 sx={{
                   fontSize: '13px',
@@ -254,8 +252,7 @@ function SettingsAI(props: Props) {
               >
                 ollama.com
               </TsButton>{' '}
-              and follow the installation instructions to get it set up on your
-              computer.
+              {t('peri:ollamaIntroSuffix')}
             </Typography>
           </Box>
         </AccordionSummary>
@@ -357,8 +354,7 @@ function SettingsAI(props: Props) {
         <Accordion defaultExpanded>
           <AccordionSummary>
             <Typography variant="caption">
-              All AI-functionality is currently disabled. Please add and
-              configure an AI-engine in order to use external AIs in TagSpaces.
+              {t('peri:aiFunctionalityDisabled')}
             </Typography>
           </AccordionSummary>
         </Accordion>
@@ -404,7 +400,7 @@ function SettingsAI(props: Props) {
               onClick={(e) => {
                 e.stopPropagation();
                 const result = confirm(
-                  'Do you want to remove "' + provider.name + '" AI config?',
+                  t('peri:confirmRemoveAiConfig', { name: provider.name }),
                 );
                 if (result) {
                   dispatch(SettingsActions.removeAiProvider(provider.id));
