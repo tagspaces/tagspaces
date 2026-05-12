@@ -739,7 +739,10 @@ export const OpenedEntryContextProvider = ({
           .then((fsEntry: TS.FileSystemEntry) => {
             if (fsEntry) {
               if (fsEntry.isFile) {
-                openFsEntry(fsEntry);
+                openFsEntry(
+                  fsEntry,
+                  options.fullWidth ? TabNames.closedTabs : undefined,
+                );
                 setSelectedEntries([fsEntry]);
                 setEntryInFullWidth(options.fullWidth);
               } else {
