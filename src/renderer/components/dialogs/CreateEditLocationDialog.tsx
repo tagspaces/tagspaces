@@ -743,22 +743,10 @@ function CreateEditLocationDialog(props: Props) {
                     name="fullTextIndex"
                     checked={fullTextIndex}
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                      setFullTextIndex(event.target.checked);
-                      if (event.target.checked) {
-                        if (selectedLocation) {
-                          openConfirmDialog(
-                            t('core:confirm'),
-                            t('core:fullTextIndexRegenerate'),
-                            (result) => {
-                              if (result) {
-                                createLocationIndex(selectedLocation);
-                              }
-                            },
-                            'cancelReIndexDialogTID',
-                            'confirmReIndexDialogTID',
-                            'confirmDialogContentTID',
-                          );
-                        }
+                      const checked = event.target.checked;
+                      setFullTextIndex(checked);
+                      if (checked && !devMode) {
+                        setExtractLinks(true);
                       }
                     }}
                   />
@@ -791,7 +779,7 @@ function CreateEditLocationDialog(props: Props) {
                   </>
                 }
               />
-              {fullTextIndex && (
+              {devMode && fullTextIndex && (
                 <FormControlLabel
                   labelPlacement="start"
                   sx={{ justifyContent: 'space-between', marginLeft: 0 }}
