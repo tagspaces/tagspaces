@@ -2,12 +2,12 @@
 // https://www.electronjs.org/docs/latest/api/protocol
 // https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app
 
-import { protocol, net } from 'electron';
-import * as fs from 'fs-extra';
+import { mediaProtocol } from '@tagspaces/tagspaces-common/AppConfig';
+import { net, protocol } from 'electron';
 import { createReadStream } from 'fs';
+import * as fs from 'fs-extra';
 import { extname, normalize } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { mediaProtocol } from '@tagspaces/tagspaces-common/AppConfig';
 
 const register = () => {
   //Logger.status(`Registering file protocol: ${mediaProtocol}`);
@@ -64,14 +64,14 @@ const initialize = () => {
       return new Response('', { status: 404 });
     }
 
-    console.log(
-      'protocol handler: Fetch file param ' +
-        filepath +
-        ' as local path: ' +
-        pathname +
-        ' as: ' +
-        asFileUrl,
-    );
+    // console.log(
+    //   'protocol handler: Fetch file param ' +
+    //     filepath +
+    //     ' as local path: ' +
+    //     pathname +
+    //     ' as: ' +
+    //     asFileUrl,
+    // );
 
     const rangeHeader = request.headers.get('Range');
     if (!rangeHeader) {
@@ -153,7 +153,7 @@ const handleRangeRequest = async (request: Request, targetPath: string) => {
   if (!rangeHeader.startsWith('bytes=')) {
     return makeUnsupportedRangeResponse();
   }
-  console.log('handleRangeRequest:' + targetPath);
+  // console.log('handleRangeRequest:' + targetPath);
 
   const stat = await fs.stat(targetPath);
   // Ranges are requested using one of the following formats
