@@ -42,24 +42,37 @@ function TsToggleButton(props: TSToggleButtonProps) {
     <ToggleButton
       size={desktopMode ? 'small' : 'medium'}
       variant="outlined" // text outlined contained
+      selected={selected}
       {...rest}
       sx={{
-        ...sx,
         borderRadius: AppConfig.defaultCSSRadius,
         textTransform: 'none', //'capitalize',
         fontSize: '14px',
-        // fontWeight: selected ? 'bold' : 'normal',
         fontWeight: 'normal',
+        // Inside a ToggleButtonGroup, non-first buttons have margin-left:-1px and
+        // a 1px transparent left border. With the default `border-box` background
+        // clip, the selected/hover background would paint under that transparent
+        // border and cover the previous button's right border (the visible
+        // separator). Clipping to the padding box keeps the separator visible.
+        backgroundClip: 'padding-box',
+        borderColor: theme.palette.divider,
         '&:hover': {
-          backgroundColor: alpha(theme.palette.background.default, 0.8),
+          backgroundColor: theme.palette.action.hover,
+          borderColor: theme.palette.divider,
         },
         '&.Mui-selected': {
           color: theme.palette.primary.main,
           backgroundColor: alpha(theme.palette.background.default, 0.9),
+          borderColor: theme.palette.divider,
         },
         '&.Mui-selected:hover': {
-          backgroundColor: alpha(theme.palette.background.default, 0.8),
+          backgroundColor: theme.palette.action.hover,
+          borderColor: theme.palette.divider,
         },
+        // Caller sx wins so a parent ToggleButtonGroup can flatten inner radii
+        // and the separator between buttons stays crisp instead of fading
+        // behind a curved corner.
+        ...sx,
       }}
     >
       {children}

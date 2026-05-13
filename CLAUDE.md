@@ -160,6 +160,26 @@ The app runs on multiple platforms and storage backends. When working with file/
 
 When comparing paths (e.g., `startsWith`, equality checks), normalize **both** sides with the same functions. A common bug pattern: applying `cleanFrontDirSeparator` (strips leading `/`) to one path but not the other, breaking the comparison on Mac/Linux where absolute paths start with `/`. Path utilities live in `@tagspaces/tagspaces-common/paths.js`.
 
+## IO actions: cross-location limitations
+
+`useIOActionsContext`'s `moveFiles` / `copyFiles` / `moveDirs` / `copyDirs` in `src/renderer/hooks/IOActionsContextProvider.tsx` operate on a **single location** — they accept a `targetLocationID` but resolve both source and target through the same location's `moveFilesPromise` / `copyFilesPromise`. They don't move files between distinct locations.
+
+- **Cross-location transfers** go through `uploadFilesAPI` instead (download from source → upload to target, with `sourceLocationId` + `targetLocationId` args). This is the path `TargetFileBox` uses when files are dropped from the OS onto a cloud location.
+- The Move/Copy dialog (`MoveCopyFilesDialog`) v1 disables cloud destinations whenever they differ from the source location (`computeMoveCopyValidity` returns `reason: 'cloud-cross-location'`), to avoid an apologetic CTA that can't actually fire. Local→local across two configured local locations does work.
+- Future work to lift this limit: extend the four IO helpers with a download-then-upload pipeline, unified progress reporting, atomicity guarantees, and sidecar/thumb transfer. Tracked as a followup; **WebDAV is deprecated** and should not be special-cased.
+
+## Recent destinations LRU
+
+`useRecentDestinationsContext` (`src/renderer/hooks/RecentDestinationsContextProvider.tsx`) is the reusable LRU store for "places the user moved/copied to recently". Pattern:
+
+- Array in `localStorage` under `tsRecentMoveCopyDestinations`, dedup by `(locationId, path)`, unshift-then-truncate
+- Cap in the settings reducer (`tsRecentMoveCopyDestinations: 6` default; selector `getMaxRecentMoveCopyDestinations`)
+- Cross-tab sync via `BroadcastChannel('recent-destinations-sync')` with `instanceId` guard — same shape as `HistoryContextProvider`
+- Items: `{ path, locationId, label, ts }`. Pushers are responsible for validating `(locationId, path)` still exists on click; on failure call `removeRecent` + show a snackbar
+- Mounted in `src/renderer/containers/Root.tsx` next to `HistoryContextProvider`
+
+Reuse it in any new dialog that needs "recent X". The same persistence + cap + broadcast pattern can be cloned for a separate LRU under a different storage key — mirror `HistoryContextProvider` if you do.
+
 ## Read-only Locations
 
 `CommonLocation.isReadOnly` gates all writes: index/fulltext files, sidecar meta, thumbnails, tag-in-filename renames, `.ts/tsm.json`. Write primitives (`saveTextFilePromise`, `saveBinaryFilePromise`, `renameFilePromise`) reject with `Error('read only Location')`, but callers often swallow that into a sentinel (`false` / `undefined` / `[]`).

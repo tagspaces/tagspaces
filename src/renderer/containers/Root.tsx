@@ -33,6 +33,7 @@ import { ExtensionsContextProvider } from '-/hooks/ExtensionsContextProvider';
 import { FSWatcherContextProvider } from '-/hooks/FSWatcherContextProvider';
 import { FileUploadContextProvider } from '-/hooks/FileUploadContextProvider';
 import { HistoryContextProvider } from '-/hooks/HistoryContextProvider';
+import { RecentDestinationsContextProvider } from '-/hooks/RecentDestinationsContextProvider';
 import { IOActionsContextProvider } from '-/hooks/IOActionsContextProvider';
 import { LocationIndexContextProvider } from '-/hooks/LocationIndexContextProvider';
 import { NotificationContextProvider } from '-/hooks/NotificationContextProvider';
@@ -138,6 +139,7 @@ const SHARED_PROVIDERS = [
   FileUploadContextProvider,
   FileUploadDialogContextProvider,
   HistoryContextProvider,
+  RecentDestinationsContextProvider,
 ] as React.ComponentType<any>[];
 
 export default function Root({ store, persistor }: RootType) {

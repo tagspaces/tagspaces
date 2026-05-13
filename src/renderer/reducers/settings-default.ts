@@ -123,6 +123,8 @@ export default {
   tsLastOpenedFoldersHistory: 10,
   tsLastEditedFilesHistory: 10,
   tsSearchHistory: 10,
+  tsRecentMoveCopyDestinations: 5,
+  lastMoveCopyMode: 'move' as 'move' | 'copy',
   storedSearchesVisible: true,
   showBookmarks: true,
   fileOpenHistory: false,

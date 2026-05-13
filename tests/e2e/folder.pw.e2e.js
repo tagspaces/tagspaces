@@ -218,6 +218,7 @@ test.describe('TST01 - Folder management', () => {
     await setInputValue('[data-tid=directoryName] input', folderToCopy);
     await clickOn('[data-tid=confirmCreateNewDirectory]');
     await clickOn('[data-tid=MoveTarget' + folderToCopy + ']');
+    await clickOn('[data-tid=mcfModeCopy]');
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
@@ -274,6 +275,7 @@ test.describe('TST01 - Folder management', () => {
       'fileMenuMoveCopyFile',
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
+    await clickOn('[data-tid=mcfModeCopy]');
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
 
@@ -283,6 +285,7 @@ test.describe('TST01 - Folder management', () => {
       'fileMenuMoveCopyFile',
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
+    await clickOn('[data-tid=mcfModeCopy]');
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
 

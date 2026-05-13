@@ -350,6 +350,7 @@ test.describe('TST50** - Right button on a file', () => {
     // Copy file in parent directory
     await openContextEntryMenu(fileSelector, 'fileMenuMoveCopyFile');
     await clickOn('[data-tid=navigateToParentTID]');
+    await clickOn('[data-tid=mcfModeCopy]');
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
 

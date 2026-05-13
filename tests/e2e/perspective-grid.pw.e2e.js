@@ -165,6 +165,7 @@ test.describe('TST50 - Perspective Grid', () => {
     // open Copy/Move File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
     await clickOn('[data-tid=MoveTargetempty_folder]');
+    await clickOn('[data-tid=mcfModeCopy]');
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
 

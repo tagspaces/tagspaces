@@ -252,6 +252,7 @@ test.describe('TST02 - Folder properties', () => {
       'fileMenuMoveCopyFile',
     );
     await clickOn('[data-tid=MoveTargetempty_folder]');
+    await clickOn('[data-tid=mcfModeCopy]');
     await clickOn('[data-tid=confirmCopyFiles]');
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
     await clickOn('[data-tid=changePerspectiveTID]', {

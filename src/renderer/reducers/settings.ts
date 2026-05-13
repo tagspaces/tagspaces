@@ -110,6 +110,7 @@ export const types = {
   SET_FILE_OPEN_HISTORY: 'SET_FILE_OPEN_HISTORY',
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
+  SET_LAST_MOVE_COPY_MODE: 'SETTINGS/SET_LAST_MOVE_COPY_MODE',
   SET_HIDE_PRO_FEATURES: 'SETTINGS/SET_HIDE_PRO_FEATURES',
   SET_AUTO_SAVE_DESCRIPTION: 'SETTINGS/SET_AUTO_SAVE_DESCRIPTION',
   SET_PERSPECTIVE_ENABLED: 'SETTINGS/SET_PERSPECTIVE_ENABLED',
@@ -542,6 +543,12 @@ export default (state: any = defaultSettings, action: any) => {
         folderOpenHistory: action.folderOpenHistory,
       };
     }
+    case types.SET_LAST_MOVE_COPY_MODE: {
+      return {
+        ...state,
+        lastMoveCopyMode: action.mode,
+      };
+    }
     case types.SET_FILE_EDIT_HISTORY: {
       return {
         ...state,
@@ -968,6 +975,10 @@ export const actions = {
     type: types.SET_FILE_EDIT_HISTORY,
     fileEditHistory,
   }),
+  setLastMoveCopyMode: (mode: 'move' | 'copy') => ({
+    type: types.SET_LAST_MOVE_COPY_MODE,
+    mode,
+  }),
   checkForUpdate: () => (dispatch: (actions: Object) => void) => {
     getLastVersionPromise()
       .then((lastVersion) => {
@@ -1022,6 +1033,13 @@ export const getMapTileServer = (state: any): TS.MapTileServer =>
 export const getMapTileServers = (state: any): Array<TS.MapTileServer> =>
   AppConfig.ExtMapTileServers || state.settings.mapTileServers;
 export const getSettings = (state: any) => state.settings;
+export const getMaxRecentMoveCopyDestinations = (state: any): number => {
+  const v = state.settings.tsRecentMoveCopyDestinations;
+  return typeof v === 'number' && v >= 0 ? v : 6;
+};
+export const getLastMoveCopyMode = (state: any): 'move' | 'copy' => {
+  return state.settings.lastMoveCopyMode === 'copy' ? 'copy' : 'move';
+};
 export const getEnableWS = (state: any) => state.settings.enableWS;
 export const getDesktopMode = (state: any) => {
   if (typeof AppConfig.ExtDisplayMode === 'undefined') {
