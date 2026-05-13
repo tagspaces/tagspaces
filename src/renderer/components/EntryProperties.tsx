@@ -496,6 +496,7 @@ function EntryProperties({ tileServer }: Props) {
       <Grid container>
         <Grid size={12}>
           <TsTextField
+            key={editName === undefined ? entryName : 'editing'}
             error={fileNameError.current}
             title={isEditMode && t('core:renameDisableTooltip')}
             label={

@@ -149,7 +149,12 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
 
   function getTabContainer(tabName: string) {
     if (tabName === TabNames.propertiesTab) {
-      return <TabProperties key={openedEntry.path} tileServer={tileServer} />;
+      return (
+        <TabProperties
+          key={openedEntry.uuid || openedEntry.path}
+          tileServer={tileServer}
+        />
+      );
     } else if (tabName === TabNames.descriptionTab) {
       return <TabDescription />;
     } else if (tabName === TabNames.revisionsTab) {
