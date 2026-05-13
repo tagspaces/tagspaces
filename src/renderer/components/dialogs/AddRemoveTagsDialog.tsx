@@ -18,27 +18,18 @@
 
 import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
+import SelectedItemsSummary from '-/components/dialogs/components/SelectedItemsSummary';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
 import { TS } from '-/tagspaces.namespace';
-import FolderIcon from '@mui/icons-material/FolderOpen';
-import FileIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import {
-  extractDirectoryName,
-  extractFileName,
-} from '@tagspaces/tagspaces-common/paths';
 import { useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TagsSelect from '../TagsSelect';
@@ -53,13 +44,11 @@ function AddRemoveTagsDialog(props: Props) {
   const { t } = useTranslation();
   const { open, selected } = props;
 
-  const { findLocation } = useCurrentLocationContext();
   const { addTagsToFsEntries, removeTags } = useTaggingActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<TS.Tag[]>([]);
   const inputTags = useRef<TS.Tag[]>([]);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-  const currentLocation = findLocation();
   const currentEntries = selected || selectedEntries;
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {
@@ -144,6 +133,8 @@ function AddRemoveTagsDialog(props: Props) {
       scroll="paper"
       PaperComponent={smallScreen ? Paper : DraggablePaper}
       aria-labelledby="draggable-dialog-title"
+      fullWidth
+      maxWidth="sm"
     >
       <TsDialogTitle
         dialogTitle={t('core:tagOperationTitle')}
@@ -168,30 +159,12 @@ function AddRemoveTagsDialog(props: Props) {
           tagMode="remove"
           autoFocus={true}
         />
-        <Typography sx={{ marginTop: '10px' }} variant="subtitle2">
-          {t('selectedFilesAndFolders')}
-        </Typography>
-        <List dense sx={{ width: '550px', marginLeft: '-15px' }}>
-          {currentEntries.length > 0 &&
-            currentEntries.map((entry) => (
-              <ListItem key={entry.path} title={entry.path}>
-                <ListItemIcon>
-                  {entry.isFile ? <FileIcon /> : <FolderIcon />}
-                </ListItemIcon>
-                <Typography variant="inherit" noWrap>
-                  {entry.isFile
-                    ? extractFileName(
-                        entry.path || '',
-                        currentLocation?.getDirSeparator(),
-                      )
-                    : extractDirectoryName(
-                        entry.path || '',
-                        currentLocation?.getDirSeparator(),
-                      )}
-                </Typography>
-              </ListItem>
-            ))}
-        </List>
+        <Box sx={{ marginTop: 1.5 }}>
+          <SelectedItemsSummary
+            entries={currentEntries}
+            defaultCollapsed={smallScreen || currentEntries.length >= 5}
+          />
+        </Box>
       </DialogContent>
       <TsDialogActions>
         <TsButton
