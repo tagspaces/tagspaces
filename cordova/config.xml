@@ -26,6 +26,27 @@
         <icon density="xhdpi" src="res/icon/android/mipmap-xhdpi/ic_launcher.png" />
         <icon density="xxhdpi" src="res/icon/android/mipmap-xxhdpi/ic_launcher.png" />
         <icon density="xxxhdpi" src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png" />
+        <resource-file src="res/icon/android/mipmap-mdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-mdpi/ic_launcher_round.png" />
+        <resource-file src="res/icon/android/mipmap-hdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-hdpi/ic_launcher_round.png" />
+        <resource-file src="res/icon/android/mipmap-xhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" />
+        <resource-file src="res/icon/android/mipmap-xxhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" />
+        <resource-file src="res/icon/android/mipmap-xxxhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" />
+        <resource-file src="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png" />
+        <resource-file src="res/icon/android/mipmap-hdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png" />
+        <resource-file src="res/icon/android/mipmap-xhdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png" />
+        <resource-file src="res/icon/android/mipmap-xxhdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png" />
+        <resource-file src="res/icon/android/mipmap-xxxhdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" />
+        <resource-file src="res/icon/android/mipmap-mdpi/ic_launcher_monochrome.png" target="app/src/main/res/mipmap-mdpi/ic_launcher_monochrome.png" />
+        <resource-file src="res/icon/android/mipmap-hdpi/ic_launcher_monochrome.png" target="app/src/main/res/mipmap-hdpi/ic_launcher_monochrome.png" />
+        <resource-file src="res/icon/android/mipmap-xhdpi/ic_launcher_monochrome.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher_monochrome.png" />
+        <resource-file src="res/icon/android/mipmap-xxhdpi/ic_launcher_monochrome.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher_monochrome.png" />
+        <resource-file src="res/icon/android/mipmap-xxxhdpi/ic_launcher_monochrome.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_monochrome.png" />
+        <resource-file src="res/icon/android/mipmap-anydpi-v26/ic_launcher.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" />
+        <resource-file src="res/icon/android/mipmap-anydpi-v26/ic_launcher_round.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" />
+        <resource-file src="res/icon/android/values/ic_launcher_background.xml" target="app/src/main/res/values/ic_launcher_background.xml" />
+        <edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge">
+            <application android:roundIcon="@mipmap/ic_launcher_round" />
+        </edit-config>
 		<config-file platform="android" parent="/manifest/application/activity" target="AndroidManifest.xml" mode="merge">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
