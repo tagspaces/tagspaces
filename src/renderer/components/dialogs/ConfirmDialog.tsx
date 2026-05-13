@@ -20,8 +20,11 @@ import DraggablePaper from '-/components/DraggablePaper';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import DialogCloseButton from '-/components/dialogs/DialogCloseButton';
+import SelectedItemsSummary from '-/components/dialogs/components/SelectedItemsSummary';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
+import { TS } from '-/tagspaces.namespace';
 import BulletIcon from '@mui/icons-material/Remove';
+import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -45,6 +48,7 @@ interface Props {
   prompt?: string;
   helpText?: string;
   list: string[];
+  entriesList?: TS.FileSystemEntry[];
   confirmCallback: (result: boolean | string) => void;
   onClose: () => void;
 }
@@ -61,6 +65,7 @@ function ConfirmDialog(props: Props) {
     customCancelText,
     customConfirmText,
     list,
+    entriesList,
     confirmDialogContentTID,
     cancelDialogTID,
     confirmDialogTID,
@@ -100,17 +105,26 @@ function ConfirmDialog(props: Props) {
               placeholder={prompt}
             />
           )}
-          {list && (
-            <List dense>
-              {list.map((listItem) => (
-                <ListItem key={listItem.toString()}>
-                  <ListItemIcon>
-                    <BulletIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={listItem} />
-                </ListItem>
-              ))}
-            </List>
+          {entriesList && entriesList.length > 0 ? (
+            <Box sx={{ marginTop: 1.25 }}>
+              <SelectedItemsSummary
+                entries={entriesList}
+                defaultCollapsed={entriesList.length >= 5}
+              />
+            </Box>
+          ) : (
+            list && (
+              <List dense>
+                {list.map((listItem) => (
+                  <ListItem key={listItem.toString()}>
+                    <ListItemIcon>
+                      <BulletIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={listItem} />
+                  </ListItem>
+                ))}
+              </List>
+            )
           )}
         </DialogContentText>
       </DialogContent>

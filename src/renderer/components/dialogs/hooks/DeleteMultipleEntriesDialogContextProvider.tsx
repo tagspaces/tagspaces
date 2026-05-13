@@ -114,7 +114,7 @@ export const DeleteMultipleEntriesDialogContextProvider = ({
         onClose={closeDialog}
         title={t('core:deleteConfirmationTitle')}
         content={t('core:deleteConfirmationContent')}
-        list={selectedEntries.map((fsEntry) => fsEntry.name)}
+        entriesList={selectedEntries}
         confirmCallback={(result) => result && deleteSelectedEntries()}
         cancelDialogTID="cancelDeleteFileDialog"
         confirmDialogTID="confirmDeleteFileDialog"
