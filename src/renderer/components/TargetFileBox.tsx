@@ -18,7 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
-import { useMoveOrCopyFilesDialogContext } from '-/components/dialogs/hooks/useMoveOrCopyFilesDialogContext';
+import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
@@ -28,6 +28,8 @@ import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { alpha, useTheme } from '@mui/material/styles';
+import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
+import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
 import { Identifier } from 'dnd-core';
 import React, { ReactNode } from 'react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
@@ -60,7 +62,7 @@ function TargetFileBox(props: Props) {
   const { showNotification } = useNotificationContext();
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
-  const { openMoveOrCopyFilesDialog } = useMoveOrCopyFilesDialogContext();
+  const { openMoveCopyFilesDialog } = useMenuContext();
   //const ref = useRef<HTMLDivElement>(null);
   const { children, accepts, directoryPath, style, locationId } = props;
   const dirPath = directoryPath ? directoryPath : currentDirectoryPath;
@@ -129,6 +131,38 @@ function TargetFileBox(props: Props) {
     return Promise.reject(new Error('on files'));
   };
 
+  function openDropChoiceDialog(
+    files: File[],
+    targetDirPath: string,
+    targetLocationUuid: string,
+  ) {
+    const isDirsPromise: Promise<boolean[]> = AppConfig.isElectron
+      ? Promise.all(
+          files.map((file) =>
+            window.electronIO.ipcRenderer.invoke('isDirectory', file.path),
+          ),
+        )
+      : Promise.resolve(files.map(() => true));
+    return isDirsPromise.then((isDirsArray) => {
+      const entries: TS.FileSystemEntry[] = files
+        .map((file, index) => ({
+          uuid: getUuid(),
+          name: file.name,
+          path: file.path,
+          isFile: !isDirsArray[index],
+          extension: extractFileExtension(file.path),
+          size: file.size,
+          cdt: (file as any).cdt,
+          lmdt: file.lastModified,
+        }))
+        .filter((entry) => entry.isFile);
+      if (entries.length === 0) {
+        return;
+      }
+      openMoveCopyFilesDialog(entries, targetDirPath, targetLocationUuid, true);
+    });
+  }
+
   const [collectedProps, drop] = useDrop<DragItem, unknown, DragProps>(
     () => ({
       accept: accepts,
@@ -153,11 +187,7 @@ function TargetFileBox(props: Props) {
             !targetLocation.haveObjectStoreSupport() &&
             !targetLocation.haveWebDavSupport()
           ) {
-            return openMoveOrCopyFilesDialog(
-              files,
-              dirPath,
-              targetLocation.uuid,
-            );
+            return openDropChoiceDialog(files, dirPath, targetLocation.uuid);
           } else {
             return handleCopyFiles(files, targetLocation);
           }

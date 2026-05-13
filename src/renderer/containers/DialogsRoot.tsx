@@ -28,7 +28,6 @@ import { KeyboardDialogContextProvider } from '-/components/dialogs/hooks/Keyboa
 import { LicenseDialogContextProvider } from '-/components/dialogs/hooks/LicenseDialogContextProvider';
 import { LinkDialogContextProvider } from '-/components/dialogs/hooks/LinkDialogContextProvider';
 import { MenuContextProvider } from '-/components/dialogs/hooks/MenuContextProvider';
-import { MoveOrCopyFilesDialogContextProvider } from '-/components/dialogs/hooks/MoveOrCopyFilesDialogContextProvider';
 import { NewAudioDialogContextProvider } from '-/components/dialogs/hooks/NewAudioDialogContextProvider';
 import { NewFileDialogContextProvider } from '-/components/dialogs/hooks/NewFileDialogContextProvider';
 import { OnboardingDialogContextProvider } from '-/components/dialogs/hooks/OnboardingDialogContextProvider';
@@ -49,7 +48,6 @@ const providers = [
   EntryExistDialogContextProvider,
   DeleteMultipleEntriesDialogContextProvider,
   CreateEditLocationDialogContextProvider,
-  MoveOrCopyFilesDialogContextProvider,
   CreateDirectoryDialogContextProvider,
   ProgressDialogContextProvider,
   // PerspectiveOnboardingContextProvider must wrap SettingsDialogContextProvider

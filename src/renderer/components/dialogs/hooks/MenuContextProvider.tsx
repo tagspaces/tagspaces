@@ -56,6 +56,7 @@ type MenuContextData = {
     entries: TS.FileSystemEntry[],
     targetDirectory?: string,
     targetLocationId?: string,
+    skipTargetPicker?: boolean,
   ) => void;
   closeMoveCopyFilesDialog: () => void;
   openAddRemoveTagsDialog: (entries: TS.FileSystemEntry[]) => void;
@@ -119,6 +120,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
   const currentEntries = useRef<TS.FileSystemEntry[]>(undefined);
   const targetDirectory = useRef<string>(undefined);
   const targetLocationId = useRef<string>(undefined);
+  const skipTargetPickerRef = useRef<boolean>(false);
   const openRenameEntry = useRef<boolean>(false);
   const openMoveCopyFiles = useRef<boolean>(false);
   const openAddRemoveTags = useRef<boolean>(false);
@@ -230,11 +232,13 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
       entries: TS.FileSystemEntry[],
       tDirectory?: string,
       tLocationId?: string,
+      skipTargetPicker?: boolean,
     ) => {
       openMoveCopyFiles.current = true;
       currentEntries.current = entries;
       targetDirectory.current = tDirectory;
       targetLocationId.current = tLocationId;
+      skipTargetPickerRef.current = !!skipTargetPicker;
       forceUpdate();
     },
     [],
@@ -337,6 +341,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
         entries={currentEntries.current}
         targetDir={targetDirectory.current}
         targetLocationId={targetLocationId.current}
+        skipTargetPicker={skipTargetPickerRef.current}
       />
       <AddRemoveTagsDialogAsync
         open={openAddRemoveTags.current}

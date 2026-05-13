@@ -9,10 +9,14 @@ import { useEntryExistDialogContext } from '-/components/dialogs/hooks/useEntryE
 import { useFileUploadDialogContext } from '-/components/dialogs/hooks/useFileUploadDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
 import { actions as AppActions, AppDispatch } from '-/reducers/app';
-import { getDirProperties } from '-/services/utils-io';
+import {
+  executePromisesInBatches,
+  getDirProperties,
+} from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -25,6 +29,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
+import { extractFileName, joinPaths } from '@tagspaces/tagspaces-common/paths';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -36,18 +41,29 @@ interface Props {
   entries: TS.FileSystemEntry[];
   targetDir?: string;
   targetLocationId?: string;
+  // when true the target-directory picker is hidden and post-op
+  // thumb-generation + sendDirMessage are triggered (drag-drop import path)
+  skipTargetPicker?: boolean;
 }
 
 function MoveCopyFilesDialog(props: Props) {
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
-  const { open, entries, onClose, targetDir, targetLocationId } = props;
+  const {
+    open,
+    entries,
+    onClose,
+    targetDir,
+    targetLocationId,
+    skipTargetPicker,
+  } = props;
   const { findLocation } = useCurrentLocationContext();
-  const { currentDirectoryPath } = useDirectoryContentContext();
+  const { currentDirectoryPath, sendDirMessage } = useDirectoryContentContext();
   const { handleEntryExist, openEntryExistDialog } =
     useEntryExistDialogContext();
   const { copyFiles, copyDirs, moveFiles, moveDirs } = useIOActionsContext();
   const { openFileUploadDialog } = useFileUploadDialogContext();
+  const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const currentEntries = entries || selectedEntries;
 
@@ -107,17 +123,47 @@ function MoveCopyFilesDialog(props: Props) {
     });
   }
 
+  function generateThumbsForTransferred(sourceFilePaths: string[]) {
+    if (!targetLocation) {
+      return;
+    }
+    const sep = targetLocation.getDirSeparator();
+    const promises: Promise<TS.EditMetaAction>[] = sourceFilePaths.map(
+      (filePath) =>
+        targetLocation
+          .getPropertiesPromise(
+            joinPaths(sep, targetPath, extractFileName(filePath, sep)),
+          )
+          .then((entry) => ({ action: 'thumbGenerate', entry })),
+    );
+    executePromisesInBatches(promises).then((actions) => {
+      setReflectMetaActions(...actions);
+    });
+  }
+
   function handleCopy() {
-    dispatch(AppActions.resetProgress());
-    openFileUploadDialog(targetDir, 'copyEntriesTitle'); //selectedFiles.length > 0);
+    if (!skipTargetPicker) {
+      dispatch(AppActions.resetProgress());
+      openFileUploadDialog(targetDir, 'copyEntriesTitle');
+    }
     if (selectedFiles.length > 0) {
       //todo use uploadFilesAPI && transferMeta = true
-      copyFiles(
-        selectedFiles,
+      const filePaths = selectedFiles;
+      const onProgress = skipTargetPicker ? undefined : onUploadProgress;
+      const copyPromise = copyFiles(
+        filePaths,
         targetPath,
         targetLocation.uuid,
-        onUploadProgress,
+        onProgress,
       );
+      if (skipTargetPicker) {
+        Promise.resolve(copyPromise).then((success) => {
+          if (success) {
+            generateThumbsForTransferred(filePaths);
+          }
+          return true;
+        });
+      }
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
@@ -125,7 +171,7 @@ function MoveCopyFilesDialog(props: Props) {
         getEntriesCount(selectedDirs),
         targetPath,
         targetLocation.uuid,
-        onUploadProgress,
+        skipTargetPicker ? undefined : onUploadProgress,
       );
     }
     onClose(true);
@@ -137,24 +183,36 @@ function MoveCopyFilesDialog(props: Props) {
 
   function handleMove() {
     if (selectedFiles.length > 0) {
-      moveFiles(
-        selectedFiles,
+      const filePaths = selectedFiles;
+      const movePromise = moveFiles(
+        filePaths,
         targetPath,
         targetLocation.uuid,
-        onUploadProgress,
+        skipTargetPicker ? undefined : onUploadProgress,
         true,
         true,
       );
+      if (skipTargetPicker) {
+        Promise.resolve(movePromise).then((success) => {
+          if (success) {
+            sendDirMessage('moveFiles', filePaths);
+            generateThumbsForTransferred(filePaths);
+          }
+          return true;
+        });
+      }
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      dispatch(AppActions.resetProgress());
-      openFileUploadDialog(undefined, 'moveEntriesTitle');
+      if (!skipTargetPicker) {
+        dispatch(AppActions.resetProgress());
+        openFileUploadDialog(undefined, 'moveEntriesTitle');
+      }
       moveDirs(
         getEntriesCount(selectedDirs),
         targetPath,
         targetLocation.uuid,
-        onUploadProgress,
+        skipTargetPicker ? undefined : onUploadProgress,
       );
     }
     onClose(true);
@@ -227,11 +285,13 @@ function MoveCopyFilesDialog(props: Props) {
               </ListItem>
             ))}
         </List>
-        <DirectoryListView
-          setTargetDir={setTargetPath}
-          targetPath={targetPath}
-          targetLocationID={targetLocation?.uuid}
-        />
+        {!skipTargetPicker && (
+          <DirectoryListView
+            setTargetDir={setTargetPath}
+            targetPath={targetPath}
+            targetLocationID={targetLocation?.uuid}
+          />
+        )}
         <Box sx={{ marginTop: '10px' }}>
           {targetPath ? (
             <Typography variant="subtitle2">
@@ -253,8 +313,7 @@ function MoveCopyFilesDialog(props: Props) {
             data-tid="confirmMoveFiles"
             disabled={
               !targetPath ||
-              // AppConfig.isAndroid ||
-              targetPath === currentDirectoryPath
+              (!skipTargetPicker && targetPath === currentDirectoryPath)
             }
             onClick={() => copyMove(false)}
             variant="contained"
@@ -265,7 +324,10 @@ function MoveCopyFilesDialog(props: Props) {
         <TsButton
           onClick={() => copyMove(true)}
           data-tid="confirmCopyFiles"
-          disabled={!targetPath || targetPath === currentDirectoryPath}
+          disabled={
+            !targetPath ||
+            (!skipTargetPicker && targetPath === currentDirectoryPath)
+          }
           variant="contained"
         >
           {t('core:copyEntriesButton')}
