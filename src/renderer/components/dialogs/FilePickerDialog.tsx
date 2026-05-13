@@ -27,6 +27,7 @@ import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import {
   actions as SettingsActions,
   getLastLinkType,
@@ -109,6 +110,7 @@ function FilePickerDialog(props: FilePickerDialogProps) {
 
   const { locations, findLocation } = useCurrentLocationContext();
   const { currentDirectoryPath } = useDirectoryContentContext();
+  const { getMetadataID } = useIOActionsContext();
   const dispatch = useDispatch();
   const lastLinkType = useSelector(getLastLinkType);
   const theme = useTheme();
@@ -261,7 +263,7 @@ function FilePickerDialog(props: FilePickerDialogProps) {
   const primaryDisabled =
     !selectedEntry || !modeAccepts(selectedEntry, mode) || !targetLocation;
 
-  function handleConfirm() {
+  async function handleConfirm() {
     if (!selectedEntry || !targetLocation) return;
     let link: string;
     if (linkType === 'relative' && canUseRelative && sourceDir) {
@@ -270,9 +272,19 @@ function FilePickerDialog(props: FilePickerDialogProps) {
         targetLocation,
         sourceDir,
       );
-      link = rel ?? buildSharingLinkForEntry(selectedEntry, targetLocation);
+      link =
+        rel ??
+        (await buildSharingLinkForEntry(
+          selectedEntry,
+          targetLocation,
+          getMetadataID,
+        ));
     } else {
-      link = buildSharingLinkForEntry(selectedEntry, targetLocation);
+      link = await buildSharingLinkForEntry(
+        selectedEntry,
+        targetLocation,
+        getMetadataID,
+      );
     }
     const finalLabel =
       (linkLabel && linkLabel.trim()) || selectedEntry.name || '';

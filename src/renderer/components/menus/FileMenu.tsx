@@ -57,6 +57,7 @@ import {
 } from '-/reducers/settings';
 import { supportedImgs } from '-/services/thumbsgenerator';
 import {
+  buildSharingLinkForEntry,
   createNewInstance,
   findCandidateExtensionsForFile,
   getRelativeEntryPath,
@@ -72,7 +73,6 @@ import {
   extractContainingDirectoryPath,
   extractParentDirectoryPath,
   extractTitle,
-  generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -139,15 +139,10 @@ function FileMenu(props: Props) {
   }, [currentLocationId, lastSelectedEntry]);
 
   function generateFileLink(): Promise<string> {
-    const entryPath = selectedEntries[0].path;
-    const relativePath = getRelativeEntryPath(currentLocationPath, entryPath);
-    return getMetadataID(
-      selectedEntries[0].path,
-      selectedEntries[0].uuid,
+    return buildSharingLinkForEntry(
+      selectedEntries[0],
       currentLocation,
-      selectedEntries[0].isFile,
-    ).then((id) =>
-      generateSharingLink(currentLocationId, relativePath, undefined, id),
+      getMetadataID,
     );
   }
 

@@ -25,10 +25,10 @@ import {
   extractDirectoryName,
   getThumbFileLocationForDirectory,
   normalizePath,
-  generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import { Pro } from '-/pro';
 import {
+  buildSharingLinkForEntry,
   createNewInstance,
   getRelativeEntryPath,
   openDirectoryMessage,
@@ -135,33 +135,28 @@ function DirectoryMenu(props: Props) {
   const directoryPath = props.directoryPath || currentDirectoryPath;
 
   function generateFolderLink(): Promise<any> {
-    let locationID = undefined;
-    let entryPath = currentDirectoryPath;
-    if (selectedEntries && selectedEntries.length > 0) {
-      if (selectedEntries[0]['locationID']) {
-        locationID = selectedEntries[0]['locationID'];
-      }
-      entryPath = selectedEntries[0].path;
-    }
-    const tmpLoc = findLocation(locationID);
-    return getLocationPath(tmpLoc).then((locationPath) => {
-      const relativePath = getRelativeEntryPath(locationPath, entryPath);
-      const folderName = extractDirectoryName(
-        selectedEntries[0] ? selectedEntries[0].name : currentDirectoryPath,
-        currentLocation?.getDirSeparator(),
-      );
-      return getMetadataID(
-        entryPath,
-        selectedEntries[0]?.uuid,
-        tmpLoc,
-        false,
-      ).then((id) => {
-        return {
-          url: generateSharingLink(locationID, undefined, relativePath, id),
+    const entry = selectedEntries?.[0];
+    const entryPath = entry?.path || currentDirectoryPath;
+    const tmpLoc = findLocation(entry?.['locationID']);
+    const folderName = extractDirectoryName(
+      entry ? entry.name : currentDirectoryPath,
+      currentLocation?.getDirSeparator(),
+    );
+    const folderEntry: TS.FileSystemEntry = entry
+      ? ({ ...entry, isFile: false } as TS.FileSystemEntry)
+      : ({
+          uuid: '',
           name: folderName,
-        };
-      });
-    });
+          isFile: false,
+          path: entryPath,
+          extension: '',
+          tags: [],
+          size: 0,
+          lmdt: 0,
+        } as TS.FileSystemEntry);
+    return buildSharingLinkForEntry(folderEntry, tmpLoc, getMetadataID).then(
+      (url) => ({ url, name: folderName }),
+    );
   }
 
   function copyRelativePath() {

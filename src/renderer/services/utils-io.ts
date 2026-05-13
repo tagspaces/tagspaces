@@ -728,25 +728,40 @@ export function getRelativeEntryPath(
 
 /**
  * Build a TagSpaces `ts://?...` sharing link for the given entry inside its
- * location. Mirrors the canonical recipe used by LinksTab.tsx and
- * HistoryContextProvider.tsx so all `ts://` links across the renderer have an
- * identical shape.
+ * location. Canonical recipe — all callers that produce a shareable link
+ * (FileMenu, DirectoryMenu, FilePickerDialog) should go through this.
+ *
+ * Files go in the `tsepath` slot, folders in the `tsdpath` slot.
+ *
+ * `getMetadataID` is required: it produces a stable sidecar UUID that
+ * survives renames (the runtime `entry.uuid` does not). Pass the function
+ * from `useIOActionsContext()`.
  */
 export function buildSharingLinkForEntry(
   entry: TS.FileSystemEntry,
   location: CommonLocation,
-): string {
+  getMetadataID: (
+    path: string,
+    id: string,
+    location: CommonLocation,
+    isFile: boolean,
+  ) => Promise<string>,
+): Promise<string> {
   const sep = location.getDirSeparator?.() || '/';
   const relativeEntryPath = cleanRootPath(
     entry.path || '',
     location.path || '',
     sep,
   );
-  return generateSharingLink(
-    location.uuid,
-    relativeEntryPath,
-    undefined,
-    entry.uuid,
+  return getMetadataID(
+    entry.path,
+    entry.uuid || '',
+    location,
+    entry.isFile,
+  ).then((id) =>
+    entry.isFile
+      ? generateSharingLink(location.uuid, relativeEntryPath, undefined, id)
+      : generateSharingLink(location.uuid, undefined, relativeEntryPath, id),
   );
 }
 
