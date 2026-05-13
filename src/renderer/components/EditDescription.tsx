@@ -27,7 +27,7 @@ import { useEffect, useRef } from 'react';
 
 function EditDescription() {
   const theme = useTheme();
-  const { setEditDescriptionMode } = useFilePropertiesContext();
+  const { setEditDescriptionMode, setDescription } = useFilePropertiesContext();
 
   const milkdownDivRef = useRef<HTMLDivElement>(null);
   const fileDescriptionRef = useRef<CrepeRef>(null);
@@ -49,6 +49,27 @@ function EditDescription() {
     fileDescriptionRef.current.setEditMode(editMode);
   };
 
+  const insertMarkdown = (markdown: string) => {
+    const ref = fileDescriptionRef.current;
+    if (!ref) return;
+    ref.insert(markdown);
+    // The Crepe `markdownUpdated` listener in DescriptionMdEditor.tsx is
+    // gated on `view.hasFocus()` to avoid firing on programmatic updates,
+    // which means our insert here would otherwise be silently skipped and
+    // the description wouldn't be marked dirty. Push the new markdown into
+    // the parent state explicitly so save picks it up.
+    const next = ref.getMarkdown();
+    if (typeof next === 'string') {
+      setDescription(next);
+    }
+    // Return DOM focus so the caret blinks at the new position and the user
+    // can continue typing.
+    ref.focus();
+  };
+
+  const getSelectedText = () =>
+    fileDescriptionRef.current?.getSelectedText() ?? '';
+
   return (
     <Box
       sx={{
@@ -58,6 +79,8 @@ function EditDescription() {
       <EditDescriptionButtons
         resetMdContent={resetMdContent}
         setEditMode={setEditMode}
+        insertMarkdown={insertMarkdown}
+        getSelectedText={getSelectedText}
       />
       <Box
         ref={milkdownDivRef}

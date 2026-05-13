@@ -26,6 +26,7 @@ import { EntryExistDialogContextProvider } from '-/components/dialogs/hooks/Entr
 import { ImportMacTagDialogContextProvider } from '-/components/dialogs/hooks/ImportMacTagDialogContextProvider';
 import { KeyboardDialogContextProvider } from '-/components/dialogs/hooks/KeyboardDialogContextProvider';
 import { LicenseDialogContextProvider } from '-/components/dialogs/hooks/LicenseDialogContextProvider';
+import { FilePickerDialogContextProvider } from '-/components/dialogs/hooks/FilePickerDialogContextProvider';
 import { LinkDialogContextProvider } from '-/components/dialogs/hooks/LinkDialogContextProvider';
 import { MenuContextProvider } from '-/components/dialogs/hooks/MenuContextProvider';
 import { NewAudioDialogContextProvider } from '-/components/dialogs/hooks/NewAudioDialogContextProvider';
@@ -67,6 +68,7 @@ const providers = [
   AboutDialogContextProvider,
   KeyboardDialogContextProvider,
   LinkDialogContextProvider,
+  FilePickerDialogContextProvider,
   ProTeaserDialogContextProvider,
   AiGenerationDialogContextProvider,
   ResolveConflictContextProvider,

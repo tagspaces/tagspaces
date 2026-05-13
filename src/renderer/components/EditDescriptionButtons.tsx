@@ -17,13 +17,14 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { MoreMenuIcon } from '-/components/CommonIcons';
+import { LinkIcon, MoreMenuIcon } from '-/components/CommonIcons';
 import { ProTooltip } from '-/components/HelperComponents';
 import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import AiGenDescButton from '-/components/chat/AiGenDescButton';
 import AiGenTagsButton from '-/components/chat/AiGenTagsButton';
+import { useFilePickerDialogContext } from '-/components/dialogs/hooks/useFilePickerDialogContext';
 import DescriptionMenu from '-/components/md/DescriptionMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
@@ -35,18 +36,25 @@ import {
 } from '-/services/utils-io';
 import { ButtonGroup, useTheme } from '@mui/material';
 import { formatDateTime4Tag } from '@tagspaces/tagspaces-common/misc';
-import { extractTitle } from '@tagspaces/tagspaces-common/paths';
+import {
+  extractContainingDirectoryPath,
+  extractTitle,
+} from '@tagspaces/tagspaces-common/paths';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ButtonsProps {
   resetMdContent: (md: string) => void;
   setEditMode: (editMode: boolean) => void;
+  insertMarkdown?: (markdown: string) => void;
+  getSelectedText?: () => string;
 }
 
 const EditDescriptionButtons: React.FC<ButtonsProps> = ({
   resetMdContent,
   setEditMode,
+  insertMarkdown,
+  getSelectedText,
 }) => {
   const { t } = useTranslation();
   const {
@@ -58,8 +66,65 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
   } = useFilePropertiesContext();
   const { findLocation } = useCurrentLocationContext();
   const { openedEntry, reloadOpenedFile } = useOpenedEntryContext();
+  const { openFilePickerDialog } = useFilePickerDialogContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
+
+  function buildSafeMarkdownLink(label: string, url: string): string {
+    // CommonMark link labels can't contain unescaped `[` or `]` (and `\`
+    // must be escaped). TagSpaces filenames frequently embed `[tags]`, which
+    // would break naive `[${name}](...)` interpolation.
+    const escapedLabel = label
+      .replace(/\\/g, '\\\\')
+      .replace(/\[/g, '\\[')
+      .replace(/\]/g, '\\]');
+    // For the URL, URL-encode special chars so the markdown stays pure-ASCII
+    // through every save/reparse cycle (angle-bracket form `<url>` is lost
+    // by some markdown serializers). encodeURI preserves path separators,
+    // but does NOT encode `[ ] ( )` — encode those manually.
+    // Skip encoding for ts:// links: they already contain encoded params.
+    const isTsLink = /^ts:\/\//.test(url);
+    const safeUrl = isTsLink
+      ? url
+      : encodeURI(url)
+          .replace(/\[/g, '%5B')
+          .replace(/\]/g, '%5D')
+          .replace(/\(/g, '%28')
+          .replace(/\)/g, '%29');
+    return `[${escapedLabel}](${safeUrl})`;
+  }
+
+  function handleInsertFileLink() {
+    if (!insertMarkdown) return;
+    // Capture the editor's current selection text BEFORE the dialog opens.
+    // Once MUI's focus-trap moves focus into the dialog, reading the selection
+    // is still safe (ProseMirror state survives focus loss), but we read it
+    // here for clarity. Empty string = no selection.
+    const initialLabel = getSelectedText ? getSelectedText() : '';
+    // For a file's description the relative-link base is the file's
+    // containing folder; for a folder's description it's the folder itself
+    // (the description "lives in" the folder).
+    const sourceDir = openedEntry?.path
+      ? openedEntry.isFile
+        ? extractContainingDirectoryPath(
+            openedEntry.path,
+            findLocation(openedEntry.locationID)?.getDirSeparator?.() || '/',
+          )
+        : openedEntry.path
+      : undefined;
+    openFilePickerDialog({
+      mode: 'any',
+      sourceLocationId: openedEntry?.locationID,
+      sourceDir,
+      initialLocationId: openedEntry?.locationID,
+      showLabelField: true,
+      initialLabel,
+      onSelect: (entry, link, _linkType, label) => {
+        const finalLabel = (label && label.trim()) || entry.name || link;
+        insertMarkdown(buildSafeMarkdownLink(finalLabel, link));
+      },
+    });
+  }
   //const [isDescriptionChanged, descriptionChanged] = useState<boolean>(false);
 
   /*React.useImperativeHandle(buttonsRef, () => ({
@@ -231,6 +296,17 @@ const EditDescriptionButtons: React.FC<ButtonsProps> = ({
             />
           </ProTooltip>
         </>
+      )}
+      {isEditDescriptionMode && insertMarkdown && (
+        <TsIconButton
+          tooltip={t('core:insertFileOrFolderLink')}
+          onClick={handleInsertFileLink}
+          sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
+          data-tid="insertFileOrFolderLinkTID"
+          aria-label={t('core:insertFileOrFolderLink')}
+        >
+          <LinkIcon />
+        </TsIconButton>
       )}
       <TsIconButton
         tooltip={t('core:moreActions')}

@@ -1,6 +1,6 @@
 import React, { useImperativeHandle } from 'react';
 import { replaceAll, insert, getMarkdown } from '@milkdown/kit/utils';
-import { EditorStatus } from '@milkdown/kit/core';
+import { editorViewCtx, EditorStatus } from '@milkdown/kit/core';
 import type { Editor } from '@milkdown/kit/core';
 import { Crepe } from '@milkdown/crepe';
 
@@ -9,7 +9,9 @@ export interface CrepeRef {
   insert: (markdown: string) => void;
   setEditMode: (isEditMode: boolean) => void;
   getMarkdown: () => string | undefined;
+  getSelectedText: () => string;
   destroy: () => void;
+  focus: () => void;
 }
 
 export function useCrepeHandler(
@@ -27,7 +29,18 @@ export function useCrepeHandler(
     insert: (markdown: string) => {
       const editor = get();
       if (loading || !editor || editor.status !== EditorStatus.Created) return;
-      editor.action(insert(markdown));
+      // `inline: true` serializes the parsed doc to DOM and re-parses as an
+      // inline slice, so the inserted content (e.g. a markdown link) lands
+      // inside the current paragraph instead of splitting it into a new block.
+      editor.action(insert(markdown, true));
+    },
+    focus: () => {
+      const editor = get();
+      if (loading || !editor || editor.status !== EditorStatus.Created) return;
+      editor.action((ctx) => {
+        const view = ctx.get(editorViewCtx);
+        view?.focus();
+      });
     },
     setEditMode: (isEditable: boolean) => {
       const crepe = getCrepe();
@@ -56,6 +69,19 @@ export function useCrepeHandler(
       const editor = get();
       if (loading || !editor || editor.status !== EditorStatus.Created) return;
       return editor.action(getMarkdown());
+    },
+    getSelectedText: () => {
+      const editor = get();
+      if (loading || !editor || editor.status !== EditorStatus.Created) {
+        return '';
+      }
+      return editor.action((ctx) => {
+        const view = ctx.get(editorViewCtx);
+        if (!view) return '';
+        const { from, to, empty } = view.state.selection;
+        if (empty) return '';
+        return view.state.doc.textBetween(from, to, ' ').trim();
+      });
     },
     destroy: () => {
       const crepe = getCrepe();

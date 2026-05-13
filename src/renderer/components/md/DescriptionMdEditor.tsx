@@ -28,10 +28,12 @@ import AppConfig from '-/AppConfig';
 
 import { CrepeRef, useCrepeHandler } from '-/components/md/useCrepeHandler';
 import { createCrepeEditor } from '-/components/md/utils';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { extractContainingDirectoryPath } from '@tagspaces/tagspaces-common/paths';
 import useFirstRender from '-/utils/useFirstRender';
 import { useTranslation } from 'react-i18next';
 
@@ -45,6 +47,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
     const { onFocus } = props;
     const { t } = useTranslation();
     const { currentDirectory } = useDirectoryContentContext();
+    const { findLocation } = useCurrentLocationContext();
     const { metaActions } = useEditedEntryMetaContext();
     const {
       saveDescription,
@@ -68,6 +71,23 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
     const isMac = AppConfig.isMacLike;
     const mod = isMac ? '\u2318' : 'Ctrl+';
 
+    // Base folder for resolving relative markdown links. For a file's
+    // description the base is the file's containing folder; for a folder's
+    // description the base is the folder itself (the description "lives in"
+    // the folder). Falls back to currentDirectory if the entry path isn't
+    // available yet.
+    const linkBaseFolder = (() => {
+      if (openedEntry?.path) {
+        if (!openedEntry.isFile) {
+          return openedEntry.path;
+        }
+        const loc = findLocation(openedEntry.locationID);
+        const sep = loc?.getDirSeparator?.() || '/';
+        return extractContainingDirectoryPath(openedEntry.path, sep);
+      }
+      return currentDirectory?.path;
+    })();
+
     const { get, loading } = useEditor(
       (root) => {
         // Build a Milkdown‐based “Crepe” editor:
@@ -80,12 +100,13 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
           isEditDescriptionMode,
           {},
           placeholder,
-          currentDirectory?.path,
+          linkBaseFolder,
           openLink,
           (newMd: string) => {
             setDescription(newMd);
           },
           onFocus,
+          openedEntry?.locationID,
         );
 
         // Listen for status changes:
@@ -119,7 +140,7 @@ const DescriptionMdEditor = forwardRef<CrepeRef, CrepeMdEditorProps>(
 
         return crepe;
       },
-      [currentDirectory?.path], //, isEditDescriptionMode],
+      [linkBaseFolder],
     );
 
     // Whenever openedEntry changes and the user hasn't manually edited,

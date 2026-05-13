@@ -25,10 +25,13 @@ import { prepareTagForExport } from '@tagspaces/tagspaces-common/misc';
 import {
   baseName,
   cleanFrontDirSeparator,
+  cleanRootPath,
   cleanTrailingDirSeparator,
+  extractContainingDirectoryPath,
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
+  generateSharingLink,
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import Links from 'assets/links';
@@ -721,6 +724,90 @@ export function getRelativeEntryPath(
   let relEntryPath = entryPathCleaned.replace(currentPathCleaned, '');
   relEntryPath = cleanFrontDirSeparator(relEntryPath);
   return relEntryPath;
+}
+
+/**
+ * Build a TagSpaces `ts://?...` sharing link for the given entry inside its
+ * location. Mirrors the canonical recipe used by LinksTab.tsx and
+ * HistoryContextProvider.tsx so all `ts://` links across the renderer have an
+ * identical shape.
+ */
+export function buildSharingLinkForEntry(
+  entry: TS.FileSystemEntry,
+  location: CommonLocation,
+): string {
+  const sep = location.getDirSeparator?.() || '/';
+  const relativeEntryPath = cleanRootPath(
+    entry.path || '',
+    location.path || '',
+    sep,
+  );
+  return generateSharingLink(
+    location.uuid,
+    relativeEntryPath,
+    undefined,
+    entry.uuid,
+  );
+}
+
+/**
+ * Build a Markdown-style relative path from `sourceDir` to the entry.
+ * Returns `null` when relativity is not possible — either no `sourceDir` was
+ * provided, or the entry and source dir are not under the same location root.
+ *
+ * Same directory  → returns the leaf name (e.g. `B.md`).
+ * Descendant      → `subdir/B.md`.
+ * Sibling/parent  → `../images/B.png`.
+ *
+ * Callers are responsible for providing the correct `sourceDir`:
+ * - For a file's description: the file's containing directory
+ * - For a folder's description: the folder itself
+ */
+export function buildRelativeLinkForEntry(
+  entry: TS.FileSystemEntry,
+  location: CommonLocation,
+  sourceDir: string,
+): string | null {
+  if (!entry.path || !sourceDir) return null;
+  const root = cleanTrailingDirSeparator(location.path || '').replace(
+    /\\/g,
+    '/',
+  );
+  const target = cleanTrailingDirSeparator(entry.path).replace(/\\/g, '/');
+  const sourceDirNorm = cleanTrailingDirSeparator(sourceDir).replace(
+    /\\/g,
+    '/',
+  );
+
+  // Both source and target must live under the same location root.
+  if (root) {
+    if (!(target === root || target.startsWith(root + '/'))) return null;
+    if (!(sourceDirNorm === root || sourceDirNorm.startsWith(root + '/'))) {
+      return null;
+    }
+  }
+
+  const sourceRel = cleanFrontDirSeparator(
+    root ? sourceDirNorm.slice(root.length) : sourceDirNorm,
+  );
+  const targetRel = cleanFrontDirSeparator(
+    root ? target.slice(root.length) : target,
+  );
+  const sourceSegments = sourceRel ? sourceRel.split('/') : [];
+  const targetSegments = targetRel ? targetRel.split('/') : [];
+
+  let common = 0;
+  while (
+    common < sourceSegments.length &&
+    common < targetSegments.length &&
+    sourceSegments[common] === targetSegments[common]
+  ) {
+    common += 1;
+  }
+  const upHops = sourceSegments.length - common;
+  const tail = targetSegments.slice(common).join('/');
+  const relative = '../'.repeat(upHops) + tail;
+  return relative.length > 0 ? relative : './';
 }
 
 /**

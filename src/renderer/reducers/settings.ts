@@ -111,6 +111,7 @@ export const types = {
   SET_FOLDER_OPEN_HISTORY: 'SET_FOLDER_OPEN_HISTORY',
   SET_FILE_EDIT_HISTORY: 'SET_FILE_EDIT_HISTORY',
   SET_LAST_MOVE_COPY_MODE: 'SETTINGS/SET_LAST_MOVE_COPY_MODE',
+  SET_LAST_LINK_TYPE: 'SETTINGS/SET_LAST_LINK_TYPE',
   SET_HIDE_PRO_FEATURES: 'SETTINGS/SET_HIDE_PRO_FEATURES',
   SET_AUTO_SAVE_DESCRIPTION: 'SETTINGS/SET_AUTO_SAVE_DESCRIPTION',
   SET_PERSPECTIVE_ENABLED: 'SETTINGS/SET_PERSPECTIVE_ENABLED',
@@ -549,6 +550,12 @@ export default (state: any = defaultSettings, action: any) => {
         lastMoveCopyMode: action.mode,
       };
     }
+    case types.SET_LAST_LINK_TYPE: {
+      return {
+        ...state,
+        lastLinkType: action.linkType,
+      };
+    }
     case types.SET_FILE_EDIT_HISTORY: {
       return {
         ...state,
@@ -979,6 +986,10 @@ export const actions = {
     type: types.SET_LAST_MOVE_COPY_MODE,
     mode,
   }),
+  setLastLinkType: (linkType: 'ts' | 'relative') => ({
+    type: types.SET_LAST_LINK_TYPE,
+    linkType,
+  }),
   checkForUpdate: () => (dispatch: (actions: Object) => void) => {
     getLastVersionPromise()
       .then((lastVersion) => {
@@ -1039,6 +1050,9 @@ export const getMaxRecentMoveCopyDestinations = (state: any): number => {
 };
 export const getLastMoveCopyMode = (state: any): 'move' | 'copy' => {
   return state.settings.lastMoveCopyMode === 'copy' ? 'copy' : 'move';
+};
+export const getLastLinkType = (state: any): 'ts' | 'relative' => {
+  return state.settings.lastLinkType === 'ts' ? 'ts' : 'relative';
 };
 export const getEnableWS = (state: any) => state.settings.enableWS;
 export const getDesktopMode = (state: any) => {

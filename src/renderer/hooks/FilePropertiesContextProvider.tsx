@@ -81,22 +81,23 @@ export const FilePropertiesContextProvider = ({
 
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [isEditDescriptionMode, setIsEditDescriptionMode] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (openedEntry) {
-      // auto set EditDescriptionMode on opening
+      // Description starts in read mode for every opened entry. The user
+      // explicitly enters edit mode via the "Edit description" button (or by
+      // double-clicking the description area). On read-only locations, force
+      // edit mode off if it was somehow on.
       const openedLocation = findLocation(openedEntry.locationID);
-      if (openedLocation) {
-        if (openedLocation.isReadOnly) {
-          if (isEditDescriptionMode) {
-            setIsEditDescriptionMode(false);
-          }
-        } else if (!isEditDescriptionMode) {
-          setIsEditDescriptionMode(true);
-        }
+      if (
+        openedLocation &&
+        openedLocation.isReadOnly &&
+        isEditDescriptionMode
+      ) {
+        setIsEditDescriptionMode(false);
       }
 
       if (

@@ -42,6 +42,7 @@ export function createCrepeEditor(
   openLink?: (url: string, options?) => void,
   onChange?: (markdown: string, prevMarkdown: string) => void,
   onFocus?: () => void,
+  currentLocationId?: string,
 ): Crepe {
   const crepe = new Crepe({
     root,
@@ -105,9 +106,30 @@ export function createCrepeEditor(
                   !href.includes('://') &&
                   !href.startsWith('/')
                 ) {
-                  const absolutePath = resolveRelativePath(currentFolder, href);
+                  // Markdown link URLs are URL-encoded so they roundtrip
+                  // safely through the markdown serializer (spaces, brackets,
+                  // parens). Decode before resolving against the filesystem
+                  // path so segments match the real entry names.
+                  let decodedHref = href;
+                  try {
+                    decodedHref = decodeURI(href);
+                  } catch {
+                    // leave as-is if malformed
+                  }
+                  const absolutePath = resolveRelativePath(
+                    currentFolder,
+                    decodedHref,
+                  );
+                  // Include the current location id so openLink knows where
+                  // to look up the entry — otherwise it falls back to the
+                  // "first RW location" which is often wrong in multi-
+                  // location setups.
                   resolvedHref =
-                    'ts://?cmdopen=' + encodeURIComponent(absolutePath);
+                    'ts://?cmdopen=' +
+                    encodeURIComponent(absolutePath) +
+                    (currentLocationId
+                      ? '&tslid=' + encodeURIComponent(currentLocationId)
+                      : '');
                 }
                 openLink(resolvedHref, { fullWidth: false });
                 return true;

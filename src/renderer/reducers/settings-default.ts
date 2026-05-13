@@ -125,6 +125,7 @@ export default {
   tsSearchHistory: 10,
   tsRecentMoveCopyDestinations: 5,
   lastMoveCopyMode: 'move' as 'move' | 'copy',
+  lastLinkType: 'relative' as 'ts' | 'relative',
   storedSearchesVisible: true,
   showBookmarks: true,
   fileOpenHistory: false,

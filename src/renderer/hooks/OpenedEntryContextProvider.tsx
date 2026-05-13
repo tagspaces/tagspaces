@@ -746,7 +746,14 @@ export const OpenedEntryContextProvider = ({
                 setSelectedEntries([fsEntry]);
                 setEntryInFullWidth(options.fullWidth);
               } else {
-                openDirectory(fsEntry.path);
+                // Navigate the file manager AND also set the folder as the
+                // opened entry so the details panel (description tab, etc.)
+                // refreshes to the new folder. Matches the behavior of the
+                // 'ts' kind path for folder targets.
+                openDirectory(fsEntry.path).then(() => {
+                  openEntry(fsEntry);
+                  return true;
+                });
               }
             }
             return true;

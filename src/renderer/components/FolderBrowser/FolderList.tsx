@@ -17,8 +17,14 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { FileIcon, FolderIcon } from '-/components/CommonIcons';
+import { FolderIcon } from '-/components/CommonIcons';
+import FileExtBadge from '-/components/FileExtBadge';
 import TsTooltip from '-/components/TsTooltip';
+import {
+  getDefaultFolderColor,
+  getSupportedFileTypes,
+} from '-/reducers/settings';
+import { findColorForEntry } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -29,8 +35,54 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
+import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+
+const TILE_SX = {
+  minWidth: 36,
+  height: 22,
+  fontSize: 10,
+  lineHeight: 1,
+  padding: '0 4px',
+} as const;
+
+function getDisplayExtension(entry: TS.FileSystemEntry): string {
+  if (entry.extension) return entry.extension;
+  const source = entry.name || entry.path || '';
+  return source ? extractFileExtension(source) : '';
+}
+
+function ExtensionTile({
+  entry,
+  supportedFileTypes,
+  defaultFolderColor,
+}: {
+  entry: TS.FileSystemEntry;
+  supportedFileTypes: Array<any>;
+  defaultFolderColor: string;
+}) {
+  const ext = getDisplayExtension(entry);
+  const normalizedEntry: TS.FileSystemEntry =
+    entry.isFile && !entry.extension && ext
+      ? { ...entry, extension: ext }
+      : entry;
+  const color = findColorForEntry(
+    normalizedEntry,
+    supportedFileTypes,
+    defaultFolderColor,
+  );
+  return (
+    <FileExtBadge noWrap sx={{ ...TILE_SX, backgroundColor: color }}>
+      {entry.isFile ? (
+        ext || '·'
+      ) : (
+        <FolderIcon style={{ fontSize: 14, color: 'white' }} />
+      )}
+    </FileExtBadge>
+  );
+}
 
 export type FolderListFilter = 'folders' | 'files' | 'all';
 
@@ -64,6 +116,8 @@ function FolderList({
   height = 240,
 }: Props) {
   const { t } = useTranslation();
+  const supportedFileTypes = useSelector(getSupportedFileTypes);
+  const defaultFolderColor = useSelector(getDefaultFolderColor);
   const [entries, setEntries] = useState<TS.FileSystemEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const listRef = useRef<HTMLUListElement | null>(null);
@@ -137,11 +191,17 @@ function FolderList({
 
   const visible = useMemo(() => {
     const q = (query || '').trim().toLowerCase();
-    return entries.filter((e) => {
+    const filtered = entries.filter((e) => {
       if (filter === 'folders' && e.isFile) return false;
       if (filter === 'files' && !e.isFile) return false;
       if (q && !e.name.toLowerCase().includes(q)) return false;
       return true;
+    });
+    // Show folders first, then files. Within each group keep the order from
+    // listDirectoryPromise (typically the location's natural sort).
+    return [...filtered].sort((a, b) => {
+      if (a.isFile === b.isFile) return 0;
+      return a.isFile ? 1 : -1;
     });
   }, [entries, filter, query]);
 
@@ -217,8 +277,12 @@ function FolderList({
                 onDoubleClick={() => !entry.isFile && onDescend?.(entry.path)}
                 sx={{ gap: 1 }}
               >
-                <ListItemIcon sx={{ minWidth: 32 }}>
-                  {entry.isFile ? <FileIcon /> : <FolderIcon />}
+                <ListItemIcon sx={{ minWidth: 44 }}>
+                  <ExtensionTile
+                    entry={entry}
+                    supportedFileTypes={supportedFileTypes}
+                    defaultFolderColor={defaultFolderColor}
+                  />
                 </ListItemIcon>
                 <ListItemText
                   primary={

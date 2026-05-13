@@ -25,6 +25,7 @@ import {
 } from '-/reducers/settings';
 import { findColorForEntry } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import { extractFileExtension } from '@tagspaces/tagspaces-common/paths';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
@@ -74,6 +75,15 @@ const TILE_SX = {
   padding: '0 4px',
 } as const;
 
+function getDisplayExtension(entry: TS.FileSystemEntry): string {
+  if (entry.extension) return entry.extension;
+  // Some IO backends don't populate `extension`; derive from the filename
+  // (or path as a final fallback) so the tile + color computation work.
+  const source = entry.name || entry.path || '';
+  if (!source) return '';
+  return extractFileExtension(source);
+}
+
 function ExtensionTile({
   entry,
   supportedFileTypes,
@@ -83,8 +93,15 @@ function ExtensionTile({
   supportedFileTypes: Array<any>;
   defaultFolderColor: string;
 }) {
+  const ext = getDisplayExtension(entry);
+  // Normalize the entry so findColorForEntry / the badge label see the same
+  // derived extension when the IO layer didn't supply one.
+  const normalizedEntry: TS.FileSystemEntry =
+    entry.isFile && !entry.extension && ext
+      ? { ...entry, extension: ext }
+      : entry;
   const color = findColorForEntry(
-    entry,
+    normalizedEntry,
     supportedFileTypes,
     defaultFolderColor,
   );
@@ -97,7 +114,7 @@ function ExtensionTile({
       }}
     >
       {entry.isFile ? (
-        entry.extension || '·'
+        ext || '·'
       ) : (
         <FolderIcon style={{ fontSize: 14, color: 'white' }} />
       )}
