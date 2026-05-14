@@ -234,7 +234,10 @@ test.describe('TST50 - Perspective Grid', () => {
 
   test.skip('TST5012 - Move file different partition [manual]', async () => {});
 
-  test('TST5013 - Delete files from selection (many files) [web,s3,electron]', async () => {
+  test('TST5013 - Delete files from selection (many files) [web,s3,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     const selectedIds = await selectRowFiles([0, 1, 2]);
 
     await clickOn('[data-tid=gridPerspectiveDeleteMultipleFiles]');
@@ -248,6 +251,9 @@ test.describe('TST50 - Perspective Grid', () => {
         5000,
       );
     }
+    // Restore the deleted files (sample.avif/bmp/c by default sort) so later
+    // tests in this file (e.g. TST5048) can still find them.
+    await testDataRefresh(isS3, testDataDir);
   });
 
   test.skip('TST5015 - Tag file drag&drop in perspective [manual]', async () => {});
