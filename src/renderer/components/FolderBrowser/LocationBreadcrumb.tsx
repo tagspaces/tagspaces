@@ -50,12 +50,25 @@ function LocationBreadcrumb({ location, path, onJump }: Props) {
   const pathNorm = normalize(path || '');
 
   // Compute the segments inside the location.
+  // The "root" segment is anchored on the basename of location.path — this
+  // tolerates locations whose configured path is relative (e.g. extconfig
+  // entries used by the e2e tests) while the runtime `path` is absolute.
+  // Without this, every ancestor of the location surface (e.g. `/Users/na/…`)
+  // would leak into the breadcrumb.
+  const rootSegments = rootNorm.split('/').filter((s) => s.length > 0);
+  const rootLeaf = rootSegments[rootSegments.length - 1];
   let inside = pathNorm;
   if (
     rootNorm &&
     (pathNorm === rootNorm || pathNorm.startsWith(rootNorm + '/'))
   ) {
     inside = pathNorm.slice(rootNorm.length).replace(/^\/+/, '');
+  } else if (rootLeaf) {
+    const pathSegments = pathNorm.split('/').filter((s) => s.length > 0);
+    const rootIdx = pathSegments.lastIndexOf(rootLeaf);
+    if (rootIdx >= 0) {
+      inside = pathSegments.slice(rootIdx + 1).join('/');
+    }
   }
   const segments = inside.split('/').filter((s) => s.length > 0);
 

@@ -169,9 +169,9 @@ test.describe('TST51 - Command line file opening', () => {
       15000,
     );
 
-    // Switch to description tab and add description
+    // Switch to description tab and enter edit mode
     await clickOn('[data-tid=descriptionTabTID]');
-    await clickOn('[data-tid=descriptionTID]');
+    await clickOn('[data-tid=editDescriptionTID]');
     const editor = await global.client.waitForSelector(
       '[data-tid=descriptionTID] [contenteditable=true]',
       { timeout: 8000 },

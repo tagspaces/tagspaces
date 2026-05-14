@@ -29,12 +29,23 @@ import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
-import { extractParentDirectoryPath } from '@tagspaces/tagspaces-common/paths';
+import {
+  cleanFrontDirSeparator,
+  cleanTrailingDirSeparator,
+  extractParentDirectoryPath,
+} from '@tagspaces/tagspaces-common/paths';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FolderList, { FolderListFilter } from './FolderList';
 import LocationBreadcrumb from './LocationBreadcrumb';
 import LocationPicker from './LocationPicker';
+
+function normalizePath(p: string): string {
+  if (!p) return '';
+  return cleanTrailingDirSeparator(
+    cleanFrontDirSeparator(p.replace(/\\/g, '/')),
+  );
+}
 
 interface Props {
   locations: CommonLocation[];
@@ -59,6 +70,8 @@ interface Props {
   onQueryChange?: (query: string) => void;
   /** Fixed height of the folder list area. */
   listHeight?: number | string;
+  /** Bump to force the folder list to re-fetch its current path. */
+  refreshKey?: number;
 }
 
 function FolderBrowser({
@@ -75,16 +88,31 @@ function FolderBrowser({
   onCreateFolder,
   onQueryChange,
   listHeight = 240,
+  refreshKey,
 }: Props) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const activeLocation = locations.find((l) => l.uuid === activeLocationId);
   const sep = activeLocation?.getDirSeparator?.() || '/';
 
+  // We can't always compare `path` against `activeLocation.path` directly:
+  // extconfig-defined locations carry a *relative* path like
+  // `./tests/testdata-0/file-structure/supported-filestypes` while the
+  // runtime `path` is absolute (`/Users/.../supported-filestypes`). Anchor
+  // the "are we at the location root?" check on the location's leaf folder
+  // name (basename) so the equality holds in both shapes.
+  const rootNorm = normalizePath(activeLocation?.path || '');
+  const pathNorm = normalizePath(path || '');
+  const rootSegments = rootNorm.split('/').filter((s) => s.length > 0);
+  const rootLeaf = rootSegments[rootSegments.length - 1];
+  const pathSegments = pathNorm.split('/').filter((s) => s.length > 0);
+  const pathLeaf = pathSegments[pathSegments.length - 1];
+
   const atLocationRoot =
     !!activeLocation &&
-    (path === (activeLocation.path || '') ||
-      (path === '' && !activeLocation.path));
+    (pathNorm === rootNorm ||
+      (pathNorm === '' && !rootNorm) ||
+      (!!rootLeaf && !!pathLeaf && rootLeaf === pathLeaf));
 
   function setQueryAndNotify(next: string) {
     setQuery(next);
@@ -93,17 +121,7 @@ function FolderBrowser({
 
   function handleUp() {
     if (atLocationRoot || !activeLocation) return;
-    const parent = extractParentDirectoryPath(path, sep);
-    if (
-      activeLocation.path &&
-      (parent === activeLocation.path ||
-        parent === '' ||
-        !parent.startsWith(activeLocation.path))
-    ) {
-      onPathChange(activeLocation.path);
-    } else {
-      onPathChange(parent);
-    }
+    onPathChange(extractParentDirectoryPath(path, sep));
   }
 
   if (!activeLocation) {
@@ -216,6 +234,7 @@ function FolderBrowser({
           onDescend={onPathChange}
           onFileSelect={onFileSelect}
           height={listHeight}
+          refreshKey={refreshKey}
         />
       </Box>
     </Box>

@@ -121,6 +121,10 @@ function MoveCopyFilesDialog(props: Props) {
   // Phase 7 will use `searchQuery` to hide the Recent destinations row while typing.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchQuery, setSearchQuery] = useState('');
+  // Bumped after creating a subfolder via the picker so FolderList re-fetches
+  // and the new folder appears in the current path's list (instead of silently
+  // navigating into it, which would hide MoveTarget<name> from the picker).
+  const [dirVersion, setDirVersion] = useState(0);
 
   function handlePickLocation(loc: any) {
     setActiveTargetLocationId(loc.uuid);
@@ -405,7 +409,7 @@ function MoveCopyFilesDialog(props: Props) {
         </Box>
 
         {/* Regions 3 + 4 + 6: Destination row + Tools row + Folder list (single composition) */}
-        {!skipTargetPicker && targetLocation && (
+        {open && !skipTargetPicker && targetLocation && (
           <>
             <Typography
               variant="overline"
@@ -467,12 +471,17 @@ function MoveCopyFilesDialog(props: Props) {
               locationDisabledTooltip={t('core:cloudCrossLocationNotSupported')}
               filter="folders"
               onCreateFolder={(parent) =>
-                openCreateDirectoryDialog(parent, (newDirPath: string) =>
-                  setTargetPath(newDirPath),
-                )
+                openCreateDirectoryDialog(parent, () => {
+                  // Stay at the parent path; bump the version so FolderList
+                  // re-fetches and the new folder shows up. Auto-navigating
+                  // into the new folder would hide it from the picker list
+                  // and break the create-then-select flow.
+                  setDirVersion((v) => v + 1);
+                })
               }
               onQueryChange={setSearchQuery}
               listHeight={smallScreen ? '50vh' : 240}
+              refreshKey={dirVersion}
             />
             {showInlineError && validityMessageKey && (
               <Box

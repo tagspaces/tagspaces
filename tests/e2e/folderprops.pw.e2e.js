@@ -184,8 +184,13 @@ test.describe('TST02 - Folder properties', () => {
     // select folder to move
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]'); //todo moveCopyEntryTID
     await clickOn('[data-tid=MoveTarget' + targetFolder + ']');
+    // The dialog persists the last-used mode in Redux; pin it to Move here.
+    await clickOn('[data-tid=mcfModeMove]');
     await clickOn('[data-tid=confirmMoveFiles]');
+    // For directory moves on a local location the file-upload dialog shows
+    // no progress (0/0) so only the minimize button is rendered.
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadMinimizeDialogTID]');
     await expectElementExist(getGridFileSelector(newFolder), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + targetFolder + ']');
     await expectElementExist(getGridFileSelector(newFolder), true, 5000);

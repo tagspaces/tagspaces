@@ -319,7 +319,7 @@ function FilePickerDialog(props: FilePickerDialogProps) {
         onClose={onClose}
       />
       <DialogContent sx={{ overflowX: 'hidden', overflowY: 'auto' }}>
-        {targetLocation && (
+        {open && targetLocation && (
           <FolderBrowser
             locations={locations}
             activeLocationId={targetLocation.uuid}

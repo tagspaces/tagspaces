@@ -103,6 +103,8 @@ interface Props {
   /** Fixed visible height for the list area. Content scrolls; loading and
    *  empty states center inside this area so the parent's layout stays stable. */
   height?: number | string;
+  /** Bump to force a re-fetch of the current path (e.g. after creating a folder). */
+  refreshKey?: number;
 }
 
 function FolderList({
@@ -114,6 +116,7 @@ function FolderList({
   onDescend,
   onFileSelect,
   height = 240,
+  refreshKey = 0,
 }: Props) {
   const { t } = useTranslation();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
@@ -187,7 +190,7 @@ function FolderList({
     return () => {
       cancelled = true;
     };
-  }, [location, path]);
+  }, [location, path, refreshKey]);
 
   const visible = useMemo(() => {
     const q = (query || '').trim().toLowerCase();

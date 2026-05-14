@@ -188,7 +188,11 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=confirmCreateNewDirectory]');
     await clickOn('[data-tid=MoveTarget' + folderToMove + ']');
     await clickOn('[data-tid=confirmMoveFiles]');
+    // For directory moves on a local location the file-upload dialog opens
+    // but reports no progress (0/0) so the "closeAndClear" button is hidden;
+    // fall through to the always-present "minimize" button.
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadMinimizeDialogTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await expectElementExist(getGridFileSelector(testFolder), false, 5000);
     await global.client.dblclick('[data-tid=fsEntryName_' + folderToMove + ']');
@@ -220,7 +224,10 @@ test.describe('TST01 - Folder management', () => {
     await clickOn('[data-tid=MoveTarget' + folderToCopy + ']');
     await clickOn('[data-tid=mcfModeCopy]');
     await clickOn('[data-tid=confirmCopyFiles]');
+    // Same reasoning as TST0108: dir copies on a local location skip the
+    // "closeAndClear" button, so fall through to "minimize".
     await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadMinimizeDialogTID]');
     await clickOn('[data-tid=location_' + defaultLocationName + ']');
     await expectElementExist(getGridFileSelector('empty_folder'), true, 5000);
     await global.client.dblclick(getGridFileSelector(folderToCopy));

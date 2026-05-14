@@ -942,7 +942,10 @@ export async function waitForNotification(
 
 export async function addDescription(desc) {
   await clickOn('[data-tid=descriptionTabTID]');
-  await clickOn('[data-tid=descriptionTID]');
+  // The Milkdown editor only exposes a contenteditable host once edit mode
+  // is on. A single click on the description body does NOT toggle edit mode
+  // (only `onDoubleClick` does), so click the dedicated edit button instead.
+  await clickOn('[data-tid=editDescriptionTID]');
   const editor = await global.client.waitForSelector(
     '[data-tid=descriptionTID] [contenteditable=true]',
   );
@@ -951,11 +954,7 @@ export async function addDescription(desc) {
   } catch (e) {
     await editor.type(desc);
   }
-  if (await isDisplayed('[data-tid=descriptionChangedTID]', true, 8000)) {
-    await clickOn('[data-tid=saveDescriptionTID]');
-  } else {
-    await clickOn('[data-tid=saveDescriptionTID]');
-  }
+  await clickOn('[data-tid=saveDescriptionTID]');
 }
 
 export async function createFile(

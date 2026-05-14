@@ -58,7 +58,9 @@ export function computeMoveCopyValidity({
   sourceLocation,
   mode,
 }: Params): MoveCopyValidity {
-  if (!targetPath || !targetLocation) {
+  // S3 bucket roots have an empty `path`, so treat any non-null `targetPath`
+  // as a valid destination as long as the location itself is selected.
+  if (!targetLocation || targetPath === undefined || targetPath === null) {
     return { disabled: true, reason: 'no-target' };
   }
 

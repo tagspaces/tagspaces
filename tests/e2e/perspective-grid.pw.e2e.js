@@ -19,7 +19,7 @@ import {
   selectRowFiles,
   setSettings
 } from './general.helpers';
-import { startTestingApp, stopApp } from './hook';
+import { startTestingApp, stopApp, testDataRefresh } from './hook';
 import {
   createPwLocation,
   createS3Location,
@@ -153,7 +153,10 @@ test.describe('TST50 - Perspective Grid', () => {
     }
   });
 
-  test('TST5008 - Copy file [web,s3,electron]', async () => {
+  test('TST5008 - Copy file [web,s3,electron]', async ({
+    isS3,
+    testDataDir,
+  }) => {
     const fileName = 'sample.svg';
     await openFile(fileName, 'showPropertiesTID');
     // add meta json to file
@@ -183,6 +186,10 @@ test.describe('TST50 - Perspective Grid', () => {
 
     await expectElementExist(getGridFileSelector(fileName), true);
     await expectMetaFilesExist(arrayMeta, true);
+    // Reset the source sidecar (and the toggled persist-tags setting via the
+    // mode toggle persisting through Redux) before the next test reuses
+    // sample.svg with a clean state.
+    await testDataRefresh(isS3, testDataDir);
   });
 
   test.skip('TST5009 - Copy file on different partition [manual]', async () => {});
@@ -200,6 +207,9 @@ test.describe('TST50 - Perspective Grid', () => {
     // open Copy/Move File Dialog
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
     await clickOn('[data-tid=MoveTargetempty_folder]');
+    // The dialog persists the last-used mode in Redux, so explicitly switch
+    // back to Move here — a prior test (TST5008) may have left it on Copy.
+    await clickOn('[data-tid=mcfModeMove]');
     await clickOn('[data-tid=confirmMoveFiles]');
     // Wait for S3 move operation to complete
     await global.client.waitForTimeout(1500);
