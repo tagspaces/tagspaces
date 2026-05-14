@@ -239,6 +239,18 @@ function FolderList({
   }
 
   if (visible.length === 0) {
+    let emptyMessage: string;
+    if (query) {
+      emptyMessage = t('core:noFoldersMatch');
+    } else if (filter === 'folders' && entries.some((e) => e.isFile)) {
+      // Folder is not actually empty — it just has no subfolders, only files
+      // that the picker is filtering out.
+      emptyMessage = t('core:noSubfoldersHere');
+    } else if (filter === 'files' && entries.some((e) => !e.isFile)) {
+      emptyMessage = t('core:noFilesHere');
+    } else {
+      emptyMessage = t('core:thisFolderIsEmpty');
+    }
     return (
       <Box
         sx={{
@@ -251,7 +263,7 @@ function FolderList({
           fontSize: '0.875rem',
         }}
       >
-        {query ? t('core:noFoldersMatch') : t('core:thisFolderIsEmpty')}
+        {emptyMessage}
       </Box>
     );
   }

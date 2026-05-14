@@ -42,6 +42,8 @@
   "filesAlreadyInThisFolder": "Files are already in this folder.",
   "locationIsReadOnly": "This location is read-only.",
   "thisFolderIsEmpty": "This folder is empty.",
+  "noSubfoldersHere": "No subfolders here.",
+  "noFilesHere": "No files here.",
   "noFoldersMatch": "No folders match.",
   "filterFolders": "Filter folders",
   "recentDestinationGone": "That folder is no longer available.",
