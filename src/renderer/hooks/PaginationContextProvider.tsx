@@ -48,6 +48,12 @@ export const PaginationContextProvider = ({
   const { setReflectMetaActions } = useEditedEntryMetaContext();
   const { settings, showDirectories } = usePerspectiveSettingsContext();
   const { sortedDirContent } = useSortedDirContext();
+  // Only the two settings that actually shape pagination should reset the
+  // current page. Depending on the whole `settings` object would also clobber
+  // page state on every unrelated change (zoom/entrySize, thumbnailMode,
+  // sortBy, …), which is surprising to the user.
+  const gridPageLimit =
+    settings?.gridPageLimit ?? defaultSettings.gridPageLimit;
 
   const [page, setPage] = useState<number>(initPage);
   // const firstRender = useFirstRender();
@@ -63,7 +69,7 @@ export const PaginationContextProvider = ({
         console.debug('meta loaded')
       );
     }*/
-  }, [currentDirectoryPath, searchQuery, settings]); //, isSearchMode isMetaFolderExist]);
+  }, [currentDirectoryPath, searchQuery, gridPageLimit, showDirectories]);
 
   function getPageFiles(currentPage: number, dirContent: TS.FileSystemEntry[]) {
     const gridPageLimit =
@@ -89,7 +95,7 @@ export const PaginationContextProvider = ({
 
   const pageFiles = useMemo(
     () => getPageFiles(page, sortedDirContent),
-    [page, sortedDirContent, settings, showDirectories],
+    [page, sortedDirContent, gridPageLimit, showDirectories],
   );
 
   function setCurrentPage(currentPage?: number) {
