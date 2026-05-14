@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { FileIcon, FolderIcon } from '-/components/CommonIcons';
+import { FolderIcon } from '-/components/CommonIcons';
 import FileExtBadge from '-/components/FileExtBadge';
 import {
   getDefaultFolderColor,
@@ -283,8 +283,12 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
                     : null;
                 return (
                   <ListItem title={entry.path} key={entry.path} sx={{ gap: 1 }}>
-                    <ListItemIcon sx={{ minWidth: 32 }}>
-                      {entry.isFile ? <FileIcon /> : <FolderIcon />}
+                    <ListItemIcon sx={{ minWidth: 44 }}>
+                      <ExtensionTile
+                        entry={entry}
+                        supportedFileTypes={supportedFileTypes}
+                        defaultFolderColor={defaultFolderColor}
+                      />
                     </ListItemIcon>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography variant="body2" noWrap>
