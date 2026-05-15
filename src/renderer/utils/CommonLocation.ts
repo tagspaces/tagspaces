@@ -15,7 +15,6 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 //import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
-import { Pro } from '-/pro';
 import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { offlineRejectionIfRemote } from '-/utils/OfflineError';
@@ -114,8 +113,8 @@ export class CommonLocation implements TS.Location {
     this.disableIndexing = location.disableIndexing;
     this.reloadOnFocus = location.reloadOnFocus;
     this.disableThumbnailGeneration = location.disableThumbnailGeneration;
-    this.fullTextIndex = Pro && location.fullTextIndex;
-    this.extractLinks = Pro && location.extractLinks;
+    this.fullTextIndex = location.fullTextIndex;
+    this.extractLinks = location.extractLinks;
     this.maxIndexAge = location.maxIndexAge;
     this.maxLoops = location.maxLoops;
     this.persistTagsInSidecarFile = location.persistTagsInSidecarFile;
@@ -1113,6 +1112,7 @@ export class CommonLocation implements TS.Location {
     ignorePatterns: Array<string>,
     requestId: string,
     forceFullReindex: boolean = false,
+    extendedExtraction: boolean = false,
   ): Promise<any> => {
     /*if (this.isReadOnly) {
       return Promise.reject(new Error('read only Location'));
@@ -1128,6 +1128,7 @@ export class CommonLocation implements TS.Location {
         extractLinks,
         ignorePatterns,
         forceFullReindex,
+        extendedExtraction,
       });
       return window.electronIO.ipcRenderer.invoke(
         'postRequest',

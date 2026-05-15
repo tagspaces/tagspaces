@@ -39,7 +39,9 @@ export default defineConfig({
     },
     {
       name: 'electron',
-      grep: projectTagGrep('electron'),
+      // require 'electron' AND forbid '_lite' — Lite-specific tests assume
+      // the Pro module isn't installed and would fail in a Pro build
+      grep: projectTagGrep(['electron', '!_lite']),
       use: {
         isElectron: true,
         isWin,

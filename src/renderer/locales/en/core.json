@@ -382,6 +382,8 @@
   "disableIndexing": "Disable Indexing",
   "disableThumbnailGeneration": "Disable Thumbnail Generation",
   "createFullTextIndex": "Enable full text search",
+  "fullTextIndexProOnly": "Pro only:",
+  "fullTextIndexRequiresPro": "PDF and Office formats require Pro.",
   "extractLinks": "Extract links",
   "watchForChangesInLocation": "Watch for external changes in this location",
   "collectedTags": "Collected Tags",

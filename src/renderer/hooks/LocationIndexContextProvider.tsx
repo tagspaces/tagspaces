@@ -402,6 +402,7 @@ export const LocationIndexContextProvider = ({
               ignorePatterns,
               loc.uuid,
               forceFullReindex,
+              !!Pro,
             )
             .then((result) => {
               if (result && result.success) {
@@ -490,7 +491,7 @@ export const LocationIndexContextProvider = ({
       onProgress,
     };
     if (extractText) {
-      indexParam.extractPDFcontent = extractPDFcontent;
+      indexParam.extendedExtraction = Pro ? extractPDFcontent : false;
     }
 
     // Try incremental indexing if an existing index is available

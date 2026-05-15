@@ -738,7 +738,6 @@ function CreateEditLocationDialog(props: Props) {
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                 control={
                   <TsSwitch
-                    disabled={!Pro}
                     data-tid="changeFullTextIndex"
                     name="fullTextIndex"
                     checked={fullTextIndex}
@@ -768,14 +767,25 @@ function CreateEditLocationDialog(props: Props) {
                           </div>
                           <div>Tabular: .csv</div>
                           <div>Contacts: .vcf</div>
-                          <div>Documents: .pdf, .docx, .odt</div>
-                          <div>Spreadsheets: .xlsx, .ods</div>
-                          <div>Presentations: .pptx, .odp</div>
-                          <div>Ebooks: .epub</div>
+                          {Pro ? (
+                            <>
+                              <div style={{ marginTop: 4 }}>
+                                <b>{t('core:fullTextIndexProOnly')}</b>
+                              </div>
+                              <div>Documents: .pdf, .docx, .odt</div>
+                              <div>Spreadsheets: .xlsx, .ods</div>
+                              <div>Presentations: .pptx, .odp</div>
+                              <div>Ebooks: .epub</div>
+                            </>
+                          ) : (
+                            <div style={{ marginTop: 4, fontStyle: 'italic' }}>
+                              {t('core:fullTextIndexRequiresPro')}
+                            </div>
+                          )}
                         </div>
                       }
                     />
-                    {Pro ? <BetaLabel /> : <ProLabel />}
+                    <BetaLabel />
                   </>
                 }
               />
@@ -785,7 +795,6 @@ function CreateEditLocationDialog(props: Props) {
                   sx={{ justifyContent: 'space-between', marginLeft: 0 }}
                   control={
                     <TsSwitch
-                      disabled={!Pro}
                       data-tid="extractLinksTID"
                       name="extractLinks"
                       checked={extractLinks}
@@ -797,7 +806,7 @@ function CreateEditLocationDialog(props: Props) {
                   label={
                     <>
                       {t('core:extractLinks')}
-                      {Pro ? <BetaLabel /> : <ProLabel />}
+                      <BetaLabel />
                     </>
                   }
                 />
