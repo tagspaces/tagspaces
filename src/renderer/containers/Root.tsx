@@ -16,7 +16,13 @@
  *
  */
 import AppConfig from '-/AppConfig';
+import { ErrorBoundary } from '-/components/ErrorBoundary';
 import { FileUploadDialogContextProvider } from '-/components/dialogs/hooks/FileUploadDialogContextProvider';
+import i18n from '-/services/i18n';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import App from '-/containers/App';
 import DialogsRoot from '-/containers/DialogsRoot';
 import MainPage from '-/containers/MainPage';
@@ -61,6 +67,83 @@ type RootType = {
   store: Store<{}>;
   persistor: any;
 };
+
+function safeT(key: string, fallback: string) {
+  try {
+    const v = i18n.t(key);
+    return typeof v === 'string' && v && v !== key ? v : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function TopLevelFallback({ error }: { error?: Error }) {
+  const isDev = process.env.NODE_ENV !== 'production';
+  return (
+    <Box
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 3,
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: 560,
+          width: '100%',
+          padding: 3,
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: AppConfig.defaultCSSRadius,
+          backgroundColor: 'background.paper',
+        }}
+      >
+        <Alert severity="error" sx={{ marginBottom: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            {safeT('core:somethingWentWrong', 'Something went wrong')}
+          </Typography>
+          <Typography variant="body2">
+            {error?.message ||
+              safeT('core:unexpectedError', 'An unexpected error occurred')}
+          </Typography>
+        </Alert>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => window.location.reload()}
+          sx={{
+            borderRadius: AppConfig.defaultCSSRadius,
+            textTransform: 'none',
+          }}
+        >
+          {safeT('core:reloadApplication', 'Reload Application')}
+        </Button>
+        {isDev && error?.stack && (
+          <Box component="details" sx={{ marginTop: 2 }}>
+            <Box component="summary" sx={{ cursor: 'pointer' }}>
+              {safeT('core:showErrorDetails', 'Show error details')}
+            </Box>
+            <Box
+              component="pre"
+              sx={{
+                whiteSpace: 'pre-wrap',
+                fontSize: 11,
+                marginTop: 1,
+                maxHeight: 280,
+                overflow: 'auto',
+              }}
+            >
+              {error.stack}
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </Box>
+  );
+}
 
 /**
  * Compose an array of providers (components that accept children) around children.
@@ -183,32 +266,37 @@ export default function Root({ store, persistor }: RootType) {
   }
 
   return (
-    <ReduxProvider
-      // @ts-ignore
-      store={store}
+    <ErrorBoundary
+      fallback={(error) => <TopLevelFallback error={error} />}
+      onError={(error, info) => console.error('Top-level crash:', error, info)}
     >
-      {/**
-       * PersistGate delays the rendering of the app's UI until the persisted state has been retrieved
-       * and saved to redux.
-       * The `loading` prop can be `null` or any react instance to show during loading (e.g. a splash screen),
-       * for example `loading={<SplashScreen />}`.
-       * @see https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md
-       */}
-      <PersistGate
-        // loading={<LoadingScreen />}
-        onBeforeLift={() => {
-          // eslint-disable-next-line react/prop-types
-          if (!AppConfig.ExtIsAmplify) {
-            // || store.app.user !== undefined
-            // @ts-ignore
-            store.dispatch(AppActions.initApp());
-          }
-        }}
+      <ReduxProvider
         // @ts-ignore
-        persistor={persistor}
+        store={store}
       >
-        {appContent}
-      </PersistGate>
-    </ReduxProvider>
+        {/**
+         * PersistGate delays the rendering of the app's UI until the persisted state has been retrieved
+         * and saved to redux.
+         * The `loading` prop can be `null` or any react instance to show during loading (e.g. a splash screen),
+         * for example `loading={<SplashScreen />}`.
+         * @see https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md
+         */}
+        <PersistGate
+          // loading={<LoadingScreen />}
+          onBeforeLift={() => {
+            // eslint-disable-next-line react/prop-types
+            if (!AppConfig.ExtIsAmplify) {
+              // || store.app.user !== undefined
+              // @ts-ignore
+              store.dispatch(AppActions.initApp());
+            }
+          }}
+          // @ts-ignore
+          persistor={persistor}
+        >
+          {appContent}
+        </PersistGate>
+      </ReduxProvider>
+    </ErrorBoundary>
   );
 }

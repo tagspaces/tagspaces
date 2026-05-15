@@ -19,7 +19,10 @@
 import { createRoot } from 'react-dom/client';
 // import Root from './containers/Root';
 import configureStore from './store/configureStore';
+import { installGlobalErrorHandlers } from './services/globalErrorHandlers';
 import './app.global.css';
+
+installGlobalErrorHandlers();
 
 const { store, persistor } = configureStore({});
 

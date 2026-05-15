@@ -16,8 +16,15 @@
  *
  */
 
-import React, { createContext, useMemo, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
+import { setGlobalErrorNotifier } from '-/services/globalErrorHandlers';
 
 type NotificationStatus = {
   visible: boolean;
@@ -139,6 +146,19 @@ export const NotificationContextProvider = ({
       autohide,
     });
   }
+
+  useEffect(() => {
+    setGlobalErrorNotifier((text, notificationType, autohide, tid) => {
+      setNotificationStatus({
+        visible: true,
+        text,
+        tid: tid ?? 'globalErrorTID',
+        notificationType: notificationType ?? 'error',
+        autohide: autohide ?? true,
+      });
+    });
+    return () => setGlobalErrorNotifier(null);
+  }, []);
 
   function hideNotifications(excludeTypes = []) {
     if (

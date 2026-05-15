@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import EntryContainerNav from '-/components/EntryContainerNav';
 import EntryContainerTabs from '-/components/EntryContainerTabs';
 import EntryContainerTitle from '-/components/EntryContainerTitle';
+import { ErrorBoundary } from '-/components/ErrorBoundary';
 import FileView from '-/components/FileView';
 import { Splitter } from '-/components/Splitter';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
@@ -600,13 +601,27 @@ function EntryContainer() {
         );
 
         const fileView = openedEntry.isFile ? (
-          <FileView
-            key="FileViewID"
-            fileViewer={fileViewer}
-            fileViewerContainer={fileViewerContainer}
-            height="100%"
-            handleMessage={handleMessage}
-          />
+          <ErrorBoundary
+            title={t('core:error')}
+            label={openedEntry.path}
+            resetKeys={[openedEntry.path]}
+            onError={() =>
+              showNotification(
+                t('core:error'),
+                'error',
+                true,
+                'fileViewCrashTID',
+              )
+            }
+          >
+            <FileView
+              key="FileViewID"
+              fileViewer={fileViewer}
+              fileViewerContainer={fileViewerContainer}
+              height="100%"
+              handleMessage={handleMessage}
+            />
+          </ErrorBoundary>
         ) : null;
 
         if (openedEntry.isFile && isPanelOpened) {

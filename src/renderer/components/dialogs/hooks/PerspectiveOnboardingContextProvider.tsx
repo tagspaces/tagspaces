@@ -16,6 +16,7 @@
  *
  */
 
+import { ErrorBoundary } from '-/components/ErrorBoundary';
 import LoadingLazy from '-/components/LoadingLazy';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import {
@@ -23,7 +24,7 @@ import {
   loadExternalPerspectiveOnboarding,
   perspectiveHasOnboarding,
 } from '-/perspectives';
-import PerspectiveErrorBoundary from '-/perspectives/PerspectiveErrorBoundary';
+import i18n from '-/services/i18n';
 import { AppDispatch } from '-/reducers/app';
 import { actions as SettingsActions } from '-/reducers/settings';
 import Dialog from '@mui/material/Dialog';
@@ -124,9 +125,10 @@ export const PerspectiveOnboardingContextProvider = ({
         />
         <DialogContent>
           {Body && activeId && (
-            <PerspectiveErrorBoundary
-              perspectiveId={activeId}
-              context="onboarding"
+            <ErrorBoundary
+              title={i18n.t('core:onboardingFailedToLoad')}
+              label={`${i18n.t('core:perspectiveLabel')} ${activeId}`}
+              resetKeys={[activeId]}
             >
               <React.Suspense fallback={<LoadingLazy />}>
                 {React.createElement(Body as any, {
@@ -134,7 +136,7 @@ export const PerspectiveOnboardingContextProvider = ({
                   perspectiveId: activeId,
                 })}
               </React.Suspense>
-            </PerspectiveErrorBoundary>
+            </ErrorBoundary>
           )}
         </DialogContent>
       </Dialog>
