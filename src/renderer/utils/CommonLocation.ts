@@ -224,7 +224,14 @@ export class CommonLocation implements TS.Location {
     //    http://localhost in dev). Without this, bare paths like /Users/…
     //    resolve to http://localhost:1212/Users/… in dev and fail.
     //    Windows drive paths (C:/…) need a leading slash: tsfile:///C:/…
+    //    UNC paths (\\server\share\…) encode the server as the URL authority:
+    //    tsfile://server/share/… — the protocol handler then recovers the UNC
+    //    path via fileURLToPath('file://server/share/…') on Windows. Producing
+    //    tsfile:////server/… (empty authority + //-prefixed path) breaks that.
     if (!protocol && AppConfig.isElectron) {
+      if (isUnc) {
+        return AppConfig.mediaProtocol + '://' + rest.replace(/^\/+/, '');
+      }
       const localRest = rest.startsWith('/') ? rest : '/' + rest;
       return AppConfig.mediaProtocol + '://' + localRest;
     }
@@ -276,13 +283,10 @@ export class CommonLocation implements TS.Location {
     // any page origin (file:// in prod, http://localhost in dev).
     // Skip for S3 — those need signed URLs via getURLforPathInt, not tsfile://.
     if (rawPath && AppConfig.isElectron && !this.haveObjectStoreSupport()) {
-      // Normalize backslashes (Windows) and ensure a leading slash so the
-      // resulting URL is tsfile:///… on all platforms (tsfile:///C:/… on Win).
-      const normalized = rawPath.replaceAll(this.getDirSeparator(), '/');
-      const withLeadingSlash = normalized.startsWith('/')
-        ? normalized
-        : '/' + normalized;
-      return AppConfig.mediaProtocol + '://' + withLeadingSlash;
+      // Route through normalizeUrl so UNC paths (\\server\share\…) become
+      // tsfile://server/share/… (server as URL authority) — the protocol
+      // handler then recovers the UNC path via fileURLToPath on Windows.
+      return this.normalizeUrl(rawPath);
     }
     return rawPath;
   };
