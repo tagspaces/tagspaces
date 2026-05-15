@@ -83,6 +83,10 @@ export interface FilePickerDialogProps {
     linkType: FilePickerLinkType,
     label: string,
   ) => void;
+  /** Fired exactly once when the dialog closes without a confirmed selection
+   *  (X / Cancel / Esc / backdrop). Mutually exclusive with onSelect for any
+   *  single open cycle. */
+  onCancel?: () => void;
 }
 
 function modeAccepts(entry: TS.FileSystemEntry, mode: FilePickerMode): boolean {
@@ -106,6 +110,7 @@ function FilePickerDialog(props: FilePickerDialogProps) {
     showLabelField,
     initialLabel,
     onSelect,
+    onCancel,
   } = props;
 
   const { locations, findLocation } = useCurrentLocationContext();
@@ -147,6 +152,9 @@ function FilePickerDialog(props: FilePickerDialogProps) {
   // the user switches to a different entry — but only as long as the label
   // still matches the previous entry's name (i.e. they haven't customized).
   const prevEntryNameRef = useRef<string>('');
+  // True once `handleConfirm` has fired `onSelect` this open cycle. Used to
+  // suppress the `onCancel` callback when closing after a successful pick.
+  const selectionMadeRef = useRef<boolean>(false);
 
   // Reset all transient state on each fresh open of the dialog so reuse from a
   // keepMounted context provider doesn't show stale selection between opens.
@@ -162,6 +170,7 @@ function FilePickerDialog(props: FilePickerDialogProps) {
       setLinkLabel(initialLabel || '');
       userEditedLabelRef.current = !!initialLabel;
       prevEntryNameRef.current = '';
+      selectionMadeRef.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -288,14 +297,25 @@ function FilePickerDialog(props: FilePickerDialogProps) {
     }
     const finalLabel =
       (linkLabel && linkLabel.trim()) || selectedEntry.name || '';
+    selectionMadeRef.current = true;
     onSelect(selectedEntry, link, canUseRelative ? linkType : 'ts', finalLabel);
+    onClose();
+  }
+
+  // Single funnel for all close paths (X / Cancel / Esc / backdrop). If we
+  // got here without `handleConfirm` flipping the ref, the user dismissed
+  // without picking — fire onCancel exactly once.
+  function handleClose() {
+    if (!selectionMadeRef.current) {
+      onCancel?.();
+    }
     onClose();
   }
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       keepMounted
       scroll="paper"
       aria-labelledby="fpd-title"
@@ -316,7 +336,7 @@ function FilePickerDialog(props: FilePickerDialogProps) {
           </Typography>
         }
         closeButtonTestId="closeFilePickerTID"
-        onClose={onClose}
+        onClose={handleClose}
       />
       <DialogContent sx={{ overflowX: 'hidden', overflowY: 'auto' }}>
         {open && targetLocation && (
@@ -434,7 +454,7 @@ function FilePickerDialog(props: FilePickerDialogProps) {
           <Box />
         )}
         <Stack direction="row" spacing={1}>
-          <TsButton data-tid="closeFilePickerDialog" onClick={onClose}>
+          <TsButton data-tid="closeFilePickerDialog" onClick={handleClose}>
             {t('core:cancel')}
           </TsButton>
           <TsButton

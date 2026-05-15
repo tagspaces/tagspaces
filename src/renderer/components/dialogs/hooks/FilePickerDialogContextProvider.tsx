@@ -17,20 +17,24 @@
  */
 
 /**
- * Extension postMessage protocol for requesting a file picker (spec only —
- * the host-side router that translates these messages into
- * `openFilePickerDialog` calls is a follow-up).
+ * Extension postMessage protocol for requesting a file picker. Implemented
+ * by the host-side router in `EntryContainer.handleMessage`.
  *
  * Request (extension → host):
  *   {
  *     command: 'requestFilePicker',
- *     eventID: string,
+ *     eventID: string,                   // must match the iframe's eventID
  *     options?: {
- *       mode?: 'file' | 'folder' | 'any',
- *       allowedExtensions?: string[],
- *       title?: string,
- *       sourceLocationId?: string,
- *       sourceDir?: string,
+ *       mode?: 'file' | 'folder' | 'any',  // default 'any'
+ *       allowedExtensions?: string[],    // accepted but currently ignored (TODO)
+ *       title?: string,                  // optional dialog title override
+ *       sourceLocationId?: string,       // optional; defaults to openedEntry.locationID
+ *       sourceDir?: string,              // optional; defaults to the openedEntry's
+ *                                        // containing folder (file) or itself (folder)
+ *       showLabelField?: boolean,        // when true, the dialog renders an editable
+ *                                        // "Link text" field; returned in response.label
+ *       initialLabel?: string,           // default value for the Link-text field
+ *                                        // (e.g. the user's current editor selection)
  *     },
  *   }
  *
@@ -40,12 +44,21 @@
  *     cancelled?: true,                  // mutually exclusive with the rest
  *     link?: 'ts://...' | '../foo.md',
  *     linkType?: 'ts' | 'relative',
+ *     label?: string,                    // user-edited link text (when showLabelField)
  *     name?: string,
  *     path?: string,                     // absolute path inside the location
  *     locationId?: string,
  *     isFile?: boolean,
  *     extension?: string,
  *   }
+ *
+ * Constraints:
+ * - Only one outstanding `requestFilePicker` per iframe. Sending a second
+ *   before the first resolves silently replaces it — no `cancelled` reply
+ *   will arrive for the abandoned request.
+ * - The host defaults `initialLocationId` to the current entry's location
+ *   (least-privilege). The user can switch locations manually inside the
+ *   dialog; the eventual response carries the picked entry's `locationId`.
  */
 
 import LoadingLazy from '-/components/LoadingLazy';
@@ -72,6 +85,12 @@ export interface FilePickerDialogOpenOptions {
     linkType: FilePickerLinkType,
     label: string,
   ) => void;
+  /** Fired exactly once when the dialog closes without a confirmed selection
+   *  (X / Cancel / Esc / backdrop). Mutually exclusive with onSelect for any
+   *  single open cycle. Required for callers that need a definitive "the user
+   *  walked away" signal — e.g. the extension postMessage router has to reply
+   *  with `{ cancelled: true }` so the requesting extension stops waiting. */
+  onCancel?: () => void;
 }
 
 type FilePickerDialogContextData = {
@@ -153,6 +172,9 @@ export const FilePickerDialogContextProvider = ({
         ) => {
           // Read from the ref so callers can pass freshly-closed-over handlers.
           options.current?.onSelect(entry, link, linkType, label);
+        }}
+        onCancel={() => {
+          options.current?.onCancel?.();
         }}
       />
       {children}

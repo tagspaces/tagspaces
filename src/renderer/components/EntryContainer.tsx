@@ -23,6 +23,7 @@ import EntryContainerTitle from '-/components/EntryContainerTitle';
 import { ErrorBoundary } from '-/components/ErrorBoundary';
 import FileView from '-/components/FileView';
 import { Splitter } from '-/components/Splitter';
+import { useFilePickerDialogContext } from '-/components/dialogs/hooks/useFilePickerDialogContext';
 import { useResolveConflictContext } from '-/components/dialogs/hooks/useResolveConflictContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -76,6 +77,7 @@ function EntryContainer() {
   const { saveDescription, isEditMode, setEditMode, closeOpenedEntries } =
     useFilePropertiesContext();
   const { findLocation } = useCurrentLocationContext();
+  const { openFilePickerDialog } = useFilePickerDialogContext();
   const { saveFileOpen } = useResolveConflictContext();
   const { setThumbnailImageChange } = useIOActionsContext();
   const { saveBinaryFilePromise } = usePlatformFacadeContext();
@@ -380,6 +382,57 @@ function EntryContainer() {
         break;
       case 'contentChangedInEditor': {
         setFileChanged(true);
+        break;
+      }
+      case 'requestFilePicker': {
+        const opts = data.options || {};
+        const sep = cLocation?.getDirSeparator?.() || '/';
+        const sourceLocationId =
+          opts.sourceLocationId ?? openedEntry?.locationID;
+        const sourceDir =
+          opts.sourceDir ??
+          (openedEntry?.path
+            ? openedEntry.isFile
+              ? extractContainingDirectoryPath(openedEntry.path, sep)
+              : openedEntry.path
+            : undefined);
+
+        const reply = (payload: Record<string, unknown>) => {
+          fileViewer.current?.contentWindow?.postMessage(
+            { eventID: data.eventID, ...payload },
+            '*',
+          );
+        };
+
+        openFilePickerDialog({
+          mode: opts.mode ?? 'any',
+          title: opts.title,
+          // Least-privilege default: open scoped to the current entry's
+          // location. The user can still switch locations manually.
+          initialLocationId: sourceLocationId,
+          sourceLocationId,
+          sourceDir,
+          // Optional: extension can prefill an editable Link-text field
+          // (e.g. with the user's currently-selected text in the editor).
+          showLabelField: opts.showLabelField === true,
+          initialLabel:
+            typeof opts.initialLabel === 'string'
+              ? opts.initialLabel
+              : undefined,
+          onSelect: (entry, link, linkType, label) => {
+            reply({
+              link,
+              linkType,
+              label,
+              name: entry.name,
+              path: entry.path,
+              locationId: entry.locationID,
+              isFile: entry.isFile,
+              extension: entry.extension,
+            });
+          },
+          onCancel: () => reply({ cancelled: true }),
+        });
         break;
       }
       default:
