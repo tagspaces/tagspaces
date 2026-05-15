@@ -19,7 +19,7 @@
   "dependencies": {
     "@tagspaces/extensions": "1.0.245",
     "@tagspaces/tagspaces-common-node": "4.8.3",
-    "@tagspaces/tagspaces-ws": "4.8.3",
+    "@tagspaces/tagspaces-ws": "4.8.4",
     "wasm-vips": "0.0.17",
     "ws": "8.19.0"
   },

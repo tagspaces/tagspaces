@@ -249,7 +249,6 @@
     "@playwright/test": "^1.53.2",
     "@pmmmwh/react-refresh-webpack-plugin": "0.6.2",
     "@svgr/webpack": "8.1.0",
-    "@types/date-fns": "2.6.3",
     "@types/fscreen": "^1.0.4",
     "@types/leaflet": "1.9.21",
     "@types/node": "20.6.2",
