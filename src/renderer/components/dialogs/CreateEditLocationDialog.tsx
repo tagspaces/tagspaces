@@ -44,7 +44,11 @@ import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useTagGroupsLocationContext } from '-/hooks/useTagGroupsLocationContext';
 import { Pro } from '-/pro';
-import { getPersistTagsInSidecarFile, isDevMode } from '-/reducers/settings';
+import {
+  getPersistTagsInSidecarFile,
+  isDevMode,
+  isHideProFeatures,
+} from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import useFirstRender from '-/utils/useFirstRender';
@@ -102,6 +106,7 @@ function CreateEditLocationDialog(props: Props) {
   const isPersistTagsInSidecar = useSelector(getPersistTagsInSidecarFile);
   //const locations: Array<CommonLocation> = useSelector(getLocations);
   const devMode: boolean = useSelector(isDevMode);
+  const hideProFeatures: boolean = useSelector(isHideProFeatures);
   const IgnorePatternDialog =
     Pro && Pro.UI ? Pro.UI.IgnorePatternDialog : false;
   /*const { location } = props;*/
@@ -767,7 +772,7 @@ function CreateEditLocationDialog(props: Props) {
                           </div>
                           <div>Tabular: .csv</div>
                           <div>Contacts: .vcf</div>
-                          {Pro ? (
+                          {(Pro ? true : !hideProFeatures) && (
                             <>
                               <div style={{ marginTop: 4 }}>
                                 <b>{t('core:fullTextIndexProOnly')}</b>
@@ -777,10 +782,6 @@ function CreateEditLocationDialog(props: Props) {
                               <div>Presentations: .pptx, .odp</div>
                               <div>Ebooks: .epub</div>
                             </>
-                          ) : (
-                            <div style={{ marginTop: 4, fontStyle: 'italic' }}>
-                              {t('core:fullTextIndexRequiresPro')}
-                            </div>
                           )}
                         </div>
                       }
