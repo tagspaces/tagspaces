@@ -16,13 +16,18 @@
  *
  */
 
+import { LinkIcon } from '-/components/CommonIcons';
+import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
+import { useFilePickerDialogContext } from '-/components/dialogs/hooks/useFilePickerDialogContext';
 import { useTargetPathContext } from '-/components/dialogs/hooks/useTargetPathContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { fileNameValidation, urlValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { FormControl } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
 import React, { useEffect, useReducer, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -48,9 +53,14 @@ function CreateLink(props: Props) {
   } = props;
   const { t } = useTranslation();
   const { targetDirectoryPath } = useTargetPathContext();
+  const { openFilePickerDialog } = useFilePickerDialogContext();
+  const { findLocation } = useCurrentLocationContext();
 
   const [inputError, setInputError] = useState<boolean>(false);
   const [urlError, setUrlError] = useState<boolean>(false);
+  // The URL field is controlled so the file picker can write a ts:// /
+  // relative link into it after the user picks an internal entry.
+  const [linkUrl, setLinkUrl] = useState<string>('');
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
@@ -82,8 +92,25 @@ function CreateLink(props: Props) {
     handleValidation(fileNameValidation(event.target.value));
   };
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLinkUrl(event.target.value);
     handleFileContentChange(event.target.value);
     handleUrlValidation(!urlValidation(event.target.value));
+  };
+
+  const openLinkPicker = () => {
+    const currentLocation = findLocation();
+    openFilePickerDialog({
+      mode: 'any',
+      sourceLocationId: currentLocation?.uuid,
+      sourceDir: targetDirectoryPath,
+      title: t('core:chooseEntry'),
+      onSelect: (_entry, link) => {
+        setLinkUrl(link);
+        handleFileContentChange(link);
+        // A picked entry yields a valid ts:// / relative link.
+        handleUrlValidation(false);
+      },
+    });
   };
 
   const handleValidation = (noValid) => {
@@ -141,7 +168,24 @@ function CreateLink(props: Props) {
           id="fileLinkID"
           placeholder={t('core:createLinkPlaceholder')}
           label={t('core:linkURL')}
+          value={linkUrl}
           onChange={handleUrlChange}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <TsIconButton
+                    size="small"
+                    data-tid={tid('pickLinkTargetTID')}
+                    tooltip={t('core:chooseEntry')}
+                    onClick={openLinkPicker}
+                  >
+                    <LinkIcon />
+                  </TsIconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
         {urlError && (
           <FormHelperText>{t('core:urlValidationHelp')}</FormHelperText>

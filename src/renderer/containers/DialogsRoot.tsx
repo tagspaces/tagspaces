@@ -58,6 +58,13 @@ const providers = [
   // providers wrap it from the outside.
   PerspectiveOnboardingContextProvider,
   SettingsDialogContextProvider,
+  // FilePickerDialogContextProvider must wrap NewFileDialogContextProvider so
+  // the "Choose file or folder" button in the Create Link File dialog (rendered
+  // by NewFileDialog → CreateLink) can call openFilePickerDialog(). React
+  // Context follows the React tree, and each dialog provider renders its dialog
+  // as a sibling that precedes {children} — so a provider listed later here is
+  // NOT an ancestor of an earlier dialog's content.
+  FilePickerDialogContextProvider,
   NewFileDialogContextProvider,
   NewAudioDialogContextProvider,
   // OnboardingDialogContextProvider must wrap LicenseDialogContextProvider
@@ -68,7 +75,6 @@ const providers = [
   AboutDialogContextProvider,
   KeyboardDialogContextProvider,
   LinkDialogContextProvider,
-  FilePickerDialogContextProvider,
   ProTeaserDialogContextProvider,
   AiGenerationDialogContextProvider,
   ResolveConflictContextProvider,
