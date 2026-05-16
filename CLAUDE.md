@@ -160,6 +160,15 @@ The app runs on multiple platforms and storage backends. When working with file/
 
 When comparing paths (e.g., `startsWith`, equality checks), normalize **both** sides with the same functions. A common bug pattern: applying `cleanFrontDirSeparator` (strips leading `/`) to one path but not the other, breaking the comparison on Mac/Linux where absolute paths start with `/`. Path utilities live in `@tagspaces/tagspaces-common/paths.js`.
 
+## Data-loss avoidance (file-manager mindset)
+
+TagSpaces is a file manager that operates on users' real files. Treat the user's data as sacred: a single accidental overwrite or skipped delete can lose work that has no other copy. When changing IO/destructive code paths, default to the safer option even when it costs elegance or atomicity.
+
+- **Merge, don't wipe.** On destination conflicts prefer source-wins merge over delete-then-replace — users can clean up extras; they can't recover wiped files. Mirror Finder/Explorer's "Merge" semantics on folder overwrites.
+- **Never swallow IO errors.** A promise that resolves "success" on a failed delete/move lets the UI lie about disk state (e.g. folder reappears on reload). Propagate so the renderer's `.catch` can suppress optimistic updates and surface a notification.
+- **Order steps for recoverable failure.** Copy first (source intact if copy fails), then delete source (dest has the data if delete fails). Never delete source before the copy is durable.
+- **Cover IO fixes with both layers of tests.** Unit against the IO module with a hijacked `fs` to simulate failure; e2e asserting on-disk state survives a hard reload, not just the optimistic listing. See `io-fsclient.test.js` and `move-copy-dialog.pw.e2e.js:TST1008`.
+
 ## IO actions: cross-location limitations
 
 `useIOActionsContext`'s `moveFiles` / `copyFiles` / `moveDirs` / `copyDirs` in `src/renderer/hooks/IOActionsContextProvider.tsx` operate on a **single location** — they accept a `targetLocationID` but resolve both source and target through the same location's `moveFilesPromise` / `copyFilesPromise`. They don't move files between distinct locations.
