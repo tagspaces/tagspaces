@@ -567,6 +567,29 @@ export default function loadMainEvents() {
       });
   });
   ipcMain.on('openUrl', async (event, url) => {
+    // Scheme allowlist: shell.openExternal hands the URL to the OS, which
+    // means a malicious file:// or custom scheme (ms-msdt:, search-ms:, etc.)
+    // could trigger arbitrary code execution. Only forward URLs whose scheme
+    // is on the allowlist below. ts:// links are routed inside the renderer
+    // and must never reach this handler.
+    if (typeof url !== 'string' || url.length === 0) {
+      console.warn('openUrl: ignored non-string url');
+      return;
+    }
+    let parsed: URL;
+    try {
+      parsed = new URL(url);
+    } catch (e) {
+      console.warn('openUrl: ignored unparseable url:', url);
+      return;
+    }
+    const allowed = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+    if (!allowed.has(parsed.protocol)) {
+      console.warn(
+        'openUrl: blocked scheme ' + parsed.protocol + ' for url: ' + url,
+      );
+      return;
+    }
     await shell.openExternal(url);
   });
   ipcMain.handle('selectDirectoryDialog', async () => {

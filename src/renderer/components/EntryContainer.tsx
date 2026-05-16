@@ -268,9 +268,11 @@ function EntryContainer() {
       case 'playbackEnded':
         openNextFileAction();
         break;
-      // case 'openLinkExternally':
-      //   // openLink(data.link);
-      //   break;
+      // 'openLinkExternally' is handled by the global window-message
+      // listener in MainPage.tsx, which routes through openLink() for all
+      // extension iframes. Do NOT handle it here — that would double-fire
+      // openLink() and race the entry-open sequence (ts:// links break,
+      // among other things).
       case 'loadDefaultTextContent':
         if (!openedEntry || !openedEntry.path) {
           // || openedEntry.changed) {

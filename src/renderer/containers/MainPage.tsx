@@ -118,10 +118,19 @@ function MainPage() {
   );
 
   useEventListener('message', (e) => {
+    // Only accept messages from same-origin frames or sandboxed extension
+    // iframes (origin 'null'). Without this, any embedded frame could trigger
+    // openLink() with attacker-controlled URLs.
+    const trusted = e.origin === window.location.origin || e.origin === 'null';
+    if (!trusted) return;
     if (typeof e.data === 'string') {
       try {
         const data = JSON.parse(e.data);
-        if (data.command === 'openLinkExternally') {
+        if (
+          data.command === 'openLinkExternally' &&
+          typeof data.link === 'string' &&
+          data.link.length > 0
+        ) {
           openLink(data.link, { fullWidth: false });
         }
       } catch (ex) {
