@@ -76,6 +76,7 @@ export default {
   newHTMLFileContent:
     '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body></body></html>',
   showUnixHiddenEntries: false,
+  showSymbolicLinks: true,
   entryContainerTab: 0,
   checkForUpdates,
   reorderTags: false,

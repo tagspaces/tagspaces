@@ -427,7 +427,26 @@ function GridCell(props: Props) {
 
   function generateExtension() {
     return (
-      <TsTooltip title={i18n.t('clickToSelect') + ': ' + fsEntry.name}>
+      <TsTooltip
+        title={
+          <>
+            {fsEntry.isBrokenSymlink ? (
+              <>
+                {i18n.t('core:brokenSymbolicLink')}
+                <br />
+              </>
+            ) : fsEntry.isSymbolicLink ? (
+              <>
+                {i18n.t('core:symbolicLinkTo', {
+                  target: fsEntry.symlinkTargetPath || '?',
+                })}
+                <br />
+              </>
+            ) : null}
+            {i18n.t('clickToSelect')}: {fsEntry.name}
+          </>
+        }
+      >
         <FileExtBadge
           sx={{
             backgroundColor: fileSystemEntryColor,
@@ -534,6 +553,8 @@ function GridCell(props: Props) {
             <EntryIcon
               isFile={fsEntry.isFile}
               fileExtension={fsEntry.extension}
+              isSymbolicLink={fsEntry.isSymbolicLink}
+              isBrokenSymlink={fsEntry.isBrokenSymlink}
             />
           </Box>
         )}

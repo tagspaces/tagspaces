@@ -22,6 +22,8 @@ import React, { useMemo } from 'react';
 interface Props {
   isFile: boolean;
   fileExtension?: string;
+  isSymbolicLink?: boolean;
+  isBrokenSymlink?: boolean;
 }
 
 const ICONS = {
@@ -81,7 +83,12 @@ function getIcon(isFile: boolean, fileExtension: string): React.ReactNode {
   return ICONS.genericFile;
 }
 
-function EntryIcon({ isFile, fileExtension = '' }: Props) {
+function EntryIcon({
+  isFile,
+  fileExtension = '',
+  isSymbolicLink = false,
+  isBrokenSymlink = false,
+}: Props) {
   // Memoize icon selection for performance
   const iconSVGPath = useMemo(
     () => getIcon(isFile, fileExtension),
@@ -96,6 +103,25 @@ function EntryIcon({ isFile, fileExtension = '' }: Props) {
       fill="#bbbbbb22"
     >
       {iconSVGPath}
+      {isSymbolicLink && !isBrokenSymlink && (
+        <path
+          d="M 10 12 L 14 12 M 12 10 L 14 12 L 12 14"
+          stroke="#1976d2"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      )}
+      {isBrokenSymlink && (
+        <path
+          d="M 10 10 L 14 14 M 14 10 L 10 14"
+          stroke="#d32f2f"
+          strokeWidth="2"
+          strokeLinecap="round"
+          fill="none"
+        />
+      )}
     </svg>
   );
 }

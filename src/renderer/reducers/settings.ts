@@ -38,6 +38,7 @@ export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
+  TOGGLE_SHOWSYMBOLICLINKS: 'SETTINGS/TOGGLE_SHOWSYMBOLICLINKS',
   SET_ENTRY_CONTAINER_TAB: 'SETTINGS/SET_ENTRY_CONTAINER_TAB',
   SET_DESKTOPMODE: 'SETTINGS/SET_DESKTOPMODE',
   SET_USEONLYTAGSFROMTAGLIBRARY: 'SETTINGS/SET_USEONLYTAGSFROMTAGLIBRARY',
@@ -183,6 +184,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
       return { ...state, showUnixHiddenEntries: !state.showUnixHiddenEntries };
+    }
+    case types.TOGGLE_SHOWSYMBOLICLINKS: {
+      return { ...state, showSymbolicLinks: !state.showSymbolicLinks };
     }
     case types.SET_ENTRY_CONTAINER_TAB: {
       return { ...state, entryContainerTab: action.entryContainerTab };
@@ -736,6 +740,9 @@ export const actions = {
   toggleShowUnixHiddenEntries: () => ({
     type: types.TOGGLE_SHOWUNIXHIDDENENTRIES,
   }),
+  toggleShowSymbolicLinks: () => ({
+    type: types.TOGGLE_SHOWSYMBOLICLINKS,
+  }),
   setEntryContainerTab: (
     tabName: (typeof TabNames)[keyof typeof TabNames],
   ) => ({
@@ -1105,6 +1112,8 @@ export const getLastPublishedVersion = (state: any) =>
   state.settings.lastPublishedVersion;
 export const getShowUnixHiddenEntries = (state: any) =>
   state.settings.showUnixHiddenEntries;
+export const getShowSymbolicLinks = (state: any) =>
+  state.settings.showSymbolicLinks !== false;
 export const getEntryContainerTab = (state: any) =>
   state.settings.entryContainerTab;
 export const getUseDefaultLocation = (state: any) =>

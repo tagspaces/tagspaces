@@ -35,6 +35,7 @@ import {
 import {
   actions as SettingsActions,
   getDefaultPerspective,
+  getShowSymbolicLinks,
   getShowUnixHiddenEntries,
   getTagDelimiter,
 } from '-/reducers/settings';
@@ -250,6 +251,7 @@ export const DirectoryContentContextProvider = ({
   const currentLocationPath = useRef<string>('');
   //const useGenerateThumbnails = useSelector(getUseGenerateThumbnails);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
+  const showSymbolicLinks = useSelector(getShowSymbolicLinks);
   const defaultPerspective = useSelector(getDefaultPerspective);
   const tagDelimiter: string = useSelector(getTagDelimiter);
   const isOnline = useSelector(getIsOnline);
@@ -1007,7 +1009,13 @@ export const DirectoryContentContextProvider = ({
         });
       }
     },
-    [currentLocation, signal, selectedEntries, showUnixHiddenEntries],
+    [
+      currentLocation,
+      signal,
+      selectedEntries,
+      showUnixHiddenEntries,
+      showSymbolicLinks,
+    ],
   );
 
   const loadDirectoryContentInt = useCallback(
@@ -1073,7 +1081,7 @@ export const DirectoryContentContextProvider = ({
           return [];
         });
     },
-    [signal, showUnixHiddenEntries],
+    [signal, showUnixHiddenEntries, showSymbolicLinks],
   );
 
   function clearDirectoryContent() {
@@ -1216,6 +1224,10 @@ export const DirectoryContentContextProvider = ({
 
     dirEntries.forEach((entry) => {
       if (!showHidden && entry.name.startsWith('.')) {
+        return;
+      }
+
+      if (!showSymbolicLinks && entry.isSymbolicLink) {
         return;
       }
 

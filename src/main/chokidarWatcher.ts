@@ -42,6 +42,7 @@ export function watchFolder(
       //  /(^|[\/\\])\../.test(path) || path.includes('.ts'), // ignoring .dotfiles // ignoring .ts folder
       // (stats && stats.isDirectory()),  // ignoring directories
       ignoreInitial: true,
+      followSymlinks: false,
       depth,
     });
 

@@ -734,6 +734,29 @@ function SettingsGeneral() {
           ),
         },
         {
+          label: t('core:showSymbolicLinks'),
+          jsx: (
+            <ListItem>
+              <ListItemText
+                primary={
+                  <Typography>
+                    {t('core:showSymbolicLinks')}
+                    <InfoIcon tooltip={t('core:showSymbolicLinksInfo')} />
+                  </Typography>
+                }
+              />
+              <TsSwitch
+                data-tid="settingsSetShowSymbolicLinks"
+                onClick={() => {
+                  dispatch(SettingsActions.toggleShowSymbolicLinks());
+                  openCurrentDirectory();
+                }}
+                checked={settings.showSymbolicLinks !== false}
+              />
+            </ListItem>
+          ),
+        },
+        {
           label: t('core:maxSearchResultChoose'),
           jsx: (
             <ListItem>

@@ -194,6 +194,9 @@ export namespace TS {
     name: string;
     isFile: boolean;
     isNewFile?: boolean;
+    isSymbolicLink?: boolean;
+    isBrokenSymlink?: boolean;
+    symlinkTargetPath?: string;
     locationID?: string;
     //isAutoSaveEnabled?: boolean; // common with OpenedEntry
     extension?: string;
