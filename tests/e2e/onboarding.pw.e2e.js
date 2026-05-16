@@ -106,6 +106,45 @@ test.describe('TST91 - Onboarding flow', () => {
     expect(openPrimary || chooseFolder).toBeTruthy();
   });
 
+  test('TST9105 - License dialog only closes via its action buttons [electron,web,s3]', async () => {
+    // The dialog should ignore Escape and backdrop clicks — only the
+    // Agree / Quit buttons inside it may dismiss it. We can verify Escape
+    // and backdrop, plus the Agree button. We don't click Quit because
+    // it terminates the Electron app.
+    await global.client.waitForSelector('[data-tid=agreeLicenseDialog]', {
+      timeout: 10000,
+      state: 'visible',
+    });
+
+    // Escape must NOT close the dialog.
+    await global.client.keyboard.press('Escape');
+    await global.client.waitForTimeout(300);
+    expect(
+      await global.client.isVisible('[data-tid=agreeLicenseDialog]'),
+    ).toBe(true);
+
+    // Clicking the backdrop (outside the dialog paper) must NOT close it.
+    // The dialog paper is centered, so a click at (5, 5) lands on the
+    // MUI backdrop covering the rest of the viewport.
+    await global.client.mouse.click(5, 5);
+    await global.client.waitForTimeout(300);
+    expect(
+      await global.client.isVisible('[data-tid=agreeLicenseDialog]'),
+    ).toBe(true);
+
+    // The Quit button must exist (alternative CTA) — we don't click it,
+    // since it would terminate the app and end the test session.
+    const quitBtn = await global.client.$('[data-tid=confirmLicenseDialog]');
+    expect(quitBtn).toBeTruthy();
+
+    // The Agree button must close the dialog.
+    await global.client.click('[data-tid=agreeLicenseDialog]');
+    await global.client.waitForSelector('[data-tid=agreeLicenseDialog]', {
+      timeout: 5000,
+      state: 'hidden',
+    });
+  });
+
   test('TST9104 - Closing the wizard marks onboarding completed [electron,web,s3]', async () => {
     await global.client.waitForSelector('[data-tid=agreeLicenseDialog]', {
       timeout: 10000,

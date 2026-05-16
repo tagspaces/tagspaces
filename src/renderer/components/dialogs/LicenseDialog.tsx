@@ -61,7 +61,7 @@ function LicenseDialog(props: Props) {
     <Dialog
       open={open}
       onClose={(_event, reason) => {
-        if (reason === 'escapeKeyDown') return;
+        if (reason === 'escapeKeyDown' || reason === 'backdropClick') return;
         onClose();
       }}
       keepMounted
