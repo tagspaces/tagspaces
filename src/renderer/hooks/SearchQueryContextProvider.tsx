@@ -73,7 +73,10 @@ export const SearchQueryContextProvider = ({
 
   useEffect(() => {
     if (searchQuery && Object.keys(searchQuery).length > 0) {
-      tempSearchQuery.current = { ...searchQuery };
+      // forceIndexing is a one-shot — clear it after the executed query
+      // syncs back so the toggle reverts to "use current index" and the
+      // next search doesn't silently re-index again.
+      tempSearchQuery.current = { ...searchQuery, forceIndexing: false };
     } else {
       tempSearchQuery.current = {};
     }
