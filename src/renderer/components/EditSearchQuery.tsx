@@ -37,6 +37,7 @@ import TsTooltip from '-/components/TsTooltip';
 import TsDatePicker from '-/components/TsDatePicker';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
+import TsSwitch from '-/components/TsSwitch';
 import TsTextField from '-/components/TsTextField';
 import TsToggleButton from '-/components/TsToggleButton';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
@@ -47,6 +48,7 @@ import { TS } from '-/tagspaces.namespace';
 import { ListItemText, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
@@ -350,39 +352,23 @@ function EditSearchQuery(props: Props) {
         </ToggleButtonGroup>
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
-        <ToggleButtonGroup
-          onChange={() => {
-            setTempSearchQuery({
-              forceIndexing: !tempSearchQuery.forceIndexing,
-            });
-          }}
-          size="small"
-          exclusive
-          sx={{ marginBottom: 0, alignSelf: 'center' }}
-          value={tempSearchQuery.forceIndexing}
-        >
-          <TsToggleButton
-            tooltip={t('useCurrentIndexTooltip')}
-            sx={{
-              borderTopRightRadius: 0,
-              borderBottomRightRadius: 0,
-            }}
-            value={false}
-          >
-            {t('useCurrentIndex')}
-          </TsToggleButton>
-          <TsToggleButton
-            tooltip={t('forceReindexTooltip')}
-            sx={{
-              borderTopLeftRadius: 0,
-              borderBottomLeftRadius: 0,
-            }}
-            value={true}
-            data-tid="forceIndexingTID"
-          >
-            {t('forceReindex')}
-          </TsToggleButton>
-        </ToggleButtonGroup>
+        <FormControlLabel
+          labelPlacement="start"
+          sx={{ justifyContent: 'space-between', marginLeft: 0 }}
+          control={
+            <TsSwitch
+              data-tid="forceIndexingTID"
+              tooltip={t('forceReindexTooltip')}
+              checked={!!tempSearchQuery.forceIndexing}
+              onChange={(event) =>
+                setTempSearchQuery({
+                  forceIndexing: event.target.checked,
+                })
+              }
+            />
+          }
+          label={t('forceReindex')}
+        />
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
         <TagsSelect
