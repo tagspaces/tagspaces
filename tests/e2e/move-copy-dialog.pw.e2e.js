@@ -5,8 +5,10 @@ import { expect, test } from './fixtures';
 import {
   clickOn,
   clickOnIfVisible,
+  createNewDirectory,
   expectElementExist,
   getGridFileSelector,
+  reloadDirectory,
   setInputValue,
 } from './general.helpers';
 import { startTestingApp, stopApp } from './hook';
@@ -216,5 +218,61 @@ test.describe('TST10 - Move/Copy dialog new features', () => {
     expect(await moveBtn.isDisabled()).toBe(true);
 
     await closeMoveCopyDialog();
+  });
+
+  test('TST1008 - Folder move with same-name overwrite removes source on disk (regression) [electron]', async () => {
+    // Regression guard for the silent-swallow bug in moveDirectoryPromise:
+    // when the destination already contained a folder with the same name,
+    // the conflict dialog confirmed "override", the source vanished from
+    // the listing — but on reload it reappeared because the on-disk delete
+    // had failed silently. The IO layer now propagates the failure; this
+    // test asserts the user-visible contract that the source is truly gone
+    // even after a hard directory reload.
+    const sourceName = 'mvmerge_src_' + Date.now();
+    const destParent = 'mvmerge_dest_' + Date.now();
+
+    // 1. Create source at root, then create dest-parent + a same-named
+    //    child inside it (so the move triggers the conflict path).
+    await createNewDirectory(sourceName);
+    await createNewDirectory(destParent);
+    await global.client.dblclick(getGridFileSelector(destParent));
+    await createNewDirectory(sourceName);
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await expectElementExist(getGridFileSelector(sourceName), true, 10000);
+
+    // 2. Open Move/Copy dialog on the root source folder.
+    await openContextEntryMenu(
+      '[data-tid=fsEntryName_' + sourceName + ']',
+      'fileMenuMoveCopyDirectoryTID',
+    );
+    await expectElementExist('[data-tid=confirmMoveFiles]', true, 10000);
+
+    // 3. Descend into dest-parent so target = root/<destParent>.
+    await clickOn('[data-tid=MoveTarget' + destParent + ']');
+    await clickOn('[data-tid=confirmMoveFiles]');
+
+    // 4. Conflict dialog appears ("X exist do you want to override it?").
+    //    Confirm the overwrite.
+    await clickOn('[data-tid=confirmOverwriteByCopyMoveDialog]');
+
+    // 5. Directory-move on a local location may surface the upload dialog
+    //    with no progress (0/0); minimize/close it as the existing folder
+    //    move tests do.
+    await clickOnIfVisible('[data-tid=uploadCloseAndClearTID]');
+    await clickOnIfVisible('[data-tid=uploadMinimizeDialogTID]');
+
+    // 6. Source is gone from the root listing — the optimistic UI removal.
+    await clickOn('[data-tid=location_' + defaultLocationName + ']');
+    await expectElementExist(getGridFileSelector(sourceName), false, 7000);
+
+    // 7. The real assertion: reload from disk and verify the source is
+    //    STILL gone. Prior to the fix the folder reappeared here because
+    //    the source delete had silently failed.
+    await reloadDirectory();
+    await expectElementExist(getGridFileSelector(sourceName), false, 7000);
+
+    // 8. And the destination still has the merged folder.
+    await global.client.dblclick(getGridFileSelector(destParent));
+    await expectElementExist(getGridFileSelector(sourceName), true, 7000);
   });
 });
