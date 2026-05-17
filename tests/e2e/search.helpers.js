@@ -69,7 +69,10 @@ export async function searchEngine(
     }
 
     if (options.reindexing) {
-      await clickOn('[data-tid=forceIndexingTID]');
+      // forceIndexingTID is a TsSwitch (MUI Switch) since the force-reindex
+      // redesign — clicking the root span doesn't reliably toggle it, so
+      // check the underlying input (same pattern as changeFullTextIndex).
+      await global.client.check('[data-tid=forceIndexingTID] input');
     }
     if (options.searchType) {
       await clickOn('[data-tid=' + options.searchType + ']');
