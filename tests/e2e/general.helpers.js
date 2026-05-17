@@ -789,11 +789,14 @@ export async function createRevision(
   await clickOn('[data-tid=fileContainerSaveFile]');
   await clickOn('[data-tid=cancelEditingTID]');
 
-  if (await isDisplayed('[data-tid=viewRevisionTID]', false, 3000)) {
-    //Toggle Revisions
+  // The Revisions tab is rendered only once the just-created backup dir
+  // is detected; on object-store/remote (S3) locations that can lag the
+  // save. Wait for the tab to mount before clicking, unless a revision
+  // row is already visible.
+  if (!(await isDisplayed('[data-tid=viewRevisionTID]', true, 1000))) {
+    await expectElementExist('[data-tid=revisionsTabTID]', true, 15000);
     await clickOn('[data-tid=revisionsTabTID]');
   }
-  //await clickOn('[data-tid=revisionsTID]');
   await expectElementExist('[data-tid=viewRevisionTID]');
 }
 

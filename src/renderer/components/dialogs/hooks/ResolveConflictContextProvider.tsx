@@ -151,28 +151,34 @@ export const ResolveConflictContextProvider = ({
           fileOpen.isFile,
         );
         const backupDir = getBackupFileDir(fileOpen.path, fileOpen.uuid);
-        location.listDirectoryPromise(backupDir, []).then(async (backup) => {
+        // Preserve the pre-edit (original) content as the first revision.
+        // This MUST be awaited: leaving it fire-and-forget (a) risks losing
+        // the original version if the user navigates/closes before the copy
+        // lands, and (b) races the post-save tab recompute so the Revisions
+        // tab never appears on slower / object-store (S3) locations —
+        // haveRevisions()'s single checkDirExist() runs before the backup
+        // dir is durable. See fileopener TST0829.
+        try {
+          const backup = await location.listDirectoryPromise(backupDir, []);
           const haveBackup = backup.some((b) =>
             b.path.endsWith(fileOpen.extension),
           );
           if (!haveBackup) {
-            try {
-              const targetPath = getBackupFileLocation(
-                fileOpen.path,
-                id,
-                location.getDirSeparator(),
-              );
-              await copyFilePromiseOverwrite(
-                fileOpen.path,
-                targetPath,
-                fileOpen.locationID,
-                false,
-              );
-            } catch (error) {
-              console.log('copyFilePromiseOverwrite', error);
-            }
+            const originalRevisionPath = getBackupFileLocation(
+              fileOpen.path,
+              id,
+              location.getDirSeparator(),
+            );
+            await copyFilePromiseOverwrite(
+              fileOpen.path,
+              originalRevisionPath,
+              fileOpen.locationID,
+              false,
+            );
           }
-        });
+        } catch (error) {
+          console.log('creating initial revision backup failed', error);
+        }
         // wait 5ms in order ot get older timestamp
         await new Promise((resolve) => setTimeout(resolve, 5));
         const targetPath = getBackupFileLocation(
