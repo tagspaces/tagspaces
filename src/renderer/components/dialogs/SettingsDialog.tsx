@@ -18,6 +18,7 @@
 import {
   AIIcon,
   AdvancedSettingsIcon,
+  ExportImportIcon,
   ExtensionIcon,
   FileIcon,
   KeyboardIcon,
@@ -29,6 +30,7 @@ import { BetaLabel } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
 import SettingsAI from '-/components/dialogs/components/SettingsAI';
 import SettingsAdvanced from '-/components/dialogs/components/SettingsAdvanced';
+import SettingsBackupRestore from '-/components/dialogs/components/SettingsBackupRestore';
 import SettingsExtensions from '-/components/dialogs/components/SettingsExtensions';
 import SettingsFileTypes from '-/components/dialogs/components/SettingsFileTypes';
 import SettingsGeneral from '-/components/dialogs/components/SettingsGeneral';
@@ -58,6 +60,7 @@ export enum SettingsTab {
   Extensions = 'extensions',
   Perspectives = 'perspectives',
   Advanced = 'advanced',
+  BackupRestore = 'backupRestore',
   AI = 'ai',
 }
 
@@ -199,6 +202,17 @@ function SettingsDialog(props: Props) {
           label={t('core:advancedSettingsTab')}
         />
         <Tab
+          value={SettingsTab.BackupRestore}
+          sx={{
+            textTransform: 'unset',
+            justifyContent: 'flex-start',
+          }}
+          iconPosition="start"
+          icon={smallScreen ? '' : <ExportImportIcon />}
+          data-tid="backupRestoreSettingsDialog"
+          label={t('core:backupRestoreSettingsTab')}
+        />
+        <Tab
           value={SettingsTab.AI}
           sx={{
             textTransform: 'unset',
@@ -230,6 +244,7 @@ function SettingsDialog(props: Props) {
         {currentTab === SettingsTab.Extensions && <SettingsExtensions />}
         {currentTab === SettingsTab.Perspectives && <SettingsPerspectives />}
         {currentTab === SettingsTab.Advanced && <SettingsAdvanced />}
+        {currentTab === SettingsTab.BackupRestore && <SettingsBackupRestore />}
         {currentTab === SettingsTab.AI && (
           <SettingsAI closeSettings={onClose} />
         )}

@@ -19,6 +19,7 @@
 import LocationView from '-/components/LocationView';
 import TsButton from '-/components/TsButton';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
+import ExportImportDialog from '-/components/dialogs/ExportImportDialog';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -53,12 +54,6 @@ function LocationManager(props: Props) {
   const [isExportLocationsDialogOpened, setExportLocationsDialogOpened] =
     useState<boolean>(false);
   const [importFile, setImportFile] = useState<File>(undefined);
-
-  const ExportLocationsDialog =
-    Pro && Pro.UI ? Pro.UI.ExportLocationsDialog : false;
-
-  const ImportLocationsDialog =
-    Pro && Pro.UI ? Pro.UI.ImportLocationsDialog : false;
 
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
     ? useContext<TS.WorkSpacesContextData>(
@@ -211,17 +206,21 @@ function LocationManager(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-      {ExportLocationsDialog && isExportLocationsDialogOpened && (
-        <ExportLocationsDialog
+      {isExportLocationsDialogOpened && (
+        <ExportImportDialog
           open={isExportLocationsDialogOpened}
+          mode="export"
+          scope="locations"
           onClose={() => setExportLocationsDialogOpened(false)}
         />
       )}
-      {ImportLocationsDialog && importFile && (
-        <ImportLocationsDialog
+      {importFile && (
+        <ExportImportDialog
           open={Boolean(importFile)}
-          onClose={() => setImportFile(undefined)}
+          mode="import"
+          scope="locations"
           importFile={importFile}
+          onClose={() => setImportFile(undefined)}
         />
       )}
     </Box>

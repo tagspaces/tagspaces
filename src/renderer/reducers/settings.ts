@@ -27,6 +27,7 @@ import {
   setZoomFactorElectron,
   updateByProp,
 } from '-/services/utils-io';
+import { mergeImportedSettings } from '-/services/export-import-validators';
 import { TS } from '-/tagspaces.namespace';
 import versionMeta from '-/version.json';
 import { getUuid } from '@tagspaces/tagspaces-common/utils-io';
@@ -36,6 +37,7 @@ import defaultSettings from './settings-default';
 
 export const types = {
   UPGRADE_SETTINGS: 'SETTINGS/UPGRADE_SETTINGS',
+  IMPORT_SETTINGS: 'SETTINGS/IMPORT_SETTINGS',
   SET_LANGUAGE: 'SETTINGS/SET_LANGUAGE',
   TOGGLE_SHOWUNIXHIDDENENTRIES: 'SETTINGS/TOGGLE_SHOWUNIXHIDDENENTRIES',
   TOGGLE_SHOWSYMBOLICLINKS: 'SETTINGS/TOGGLE_SHOWSYMBOLICLINKS',
@@ -181,6 +183,15 @@ export default (state: any = defaultSettings, action: any) => {
           return ext;
         }),
       };
+    }
+    case types.IMPORT_SETTINGS: {
+      // Merge imported settings over the current (trusted) state — never over
+      // defaults — so a partial/old file can't wipe local-only preferences.
+      return mergeImportedSettings(
+        state,
+        action.settings,
+        defaultSettings.keyBindings,
+      );
     }
     case types.TOGGLE_SHOWUNIXHIDDENENTRIES: {
       return { ...state, showUnixHiddenEntries: !state.showUnixHiddenEntries };
@@ -964,6 +975,10 @@ export const actions = {
   }),
   upgradeSettings: () => ({
     type: types.UPGRADE_SETTINGS,
+  }),
+  importSettings: (settings: Record<string, any>) => ({
+    type: types.IMPORT_SETTINGS,
+    settings,
   }),
   setLastPublishedVersion: (lastPublishedVersion: string) => ({
     type: types.SET_LAST_PUBLISHED_VERSION,

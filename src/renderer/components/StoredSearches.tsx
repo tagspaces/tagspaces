@@ -52,6 +52,7 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Pro } from '../pro';
+import ExportImportDialog from './dialogs/ExportImportDialog';
 import SidePanelTitle from './SidePanelTitle';
 
 interface Props {
@@ -96,11 +97,6 @@ function StoredSearches(props: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const menuHistoryKey = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
-
-  const ExportSearchesDialog =
-    Pro && Pro.UI ? Pro.UI.ExportSearchesDialog : false;
-  const ImportSearchesDialog =
-    Pro && Pro.UI ? Pro.UI.ImportSearchesDialog : false;
 
   const handleSearchMenu = (event: any) => {
     setSearchMenuAnchorEl(event.currentTarget);
@@ -504,19 +500,21 @@ function StoredSearches(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-      {ExportSearchesDialog && isExportSearchesDialogOpened && (
-        <ExportSearchesDialog
+      {isExportSearchesDialogOpened && (
+        <ExportImportDialog
           open={isExportSearchesDialogOpened}
+          mode="export"
+          scope="searches"
           onClose={() => setExportSearchesDialogOpened(false)}
-          searches={searches}
         />
       )}
-      {ImportSearchesDialog && importFile && (
-        <ImportSearchesDialog
+      {importFile && (
+        <ExportImportDialog
           open={Boolean(importFile)}
-          onClose={() => setImportFile(undefined)}
+          mode="import"
+          scope="searches"
           importFile={importFile}
-          searches={searches}
+          onClose={() => setImportFile(undefined)}
         />
       )}
     </Box>

@@ -27,7 +27,6 @@ import {
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import TsMenuList from '-/components/TsMenuList';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
-import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
@@ -40,7 +39,7 @@ import Links from 'assets/links';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ImportExportTagGroupsDialog from '../dialogs/ImportExportTagGroupsDialog';
+import ExportImportDialog from '../dialogs/ExportImportDialog';
 
 interface Props {
   classes?: any;
@@ -52,66 +51,49 @@ interface Props {
 
 function TagLibraryMenu(props: Props) {
   const { t } = useTranslation();
-  const { showNotification } = useNotificationContext();
-  const { tagGroups, refreshTagLibrary } = useEditedTagLibraryContext();
+  const { refreshTagLibrary } = useEditedTagLibraryContext();
 
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const fileInput = useRef<HTMLInputElement>(null);
-  const tagGroupsImported = useRef([]);
-  // const [tagGroups, setTagGroups] = useState(null);
-  const [
-    isImportExportTagGroupDialogOpened,
-    setIsImportExportTagGroupDialogOpened,
-  ] = useState(false);
-  const [dialogModeImport, setDialogModeImport] = useState(false);
-
-  function handleCloseDialogs() {
-    setIsImportExportTagGroupDialogOpened(false);
-  }
+  const [isExportTagGroupsOpened, setExportTagGroupsOpened] = useState(false);
+  const [importFile, setImportFile] = useState<File>(undefined);
 
   function handleExportTagGroup() {
     props.onClose();
-    setDialogModeImport(false);
-    // setTagGroups(props.tagGroups);
-    setIsImportExportTagGroupDialogOpened(true);
+    setExportTagGroupsOpened(true);
   }
 
   function handleImportTagGroup() {
     props.onClose();
-    setDialogModeImport(true);
     fileInput.current.click();
   }
 
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
     const file = target.files[0];
-    const reader: any = new FileReader();
-
-    reader.onload = () => {
-      try {
-        const jsonObj = JSON.parse(reader.result);
-        if (jsonObj.tagGroups) {
-          tagGroupsImported.current = jsonObj.tagGroups;
-          setIsImportExportTagGroupDialogOpened(true);
-        } else {
-          showNotification(t('core:invalidImportFile'), 'warning', true);
-        }
-      } catch (e) {
-        showNotification(t('core:invalidImportFile'), 'warning', true);
-      }
-    };
-    reader.readAsText(file);
+    if (file) {
+      setImportFile(file);
+    }
     target.value = null;
   }
 
   return (
     <Box sx={{ overflowY: 'hidden' }}>
-      {isImportExportTagGroupDialogOpened && (
-        <ImportExportTagGroupsDialog
-          open={isImportExportTagGroupDialogOpened}
-          onClose={handleCloseDialogs}
-          tagGroups={dialogModeImport ? tagGroupsImported.current : tagGroups}
-          dialogModeImport={dialogModeImport}
+      {isExportTagGroupsOpened && (
+        <ExportImportDialog
+          open={isExportTagGroupsOpened}
+          mode="export"
+          scope="tagGroups"
+          onClose={() => setExportTagGroupsOpened(false)}
+        />
+      )}
+      {importFile && (
+        <ExportImportDialog
+          open={Boolean(importFile)}
+          mode="import"
+          scope="tagGroups"
+          importFile={importFile}
+          onClose={() => setImportFile(undefined)}
         />
       )}
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>

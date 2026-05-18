@@ -78,11 +78,28 @@ export function getAllTags(
   );
 }
 
+/**
+ * Run each tag group through prepareTagGroupForExport and keep only the ones
+ * with a title + uuid. Shared by the legacy exporter and the unified
+ * export/import dialog so both produce an identical tag-group payload.
+ */
+export function prepareTagGroupsForExport(
+  entry: Array<TS.TagGroup>,
+): TS.TagGroup[] {
+  const allTagGroups: TS.TagGroup[] = [];
+  (entry || []).forEach((value) => {
+    const preparedTagGroup = prepareTagGroupForExport(value);
+    if (preparedTagGroup.title && preparedTagGroup.uuid) {
+      allTagGroups.push(preparedTagGroup);
+    }
+  });
+  return allTagGroups;
+}
+
 export function exportTagGroups(
   entry: Array<TS.TagGroup>,
   settingsVersion = 3,
 ) {
-  const tagLibrary = entry;
   const jsonFormat =
     '{ "appName": "' +
     versionMeta.name +
@@ -91,13 +108,7 @@ export function exportTagGroups(
     '", "settingsVersion": ' +
     settingsVersion +
     ', "tagGroups": ';
-  const allTagGroups = [];
-  tagLibrary.forEach((value) => {
-    const preparedTagGroup = prepareTagGroupForExport(value);
-    if (preparedTagGroup.title && preparedTagGroup.uuid) {
-      allTagGroups.push(preparedTagGroup);
-    }
-  });
+  const allTagGroups = prepareTagGroupsForExport(entry);
 
   const blob = new Blob(
     [jsonFormat + JSON.stringify(allTagGroups, null, 2) + '}'],
