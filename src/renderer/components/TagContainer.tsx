@@ -20,6 +20,7 @@ import DateIcon from '@mui/icons-material/DateRange';
 import PlaceIcon from '@mui/icons-material/Place';
 import { Box } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import Tag from '-/components/Tag';
@@ -33,6 +34,22 @@ import { TS } from '-/tagspaces.namespace';
 import { convertToTimestamp, isDateTimeTag } from '-/utils/dates';
 import { isGeoTag } from '-/utils/geo';
 import { formatDateTime } from '@tagspaces/tagspaces-common/misc';
+
+/** peri.json month-name keys, indexed by Date.getMonth() (0 = January) */
+const MONTH_KEYS = [
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+];
 
 interface Props {
   tag: TS.Tag;
@@ -73,6 +90,7 @@ function TagContainer({
     textcolor,
     description,
   } = tag;
+  const { t } = useTranslation();
   const { addTags } = useTaggingActionsContext();
   const { selectedEntries } = useSelectedEntriesContext();
   const { tagGroups } = useEditedTagLibraryContext();
@@ -102,45 +120,6 @@ function TagContainer({
     ],
   );
 
-  // Create the getColor function once
-  // const getColors = useCallback(
-  //   () =>
-  //     color && textcolor
-  //       ? { color, textcolor }
-  //       : getTagColors(
-  //           originalTitle,
-  //           tagGroup ? [tagGroup] : tagGroups,
-  //           defaultTextColor,
-  //           defaultBgColor,
-  //         ),
-  //   [
-  //     color,
-  //     textcolor,
-  //     originalTitle,
-  //     tagGroup,
-  //     tagGroups,
-  //     defaultTextColor,
-  //     defaultBgColor,
-  //   ],
-  // );
-  // const { color: bgColor, textcolor: txtColor } = getColors();
-
-  // let txtColor;
-  // let bgColor;
-  // if (tag.color && tag.textcolor) {
-  //   txtColor = tag.textcolor;
-  //   bgColor = tag.color;
-  // } else {
-  //   const tagColors = getTagColors(
-  //     originalTitle,
-  //     tagGroup ? [tagGroup] : undefined,
-  //     defaultTextColor,
-  //     defaultBgColor,
-  //   );
-  //   txtColor = tagColors.textcolor;
-  //   bgColor = tagColors.color;
-  // }
-
   /** Detect tag type */
   const isTagGeo = useMemo(
     () => !tagGroup && isGeoTag(originalTitle),
@@ -168,6 +147,16 @@ function TagContainer({
     const [first, second] = originalTitle.split('-');
     const format = (val: string) => {
       const ts = convertToTimestamp(val);
+      const d = new Date(ts);
+      if (/^\d{4}$/.test(val)) {
+        // year only: 2026
+        return `${d.getFullYear()}`;
+      }
+      if (/^\d{6}$/.test(val)) {
+        // year-month: 202605 -> 2026 May
+        const month = t('peri:' + MONTH_KEYS[d.getMonth()]);
+        return `${d.getFullYear()} ${month}`;
+      }
       return formatDateTime(ts, val.length > 8);
     };
 
@@ -179,7 +168,7 @@ function TagContainer({
     }
 
     return description ? `${titleText} ${description}` : titleText;
-  }, [isTagDate, originalTitle, description]);
+  }, [isTagDate, originalTitle, description, t]);
 
   /** Truncate long date titles for display */
   const displayTitle = useMemo(
@@ -239,7 +228,11 @@ function TagContainer({
           {(isTagDate || isDateSmartTag) && (
             <DateIcon sx={{ color: txtColor, height: 16, ml: '-5px' }} />
           )}
-          {!isTagGeo && <span>{displayTitle}</span>}
+          {!isTagGeo &&
+            !(
+              (isTagDate || isDateSmartTag) &&
+              (originalTitle?.length ?? 0) > 8
+            ) && <span>{displayTitle}</span>}
         </Box>
 
         <TagContainerMenu
