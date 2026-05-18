@@ -104,7 +104,7 @@ function GridPagination(props: Props) {
     useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
-  const { openEntry } = useOpenedEntryContext();
+  const { openEntry, openedEntry } = useOpenedEntryContext();
   const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
     ? useContext<TS.ThumbDialogContextData>(
         Pro.contextProviders.ThumbDialogContext,
@@ -158,6 +158,40 @@ function GridPagination(props: Props) {
         });
     }
   }, [currentDirectoryPath, directoryMeta?.lastUpdated, currentLocation]);
+
+  // When a file is opened the perspective pane shrinks (the file viewer takes
+  // part of the width), which can reflow the opened entry's cell off-screen.
+  // Keep it within the visible area — including while the pane width animates.
+  useEffect(() => {
+    const container = containerEl.current;
+    const openedPath = openedEntry?.path;
+    if (!container || !openedPath) return;
+
+    const entry = pageFiles.find((e) => e.path === openedPath);
+    if (!entry) return; // opened file is on another page / not listed
+
+    let raf = 0;
+    const scrollOpenedIntoView = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const cell = container.querySelector(`[data-entry-id="${entry.uuid}"]`);
+        cell?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      });
+    };
+
+    scrollOpenedIntoView();
+
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(scrollOpenedIntoView);
+      ro.observe(container);
+    }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro?.disconnect();
+    };
+  }, [openedEntry?.path, pageFiles]);
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<unknown>, value: number) => {
