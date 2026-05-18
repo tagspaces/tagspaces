@@ -424,7 +424,6 @@ function GridPagination(props: Props) {
       }}
     >
       <Box
-        ref={containerEl}
         onContextMenu={(event: React.MouseEvent<HTMLDivElement>) =>
           openDirectoryMenu(event, currentDirectoryPath)
         }
@@ -445,7 +444,10 @@ function GridPagination(props: Props) {
             {showDetails && folderDetails}
           </Grid>
         </Box>
-        <Box sx={{ flexGrow: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+        <Box
+          ref={containerEl}
+          sx={{ flexGrow: 1, overflowY: 'auto', overflowX: 'hidden' }}
+        >
           <Grid container spacing={0}>
             {folderDescription}
           </Grid>
