@@ -416,15 +416,22 @@ export const IOActionsContextProvider = ({
   function deleteEntries(...entries: TS.FileSystemEntry[]): Promise<boolean> {
     if (entries && entries.length > 0) {
       return deleteEntriesPromise(...entries)
-        .then((success) => {
-          const fileNames = entries
-            .map((e) => {
-              if (e.isFile) {
-                deleteMeta(e.path, e.uuid);
-              }
-              return e.name;
-            })
-            .join(' ');
+        .then(async (success) => {
+          // Await sidecar + thumbnail + revisions cleanup before reporting the
+          // delete as complete. Previously deleteMeta() was fire-and-forget, so
+          // the delete resolved (and the UI updated) while `.ts/<name>.json` /
+          // `.ts/<name>.jpg` were still on disk or mid-deletion. Re-uploading a
+          // same-named file then raced that cleanup: uploadFile()'s
+          // "already exist, skipped" guard rejected the new thumbnail, and the
+          // lagging deleteMeta() subsequently wiped the freshly uploaded file's
+          // metadata/thumb and emitted stray `delete` reflect actions — most
+          // visibly breaking re-upload in the Kanban perspective.
+          await Promise.all(
+            entries
+              .filter((e) => e.isFile)
+              .map((e) => deleteMeta(e.path, e.uuid)),
+          );
+          const fileNames = entries.map((e) => e.name).join(' ');
           if (success) {
             showNotification(
               t('deletingEntriesSuccessful', {
