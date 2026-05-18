@@ -1,4 +1,5 @@
 /* Copyright (c) 2016-present - TagSpaces GmbH. All rights reserved. */
+import pathLib from 'path';
 import { dataTidFormat } from '../../src/renderer/services/test';
 import {
   getPropertiesFileName,
@@ -96,7 +97,10 @@ test.describe('TST51 - Command line file opening', () => {
   test('TST5101 - Open file via cmdopen and verify it is displayed [electron]', async ({
     testDataDir,
   }) => {
-    const filePath = testDataDir + '/' + testFileName;
+    // pathLib.join (not string concat) — testDataDir is native-separator
+    // (backslashes on Windows); concatenating '/' yields a mixed-separator
+    // path that cmdopen can't resolve on Windows.
+    const filePath = pathLib.join(testDataDir, testFileName);
     await openFileViaCmdOpen(filePath);
 
     // Verify the file is opened in the entry viewer
@@ -114,7 +118,10 @@ test.describe('TST51 - Command line file opening', () => {
   test.skip('TST5102 - Add tags to file opened via cmdopen [electron]', async ({
     testDataDir,
   }) => {
-    const filePath = testDataDir + '/' + testFileName;
+    // pathLib.join (not string concat) — testDataDir is native-separator
+    // (backslashes on Windows); concatenating '/' yields a mixed-separator
+    // path that cmdopen can't resolve on Windows.
+    const filePath = pathLib.join(testDataDir, testFileName);
     await openFileViaCmdOpen(filePath);
 
     await expectElementExist(
@@ -143,7 +150,10 @@ test.describe('TST51 - Command line file opening', () => {
   test.skip('TST5103 - Add and remove tags from file opened via cmdopen [electron]', async ({
     testDataDir,
   }) => {
-    const filePath = testDataDir + '/' + testFileName;
+    // pathLib.join (not string concat) — testDataDir is native-separator
+    // (backslashes on Windows); concatenating '/' yields a mixed-separator
+    // path that cmdopen can't resolve on Windows.
+    const filePath = pathLib.join(testDataDir, testFileName);
     await openFileViaCmdOpen(filePath);
 
     await expectElementExist(
@@ -160,7 +170,10 @@ test.describe('TST51 - Command line file opening', () => {
   test('TST5104 - Add description to file opened via cmdopen [electron]', async ({
     testDataDir,
   }) => {
-    const filePath = testDataDir + '/' + testFileName;
+    // pathLib.join (not string concat) — testDataDir is native-separator
+    // (backslashes on Windows); concatenating '/' yields a mixed-separator
+    // path that cmdopen can't resolve on Windows.
+    const filePath = pathLib.join(testDataDir, testFileName);
     await openFileViaCmdOpen(filePath);
 
     await expectElementExist(
@@ -186,7 +199,10 @@ test.describe('TST51 - Command line file opening', () => {
   test('TST5105 - Close file opened via cmdopen [electron]', async ({
     testDataDir,
   }) => {
-    const filePath = testDataDir + '/' + testFileName;
+    // pathLib.join (not string concat) — testDataDir is native-separator
+    // (backslashes on Windows); concatenating '/' yields a mixed-separator
+    // path that cmdopen can't resolve on Windows.
+    const filePath = pathLib.join(testDataDir, testFileName);
     await openFileViaCmdOpen(filePath);
 
     await expectElementExist(
