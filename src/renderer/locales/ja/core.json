@@ -97,7 +97,6 @@
   "generalTab": "全般",
   "fileTypeTab": "ファイルの種類",
   "keyBindingsTab": "キーの割り当て",
-  "advancedSettingsTab": "その他",
   "extensionsTab": "拡張機能",
   "perspectivesSettingsTab": "表示モード",
   "perspectivesSettingsHelp": "表示モードの切り替えで使用可能な表示モードを選択します。無効化された表示モードは、ここで再度有効にするまで非表示のままになります。",

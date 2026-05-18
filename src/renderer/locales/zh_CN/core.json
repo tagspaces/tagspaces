@@ -97,7 +97,6 @@
   "generalTab": "常规",
   "fileTypeTab": "文件类型",
   "keyBindingsTab": "按键绑定",
-  "advancedSettingsTab": "高级选项",
   "extensionsTab": "扩展",
   "perspectivesSettingsTab": "视图",
   "perspectivesSettingsHelp": "选择在视图切换器中可用的视图。已禁用的视图将保持隐藏，直到您在此处重新启用它们。",

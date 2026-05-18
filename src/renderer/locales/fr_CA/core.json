@@ -97,7 +97,6 @@
   "generalTab": "Général",
   "fileTypeTab": "Types de Fichiers",
   "keyBindingsTab": "Raccourcis Clavier",
-  "advancedSettingsTab": "Avancé",
   "extensionsTab": "Extensions",
   "perspectivesSettingsTab": "Perspectives",
   "perspectivesSettingsHelp": "Choisissez les perspectives disponibles dans le sélecteur de perspectives. Les perspectives désactivées resteront masquées tant qu'elles ne sont pas réactivées ici.",

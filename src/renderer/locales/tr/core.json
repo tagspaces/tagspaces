@@ -97,7 +97,6 @@
   "generalTab": "Genel",
   "fileTypeTab": "Dosya Türleri",
   "keyBindingsTab": "Tuş Bağlantıları",
-  "advancedSettingsTab": "Gelişmiş",
   "extensionsTab": "Uzantılar",
   "perspectivesSettingsTab": "Perspektifler",
   "perspectivesSettingsHelp": "Perspektif değiştiricide hangi perspektiflerin kullanılabilir olacağını seçin. Devre dışı bırakılan perspektifler, burada yeniden etkinleştirilene kadar gizli kalır.",

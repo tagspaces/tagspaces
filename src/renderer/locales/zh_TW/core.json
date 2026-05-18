@@ -97,7 +97,6 @@
   "generalTab": "一般",
   "fileTypeTab": "檔案類型",
   "keyBindingsTab": "快捷鍵",
-  "advancedSettingsTab": "進階",
   "extensionsTab": "擴充功能",
   "perspectivesSettingsTab": "視圖",
   "perspectivesSettingsHelp": "選擇在視圖切換器中可用的視圖。已停用的視圖將保持隱藏，直到您在此處重新啟用它們。",

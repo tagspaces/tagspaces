@@ -97,7 +97,6 @@
   "generalTab": "Общие",
   "fileTypeTab": "Типы файлов",
   "keyBindingsTab": "Привязки клавиш",
-  "advancedSettingsTab": "Дополнительно",
   "extensionsTab": "Расширения",
   "perspectivesSettingsTab": "Перспективы",
   "perspectivesSettingsHelp": "Выберите, какие перспективы будут доступны в переключателе перспектив. Отключённые перспективы остаются скрытыми, пока вы не включите их здесь снова.",

@@ -32,9 +32,11 @@ describe('secure-crypto', () => {
   test('tampered ciphertext is rejected (authenticated)', async () => {
     const blob = await encryptString(secret, password);
     const header = JSON.parse(blob);
-    // flip the last base64 char of the ciphertext
-    const ct = header.ct;
-    header.ct = ct.slice(0, -2) + (ct.slice(-2, -1) === 'A' ? 'B' : 'A') + ct.slice(-1);
+    // Decode → flip a real ciphertext byte → re-encode, so the mutation is
+    // deterministic (a base64 char flip can decode to identical bytes).
+    const bytes = Buffer.from(header.ct, 'base64');
+    bytes[Math.floor(bytes.length / 2)] ^= 0xff;
+    header.ct = bytes.toString('base64');
     const out = await decryptString(JSON.stringify(header), password);
     expect(out).toBeUndefined();
   });

@@ -97,7 +97,6 @@
   "generalTab": "General",
   "fileTypeTab": "Tipus de fitxer",
   "keyBindingsTab": "Dreceres de teclat",
-  "advancedSettingsTab": "Avançat",
   "extensionsTab": "Extensions",
   "perspectivesSettingsTab": "Perspectives",
   "perspectivesSettingsHelp": "Trieu quines perspectives estaran disponibles al selector de perspectives. Les perspectives desactivades es mantindran ocultes fins que les torneu a activar aquí.",

@@ -97,7 +97,6 @@
   "generalTab": "일반",
   "fileTypeTab": "파일 타입",
   "keyBindingsTab": "단축키",
-  "advancedSettingsTab": "고급",
   "extensionsTab": "확장",
   "perspectivesSettingsTab": "퍼스펙티브",
   "perspectivesSettingsHelp": "퍼스펙티브 전환기에서 사용할 수 있는 퍼스펙티브를 선택하세요. 비활성화된 퍼스펙티브는 여기에서 다시 활성화할 때까지 숨겨집니다.",

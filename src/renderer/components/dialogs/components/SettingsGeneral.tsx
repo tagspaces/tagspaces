@@ -17,7 +17,14 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CheckIcon, CloseIcon, ReloadIcon } from '-/components/CommonIcons';
+import {
+  CheckIcon,
+  CloseIcon,
+  CreateFileIcon,
+  DeleteIcon,
+  EditIcon,
+  ReloadIcon,
+} from '-/components/CommonIcons';
 import { BetaLabel, ProLabel } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
@@ -30,7 +37,9 @@ import TsSwitch from '-/components/TsSwitch';
 import TsTextField from '-/components/TsTextField';
 import TsToggleButton from '-/components/TsToggleButton';
 import ColorPickerDialog from '-/components/dialogs/ColorPickerDialog';
+import { historyKeys } from '-/hooks/HistoryContextProvider';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { PerspectiveIDs } from '-/perspectives';
 import { Pro } from '-/pro';
@@ -38,13 +47,16 @@ import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
   getFileNameTagPlace,
+  getMapTileServers,
   getMaxCollectedTag,
   getPersistTagsInSidecarFile,
   getSettings,
   isDevMode,
+  isHideProFeatures,
 } from '-/reducers/settings';
 import { isWorkerAvailable, setLanguage } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
+import { clearAllURLParams } from '-/utils/dom';
 import { darkThemes, lightThemes } from '-/utils/Themes';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { Box, IconButton, InputAdornment, ListItemIcon } from '@mui/material';
@@ -84,7 +96,10 @@ function SettingsGeneral() {
   // --- Advanced settings imports ---
   const maxCollectedTag = useSelector(getMaxCollectedTag);
   const { openConfirmDialog } = useNotificationContext();
+  const { delAllHistory } = useHistoryContext();
   const devMode = useSelector(isDevMode);
+  const hideProFeatures = useSelector(isHideProFeatures);
+  const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const wsAlive = useRef<boolean>(null);
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
@@ -92,6 +107,7 @@ function SettingsGeneral() {
         Pro.contextProviders.WorkSpacesContext,
       )
     : undefined;
+  const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
 
   useEffect(() => {
@@ -152,6 +168,46 @@ function SettingsGeneral() {
     dispatch(SettingsActions.setPrefixTagContainer(prefix));
 
   const setAuthor = (user: string) => dispatch(SettingsActions.setAuthor(user));
+
+  // --- Advanced settings handlers ---
+  function setConfirmDialogKey(key: string) {
+    if (key) {
+      openConfirmDialog(
+        t('core:confirm'),
+        t('core:confirm' + key + 'Deletion'),
+        (result) => {
+          if (result) {
+            delAllHistory(key);
+          }
+        },
+        'cancelDelete' + key + 'Dialog',
+        'confirmDelete' + key + 'Dialog',
+        'confirmDelete' + key + 'DialogContent',
+      );
+    }
+  }
+
+  const handleEditTileServerClick = (event, tileServer, isDefault: boolean) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setTileServerDialog({ ...tileServer, isDefault });
+  };
+
+  const editWorkSpacesClick = (event, workSpace?: TS.WorkSpace) => {
+    event.preventDefault();
+    event.stopPropagation();
+    workSpacesContext.openNewWorkspaceDialog(workSpace);
+  };
+
+  const geoTaggingFormatDisabled = AppConfig.ExtGeoTaggingFormat !== undefined;
+
+  const setDevMode = (value) => dispatch(SettingsActions.setDevMode(value));
+
+  const setGeoTaggingFormat = (geoTaggingFormat) =>
+    dispatch(SettingsActions.setGeoTaggingFormat(geoTaggingFormat));
+
+  const setHistory = (key, value) =>
+    dispatch(SettingsActions.setHistory(key, value));
 
   // --- Settings items ---
   const settingsItems = useMemo(
@@ -1032,11 +1088,399 @@ function SettingsGeneral() {
             </ListItem>
           ),
         },
+        {
+          label: t('core:workspaces'),
+          jsx: (
+            <>
+              <ListItem>
+                <ListItemText
+                  primary={
+                    <>
+                      {t('core:workspaces')}
+                      <ProLabel />
+                    </>
+                  }
+                />
+                <TsButton
+                  disabled={!Pro}
+                  onClick={(event) => editWorkSpacesClick(event)}
+                  startIcon={<CreateFileIcon />}
+                >
+                  {t('createWorkspace')}
+                </TsButton>
+              </ListItem>
+              {workSpaces && workSpaces.length > 0 && (
+                <List
+                  sx={{
+                    padding: '5px',
+                    paddingLeft: '10px',
+                    backgroundColor: '#d3d3d34a',
+                    borderRadius: AppConfig.defaultCSSRadius,
+                  }}
+                  dense
+                >
+                  {workSpaces.map((workSpace) => (
+                    <ListItem key={workSpace.uuid}>
+                      <ListItemText
+                        primary={
+                          workSpace.fullName + ' - ' + workSpace.shortName
+                        }
+                      />
+                      <TsIconButton
+                        aria-label={'Edit workspace'}
+                        aria-haspopup="true"
+                        edge="end"
+                        disabled={!Pro}
+                        data-tid={'workSpaceEdit_' + workSpace.shortName}
+                        onClick={(event) =>
+                          editWorkSpacesClick(event, workSpace)
+                        }
+                      >
+                        <EditIcon />
+                      </TsIconButton>
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </>
+          ),
+        },
+        {
+          label: t('core:fileOpenHistory'),
+          jsx: (
+            <ListItem>
+              <ListItemText primary={t('core:fileOpenHistory')} />
+              <ListItemIcon>
+                <TsIconButton
+                  tooltip={t('clearHistory')}
+                  aria-label={t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.fileOpenKey)}
+                  data-tid="clearSearchTID"
+                >
+                  <DeleteIcon />
+                </TsIconButton>
+              </ListItemIcon>
+              <TsSelect
+                data-tid="fileOpenTID"
+                fullWidth={false}
+                title={t('core:fileOpenHistoryTitle')}
+                value={settings[historyKeys.fileOpenKey]}
+                onChange={(event) =>
+                  setHistory(historyKeys.fileOpenKey, event.target.value)
+                }
+              >
+                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </TsSelect>
+            </ListItem>
+          ),
+        },
+        {
+          label: t('core:folderOpenHistory'),
+          jsx: (
+            <ListItem>
+              <ListItemText primary={t('core:folderOpenHistory')} />
+              <ListItemIcon>
+                <TsIconButton
+                  tooltip={t('clearHistory')}
+                  aria-label={t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.folderOpenKey)}
+                  data-tid="clearSearchTID"
+                >
+                  <DeleteIcon />
+                </TsIconButton>
+              </ListItemIcon>
+              <TsSelect
+                data-tid="folderOpenTID"
+                fullWidth={false}
+                title={t('core:folderOpenHistoryTitle')}
+                value={settings[historyKeys.folderOpenKey]}
+                onChange={(event: any) =>
+                  setHistory(historyKeys.folderOpenKey, event.target.value)
+                }
+              >
+                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </TsSelect>
+            </ListItem>
+          ),
+        },
+        {
+          label: t('core:fileEditHistory'),
+          jsx: (
+            <ListItem>
+              <ListItemText primary={t('core:fileEditHistory')} />
+              <ListItemIcon>
+                <TsIconButton
+                  tooltip={t('clearHistory')}
+                  aria-label={t('core:clearHistory')}
+                  onClick={() => setConfirmDialogKey(historyKeys.fileEditKey)}
+                  data-tid="clearSearchTID"
+                >
+                  <DeleteIcon />
+                </TsIconButton>
+              </ListItemIcon>
+              <TsSelect
+                data-tid="fileEditTID"
+                fullWidth={false}
+                title={t('core:fileEditHistoryTitle')}
+                value={settings[historyKeys.fileEditKey]}
+                onChange={(event: any) =>
+                  setHistory(historyKeys.fileEditKey, event.target.value)
+                }
+              >
+                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </TsSelect>
+            </ListItem>
+          ),
+        },
+        {
+          label: t('core:searchHistory'),
+          jsx: (
+            <ListItem>
+              <ListItemText primary={t('core:searchHistory')} />
+              <ListItemIcon>
+                <TsIconButton
+                  tooltip={t('clearHistory')}
+                  aria-label={t('core:clearHistory')}
+                  onClick={() =>
+                    setConfirmDialogKey(historyKeys.searchHistoryKey)
+                  }
+                  data-tid="clearSearchTID"
+                >
+                  <DeleteIcon />
+                </TsIconButton>
+              </ListItemIcon>
+              <TsSelect
+                data-tid="searchHistoryTID"
+                fullWidth={false}
+                title={t('core:searchHistoryTitle')}
+                value={settings[historyKeys.searchHistoryKey]}
+                onChange={(event: any) =>
+                  setHistory(historyKeys.searchHistoryKey, event.target.value)
+                }
+              >
+                <MenuItem value={0}>{t('core:disabled')}</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </TsSelect>
+            </ListItem>
+          ),
+        },
+        {
+          label: t('core:geoTaggingFormat'),
+          jsx: (
+            <ListItem>
+              <ListItemText primary={t('core:geoTaggingFormat')} />
+              <TsSelect
+                disabled={geoTaggingFormatDisabled}
+                fullWidth={false}
+                data-tid="geoTaggingFormatTID"
+                title={
+                  geoTaggingFormatDisabled
+                    ? t('core:settingExternallyConfigured')
+                    : ''
+                }
+                value={
+                  geoTaggingFormatDisabled
+                    ? AppConfig.ExtGeoTaggingFormat
+                    : settings.geoTaggingFormat
+                }
+                onChange={(event: any) =>
+                  setGeoTaggingFormat(event.target.value)
+                }
+              >
+                {settings.supportedGeoTagging.map((geoTagging) => (
+                  <MenuItem key={geoTagging} value={geoTagging}>
+                    {geoTagging.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </TsSelect>
+            </ListItem>
+          ),
+        },
+        {
+          label: t('core:tileServerTitle'),
+          jsx: (
+            <>
+              <ListItem>
+                <ListItemText primary={t('core:tileServerTitle')} />
+                <TsButton
+                  onClick={(event) =>
+                    handleEditTileServerClick(event, {}, true)
+                  }
+                  startIcon={<CreateFileIcon />}
+                >
+                  {t('tileServerDialogAdd')}
+                </TsButton>
+              </ListItem>
+              <List
+                sx={{
+                  padding: '5px',
+                  paddingLeft: '10px',
+                  backgroundColor: '#d3d3d34a',
+                  borderRadius: AppConfig.defaultCSSRadius,
+                }}
+                dense
+              >
+                {tileServers.length > 0 ? (
+                  tileServers.map((tileServer, index) => (
+                    <ListItem key={tileServer.uuid}>
+                      <ListItemText
+                        primary={tileServer.name}
+                        secondary={tileServer.serverURL}
+                      />
+                      <TsIconButton
+                        aria-label={t('core:options')}
+                        aria-haspopup="true"
+                        edge="end"
+                        data-tid={'tileServerEdit_' + tileServer.name}
+                        onClick={(event) =>
+                          handleEditTileServerClick(
+                            event,
+                            tileServer,
+                            index === 0,
+                          )
+                        }
+                      >
+                        <EditIcon />
+                      </TsIconButton>
+                      {index === 0 && (
+                        <TsTooltip title={t('core:serverIsDefaultHelp')}>
+                          <CheckIcon
+                            data-tid="tileServerDefaultIndication"
+                            sx={{ marginLeft: '10px' }}
+                          />
+                        </TsTooltip>
+                      )}
+                    </ListItem>
+                  ))
+                ) : (
+                  <ListItem key="noTileServers">
+                    <ListItemText
+                      primary={t('core:noTileServersTitle')}
+                      secondary={t('core:addTileServersHelp')}
+                    />
+                  </ListItem>
+                )}
+              </List>
+            </>
+          ),
+        },
+        !Pro && {
+          label: t('core:hideProFeatures'),
+          jsx: (
+            <ListItem
+              title={
+                AppConfig.ExtHideProFeatures !== undefined
+                  ? t('core:settingExternallyConfigured')
+                  : ''
+              }
+            >
+              <ListItemText primary={t('core:hideProFeatures')} />
+              <TsSwitch
+                data-tid="settingsHideProFeatures"
+                disabled={AppConfig.ExtHideProFeatures !== undefined}
+                onClick={() =>
+                  dispatch(SettingsActions.setHideProFeatures(!hideProFeatures))
+                }
+                checked={hideProFeatures}
+              />
+            </ListItem>
+          ),
+        },
+        {
+          label: t('enableDevMode'),
+          jsx: (
+            <ListItem>
+              <ListItemText
+                primary={
+                  <>
+                    {t('enableDevMode')}
+                    <InfoIcon tooltip={t('core:devModeTooltip')} />
+                  </>
+                }
+              />
+              <TsSwitch
+                data-tid="settingsEnableDevMode"
+                disabled={AppConfig?.ExtDevMode === true}
+                onClick={() => setDevMode(!devMode)}
+                checked={devMode}
+              />
+            </ListItem>
+          ),
+        },
+        {
+          label: t('Danger Zone') + ' ' + t('core:resetSettings'),
+          jsx: (
+            <ListItem>
+              <ListItemText primary={<>{t('Danger Zone')}</>} />
+              <TsButton
+                data-tid="resetSettingsTID"
+                onClick={() =>
+                  openConfirmDialog(
+                    t('core:confirm'),
+                    t('core:confirmResetSettings'),
+                    (result) => {
+                      if (result) {
+                        clearAllURLParams();
+                        localStorage.clear();
+                        // eslint-disable-next-line no-restricted-globals
+                        if (AppConfig.isElectron) {
+                          window.electronIO.ipcRenderer.sendMessage(
+                            'reloadWindow',
+                          );
+                        } else {
+                          window.location.reload();
+                        }
+                      }
+                    },
+                    'cancelResetSettingsDialogTID',
+                    'confirmResetSettingsDialogTID',
+                    'confirmResetSettingsDialogContentTID',
+                  )
+                }
+                color="error"
+              >
+                {t('core:resetSettings')}
+              </TsButton>
+              {devMode && (
+                <TsButton
+                  data-tid="reloadAppTID"
+                  color="error"
+                  sx={{
+                    marginLeft: AppConfig.defaultSpaceBetweenButtons,
+                  }}
+                  onClick={() => {
+                    if (AppConfig.isElectron) {
+                      window.electronIO.ipcRenderer.sendMessage('reloadWindow');
+                    } else {
+                      window.location.reload();
+                    }
+                  }}
+                >
+                  {t('core:reloadApplication')}
+                </TsButton>
+              )}
+            </ListItem>
+          ),
+        },
       ].filter(Boolean),
     [
       t,
       settings,
       devMode,
+      hideProFeatures,
+      tileServers,
+      workSpaces,
       wsAlive.current,
       maxCollectedTag,
       dispatch,

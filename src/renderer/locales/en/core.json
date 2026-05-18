@@ -97,7 +97,6 @@
   "generalTab": "General",
   "fileTypeTab": "File Types",
   "keyBindingsTab": "Key Bindings",
-  "advancedSettingsTab": "Advanced",
   "extensionsTab": "Extensions",
   "perspectivesSettingsTab": "Perspectives",
   "perspectivesSettingsHelp": "Choose which perspectives are available in the perspective switcher. Disabled perspectives stay hidden until you re-enable them here.",

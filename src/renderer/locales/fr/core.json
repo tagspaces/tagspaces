@@ -97,7 +97,6 @@
   "generalTab": "Général",
   "fileTypeTab": "Types de fichier",
   "keyBindingsTab": "Raccourcis clavier",
-  "advancedSettingsTab": "Avancé",
   "extensionsTab": "Extensions",
   "perspectivesSettingsTab": "Vues",
   "perspectivesSettingsHelp": "Choisissez les vues disponibles dans le sélecteur de vues. Les vues désactivées resteront masquées jusqu'à ce que vous les réactiviez ici.",

@@ -97,7 +97,6 @@
   "generalTab": "Загальне",
   "fileTypeTab": "Типи файлів",
   "keyBindingsTab": "Гарячі клавіші",
-  "advancedSettingsTab": "Розширені",
   "extensionsTab": "Розширення",
   "perspectivesSettingsTab": "Перспективи",
   "perspectivesSettingsHelp": "Виберіть, які перспективи будуть доступні у перемикачі перспектив. Вимкнені перспективи залишаються прихованими, доки ви знову не ввімкнете їх тут.",
