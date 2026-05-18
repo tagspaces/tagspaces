@@ -34,6 +34,7 @@ export default function buildTrayMenu(
   i18n,
   isMacLike,
   globalShortcutsEnabled,
+  toggleWindow: () => void,
 ) {
   // const cKey = isMacLike ? '  -  ⌘' : '  -  Ctrl';
   // const sKey = isMacLike ? '⇧' : 'Shift';
@@ -66,7 +67,7 @@ export default function buildTrayMenu(
     {
       label: i18n.t('showTagSpaces'),
       accelerator: globalShortcutsEnabled ? 'CmdOrCtrl+Shift+w' : undefined,
-      click: mainPageProps.showTagSpaces,
+      click: toggleWindow,
     },
     {
       label: i18n.t('showSearch'),
@@ -130,5 +131,22 @@ export default function buildTrayMenu(
   // @ts-ignore
   const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
   tray?.setToolTip('TagSpaces');
-  tray?.setContextMenu(contextMenu);
+
+  const isLinux = process.platform === 'linux';
+  if (isLinux) {
+    // Linux tray implementations don't reliably emit right-click events, so
+    // setContextMenu is needed for the context menu to be accessible.
+    tray?.setContextMenu(contextMenu);
+  } else {
+    // On macOS and Windows: right-click opens the menu via popUpContextMenu.
+    // (setContextMenu() would intercept left-click on Windows, so we avoid it)
+    tray?.removeAllListeners('right-click');
+    tray?.addListener('right-click', () => {
+      tray?.popUpContextMenu(contextMenu);
+    });
+  }
+
+  // Left-click toggles the window on all platforms where click events are emitted
+  tray?.removeAllListeners('click');
+  tray?.addListener('click', toggleWindow);
 }

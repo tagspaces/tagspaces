@@ -43,7 +43,11 @@ import {
   getSettings,
   isDevMode,
 } from '-/reducers/settings';
-import { isWorkerAvailable, setLanguage } from '-/services/utils-io';
+import {
+  isWorkerAvailable,
+  setLanguage,
+  syncCloseToTray,
+} from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { darkThemes, lightThemes } from '-/utils/Themes';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
@@ -498,6 +502,27 @@ function SettingsGeneral() {
             </ListItem>
           ),
         },
+        ...(AppConfig.isElectron
+          ? [
+              {
+                label: t('core:closeToTray'),
+                jsx: (
+                  <ListItem>
+                    <ListItemText primary={t('core:closeToTray')} />
+                    <Switch
+                      data-tid="settingsSetCloseToTray"
+                      onClick={() => {
+                        const newValue = !settings.closeToTray;
+                        dispatch(SettingsActions.setCloseToTray(newValue));
+                        syncCloseToTray(newValue);
+                      }}
+                      checked={settings.closeToTray}
+                    />
+                  </ListItem>
+                ),
+              },
+            ]
+          : []),
         {
           label: t('core:reorderTags'),
           jsx: (

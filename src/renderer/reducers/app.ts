@@ -20,6 +20,7 @@ import AppConfig from '-/AppConfig';
 import {
   actions as SettingsActions,
   getCheckForUpdateOnStartup,
+  getCloseToTray,
   isGlobalKeyBindingEnabled,
 } from '-/reducers/settings';
 import {
@@ -27,6 +28,7 @@ import {
   loadExtensions,
   setGlobalShortcuts,
   setLanguage,
+  syncCloseToTray,
 } from '-/services/utils-io';
 import { getURLParameter } from '-/utils/dom';
 import { deriveInitialOnline } from '-/utils/OfflineError';
@@ -186,6 +188,7 @@ export const actions = {
     }
     setTimeout(() => {
       setGlobalShortcuts(isGlobalKeyBindingEnabled(state));
+      syncCloseToTray(getCloseToTray(state));
       loadExtensions();
     }, 1000);
     const langURLParam = getURLParameter('locale');

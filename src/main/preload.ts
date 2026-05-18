@@ -83,7 +83,8 @@ export type Channels =
   | 'startup-finished'
   | 'getAuthor'
   | 'cancelRequest'
-  | 'fetchTile';
+  | 'fetchTile'
+  | 'set-close-to-tray';
 
 const electronHandler = {
   ipcRenderer: {

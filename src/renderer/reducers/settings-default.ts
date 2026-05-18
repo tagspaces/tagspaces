@@ -79,6 +79,7 @@ export default {
   showSymbolicLinks: true,
   entryContainerTab: 0,
   checkForUpdates,
+  closeToTray: false,
   reorderTags: false,
   coloredFileExtension: false,
   loadsLocationMetaData: false,

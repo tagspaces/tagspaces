@@ -135,6 +135,7 @@
   "showSymbolicLinks": "Show symbolic links",
   "showSymbolicLinksInfo": "Display symlinks (symbolic/shortcut links) in folder listings, disable to hide them.",
   "checkForNewVersionOnStartup": "Check for new version on startup",
+  "closeToTray": "Close to tray",
   "reorderTags": "Enable changing the tag order with drag and drop",
   "prefixTagContainer": "Prefix for the tag container",
   "prefixTagContainerInfo": "In the file name 'file1_[TAG1].txt', '_' is the prefix.",

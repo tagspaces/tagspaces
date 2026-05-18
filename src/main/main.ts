@@ -39,6 +39,8 @@ import { resolveHtmlPath } from './util';
 let isMacLike = process.platform === 'darwin';
 let mainWindow: BrowserWindow | null = null;
 let globalShortcutsEnabled = false;
+let closeToTray = false; // Synced from renderer via 'set-close-to-tray' IPC
+let isQuitting = false;
 let startupFilePath: string | undefined;
 let portableMode: boolean | undefined;
 let wsProcess: UtilityProcess | null = null;
@@ -137,20 +139,28 @@ function getSpellcheckLanguage(i18n: string) {
   return 'en';
 }
 
-function showApp() {
-  const windows = BrowserWindow.getAllWindows();
-  windows.forEach((win, i) => {
-    if (win && i < 1) {
-      if (win.isMinimized()) win.restore();
-      else win.show();
+function showWindow() {
+  if (!mainWindow) return;
+  if (mainWindow.isMinimized()) {
+    mainWindow.restore();
+  }
+  if (!mainWindow.isVisible()) {
+    // hide()+show() forces the window to the top of the window stack on
+    // Linux WMs that don't raise windows on a bare show() call
+    if (process.platform === 'linux') {
+      mainWindow.hide();
     }
-  });
+    mainWindow.show();
+  }
+  app.focus({ steal: true });
+  mainWindow.focus();
 }
 
-function showMainWindow() {
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore();
-    mainWindow.show();
+function toggleWindow() {
+  if (mainWindow?.isVisible()) {
+    mainWindow.hide();
+  } else {
+    showWindow();
   }
 }
 
@@ -226,7 +236,7 @@ function showSearch() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) focusedWindow.webContents.send('cmd', 'open-search');
   else {
-    showMainWindow();
+    showWindow();
     mainWindow?.webContents.send('cmd', 'open-search');
   }
 }
@@ -234,7 +244,7 @@ function newTextFile() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) focusedWindow.webContents.send('new-text-file');
   else {
-    showMainWindow();
+    showWindow();
     mainWindow?.webContents.send('new-text-file');
   }
 }
@@ -242,7 +252,7 @@ function newMDFile() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) focusedWindow.webContents.send('new-md-file');
   else {
-    showMainWindow();
+    showWindow();
     mainWindow?.webContents.send('new-md-file');
   }
 }
@@ -250,7 +260,7 @@ function getNextFile() {
   const focusedWindow = BrowserWindow.getFocusedWindow();
   if (focusedWindow) focusedWindow.webContents.send('perspective', 'next-file');
   else {
-    showMainWindow();
+    showWindow();
     mainWindow?.webContents.send('perspective', 'next-file');
   }
 }
@@ -259,7 +269,7 @@ function getPreviousFile() {
   if (focusedWindow)
     focusedWindow.webContents.send('perspective', 'previous-file');
   else {
-    showMainWindow();
+    showWindow();
     mainWindow?.webContents.send('perspective', 'previous-file');
   }
 }
@@ -309,7 +319,7 @@ function createNewWindowInstance(url?: string) {
 function bindTrayMenu(i18n: any) {
   buildTrayMenu(
     {
-      showTagSpaces: showApp,
+      showTagSpaces: showWindow,
       resumePlayback,
       createNewWindowInstance,
       openSearch: showSearch,
@@ -321,12 +331,13 @@ function bindTrayMenu(i18n: any) {
     i18n,
     isMacLike,
     globalShortcutsEnabled,
+    toggleWindow,
   );
 }
 function bindAppMenu(i18n: any) {
   buildDesktopMenu(
     {
-      showTagSpaces: showApp,
+      showTagSpaces: showWindow,
       openSearch: showSearch,
       toggleNewFileDialog: newMDFile,
       openNextFile: getNextFile,
@@ -470,6 +481,11 @@ const createWindow = async (i18n: any) => {
   });
 
   mainWindow.on('close', (e) => {
+    if (closeToTray && !isQuitting && mainWindow && !mainWindow.isDestroyed()) {
+      e.preventDefault();
+      mainWindow.hide();
+      return;
+    }
     // @ts-ignore
     if (mainWindow.fileChanged || mainWindow.descriptionChanged) {
       const choice = dialog.showMessageBoxSync(mainWindow, {
@@ -481,7 +497,10 @@ const createWindow = async (i18n: any) => {
         message: i18n.t('unsavedChangesMessage'),
         detail: i18n.t('unsavedChangesDetails'),
       });
-      if (choice === 0) e.preventDefault();
+      if (choice === 0) {
+        e.preventDefault();
+        isQuitting = false;
+      }
       // No action needed for "Close Application", window will close
     }
   });
@@ -546,10 +565,15 @@ if (!isDebug) {
   }
 }
 
+app.on('before-quit', () => {
+  isQuitting = true;
+});
+
 app.on('window-all-closed', () => {
   // Respect the macOS convention of having the application in memory even
-  // after all windows have been closed
-  if (!isMacLike) {
+  // after all windows have been closed.
+  // When closeToTray is enabled, keep the app running in the tray.
+  if (!isMacLike && !closeToTray) {
     app.quit();
   }
 });
@@ -561,7 +585,7 @@ app.on('activate', (event, hasVisibleWindows) => {
   if (windows.length === 0) {
     createWindow(appI18N);
   } else {
-    showApp();
+    showWindow();
   }
   event.preventDefault();
 });
@@ -609,7 +633,7 @@ app
         app.dock.setMenu(
           buildDockMenu(
             {
-              showTagSpaces: showApp,
+              showTagSpaces: showWindow,
               resumePlayback,
               createNewWindowInstance,
               openSearch: showSearch,
@@ -640,7 +664,7 @@ app
       });
 
       // --- IPC Main Handlers ---
-      ipcMain.on('show-main-window', showApp);
+      ipcMain.on('show-main-window', showWindow);
       ipcMain.on('create-new-window', (e, url) => createNewWindowInstance(url));
       ipcMain.on('file-changed', (e, isChanged) => {
         // @ts-ignore
@@ -689,6 +713,9 @@ app
         BrowserWindow.getFocusedWindow()?.webContents.setZoomFactor(zoomLevel);
       });
 
+      ipcMain.on('set-close-to-tray', (e, enabled) => {
+        closeToTray = enabled;
+      });
       ipcMain.on('global-shortcuts-enabled', (e, globalShortcuts) => {
         globalShortcutsEnabled = globalShortcuts;
         try {
@@ -705,7 +732,7 @@ app
           globalShortcut.register('MediaNextTrack', getNextFile);
           globalShortcut.register('CommandOrControl+Shift+A', getPreviousFile);
           globalShortcut.register('MediaPreviousTrack', getPreviousFile);
-          globalShortcut.register('CommandOrControl+Shift+W', showApp);
+          globalShortcut.register('CommandOrControl+Shift+W', toggleWindow);
         } else {
           globalShortcut.unregisterAll();
         }
