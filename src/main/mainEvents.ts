@@ -525,12 +525,25 @@ export default function loadMainEvents() {
   );
   ipcMain.handle('deleteFilePromise', async (event, path, useTrash) => {
     if (useTrash && !path.startsWith('\\')) {
+      // Windows' shell.trashItem throws "Failed to parse path" for paths
+      // that no longer exist (orphan/meta cleanup races, or an `undefined`
+      // path segment), whereas macOS silently tolerates them. Treat a
+      // missing target as already-deleted instead of reporting a false
+      // "delete failed" that makes the renderer's optimistic UI lie.
+      if (!(await fs.pathExists(path))) {
+        return true;
+      }
       try {
         await shell.trashItem(path);
         return true;
       } catch (err) {
-        console.error('moveToTrash ' + path + 'error:', err);
-        return false;
+        console.error('moveToTrash ' + path + ' error:', err);
+        // Propagate (don't return false, don't silently permanent-delete):
+        // the user asked for a recoverable trash, so escalating to a hard
+        // delete behind their back is data loss. Rejecting lets the
+        // renderer suppress the optimistic removal and notify. See CLAUDE.md
+        // "Never swallow IO errors".
+        throw err;
       }
     } else {
       const result = await deleteFilePromise(path);
@@ -540,13 +553,18 @@ export default function loadMainEvents() {
   ipcMain.handle('deleteDirectoryPromise', async (event, path, useTrash) => {
     if (useTrash && !path.startsWith('\\')) {
       // network drive
+      if (!(await fs.pathExists(path))) {
+        return true;
+      }
       try {
         await shell.trashItem(path);
+        return true;
       } catch (err) {
-        console.error('moveToTrash ' + path + 'error:', err);
-        return false;
+        console.error('moveToTrash ' + path + ' error:', err);
+        // Propagate rather than swallow or silently hard-delete — see the
+        // deleteFilePromise handler above.
+        throw err;
       }
-      return true;
     } else {
       const result = await deleteDirectoryPromise(path);
       return result;
