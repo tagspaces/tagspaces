@@ -38,7 +38,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { formatBytes } from '@tagspaces/tagspaces-common/misc';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
@@ -50,6 +50,16 @@ interface Props {
   dirProp?: Record<string, DirSize>;
   /** When true (e.g. on <md or large selections), the pill starts collapsed. */
   defaultCollapsed?: boolean;
+  /**
+   * Controlled expanded state. When provided, the component stops keeping its
+   * own open/closed state and the parent drives it via onExpandedChange.
+   */
+  expanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
+  /** Optional: render an entry dimmed (e.g. unsupported for the operation). */
+  isDimmed?: (entry: TS.FileSystemEntry) => boolean;
+  /** Optional: trailing per-entry status adornment (e.g. a processed mark). */
+  getItemAdornment?: (entry: TS.FileSystemEntry) => ReactNode;
 }
 
 function getTotalSize(
@@ -122,12 +132,29 @@ function ExtensionTile({
   );
 }
 
-function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
+function SelectedItemsSummary({
+  entries,
+  dirProp,
+  defaultCollapsed,
+  expanded,
+  onExpandedChange,
+  isDimmed,
+  getItemAdornment,
+}: Props) {
   const { t } = useTranslation();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const defaultFolderColor = useSelector(getDefaultFolderColor);
   const itemCount = entries.length;
-  const [expanded, setExpanded] = useState(!defaultCollapsed);
+  const [internalExpanded, setInternalExpanded] = useState(!defaultCollapsed);
+  const isExpandedControlled = expanded !== undefined;
+  const isExpanded = isExpandedControlled ? expanded : internalExpanded;
+  const toggleExpanded = () => {
+    const next = !isExpanded;
+    if (!isExpandedControlled) {
+      setInternalExpanded(next);
+    }
+    onExpandedChange?.(next);
+  };
 
   if (itemCount === 0) {
     return null;
@@ -142,6 +169,7 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
     const itemSize = entry.isFile
       ? entry.size
       : dirProp?.[entry.path]?.totalSize;
+    const adornment = getItemAdornment?.(entry);
     return (
       <Paper
         variant="outlined"
@@ -161,7 +189,12 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
           defaultFolderColor={defaultFolderColor}
         />
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="body2" noWrap title={entry.path}>
+          <Typography
+            variant="body2"
+            noWrap
+            title={entry.path}
+            sx={{ ...(isDimmed?.(entry) && { color: 'text.disabled' }) }}
+          >
             {entry.name}
           </Typography>
         </Box>
@@ -173,6 +206,13 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
           >
             {formatBytes(itemSize)}
           </Typography>
+        )}
+        {adornment && (
+          <Box
+            sx={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center' }}
+          >
+            {adornment}
+          </Box>
         )}
       </Paper>
     );
@@ -193,7 +233,7 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
         }}
       >
         <ButtonBase
-          onClick={() => setExpanded((v) => !v)}
+          onClick={toggleExpanded}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -203,7 +243,7 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
             justifyContent: 'flex-start',
             textAlign: 'left',
           }}
-          aria-expanded={expanded}
+          aria-expanded={isExpanded}
           aria-label={t('core:selectedFilesAndFolders')}
         >
           <Stack
@@ -257,13 +297,13 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
               )}
             </Typography>
           </Box>
-          {expanded ? (
+          {isExpanded ? (
             <ExpandLess fontSize="small" />
           ) : (
             <ExpandMore fontSize="small" />
           )}
         </ButtonBase>
-        <Collapse in={expanded} unmountOnExit>
+        <Collapse in={isExpanded} unmountOnExit>
           <Box sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
             <List
               dense
@@ -281,6 +321,7 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
                   typeof itemSize === 'number' && itemSize > 0
                     ? formatBytes(itemSize)
                     : null;
+                const adornment = getItemAdornment?.(entry);
                 return (
                   <ListItem title={entry.path} key={entry.path} sx={{ gap: 1 }}>
                     <ListItemIcon sx={{ minWidth: 44 }}>
@@ -291,7 +332,13 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
                       />
                     </ListItemIcon>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography variant="body2" noWrap>
+                      <Typography
+                        variant="body2"
+                        noWrap
+                        sx={{
+                          ...(isDimmed?.(entry) && { color: 'text.disabled' }),
+                        }}
+                      >
                         {entry.name}
                       </Typography>
                     </Box>
@@ -303,6 +350,17 @@ function SelectedItemsSummary({ entries, dirProp, defaultCollapsed }: Props) {
                       >
                         {sizeText}
                       </Typography>
+                    )}
+                    {adornment && (
+                      <Box
+                        sx={{
+                          flexShrink: 0,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {adornment}
+                      </Box>
                     )}
                   </ListItem>
                 );

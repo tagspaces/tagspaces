@@ -466,12 +466,32 @@ function SettingsGeneral() {
         !persistTagsInSidecarFile && {
           label: t('core:fileNameTagSetting'),
           jsx: (
-            <ListItem>
-              <ListItemText primary={t('core:fileNameTagSetting')} />
+            <ListItem
+              title={
+                AppConfig.ExtFilenameTagPlacedAtEnd !== undefined
+                  ? t('core:settingExternallyConfigured')
+                  : ''
+              }
+            >
+              <ListItemText
+                primary={
+                  AppConfig.ExtFilenameTagPlacedAtEnd !== undefined ? (
+                    <>
+                      {t('core:fileNameTagSetting')}
+                      <InfoIcon
+                        tooltip={t('core:settingExternallyConfigured')}
+                      />
+                    </>
+                  ) : (
+                    t('core:fileNameTagSetting')
+                  )
+                }
+              />
               <ToggleButtonGroup
                 value={filenameTagPlacedAtEnd}
                 size="small"
                 exclusive
+                disabled={AppConfig.ExtFilenameTagPlacedAtEnd !== undefined}
               >
                 <TsToggleButton
                   value={false}

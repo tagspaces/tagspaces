@@ -87,17 +87,22 @@ function AiGenTagsButton(props: Props) {
     setIsLoading(true);
     checkOllamaModels().then((success) => {
       if (success) {
-        const promises = generateEntries.map((entry) => {
-          tagsGenerate(entry, fromDescription).then(() => {
+        const promises = generateEntries.map((entry) =>
+          tagsGenerate(entry, fromDescription).then((tagsSuccess) => {
             if (generationCompleted) {
               generationCompleted();
             }
-          });
-        });
+            return tagsSuccess;
+          }),
+        );
         Promise.all(promises)
           .then((results) => {
             setIsLoading(false);
-            if (results && results.every((result) => result)) {
+            if (
+              results &&
+              results.length > 0 &&
+              results.every((result) => result)
+            ) {
               showNotification(t('core:tagsGeneratedByAI'));
             }
           })

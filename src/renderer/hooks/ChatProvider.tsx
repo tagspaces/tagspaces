@@ -368,13 +368,15 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
    * return true if model is loaded successful false otherwise
    */
   function checkOllamaModels(): Promise<boolean> {
+    if (!defaultAiProvider) {
+      // No AI provider configured/enabled — generation cannot start.
+      return Promise.resolve(false);
+    }
     if (!models.current || models.current.length === 0) {
-      if (defaultAiProvider) {
-        return getOllamaClient(defaultAiProvider.url).then((client) => {
-          ollamaClient.current = client;
-          return refreshOllamaModels();
-        });
-      }
+      return getOllamaClient(defaultAiProvider.url).then((client) => {
+        ollamaClient.current = client;
+        return refreshOllamaModels();
+      });
     }
     return Promise.resolve(true);
   }
@@ -1163,7 +1165,13 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
           showNotification(t('core:ollamaConnectionError'));
           return Promise.resolve(undefined);
         }
-        return Promise.resolve(entry);
+        // Extension is neither image, text/pdf nor a folder — skip it instead
+        // of resolving the unchanged entry (which would mark it processed and
+        // could overwrite an existing description with undefined).
+        showNotification(
+          t('core:generationNotSupportedFor', { name: entry.name }),
+        );
+        return Promise.resolve(undefined);
       } else {
         showNotification(t('core:noModelsLoaded'));
         return Promise.resolve(undefined);
