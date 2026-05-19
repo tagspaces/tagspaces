@@ -99,6 +99,13 @@ const browserWindowOptions: BrowserWindowConstructorOptions = {
   titleBarStyle: isMacLike ? 'hidden' : 'default',
   webPreferences: {
     spellcheck: true,
+    // Renderer is fully isolated: all main-process access goes through the
+    // `electronIO` contextBridge in preload.ts. These match Electron's secure
+    // defaults — kept explicit so an unrelated webPreferences change can't
+    // silently regress them.
+    contextIsolation: true,
+    sandbox: true,
+    nodeIntegration: false,
     preload:
       app.isPackaged || !isDebug
         ? path.join(__dirname, 'preload.js')
