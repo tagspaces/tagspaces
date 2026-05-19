@@ -52,7 +52,8 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Pro } from '../pro';
-import ExportImportDialog from './dialogs/ExportImportDialog';
+import { SettingsTab } from './dialogs/SettingsDialog';
+import { useSettingsDialogContext } from './dialogs/hooks/useSettingsDialogContext';
 import SidePanelTitle from './SidePanelTitle';
 
 interface Props {
@@ -90,10 +91,8 @@ function StoredSearches(props: Props) {
   const [bookmarksMenuAnchorEl, setBookmarksMenuAnchorEl] =
     useState<null | HTMLElement>(null);
 
-  const [isExportSearchesDialogOpened, setExportSearchesDialogOpened] =
-    useState<boolean>(false);
+  const { openSettingsDialog } = useSettingsDialogContext();
 
-  const [importFile, setImportFile] = useState<File>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const menuHistoryKey = useRef<string>(undefined);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
@@ -109,7 +108,13 @@ function StoredSearches(props: Props) {
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
     const file = target.files[0];
-    setImportFile(file);
+    if (file) {
+      openSettingsDialog(SettingsTab.BackupRestore, {
+        mode: 'import',
+        scope: 'searches',
+        importFile: file,
+      });
+    }
     target.value = null;
   }
 
@@ -190,7 +195,10 @@ function StoredSearches(props: Props) {
               open={Boolean(searchMenuAnchorEl)}
               onClose={handleCloseSearchMenu}
               exportSearches={() => {
-                setExportSearchesDialogOpened(true);
+                openSettingsDialog(SettingsTab.BackupRestore, {
+                  mode: 'export',
+                  scope: 'searches',
+                });
               }}
               importSearches={() => {
                 fileInputRef.current.click();
@@ -500,23 +508,6 @@ function StoredSearches(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-      {isExportSearchesDialogOpened && (
-        <ExportImportDialog
-          open={isExportSearchesDialogOpened}
-          mode="export"
-          scope="searches"
-          onClose={() => setExportSearchesDialogOpened(false)}
-        />
-      )}
-      {importFile && (
-        <ExportImportDialog
-          open={Boolean(importFile)}
-          mode="import"
-          scope="searches"
-          importFile={importFile}
-          onClose={() => setImportFile(undefined)}
-        />
-      )}
     </Box>
   );
 }

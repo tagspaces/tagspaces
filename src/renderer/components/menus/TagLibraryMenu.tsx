@@ -26,6 +26,8 @@ import {
 } from '-/components/CommonIcons';
 import { ProLabel, ProTooltip } from '-/components/HelperComponents';
 import TsMenuList from '-/components/TsMenuList';
+import { SettingsTab } from '-/components/dialogs/SettingsDialog';
+import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { Pro } from '-/pro';
 import { getSaveTagInLocation } from '-/reducers/settings';
@@ -36,10 +38,9 @@ import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Links from 'assets/links';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import ExportImportDialog from '../dialogs/ExportImportDialog';
 
 interface Props {
   classes?: any;
@@ -52,15 +53,17 @@ interface Props {
 function TagLibraryMenu(props: Props) {
   const { t } = useTranslation();
   const { refreshTagLibrary } = useEditedTagLibraryContext();
+  const { openSettingsDialog } = useSettingsDialogContext();
 
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const fileInput = useRef<HTMLInputElement>(null);
-  const [isExportTagGroupsOpened, setExportTagGroupsOpened] = useState(false);
-  const [importFile, setImportFile] = useState<File>(undefined);
 
   function handleExportTagGroup() {
     props.onClose();
-    setExportTagGroupsOpened(true);
+    openSettingsDialog(SettingsTab.BackupRestore, {
+      mode: 'export',
+      scope: 'tagGroups',
+    });
   }
 
   function handleImportTagGroup() {
@@ -72,30 +75,17 @@ function TagLibraryMenu(props: Props) {
     const target = selection.currentTarget;
     const file = target.files[0];
     if (file) {
-      setImportFile(file);
+      openSettingsDialog(SettingsTab.BackupRestore, {
+        mode: 'import',
+        scope: 'tagGroups',
+        importFile: file,
+      });
     }
     target.value = null;
   }
 
   return (
     <Box sx={{ overflowY: 'hidden' }}>
-      {isExportTagGroupsOpened && (
-        <ExportImportDialog
-          open={isExportTagGroupsOpened}
-          mode="export"
-          scope="tagGroups"
-          onClose={() => setExportTagGroupsOpened(false)}
-        />
-      )}
-      {importFile && (
-        <ExportImportDialog
-          open={Boolean(importFile)}
-          mode="import"
-          scope="tagGroups"
-          importFile={importFile}
-          onClose={() => setImportFile(undefined)}
-        />
-      )}
       <Menu anchorEl={props.anchorEl} open={props.open} onClose={props.onClose}>
         <TsMenuList>
           <MenuItem

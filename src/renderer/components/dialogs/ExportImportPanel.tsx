@@ -49,12 +49,13 @@ import {
 import { prepareTagGroupsForExport } from '-/services/taglibrary-utils';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
+import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import LinearProgress from '@mui/material/LinearProgress';
+import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import { EXPORT_VERSION } from '-/services/export-import-utils';
 import { useEffect, useMemo, useState } from 'react';
@@ -603,145 +604,183 @@ function ExportImportPanel(props: Props) {
       : importSelectionEmpty;
 
   return (
-    <div data-tid="unifiedExportImportPanelTID">
-      <Typography sx={{ marginBottom: '8px' }}>
-        {mode === 'export'
-          ? t('core:selectWhatToExport')
-          : t('core:selectWhatToImport')}
-      </Typography>
-
-      {ALL_SECTIONS.map(renderSection)}
-
-      {mode === 'export' && (
-        <>
-          <Divider sx={{ margin: '8px 0' }} />
-          <FormControl fullWidth>
-            <FormControlLabel
-              labelPlacement="start"
-              sx={{
-                marginLeft: 0,
-                marginRight: 0,
-                justifyContent: 'space-between',
-              }}
-              control={
-                <TsSwitch
-                  checked={encrypt}
-                  onClick={() => setEncrypt(!encrypt)}
-                  data-tid="encryptExportTID"
-                />
-              }
-              label={t('core:encryptExport')}
-            />
-          </FormControl>
-          {credentialsInSelection && !encrypt && (
-            <FormHelperText sx={{ color: 'error.main' }}>
-              {t('core:disableEncryptionWarning')}
-            </FormHelperText>
-          )}
-          {credentialsInSelection && encrypt && (
-            <FormHelperText>{t('core:encryptionRecommended')}</FormHelperText>
-          )}
-          {encrypt && (
-            <>
-              <FormControl fullWidth sx={{ paddingTop: '10px' }}>
-                <TsTextField
-                  name="exportPassword"
-                  autoFocus
-                  slotProps={{
-                    input: { autoCorrect: 'off', autoCapitalize: 'none' },
-                  }}
-                  label={t('core:aesPassword')}
-                  type="password"
-                  onChange={(event: any) =>
-                    setExportPassword(event.target.value)
-                  }
-                  updateValue={(value: string) => setExportPassword(value)}
-                  retrieveValue={() => exportPassword}
-                  data-tid="exportPasswordTID"
-                />
-              </FormControl>
-              {exportPassword.length > 0 && (
-                <div
-                  data-tid="passwordStrengthTID"
-                  style={{ marginTop: 4, marginBottom: 4 }}
-                >
-                  <LinearProgress
-                    variant="determinate"
-                    value={(pwStrength.score / 4) * 100}
-                    color={
-                      pwStrength.label === 'weak'
-                        ? 'error'
-                        : pwStrength.label === 'fair'
-                          ? 'warning'
-                          : pwStrength.label === 'good'
-                            ? 'info'
-                            : 'success'
-                    }
-                    sx={{ borderRadius: AppConfig.defaultCSSRadius }}
-                  />
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: passwordTooWeak ? 'error.main' : 'text.secondary',
-                    }}
-                  >
-                    {t('core:passwordStrength')}:{' '}
-                    {t('core:pwStrength_' + pwStrength.label)}
-                  </Typography>
-                </div>
-              )}
-              {passwordTooWeak && (
-                <FormHelperText sx={{ color: 'error.main' }}>
-                  {t('core:passwordTooWeak')}
-                </FormHelperText>
-              )}
-              <FormControl fullWidth error={passwordMismatch}>
-                <TsTextField
-                  name="retypePassword"
-                  slotProps={{
-                    input: { autoCorrect: 'off', autoCapitalize: 'none' },
-                  }}
-                  label={t('core:retypePassword')}
-                  type="password"
-                  onChange={(event: any) =>
-                    setRetypePassword(event.target.value)
-                  }
-                  data-tid="retypePasswordTID"
-                />
-              </FormControl>
-              {passwordMismatch && (
-                <FormHelperText sx={{ color: 'error.main' }}>
-                  {t('core:retypePasswordDiffError')}
-                </FormHelperText>
-              )}
-            </>
-          )}
-        </>
-      )}
-
-      <div
-        style={{
-          marginTop: 16,
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: AppConfig.defaultSpaceBetweenButtons,
+    <Box
+      data-tid="unifiedExportImportPanelTID"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        minHeight: 0,
+        paddingX: 2,
+        paddingTop: 1,
+        paddingBottom: 1,
+      }}
+    >
+      {/* Sticky header: the real action buttons + encryption controls stay
+          pinned while the section list below scrolls. */}
+      <Box
+        data-tid="exportImportHeaderTID"
+        sx={{
+          flexShrink: 0,
+          backgroundColor: 'background.paper',
+          borderBottom: 1,
+          borderColor: 'divider',
+          paddingBottom: 1,
+          marginBottom: 1,
         }}
       >
-        <TsButton onClick={onCancel} data-tid="cancelExportImportTID">
-          {t('core:cancel')}
-        </TsButton>
-        <TsButton
-          onClick={mode === 'export' ? handleExport : handleImport}
-          data-tid="exportImportConfirmTID"
-          variant="contained"
-          disabled={confirmDisabled || busy}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: AppConfig.defaultSpaceBetweenButtons,
+          }}
         >
-          {mode === 'export'
-            ? t('core:startExportButton')
-            : t('core:startImportButton')}
-        </TsButton>
-      </div>
-    </div>
+          <ListItemText
+            primary={t('core:exportImportTitle')}
+            secondary={
+              mode === 'export'
+                ? t('core:selectWhatToExport')
+                : t('core:selectWhatToImport')
+            }
+          />
+          <div
+            style={{
+              display: 'flex',
+              flexShrink: 0,
+              gap: AppConfig.defaultSpaceBetweenButtons,
+            }}
+          >
+            <TsButton onClick={onCancel} data-tid="cancelExportImportTID">
+              {t('core:cancel')}
+            </TsButton>
+            <TsButton
+              onClick={mode === 'export' ? handleExport : handleImport}
+              data-tid="exportImportConfirmTID"
+              variant="contained"
+              disabled={confirmDisabled || busy}
+            >
+              {mode === 'export'
+                ? t('core:startExportButton')
+                : t('core:startImportButton')}
+            </TsButton>
+          </div>
+        </div>
+
+        {mode === 'export' && (
+          <>
+            <FormControl fullWidth>
+              <FormControlLabel
+                labelPlacement="start"
+                sx={{
+                  marginLeft: 0,
+                  marginRight: 0,
+                  justifyContent: 'space-between',
+                }}
+                control={
+                  <TsSwitch
+                    checked={encrypt}
+                    onClick={() => setEncrypt(!encrypt)}
+                    data-tid="encryptExportTID"
+                  />
+                }
+                label={t('core:encryptExport')}
+              />
+            </FormControl>
+            {credentialsInSelection && !encrypt && (
+              <FormHelperText sx={{ color: 'error.main' }}>
+                {t('core:disableEncryptionWarning')}
+              </FormHelperText>
+            )}
+            {credentialsInSelection && encrypt && (
+              <FormHelperText>{t('core:encryptionRecommended')}</FormHelperText>
+            )}
+            {encrypt && (
+              <>
+                <FormControl fullWidth sx={{ paddingTop: '10px' }}>
+                  <TsTextField
+                    name="exportPassword"
+                    autoFocus
+                    slotProps={{
+                      input: { autoCorrect: 'off', autoCapitalize: 'none' },
+                    }}
+                    label={t('core:aesPassword')}
+                    type="password"
+                    onChange={(event: any) =>
+                      setExportPassword(event.target.value)
+                    }
+                    updateValue={(value: string) => setExportPassword(value)}
+                    retrieveValue={() => exportPassword}
+                    data-tid="exportPasswordTID"
+                  />
+                </FormControl>
+                {exportPassword.length > 0 && (
+                  <div
+                    data-tid="passwordStrengthTID"
+                    style={{ marginTop: 4, marginBottom: 4 }}
+                  >
+                    <LinearProgress
+                      variant="determinate"
+                      value={(pwStrength.score / 4) * 100}
+                      color={
+                        pwStrength.label === 'weak'
+                          ? 'error'
+                          : pwStrength.label === 'fair'
+                            ? 'warning'
+                            : pwStrength.label === 'good'
+                              ? 'info'
+                              : 'success'
+                      }
+                      sx={{ borderRadius: AppConfig.defaultCSSRadius }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: passwordTooWeak
+                          ? 'error.main'
+                          : 'text.secondary',
+                      }}
+                    >
+                      {t('core:passwordStrength')}:{' '}
+                      {t('core:pwStrength_' + pwStrength.label)}
+                    </Typography>
+                  </div>
+                )}
+                {passwordTooWeak && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {t('core:passwordTooWeak')}
+                  </FormHelperText>
+                )}
+                <FormControl fullWidth error={passwordMismatch}>
+                  <TsTextField
+                    name="retypePassword"
+                    slotProps={{
+                      input: { autoCorrect: 'off', autoCapitalize: 'none' },
+                    }}
+                    label={t('core:retypePassword')}
+                    type="password"
+                    onChange={(event: any) =>
+                      setRetypePassword(event.target.value)
+                    }
+                    data-tid="retypePasswordTID"
+                  />
+                </FormControl>
+                {passwordMismatch && (
+                  <FormHelperText sx={{ color: 'error.main' }}>
+                    {t('core:retypePasswordDiffError')}
+                  </FormHelperText>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </Box>
+
+      <Box sx={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+        {ALL_SECTIONS.map(renderSection)}
+      </Box>
+    </Box>
   );
 }
 

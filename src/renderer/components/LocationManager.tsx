@@ -19,7 +19,8 @@
 import LocationView from '-/components/LocationView';
 import TsButton from '-/components/TsButton';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
-import ExportImportDialog from '-/components/dialogs/ExportImportDialog';
+import { SettingsTab } from '-/components/dialogs/SettingsDialog';
+import { useSettingsDialogContext } from '-/components/dialogs/hooks/useSettingsDialogContext';
 import LocationContextMenu from '-/components/menus/LocationContextMenu';
 import LocationManagerMenu from '-/components/menus/LocationManagerMenu';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -46,14 +47,12 @@ function LocationManager(props: Props) {
     locationDirectoryContextMenuAnchorEl,
   } = useCurrentLocationContext();
   const { openCreateEditLocationDialog } = useCreateEditLocationDialogContext();
+  const { openSettingsDialog } = useSettingsDialogContext();
 
   const locations: TS.Location[] = useSelector(getLocations);
   const [wSpaceLocations, setWSpaceLocations] =
     useState<TS.Location[]>(locations);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isExportLocationsDialogOpened, setExportLocationsDialogOpened] =
-    useState<boolean>(false);
-  const [importFile, setImportFile] = useState<File>(undefined);
 
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
     ? useContext<TS.WorkSpacesContextData>(
@@ -79,7 +78,13 @@ function LocationManager(props: Props) {
   function handleFileInputChange(selection: any) {
     const target = selection.currentTarget;
     const file = target.files[0];
-    setImportFile(file);
+    if (file) {
+      openSettingsDialog(SettingsTab.BackupRestore, {
+        mode: 'import',
+        scope: 'locations',
+        importFile: file,
+      });
+    }
     target.value = null;
   }
 
@@ -118,7 +123,12 @@ function LocationManager(props: Props) {
         importLocations={() => {
           fileInputRef.current.click();
         }}
-        exportLocations={() => setExportLocationsDialogOpened(true)}
+        exportLocations={() =>
+          openSettingsDialog(SettingsTab.BackupRestore, {
+            mode: 'export',
+            scope: 'locations',
+          })
+        }
         showCreateLocationDialog={() => {
           setSelectedLocation(undefined);
           openCreateEditLocationDialog();
@@ -206,23 +216,6 @@ function LocationManager(props: Props) {
         type="file"
         onChange={handleFileInputChange}
       />
-      {isExportLocationsDialogOpened && (
-        <ExportImportDialog
-          open={isExportLocationsDialogOpened}
-          mode="export"
-          scope="locations"
-          onClose={() => setExportLocationsDialogOpened(false)}
-        />
-      )}
-      {importFile && (
-        <ExportImportDialog
-          open={Boolean(importFile)}
-          mode="import"
-          scope="locations"
-          importFile={importFile}
-          onClose={() => setImportFile(undefined)}
-        />
-      )}
     </Box>
   );
 }
