@@ -334,12 +334,6 @@ export async function testDataRefresh(isS3, testDataDir) {
     //console.log('testDataDir:'+testDataDir);
     await refreshS3testData(testDataDir);
   } else {
-    await fse.rm(testDataDir, {
-      recursive: true,
-      force: true,
-      maxRetries: 5, // retry on EBUSY/EMFILE/ENFILE
-      retryDelay: 100, // optional back‑off in ms
-    });
     const src = pathLib.join(
       __dirname,
       '..',
@@ -347,16 +341,39 @@ export async function testDataRefresh(isS3, testDataDir) {
       'file-structure',
       'supported-filestypes',
     );
-    // Use Node's native recursive copy (not fs-extra's), since fs-extra's
-    // copy() does a non-recursive fs.mkdir(dest) per directory and races with
-    // the running Electron app's indexer recreating the .ts metafolder between
-    // our rm and copy — producing intermittent EEXIST mkdir '.ts' failures.
-    // fs.cp with { recursive: true, force: true } is idempotent w.r.t. existing
-    // destination dirs and overwrites files, so the race is harmless.
-    await fs.promises.cp(src, testDataDir, {
-      recursive: true,
-      force: true,
-    });
+    // The running Electron app's indexer/watcher keeps recreating directories
+    // (testDataDir or its .ts metafolder) between our rm and copy. Node's
+    // fs.cp is NOT actually race-safe here: its internal recursive mkdir
+    // throws EEXIST/ENOTEMPTY when a destination dir reappears mid-copy
+    // (despite { force: true }, which only governs file overwrite). When the
+    // app is actively indexing, this fails every Playwright retry too — so we
+    // retry the whole rm+cp sequence (a fresh rm re-closes the race window)
+    // and only rethrow once attempts are exhausted.
+    const transientCodes = ['EEXIST', 'ENOTEMPTY', 'EBUSY', 'EPERM'];
+    const maxAttempts = 6;
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await fse.rm(testDataDir, {
+          recursive: true,
+          force: true,
+          maxRetries: 5, // retry on EBUSY/EMFILE/ENFILE
+          retryDelay: 100, // optional back‑off in ms
+        });
+        await fs.promises.cp(src, testDataDir, {
+          recursive: true,
+          force: true,
+        });
+        break;
+      } catch (err) {
+        if (
+          attempt >= maxAttempts ||
+          !transientCodes.includes(err && err.code)
+        ) {
+          throw err;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 150 * attempt));
+      }
+    }
   }
 }
 

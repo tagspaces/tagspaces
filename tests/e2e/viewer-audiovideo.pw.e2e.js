@@ -50,17 +50,16 @@ test.describe('TST59 - Media player', () => {
     await expectMediaPlay(false);
   });
 
-  test('TST5902 - Play ogv file [web,s3,electron]', async ({
-    isWin,
-    isWeb,
-  }) => {
-    if (!isWin) {
-      await openContextEntryMenu(
-        getGridFileSelector('sample.ogv'),
-        'fileMenuOpenFile',
-      );
-      await expectMediaPlay(!isWeb);
-    }
+  test('TST5902 - Play webm file [web,s3,electron]', async ({ isWeb }) => {
+    // Smoke-test the media-player extension with WebM (VP8/VP9): it is
+    // royalty-free and decodable by stock Chromium/Electron on every
+    // platform. Theora/OGV was dropped from Chromium in M124, so an .ogv
+    // file yields video.duration = NaN here and can no longer be played.
+    await openContextEntryMenu(
+      getGridFileSelector('sample.webm'),
+      'fileMenuOpenFile',
+    );
+    await expectMediaPlay(!isWeb);
   });
 
   test('TST5903 - Open and close about dialog [web,s3,electron]', async () => {

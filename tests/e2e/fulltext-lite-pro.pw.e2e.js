@@ -11,7 +11,10 @@
  *
  * Search vocabulary (taken from the existing testdata files):
  *   - "Lorem"     — present in sample.txt
- *   - "yahoo"     — present in sample.md (link to yahoo.com)
+ *   - "embedding" — present in sample.md prose (headings). NOTE: it must be
+ *     body/heading text, not a link URL — extractMarkdownText() indexes only
+ *     marked "text" tokens and drops link/emphasis/code tokens, so a term
+ *     that lives only inside a markdown link href is never in the index.
  *   - "Klasirane" — present ONLY in sample.pdf (extracted via pdfjs)
  */
 import { expect, test } from './fixtures';
@@ -32,7 +35,7 @@ import { searchEngine } from './search.helpers';
 import { clearDataStorage } from './welcome.helpers';
 
 const pdfSearchTerm = 'Klasirane';
-const mdSearchTerm = 'yahoo';
+const mdSearchTerm = 'embedding';
 const txtSearchTerm = 'Lorem';
 
 test.beforeAll(async ({ isWeb, isS3, webServerPort }, testInfo) => {
