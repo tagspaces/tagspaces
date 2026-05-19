@@ -36,6 +36,9 @@
  * count is stored in the header so future tuning never breaks old files.
  */
 
+/* eslint-disable no-bitwise -- byte ↔ base64 / WordArray conversion and the
+   constant-time MAC compare legitimately require bitwise operators. */
+
 import CryptoJS from 'crypto-js';
 
 const TSENC_VERSION = 2;
@@ -213,7 +216,7 @@ export async function encryptString(
   const ivB64 = bytesToB64(ivBytes);
   const ctB64 = enc.ciphertext.toString(CryptoJS.enc.Base64);
   const mac = CryptoJS.HmacSHA256(
-    saltB64 + '.' + ivB64 + '.' + ctB64,
+    `${saltB64}.${ivB64}.${ctB64}`,
     macKey,
   ).toString();
   return JSON.stringify({
@@ -267,7 +270,7 @@ export async function decryptString(
           iter,
         );
         const expectedMac = CryptoJS.HmacSHA256(
-          header.salt + '.' + header.iv + '.' + header.ct,
+          `${header.salt}.${header.iv}.${header.ct}`,
           macKey,
         ).toString();
         if (

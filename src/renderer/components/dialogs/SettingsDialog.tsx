@@ -37,7 +37,7 @@ import SettingsPerspectives from '-/components/dialogs/components/SettingsPerspe
 import SettingsTemplates from '-/components/dialogs/components/SettingsTemplates';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
-import type { TransferSection } from '-/services/export-import-validators';
+import type { SettingsBackupIntent } from '-/services/export-import-validators';
 import { openURLExternally } from '-/services/utils-io';
 import ArticleIcon from '@mui/icons-material/Article';
 import Dialog from '@mui/material/Dialog';
@@ -62,16 +62,10 @@ export enum SettingsTab {
   AI = 'ai',
 }
 
-/**
- * Lets callers (e.g. the Locations menu) open Settings directly on the Backup
- * tab and immediately start an export/import scoped to one section, instead of
- * spawning a separate dialog.
- */
-export type SettingsBackupIntent = {
-  mode: 'export' | 'import';
-  scope?: TransferSection;
-  importFile?: File;
-};
+// Re-exported for callers that import it from the dialog (e.g. the settings
+// dialog context provider). Defined in export-import-validators to avoid an
+// import cycle with SettingsBackupRestore.
+export type { SettingsBackupIntent };
 
 interface Props {
   open: boolean;

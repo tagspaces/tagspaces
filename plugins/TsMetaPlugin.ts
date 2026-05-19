@@ -4,7 +4,7 @@ import webpackPaths from '../.erb/configs/webpack.paths';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import chalk from 'chalk';
-import { execFile, spawn } from 'child_process';
+import { spawn } from 'child_process';
 
 export class TsMetaPlugin {
   apply(compiler: webpack.Compiler) {
@@ -69,17 +69,19 @@ export class TsMetaPlugin {
       const cwd = path.resolve(webpackPaths.rootPath);
       const script = path.join(cwd, 'scripts', 'versionmeta.js');
 
-      // Spawn "npm run version-meta" asynchronously
+      // Run "node scripts/versionmeta.js" asynchronously, inheriting stdio
       await new Promise<void>((resolve, reject) => {
-        execFile(
-          'node',
-          [script],
-          { cwd, stdio: 'inherit' },
-          (err, _stdout, _stderr) => {
-            if (err) return reject(err);
-            resolve();
-          },
-        );
+        const child = spawn(process.execPath, [script], {
+          cwd,
+          stdio: 'inherit',
+          shell: false,
+        });
+        child.on('error', reject);
+        child.on('exit', (code, signal) => {
+          if (signal) return reject(new Error(`killed by signal ${signal}`));
+          if (code !== 0) return reject(new Error(`exit code ${code}`));
+          resolve();
+        });
       });
     }
 
@@ -111,16 +113,18 @@ export class TsMetaPlugin {
       const cwd = path.resolve(webpackPaths.rootPath);
       const script = path.join(cwd, 'scripts', 'jwt_generate.js');
 
-      await new Promise((resolve, reject) => {
-        execFile(
-          'node',
-          [script],
-          { cwd, stdio: 'inherit' },
-          (err, _stdout, _stderr) => {
-            if (err) return reject(err);
-            resolve();
-          },
-        );
+      await new Promise<void>((resolve, reject) => {
+        const child = spawn(process.execPath, [script], {
+          cwd,
+          stdio: 'inherit',
+          shell: false,
+        });
+        child.on('error', reject);
+        child.on('exit', (code, signal) => {
+          if (signal) return reject(new Error(`killed by signal ${signal}`));
+          if (code !== 0) return reject(new Error(`exit code ${code}`));
+          resolve();
+        });
       });
     }
     // beforeRun fires once, before compiling begins

@@ -19,9 +19,11 @@
 import AppConfig from '-/AppConfig';
 import { ExportIcon, ImportIcon } from '-/components/CommonIcons';
 import TsButton from '-/components/TsButton';
-import type { SettingsBackupIntent } from '-/components/dialogs/SettingsDialog';
 import ExportImportPanel from '-/components/dialogs/ExportImportPanel';
-import type { TransferSection } from '-/services/export-import-validators';
+import type {
+  SettingsBackupIntent,
+  TransferSection,
+} from '-/services/export-import-validators';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -128,5 +130,9 @@ function SettingsBackupRestore(props: Props) {
     </Box>
   );
 }
+
+SettingsBackupRestore.defaultProps = {
+  backup: undefined,
+};
 
 export default SettingsBackupRestore;

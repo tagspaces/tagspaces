@@ -46,6 +46,18 @@ export interface TransferEnvelope {
 }
 
 /**
+ * Lets callers (e.g. the Locations menu) open Settings directly on the Backup
+ * tab and immediately start an export/import scoped to one section, instead of
+ * spawning a separate dialog. Defined here (dependency-free) so SettingsDialog
+ * and SettingsBackupRestore can both import it without an import cycle.
+ */
+export type SettingsBackupIntent = {
+  mode: 'export' | 'import';
+  scope?: TransferSection;
+  importFile?: File;
+};
+
+/**
  * Settings keys that must never travel through an export/import: volatile
  * runtime/session state and environment-derived static lists.
  */
@@ -258,14 +270,11 @@ export function mergeImportedSettings(
   let mergedKeyBindings = state.keyBindings;
   if (Array.isArray(incoming.keyBindings)) {
     const stateKb = Array.isArray(state.keyBindings) ? state.keyBindings : [];
-    mergedKeyBindings = (defaultKeyBindings || []).map((x) =>
-      Object.assign(
-        {},
-        x,
-        stateKb.find((y: any) => y && y.name === x.name),
-        incoming.keyBindings.find((y: any) => y && y.name === x.name),
-      ),
-    );
+    mergedKeyBindings = (defaultKeyBindings || []).map((x) => ({
+      ...x,
+      ...stateKb.find((y: any) => y && y.name === x.name),
+      ...incoming.keyBindings.find((y: any) => y && y.name === x.name),
+    }));
     delete incoming.keyBindings;
   }
   return {
@@ -309,8 +318,12 @@ const WEAK_SUBSTRINGS = [
  * it uses a single character class.
  */
 export function evaluatePasswordStrength(pw: string): PasswordStrength {
-  const toLabel = (s: number): PasswordStrength['label'] =>
-    s <= 1 ? 'weak' : s === 2 ? 'fair' : s === 3 ? 'good' : 'strong';
+  const toLabel = (s: number): PasswordStrength['label'] => {
+    if (s <= 1) return 'weak';
+    if (s === 2) return 'fair';
+    if (s === 3) return 'good';
+    return 'strong';
+  };
 
   if (!pw) {
     return { score: 0, ok: false, label: 'weak' };
