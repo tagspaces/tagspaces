@@ -232,31 +232,31 @@ function SettingsAI(props: Props) {
           id="ai-general-header"
           data-tid="aiGeneralTID"
         >
-          <Box sx={{ display: 'block' }}>
-            <Typography>{t('core:aiSettings')}</Typography>
-            <br />
-            <Typography variant="caption">
-              {t('peri:ollamaIntroPrefix')}{' '}
-              <TsButton
-                sx={{
-                  fontSize: '13px',
-                  textTransform: 'unset',
-                  fontWeight: 'normal',
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                }}
-                variant="text"
-                onClick={() => {
-                  openURLExternally('https://ollama.com/download', true);
-                }}
-              >
-                ollama.com
-              </TsButton>{' '}
-              {t('peri:ollamaIntroSuffix')}
-            </Typography>
-          </Box>
+          <Typography>{t('core:aiSettings')}</Typography>
         </AccordionSummary>
         <AccordionDetails>
+          <Typography
+            variant="caption"
+            sx={{ display: 'block', marginBottom: 1 }}
+          >
+            {t('peri:ollamaIntroPrefix')}{' '}
+            <TsButton
+              sx={{
+                fontSize: '13px',
+                textTransform: 'unset',
+                fontWeight: 'normal',
+                paddingTop: 0,
+                paddingBottom: 0,
+              }}
+              variant="text"
+              onClick={() => {
+                openURLExternally('https://ollama.com/download', true);
+              }}
+            >
+              ollama.com
+            </TsButton>{' '}
+            {t('peri:ollamaIntroSuffix')}
+          </Typography>
           <ClickAwayListener onClickAway={handleClose}>
             <Box
               ref={anchorRef}
