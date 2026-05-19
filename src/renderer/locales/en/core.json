@@ -143,6 +143,7 @@
   "backupRestoreSettingsTab": "Backup Settings",
   "exportImportTitle": "Export & Import",
   "sectionLocations": "Locations",
+  "locationsExportConfigNote": "Only the location configuration (path, credentials and options) is exported — not the files it contains.",
   "selectWhatToExport": "Select what to export",
   "selectWhatToImport": "Select what to import",
   "encryptExport": "Encrypt export with a password",

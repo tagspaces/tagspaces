@@ -501,6 +501,11 @@ function ExportImportPanel(props: Props) {
             </span>
           }
         />
+        {s === 'locations' && mode === 'export' && (
+          <FormHelperText data-tid="locationsExportConfigNoteTID">
+            {t('core:locationsExportConfigNote')}
+          </FormHelperText>
+        )}
         {isInvalid && (
           <FormHelperText sx={{ color: 'error.main' }}>
             {t('core:sectionInvalidSkipped')}

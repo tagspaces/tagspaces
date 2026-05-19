@@ -32,17 +32,18 @@ import {
   SetColorIcon,
   SizeIcon,
 } from '-/components/CommonIcons';
+import ElectronTileLayer from '-/components/ElectronTileLayer';
 import { ProTooltip } from '-/components/HelperComponents';
 import InfoIcon from '-/components/InfoIcon';
 import NoTileServer from '-/components/NoTileServer';
 import PerspectiveSelector from '-/components/PerspectiveSelector';
 import TagDropContainer from '-/components/TagDropContainer';
 import TagsSelect from '-/components/TagsSelect';
-import TsTooltip from '-/components/TsTooltip';
 import TransparentBackground from '-/components/TransparentBackground';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
+import TsTooltip from '-/components/TsTooltip';
 import LinkGeneratorDialog from '-/components/dialogs/LinkGeneratorDialog';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -104,7 +105,6 @@ import {
   Popup,
 } from 'react-leaflet';
 import { useSelector } from 'react-redux';
-import ElectronTileLayer from '-/components/ElectronTileLayer';
 import { Pro } from '../pro';
 
 const ThumbnailTextField = styled(TsTextField)(({ theme }) => ({
@@ -521,7 +521,7 @@ function EntryProperties({ tileServer }: Props) {
                             <TsButton
                               data-tid="confirmRenameEntryTID"
                               onClick={renameEntry}
-                              variant="text"
+                              variant="contained"
                               disabled={disableConfirmButton.current}
                             >
                               {t('core:confirmSaveButton')}
