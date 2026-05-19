@@ -20,8 +20,8 @@ import AppConfig from '-/AppConfig';
 import LogoIcon from '-/assets/icons/icon.png';
 import TextLogoIcon from '-/assets/images/text-logo.svg';
 import DraggablePaper from '-/components/DraggablePaper';
-import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
+import TsTooltip from '-/components/TsTooltip';
 import TranslucentDialog from '-/components/dialogs/components/TranslucentDialog';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
@@ -155,6 +155,10 @@ function AboutDialog(props: Props) {
           title={t('core:buildOnPlatformTooltip', {
             buildTime: versionMeta.buildTime,
             userAgent: navigator.userAgent,
+            // userAgent contains '/' which i18next would HTML-escape to
+            // &#x2F;; this string is rendered as plain text by the tooltip
+            // (React escapes it anyway), so disabling escaping is safe here.
+            interpolation: { escapeValue: false },
           })}
         >
           <Typography component="span" variant="subtitle1">
