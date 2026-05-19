@@ -83,6 +83,11 @@ export type Channels =
   | 'startup-finished'
   | 'getAuthor'
   | 'cancelRequest'
+  | 'encryptCredentials'
+  | 'decryptCredentials'
+  | 'getCredentialKeyStatus'
+  | 'getWindowCount'
+  | 'flushStorageData'
   | 'fetchTile';
 
 const electronHandler = {

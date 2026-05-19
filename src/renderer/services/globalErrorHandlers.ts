@@ -28,8 +28,46 @@ let installed = false;
 let errorListener: ((event: ErrorEvent) => void) | null = null;
 let rejectionListener: ((event: PromiseRejectionEvent) => void) | null = null;
 
+type PendingNotice = {
+  text: string;
+  type: 'default' | 'info' | 'warning' | 'error';
+  tid: string;
+};
+const pendingNotices: PendingNotice[] = [];
+
 export function setGlobalErrorNotifier(fn: Notifier | null) {
   currentNotifier = fn;
+  if (fn && pendingNotices.length > 0) {
+    const queued = pendingNotices.splice(0, pendingNotices.length);
+    queued.forEach((n) => {
+      try {
+        fn(n.text, n.type, true, n.tid);
+      } catch (e) {
+        console.error('globalErrorHandlers: notifier threw', e);
+      }
+    });
+  }
+}
+
+/**
+ * Surface a user notification from non-React code. If no notifier is
+ * registered yet (e.g. during redux-persist rehydrate, before the
+ * NotificationContext mounts), the notice is queued and flushed once one is.
+ */
+export function notifyUser(
+  text: string,
+  type: 'default' | 'info' | 'warning' | 'error' = 'warning',
+  tid = 'globalNoticeTID',
+) {
+  if (currentNotifier) {
+    try {
+      currentNotifier(text, type, true, tid);
+      return;
+    } catch (e) {
+      console.error('globalErrorHandlers: notifier threw', e);
+    }
+  }
+  pendingNotices.push({ text, type, tid });
 }
 
 function notify(message: string) {

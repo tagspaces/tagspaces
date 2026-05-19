@@ -28,6 +28,11 @@ export const types = {
   MOVE_DOWN_LOCATION: 'APP/MOVE_DOWN_LOCATION',
   EDIT_LOCATION: 'APP/EDIT_LOCATION',
   REMOVE_LOCATION: 'APP/REMOVE_LOCATION',
+  // No-op that returns a fresh array reference. Used to force redux-persist
+  // to re-serialize the (unchanged) locations slice through the
+  // credentials transform when toggling at-rest encryption — its persistoid
+  // skips slices whose reference did not change.
+  TOUCH_LOCATIONS: 'APP/TOUCH_LOCATIONS',
 };
 
 export const initialState = [];
@@ -136,6 +141,10 @@ export default (state: Array<TS.S3Location> = initialState, action: any) => {
       }
       return state;
     }
+    case types.TOUCH_LOCATIONS: {
+      // Fresh reference, identical contents — see TOUCH_LOCATIONS comment.
+      return [...state];
+    }
     default: {
       return state;
     }
@@ -169,6 +178,7 @@ export const actions = {
     type: types.REMOVE_LOCATION,
     locationId,
   }),
+  touchLocations: () => ({ type: types.TOUCH_LOCATIONS }),
 };
 
 // Selectors

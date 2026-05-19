@@ -100,6 +100,7 @@ export default {
   addTagsToLibrary: true,
   interfaceLanguage: 'en',
   useTrashCan: true,
+  encryptCredentialsAtRest: false,
   useOCR: false,
   useTextExtraction: false,
   useGenerateThumbnails: true,

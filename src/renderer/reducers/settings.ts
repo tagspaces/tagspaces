@@ -46,6 +46,7 @@ export const types = {
   SET_USEONLYTAGSFROMTAGLIBRARY: 'SETTINGS/SET_USEONLYTAGSFROMTAGLIBRARY',
   SET_DEVMODE: 'SETTINGS/SET_DEVMODE',
   SET_ENABLE_WS: 'SETTINGS/SET_ENABLE_WS',
+  SET_ENCRYPT_CREDENTIALS_AT_REST: 'SETTINGS/SET_ENCRYPT_CREDENTIALS_AT_REST',
   WARNING_OPENING_FILES_EXTERNALLY: 'SETTINGS/WARNING_OPENING_FILES_EXTERNALLY',
   SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
@@ -231,6 +232,12 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_ENABLE_WS: {
       return { ...state, enableWS: action.enableWS };
+    }
+    case types.SET_ENCRYPT_CREDENTIALS_AT_REST: {
+      return {
+        ...state,
+        encryptCredentialsAtRest: action.encryptCredentialsAtRest,
+      };
     }
     case types.WARNING_OPENING_FILES_EXTERNALLY: {
       return {
@@ -738,6 +745,10 @@ export const actions = {
     type: types.SET_ENABLE_WS,
     enableWS,
   }),
+  setEncryptCredentialsAtRest: (encryptCredentialsAtRest: boolean) => ({
+    type: types.SET_ENCRYPT_CREDENTIALS_AT_REST,
+    encryptCredentialsAtRest,
+  }),
   setWarningOpeningFilesExternally: (
     warningOpeningFilesExternally: boolean,
   ) => ({
@@ -1077,6 +1088,8 @@ export const getLastLinkType = (state: any): 'ts' | 'relative' => {
   return state.settings.lastLinkType === 'ts' ? 'ts' : 'relative';
 };
 export const getEnableWS = (state: any) => state.settings.enableWS;
+export const getEncryptCredentialsAtRest = (state: any) =>
+  state.settings.encryptCredentialsAtRest === true;
 export const getDesktopMode = (state: any) => {
   if (typeof AppConfig.ExtDisplayMode === 'undefined') {
     return state.settings.desktopMode;

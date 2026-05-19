@@ -16,6 +16,7 @@
  *
  */
 import AppConfig from '-/AppConfig';
+import { credentialsTransform } from '-/services/credentialsTransform';
 import { loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 import { persistCombineReducers, PersistConfig } from 'redux-persist';
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
@@ -254,6 +255,7 @@ const rootPersistConfig: PersistConfig = {
   storage,
   version: 2,
   blacklist,
+  transforms: [credentialsTransform],
   debug: false,
 };
 

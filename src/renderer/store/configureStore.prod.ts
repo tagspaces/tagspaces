@@ -22,6 +22,11 @@ import thunk from 'redux-thunk';
 import AppConfig from '-/AppConfig';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
+import { getEncryptCredentialsAtRest } from '../reducers/settings';
+import {
+  setEncryptAtRestEnabled,
+  setPersistorRef,
+} from '../services/encryptAtRestState';
 
 const enhancer = compose(
   applyMiddleware(thunk), // , router)
@@ -31,6 +36,15 @@ const enhancer = compose(
 function configureStore(initialState) {
   const store = createStore(rootReducer, initialState, enhancer);
   onlineListener(store.dispatch);
+  const syncEncryptFlag = () => {
+    try {
+      setEncryptAtRestEnabled(getEncryptCredentialsAtRest(store.getState()));
+    } catch (e) {
+      /* ignore */
+    }
+  };
+  syncEncryptFlag();
+  store.subscribe(syncEncryptFlag);
   const persistor = persistStore(store, null, () => {
     // document.dispatchEvent(new Event('storeLoaded'));
     // console.log('Store rehydrated.');
@@ -44,6 +58,7 @@ function configureStore(initialState) {
       }
     }, 500);
   });
+  setPersistorRef(persistor);
   return { store, persistor };
 }
 

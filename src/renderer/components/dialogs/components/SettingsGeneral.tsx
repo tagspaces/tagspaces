@@ -46,6 +46,7 @@ import { Pro } from '-/pro';
 import { AppDispatch } from '-/reducers/app';
 import {
   actions as SettingsActions,
+  getEncryptCredentialsAtRest,
   getFileNameTagPlace,
   getMapTileServers,
   getMaxCollectedTag,
@@ -54,6 +55,11 @@ import {
   isDevMode,
   isHideProFeatures,
 } from '-/reducers/settings';
+import { actions as LocationActions } from '-/reducers/locations';
+import {
+  getPersistorRef,
+  setEncryptAtRestEnabled,
+} from '-/services/encryptAtRestState';
 import { isWorkerAvailable, setLanguage } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { clearAllURLParams } from '-/utils/dom';
@@ -95,10 +101,16 @@ function SettingsGeneral() {
 
   // --- Advanced settings imports ---
   const maxCollectedTag = useSelector(getMaxCollectedTag);
-  const { openConfirmDialog } = useNotificationContext();
+  const { openConfirmDialog, showNotification } = useNotificationContext();
   const { delAllHistory } = useHistoryContext();
   const devMode = useSelector(isDevMode);
   const hideProFeatures = useSelector(isHideProFeatures);
+  const encryptAtRest = useSelector(getEncryptCredentialsAtRest);
+  const [credKeyStatus, setCredKeyStatus] = useState<{
+    available: boolean;
+    weak: boolean;
+  }>({ available: false, weak: false });
+  const [encryptBusy, setEncryptBusy] = useState<boolean>(false);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const wsAlive = useRef<boolean>(null);
@@ -118,6 +130,121 @@ function SettingsGeneral() {
       });
     }
   }, [settings.enableWS]);
+
+  useEffect(() => {
+    if (AppConfig.isElectron && window.electronIO?.ipcRenderer) {
+      window.electronIO.ipcRenderer
+        .invoke('getCredentialKeyStatus')
+        .then((status: { available: boolean; weak: boolean }) => {
+          if (status) {
+            setCredKeyStatus(status);
+          }
+        })
+        .catch(() => {
+          setCredKeyStatus({ available: false, weak: false });
+        });
+    }
+  }, []);
+
+  /**
+   * Opt-in credential encryption. Enabling migrates the live store to
+   * ciphertext and actively scrubs the now-obsolete plaintext — but only
+   * when exactly one TagSpaces window is open (no concurrent localStorage
+   * writer). Disabling rewrites everything back as plaintext.
+   */
+  const handleToggleEncryptAtRest = async () => {
+    if (encryptBusy) {
+      return;
+    }
+    const enabling = !encryptAtRest;
+    const persistor = getPersistorRef();
+    if (!persistor) {
+      showNotification(t('core:credentialsEncryptionUnavailable'), 'error');
+      return;
+    }
+    if (enabling && !credKeyStatus.available) {
+      showNotification(t('core:credentialsEncryptionUnavailable'), 'error');
+      return;
+    }
+    if (AppConfig.isElectron && window.electronIO?.ipcRenderer) {
+      try {
+        const count =
+          await window.electronIO.ipcRenderer.invoke('getWindowCount');
+        if (typeof count === 'number' && count > 1) {
+          showNotification(
+            t('core:credentialsEncryptionSingleWindow'),
+            'warning',
+          );
+          return;
+        }
+      } catch (e) {
+        /* fall through — guard is best-effort */
+      }
+    }
+    openConfirmDialog(
+      t('core:confirm'),
+      enabling
+        ? t('core:credentialsEncryptionEnableConfirm')
+        : t('core:credentialsEncryptionDisableConfirm'),
+      async (result) => {
+        if (!result) {
+          return;
+        }
+        setEncryptBusy(true);
+        try {
+          // Set the singleton before flushing so the redux-persist
+          // transform sees the new mode immediately.
+          setEncryptAtRestEnabled(enabling);
+          dispatch(SettingsActions.setEncryptCredentialsAtRest(enabling));
+          // The settings slice changed (the flag) so redux-persist will
+          // re-serialize it, but the locations array reference did not —
+          // its persistoid skips unchanged slices. Force a fresh reference
+          // so locations are re-serialized through the transform too.
+          dispatch(LocationActions.touchLocations());
+          // Flush so the staged ciphertext reaches localStorage, then
+          // pause so nothing rewrites plaintext during the scrub.
+          await persistor.flush();
+          if (enabling) {
+            const enc = localStorage.getItem('persist:root');
+            if (!enc || enc.indexOf('tsenc:v1:') === -1) {
+              // Encryption did not take effect — revert, keep plaintext.
+              setEncryptAtRestEnabled(false);
+              dispatch(SettingsActions.setEncryptCredentialsAtRest(false));
+              await persistor.flush();
+              showNotification(t('core:credentialsEncryptionFailed'), 'error');
+              return;
+            }
+            // Active one-time scrub of the obsolete plaintext (single
+            // window guaranteed; in-memory state is the recovery source).
+            // redux-persist v5: pause() stops writes, persist() resumes.
+            persistor.pause();
+            localStorage.removeItem('persist:root');
+            localStorage.setItem('persist:root', enc);
+            persistor.persist();
+            if (window.electronIO?.ipcRenderer) {
+              try {
+                await window.electronIO.ipcRenderer.invoke('flushStorageData');
+              } catch (e) {
+                /* best-effort */
+              }
+            }
+            showNotification(
+              t('core:credentialsEncryptionEnabled'),
+              'info',
+              false,
+            );
+          } else {
+            showNotification(t('core:credentialsEncryptionDisabled'), 'info');
+          }
+        } catch (e) {
+          console.error('encrypt-at-rest toggle failed', e);
+          showNotification(t('core:credentialsEncryptionFailed'), 'error');
+        } finally {
+          setEncryptBusy(false);
+        }
+      },
+    );
+  };
 
   // --- Advanced settings handlers ---
   const toggleDefaultTagBackgroundColorPicker = () => {
@@ -1434,6 +1561,40 @@ function SettingsGeneral() {
                 disabled={AppConfig?.ExtDevMode === true}
                 onClick={() => setDevMode(!devMode)}
                 checked={devMode}
+              />
+            </ListItem>
+          ),
+        },
+        AppConfig.isElectron && {
+          label: t('core:encryptCredentialsAtRest'),
+          jsx: (
+            <ListItem
+              title={
+                !credKeyStatus.available
+                  ? t('core:credentialsEncryptionUnavailable')
+                  : ''
+              }
+            >
+              <ListItemText
+                primary={
+                  <>
+                    {t('core:encryptCredentialsAtRest')}
+                    <BetaLabel />
+                    <InfoIcon
+                      tooltip={
+                        credKeyStatus.weak
+                          ? t('core:encryptCredentialsAtRestWeakTooltip')
+                          : t('core:encryptCredentialsAtRestTooltip')
+                      }
+                    />
+                  </>
+                }
+              />
+              <TsSwitch
+                data-tid="settingsEncryptCredentialsAtRest"
+                disabled={!credKeyStatus.available || encryptBusy}
+                onClick={handleToggleEncryptAtRest}
+                checked={encryptAtRest}
               />
             </ListItem>
           ),

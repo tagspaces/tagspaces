@@ -24,6 +24,11 @@ import { createLogger } from 'redux-logger';
 import AppConfig from '-/AppConfig';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';
+import { getEncryptCredentialsAtRest } from '../reducers/settings';
+import {
+  setEncryptAtRestEnabled,
+  setPersistorRef,
+} from '../services/encryptAtRestState';
 
 const configureStore = (initialState) => {
   // Redux Configuration
@@ -64,6 +69,16 @@ const configureStore = (initialState) => {
 
   onlineListener(store.dispatch);
 
+  const syncEncryptFlag = () => {
+    try {
+      setEncryptAtRestEnabled(getEncryptCredentialsAtRest(store.getState()));
+    } catch (e) {
+      /* ignore */
+    }
+  };
+  syncEncryptFlag();
+  store.subscribe(syncEncryptFlag);
+
   const persistor = persistStore(store, null, () => {
     // languageChanged event is not handled in main process on store loaded (App is not ready)
     setTimeout(() => {
@@ -79,6 +94,8 @@ const configureStore = (initialState) => {
     // store.dispatch(push('/main'));
     // console.log('Store rehydrated.');
   });
+
+  setPersistorRef(persistor);
 
   if (module.hot) {
     module.hot.accept(
