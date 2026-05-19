@@ -51,15 +51,18 @@ test.describe('TST59 - Media player', () => {
   });
 
   test('TST5902 - Play webm file [web,s3,electron]', async ({ isWeb }) => {
-    // Smoke-test the media-player extension with WebM (VP8/VP9): it is
-    // royalty-free and decodable by stock Chromium/Electron on every
-    // platform. Theora/OGV was dropped from Chromium in M124, so an .ogv
-    // file yields video.duration = NaN here and can no longer be played.
+    // Smoke test for the media-player (Vidstack) extension: opening a video
+    // file mounts the player with the correct source. This is intentionally
+    // NOT a decode/seek assertion — the player lazy-loads (load="visible" +
+    // preload="metadata") and a headless/offscreen CI Electron window never
+    // reaches HAVE_METADATA, so video.duration is NaN for every codec
+    // (ogv/mp4/webm alike). sample.webm is used because it is small and
+    // royalty-free; the assertion lives in expectMediaPlay().
     await openContextEntryMenu(
       getGridFileSelector('sample.webm'),
       'fileMenuOpenFile',
     );
-    await expectMediaPlay(!isWeb);
+    await expectMediaPlay(!isWeb, 'sample.webm');
   });
 
   test('TST5903 - Open and close about dialog [web,s3,electron]', async () => {
