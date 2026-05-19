@@ -506,6 +506,7 @@ function StoredSearches(props: Props) {
         ref={fileInputRef}
         accept="*"
         type="file"
+        data-tid="searchImportFileInput"
         onChange={handleFileInputChange}
       />
     </Box>

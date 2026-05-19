@@ -158,6 +158,7 @@ function TagLibraryMenu(props: Props) {
         ref={fileInput}
         accept="*"
         type="file"
+        data-tid="tagLibraryImportFileInput"
         onChange={handleFileInputChange}
       />
     </Box>

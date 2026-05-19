@@ -122,6 +122,7 @@ function SettingsBackupRestore(props: Props) {
         ref={fileInputRef}
         accept="*"
         type="file"
+        data-tid="backupImportFileInput"
         onChange={handleFileInputChange}
       />
     </Box>
