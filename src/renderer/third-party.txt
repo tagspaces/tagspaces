@@ -3763,7 +3763,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - @tagspacespro/tagspacespro@5.0.242
+ - @tagspacespro/tagspacespro@5.0.245
 
 This package contains the following license:
 
@@ -8517,7 +8517,7 @@ THIS SOFTWARE.
 
 The following npm package may be included in this product:
 
- - prosemirror-changeset@2.4.0
+ - prosemirror-changeset@2.4.1
 
 This package contains the following license:
 
@@ -14576,7 +14576,6 @@ SOFTWARE.
 The following npm packages may be included in this product:
 
  - uuid@11.1.0
- - uuid@13.0.0
  - uuid@8.3.2
  - uuid@9.0.1
 
@@ -16025,28 +16024,30 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @milkdown/components@7.19.2
- - @milkdown/core@7.19.2
- - @milkdown/crepe@7.19.2
- - @milkdown/ctx@7.19.2
- - @milkdown/exception@7.19.2
- - @milkdown/kit@7.19.2
- - @milkdown/plugin-block@7.19.2
- - @milkdown/plugin-clipboard@7.19.2
- - @milkdown/plugin-cursor@7.19.2
- - @milkdown/plugin-history@7.19.2
- - @milkdown/plugin-indent@7.19.2
- - @milkdown/plugin-listener@7.19.2
- - @milkdown/plugin-slash@7.19.2
- - @milkdown/plugin-tooltip@7.19.2
- - @milkdown/plugin-trailing@7.19.2
- - @milkdown/plugin-upload@7.19.2
- - @milkdown/preset-commonmark@7.19.2
- - @milkdown/preset-gfm@7.19.2
- - @milkdown/prose@7.19.2
- - @milkdown/react@7.19.2
- - @milkdown/transformer@7.19.2
- - @milkdown/utils@7.19.2
+ - @milkdown/components@7.21.1
+ - @milkdown/core@7.21.1
+ - @milkdown/crepe@7.21.1
+ - @milkdown/ctx@7.21.1
+ - @milkdown/exception@7.21.1
+ - @milkdown/kit@7.21.1
+ - @milkdown/plugin-block@7.21.1
+ - @milkdown/plugin-clipboard@7.21.1
+ - @milkdown/plugin-cursor@7.21.1
+ - @milkdown/plugin-diff@7.21.1
+ - @milkdown/plugin-history@7.21.1
+ - @milkdown/plugin-indent@7.21.1
+ - @milkdown/plugin-listener@7.21.1
+ - @milkdown/plugin-slash@7.21.1
+ - @milkdown/plugin-streaming@7.21.1
+ - @milkdown/plugin-tooltip@7.21.1
+ - @milkdown/plugin-trailing@7.21.1
+ - @milkdown/plugin-upload@7.21.1
+ - @milkdown/preset-commonmark@7.21.1
+ - @milkdown/preset-gfm@7.21.1
+ - @milkdown/prose@7.21.1
+ - @milkdown/react@7.21.1
+ - @milkdown/transformer@7.21.1
+ - @milkdown/utils@7.21.1
 
 These packages each contain the following license:
 
@@ -16376,12 +16377,40 @@ SOFTWARE.
 
 -----------
 
-The following npm packages may be included in this product:
+The following npm package may be included in this product:
+
+ - nanoid@5.1.11
+
+This package contains the following license:
+
+The MIT License (MIT)
+
+Copyright 2017 Andrey Sitnik <andrey@sitnik.es>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-----------
+
+The following npm package may be included in this product:
 
  - nanoid@3.3.11
- - nanoid@5.1.7
 
-These packages each contain the following license:
+This package contains the following license:
 
 The MIT License (MIT)
 
@@ -16526,7 +16555,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @tagspaces/extensions@1.0.245
+ - @tagspaces/extensions@1.0.247
 
 This package contains the following license:
 
@@ -16543,16 +16572,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm packages may be included in this product:
 
- - @tagspaces/tagspaces-common-aws3@4.7.2
- - @tagspaces/tagspaces-common-cordova@4.7.2
- - @tagspaces/tagspaces-common-node@4.7.2
- - @tagspaces/tagspaces-common@4.7.2
- - @tagspaces/tagspaces-indexer@4.8.1
- - @tagspaces/tagspaces-pdf-extraction@4.8.2
- - @tagspaces/tagspaces-search@4.7.2
- - @tagspaces/tagspaces-thumbgen-image@4.8.0
- - @tagspaces/tagspaces-workers@4.8.2
- - @tagspaces/tagspaces-ws@4.8.2
+ - @tagspaces/tagspaces-common-aws3@4.8.5
+ - @tagspaces/tagspaces-common-cordova@4.8.5
+ - @tagspaces/tagspaces-common-node@4.8.5
+ - @tagspaces/tagspaces-common@4.8.5
+ - @tagspaces/tagspaces-indexer@4.8.5
+ - @tagspaces/tagspaces-pdf-extraction@4.8.4
+ - @tagspaces/tagspaces-search@4.8.5
+ - @tagspaces/tagspaces-thumbgen-image@4.8.5
+ - @tagspaces/tagspaces-workers@4.8.5
+ - @tagspaces/tagspaces-ws@4.8.5
 
 These packages each contain the following license:
 
