@@ -308,3 +308,166 @@ export async function decryptString(
     return undefined;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Synchronous raw-key cipher — used by the redux-persist credentials  */
+/* transform on every write. The raw key is derived from the user      */
+/* password ONCE at unlock/enable (see `deriveRawKey` below); no       */
+/* PBKDF2 per write. Distinct prefix so a value carries its scheme.    */
+/* ------------------------------------------------------------------ */
+
+/** Prefix for password-based at-rest credential encryption (CBC + HMAC). */
+export const PWENC_PREFIX = 'tsenc:p1:';
+/** Fixed plaintext the verifier blob encrypts — proves the right password. */
+const VERIFIER_SENTINEL = 'tsenc-verifier-v1';
+
+/** Default PBKDF2 iteration count for the available KDF backend. */
+export function defaultKdfIterations(): number {
+  return getSubtle() ? PBKDF2_ITER_SUBTLE : PBKDF2_ITER_CRYPTOJS;
+}
+
+/** Random 16-byte base64 salt for PBKDF2 (not secret; stored alongside). */
+export function makeKdfSalt(): string {
+  return bytesToB64(randomBytes(16));
+}
+
+/** Copy a CryptoJS WordArray's leading bytes into a Uint8Array. */
+function wordArrayToBytes(wa: CryptoJS.lib.WordArray, len: number): Uint8Array {
+  const out = new Uint8Array(len);
+  for (let i = 0; i < len; i += 1) {
+    out[i] = (wa.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+  }
+  return out;
+}
+
+/**
+ * PBKDF2 → 64-byte raw key (32 for AES-256-CBC + 32 for HMAC-SHA256).
+ * Async by necessity (PBKDF2 is expensive); call ONCE at unlock/enable.
+ */
+export async function deriveRawKey(
+  password: string,
+  saltB64: string,
+  iterations: number,
+): Promise<Uint8Array> {
+  const salt = b64ToBytes(saltB64);
+  const subtle = getSubtle();
+  if (subtle) {
+    const km = await subtle.importKey(
+      'raw',
+      ab(new TextEncoder().encode(password)),
+      'PBKDF2',
+      false,
+      ['deriveBits'],
+    );
+    const bits = await subtle.deriveBits(
+      { name: 'PBKDF2', salt: ab(salt), iterations, hash: 'SHA-256' },
+      km,
+      512,
+    );
+    return new Uint8Array(bits);
+  }
+  // CryptoJS fallback — produces the same 64-byte material via PBKDF2-SHA256.
+  const { encKey, macKey } = deriveCryptoJsKeys(
+    password,
+    bytesToWordArray(salt),
+    iterations,
+  );
+  const out = new Uint8Array(64);
+  out.set(wordArrayToBytes(encKey, 32), 0);
+  out.set(wordArrayToBytes(macKey, 32), 32);
+  return out;
+}
+
+function splitRawKey(rawKey: Uint8Array): {
+  encWa: CryptoJS.lib.WordArray;
+  macWa: CryptoJS.lib.WordArray;
+} {
+  if (!(rawKey instanceof Uint8Array) || rawKey.length !== 64) {
+    throw new Error('secure-crypto: invalid raw key');
+  }
+  return {
+    encWa: bytesToWordArray(rawKey.subarray(0, 32)),
+    macWa: bytesToWordArray(rawKey.subarray(32, 64)),
+  };
+}
+
+/**
+ * AES-256-CBC + HMAC-SHA256 (encrypt-then-MAC), synchronous.
+ *
+ * Wire format after the prefix:
+ *   ivB64 "." ctB64 "." macHex
+ */
+export function encryptWithRawKey(
+  plaintext: string,
+  rawKey: Uint8Array,
+): string {
+  const { encWa, macWa } = splitRawKey(rawKey);
+  const iv = randomBytes(16);
+  const ivWa = bytesToWordArray(iv);
+  const enc = CryptoJS.AES.encrypt(plaintext, encWa, {
+    iv: ivWa,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+  const ivB64 = bytesToB64(iv);
+  const ctB64 = enc.ciphertext.toString(CryptoJS.enc.Base64);
+  const mac = CryptoJS.HmacSHA256(`${ivB64}.${ctB64}`, macWa).toString();
+  return `${PWENC_PREFIX}${ivB64}.${ctB64}.${mac}`;
+}
+
+/** Returns the plaintext, or undefined on tamper / wrong key / malformed. */
+export function decryptWithRawKey(
+  ciphertext: string,
+  rawKey: Uint8Array,
+): string | undefined {
+  try {
+    if (
+      typeof ciphertext !== 'string' ||
+      !ciphertext.startsWith(PWENC_PREFIX)
+    ) {
+      return undefined;
+    }
+    const parts = ciphertext.slice(PWENC_PREFIX.length).split('.');
+    if (parts.length !== 3) {
+      return undefined;
+    }
+    const [ivB64, ctB64, mac] = parts;
+    const { encWa, macWa } = splitRawKey(rawKey);
+    const expected = CryptoJS.HmacSHA256(`${ivB64}.${ctB64}`, macWa).toString();
+    if (!constantTimeEqual(expected, mac)) {
+      return undefined;
+    }
+    const ivWa = bytesToWordArray(b64ToBytes(ivB64));
+    const decrypted = CryptoJS.AES.decrypt(
+      CryptoJS.lib.CipherParams.create({
+        ciphertext: CryptoJS.enc.Base64.parse(ctB64),
+      }),
+      encWa,
+      { iv: ivWa, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 },
+    );
+    const txt = decrypted.toString(CryptoJS.enc.Utf8);
+    return txt || undefined;
+  } catch (e) {
+    return undefined;
+  }
+}
+
+/**
+ * Build a verifier blob for the given derived key — encrypts a fixed
+ * sentinel string. Stored alongside the salt so a wrong password can be
+ * detected without touching credential data.
+ */
+export function makeVerifier(rawKey: Uint8Array): string {
+  return encryptWithRawKey(VERIFIER_SENTINEL, rawKey);
+}
+
+/** True iff `blob` decrypts under `rawKey` to the verifier sentinel. */
+export function checkVerifier(rawKey: Uint8Array, blob: string): boolean {
+  const out = decryptWithRawKey(blob, rawKey);
+  return typeof out === 'string' && constantTimeEqual(out, VERIFIER_SENTINEL);
+}
+
+/** True if the value is encrypted under any at-rest scheme (`tsenc:*:`). */
+export function isAnyRawEncrypted(v: unknown): v is string {
+  return typeof v === 'string' && /^tsenc:[a-z0-9]+:/i.test(v);
+}

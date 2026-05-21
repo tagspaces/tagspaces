@@ -77,10 +77,11 @@ export const NON_IMPORTABLE_SETTINGS_KEYS = [
   'supportedThemes',
   'supportedGeoTagging',
   'extensionsFound',
-  // device-bound: encryption is keyed to this machine's OS keychain, so an
-  // imported envelope must never silently flip a machine into "encrypted"
-  // mode without its key.
+  // device-bound: encryption is keyed to this machine's OS keychain (or a
+  // password held in memory), so an imported envelope must never silently
+  // flip a machine into "encrypted" mode without its key.
   'encryptCredentialsAtRest',
+  'encryptCredentialsKeySource',
 ];
 
 function isNonEmptyString(v: any): boolean {

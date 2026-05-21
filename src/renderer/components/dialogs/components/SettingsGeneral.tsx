@@ -58,8 +58,18 @@ import {
 import { actions as LocationActions } from '-/reducers/locations';
 import {
   getPersistorRef,
+  setCredentialKey,
   setEncryptAtRestEnabled,
+  setKeySource,
 } from '-/services/encryptAtRestState';
+import {
+  defaultKdfIterations,
+  deriveRawKey,
+  makeKdfSalt,
+  makeVerifier,
+} from '-/services/secure-crypto';
+import { isAnotherTabOpen } from '-/services/credentialsTabGuard';
+import CredentialsPasswordSetupDialog from '-/components/dialogs/CredentialsPasswordSetupDialog';
 import { isWorkerAvailable, setLanguage } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { clearAllURLParams } from '-/utils/dom';
@@ -111,6 +121,7 @@ function SettingsGeneral() {
     weak: boolean;
   }>({ available: false, weak: false });
   const [encryptBusy, setEncryptBusy] = useState<boolean>(false);
+  const [passwordSetupOpen, setPasswordSetupOpen] = useState<boolean>(false);
   const tileServers: Array<TS.MapTileServer> = useSelector(getMapTileServers);
   const [tileServerDialog, setTileServerDialog] = useState<any>(undefined);
   const wsAlive = useRef<boolean>(null);
@@ -138,19 +149,152 @@ function SettingsGeneral() {
         .then((status: { available: boolean; weak: boolean }) => {
           if (status) {
             setCredKeyStatus(status);
+          } else if (typeof window.crypto?.subtle !== 'undefined') {
+            // Electron without a usable keychain → password fallback is
+            // still available because Web Crypto subtle works.
+            setCredKeyStatus({ available: true, weak: true });
           }
         })
         .catch(() => {
-          setCredKeyStatus({ available: false, weak: false });
+          // safeStorage IPC failed: fall back to password mode iff Web
+          // Crypto subtle is available (e.g. unsigned macOS build).
+          setCredKeyStatus({
+            available: typeof window.crypto?.subtle !== 'undefined',
+            weak: true,
+          });
         });
+    } else {
+      // Web (or any non-Electron): password mode only. Availability is
+      // gated on Web Crypto subtle being usable.
+      setCredKeyStatus({
+        available: typeof window.crypto?.subtle !== 'undefined',
+        weak: false,
+      });
     }
   }, []);
 
   /**
-   * Opt-in credential encryption. Enabling migrates the live store to
-   * ciphertext and actively scrubs the now-obsolete plaintext — but only
-   * when exactly one TagSpaces window is open (no concurrent localStorage
-   * writer). Disabling rewrites everything back as plaintext.
+   * Best-effort multi-writer guard: Electron uses the existing
+   * getWindowCount IPC; web uses a BroadcastChannel handshake. Returns
+   * true when it's safe to mutate persist:root (only this tab/window).
+   */
+  const multiWriterOk = async (): Promise<boolean> => {
+    if (AppConfig.isElectron && window.electronIO?.ipcRenderer) {
+      try {
+        const count =
+          await window.electronIO.ipcRenderer.invoke('getWindowCount');
+        if (typeof count === 'number' && count > 1) {
+          return false;
+        }
+      } catch (e) {
+        /* best-effort */
+      }
+      return true;
+    }
+    try {
+      return !(await isAnotherTabOpen());
+    } catch (e) {
+      return true;
+    }
+  };
+
+  /**
+   * Run the enable flow for a given key source. `rawKey` is required for
+   * password mode (already derived by the password-setup dialog).
+   */
+  const performEnable = async (
+    targetKeySource: 'keychain' | 'password',
+    rawKey: Uint8Array | null,
+  ): Promise<void> => {
+    const persistor = getPersistorRef();
+    if (!persistor) {
+      showNotification(t('core:credentialsEncryptionUnavailable'), 'error');
+      return;
+    }
+    setEncryptBusy(true);
+    try {
+      // Set singletons BEFORE flushing so the transform sees the right
+      // mode immediately on the next persist write.
+      if (targetKeySource === 'password' && rawKey) {
+        setCredentialKey(rawKey);
+      }
+      setKeySource(targetKeySource);
+      setEncryptAtRestEnabled(true);
+      dispatch(SettingsActions.setEncryptCredentialsAtRest(true));
+      dispatch(SettingsActions.setEncryptCredentialsKeySource(targetKeySource));
+      // Force a fresh reference on the locations slice so redux-persist
+      // re-serializes it through the now-active transform (its
+      // persistoid skips slices whose reference did not change).
+      dispatch(LocationActions.touchLocations());
+      await persistor.flush();
+      // Active scrub of the obsolete plaintext, IF the flush produced
+      // any ciphertext. (Multi-writer guard already passed.)
+      // redux-persist v5: pause() stops writes, persist() resumes.
+      // A "no tsenc: present" outcome here is legitimate: either the
+      // user has no whitelisted data yet, or the persisted slices that
+      // hold secrets are blacklisted on this platform (e.g. `locations`
+      // on web). Future writes will be encrypted by the transform as
+      // soon as there is something to encrypt — no revert needed.
+      const enc = localStorage.getItem('persist:root');
+      if (enc && enc.indexOf('tsenc:') !== -1) {
+        persistor.pause();
+        localStorage.removeItem('persist:root');
+        localStorage.setItem('persist:root', enc);
+        persistor.persist();
+      }
+      if (AppConfig.isElectron && window.electronIO?.ipcRenderer) {
+        try {
+          await window.electronIO.ipcRenderer.invoke('flushStorageData');
+        } catch (e) {
+          /* best-effort */
+        }
+      }
+      showNotification(t('core:credentialsEncryptionEnabled'), 'info', false);
+    } catch (e) {
+      console.error('encrypt-at-rest enable failed', e);
+      showNotification(t('core:credentialsEncryptionFailed'), 'error');
+    } finally {
+      setEncryptBusy(false);
+    }
+  };
+
+  /** Disable: rewrite plaintext, clear web password artifacts + key. */
+  const performDisable = async (): Promise<void> => {
+    const persistor = getPersistorRef();
+    if (!persistor) {
+      showNotification(t('core:credentialsEncryptionUnavailable'), 'error');
+      return;
+    }
+    setEncryptBusy(true);
+    try {
+      setEncryptAtRestEnabled(false);
+      setKeySource('off');
+      setCredentialKey(null);
+      dispatch(SettingsActions.setEncryptCredentialsAtRest(false));
+      dispatch(SettingsActions.setEncryptCredentialsKeySource('off'));
+      dispatch(LocationActions.touchLocations());
+      await persistor.flush();
+      try {
+        localStorage.removeItem('tsCredKdf');
+        localStorage.removeItem('tsCredVerify');
+      } catch (e) {
+        /* best-effort */
+      }
+      showNotification(t('core:credentialsEncryptionDisabled'), 'info');
+    } catch (e) {
+      console.error('encrypt-at-rest disable failed', e);
+      showNotification(t('core:credentialsEncryptionFailed'), 'error');
+    } finally {
+      setEncryptBusy(false);
+    }
+  };
+
+  /**
+   * Opt-in credential encryption. Enabling picks the strongest available
+   * key source (Electron `safeStorage` when usable, otherwise a
+   * user-defined password) and migrates the live store to ciphertext
+   * with a one-time plaintext scrub. Multi-writer guard ensures no
+   * concurrent window/tab races.
    */
   const handleToggleEncryptAtRest = async () => {
     if (encryptBusy) {
@@ -166,84 +310,72 @@ function SettingsGeneral() {
       showNotification(t('core:credentialsEncryptionUnavailable'), 'error');
       return;
     }
-    if (AppConfig.isElectron && window.electronIO?.ipcRenderer) {
-      try {
-        const count =
-          await window.electronIO.ipcRenderer.invoke('getWindowCount');
-        if (typeof count === 'number' && count > 1) {
-          showNotification(
-            t('core:credentialsEncryptionSingleWindow'),
-            'warning',
-          );
-          return;
-        }
-      } catch (e) {
-        /* fall through — guard is best-effort */
-      }
+    if (!(await multiWriterOk())) {
+      showNotification(t('core:credentialsEncryptionSingleWindow'), 'warning');
+      return;
     }
-    openConfirmDialog(
-      t('core:confirm'),
-      enabling
-        ? t('core:credentialsEncryptionEnableConfirm')
-        : t('core:credentialsEncryptionDisableConfirm'),
-      async (result) => {
-        if (!result) {
-          return;
-        }
-        setEncryptBusy(true);
-        try {
-          // Set the singleton before flushing so the redux-persist
-          // transform sees the new mode immediately.
-          setEncryptAtRestEnabled(enabling);
-          dispatch(SettingsActions.setEncryptCredentialsAtRest(enabling));
-          // The settings slice changed (the flag) so redux-persist will
-          // re-serialize it, but the locations array reference did not —
-          // its persistoid skips unchanged slices. Force a fresh reference
-          // so locations are re-serialized through the transform too.
-          dispatch(LocationActions.touchLocations());
-          // Flush so the staged ciphertext reaches localStorage, then
-          // pause so nothing rewrites plaintext during the scrub.
-          await persistor.flush();
-          if (enabling) {
-            const enc = localStorage.getItem('persist:root');
-            if (!enc || enc.indexOf('tsenc:v1:') === -1) {
-              // Encryption did not take effect — revert, keep plaintext.
-              setEncryptAtRestEnabled(false);
-              dispatch(SettingsActions.setEncryptCredentialsAtRest(false));
-              await persistor.flush();
-              showNotification(t('core:credentialsEncryptionFailed'), 'error');
-              return;
-            }
-            // Active one-time scrub of the obsolete plaintext (single
-            // window guaranteed; in-memory state is the recovery source).
-            // redux-persist v5: pause() stops writes, persist() resumes.
-            persistor.pause();
-            localStorage.removeItem('persist:root');
-            localStorage.setItem('persist:root', enc);
-            persistor.persist();
-            if (window.electronIO?.ipcRenderer) {
-              try {
-                await window.electronIO.ipcRenderer.invoke('flushStorageData');
-              } catch (e) {
-                /* best-effort */
-              }
-            }
-            showNotification(
-              t('core:credentialsEncryptionEnabled'),
-              'info',
-              false,
-            );
-          } else {
-            showNotification(t('core:credentialsEncryptionDisabled'), 'info');
+    if (!enabling) {
+      openConfirmDialog(
+        t('core:confirm'),
+        t('core:credentialsEncryptionDisableConfirm'),
+        async (result: boolean) => {
+          if (result) {
+            await performDisable();
           }
-        } catch (e) {
-          console.error('encrypt-at-rest toggle failed', e);
-          showNotification(t('core:credentialsEncryptionFailed'), 'error');
-        } finally {
-          setEncryptBusy(false);
-        }
-      },
-    );
+        },
+      );
+      return;
+    }
+    // Enable: pick mode.
+    const electronKeychain =
+      AppConfig.isElectron &&
+      !!window.electronIO?.ipcRenderer &&
+      credKeyStatus.available &&
+      !credKeyStatus.weak;
+    if (electronKeychain) {
+      openConfirmDialog(
+        t('core:confirm'),
+        t('core:credentialsEncryptionEnableConfirm'),
+        async (result: boolean) => {
+          if (result) {
+            await performEnable('keychain', null);
+          }
+        },
+      );
+    } else {
+      // Web (or Electron without a usable keychain — e.g. unsigned macOS
+      // builds with hardenedRuntime). Collect a password, derive a key,
+      // then enable.
+      setPasswordSetupOpen(true);
+    }
+  };
+
+  const submitPasswordSetup = async (password: string) => {
+    setEncryptBusy(true);
+    try {
+      const saltB64 = makeKdfSalt();
+      const iter = defaultKdfIterations();
+      const rawKey = await deriveRawKey(password, saltB64, iter);
+      const verifierBlob = makeVerifier(rawKey);
+      try {
+        localStorage.setItem(
+          'tsCredKdf',
+          JSON.stringify({ saltB64, iter, algo: 'PBKDF2-SHA256' }),
+        );
+        localStorage.setItem('tsCredVerify', verifierBlob);
+      } catch (e) {
+        showNotification(t('core:credentialsEncryptionFailed'), 'error');
+        setEncryptBusy(false);
+        return;
+      }
+      setPasswordSetupOpen(false);
+      setEncryptBusy(false); // performEnable sets it again
+      await performEnable('password', rawKey);
+    } catch (e) {
+      console.error('credentialsSetup: deriveRawKey failed', e);
+      showNotification(t('core:credentialsEncryptionFailed'), 'error');
+      setEncryptBusy(false);
+    }
   };
 
   // --- Advanced settings handlers ---
@@ -1565,7 +1697,7 @@ function SettingsGeneral() {
             </ListItem>
           ),
         },
-        AppConfig.isElectron && {
+        {
           label: t('core:encryptCredentialsAtRest'),
           jsx: (
             <ListItem
@@ -1751,6 +1883,12 @@ function SettingsGeneral() {
             isDefault={tileServerDialog.isDefault}
           />
         )}
+        <CredentialsPasswordSetupDialog
+          open={passwordSetupOpen}
+          busy={encryptBusy}
+          onCancel={() => setPasswordSetupOpen(false)}
+          onSubmit={submitPasswordSetup}
+        />
       </List>
     </>
   );

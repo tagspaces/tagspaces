@@ -101,6 +101,7 @@ export default {
   interfaceLanguage: 'en',
   useTrashCan: true,
   encryptCredentialsAtRest: false,
+  encryptCredentialsKeySource: 'off',
   useOCR: false,
   useTextExtraction: false,
   useGenerateThumbnails: true,

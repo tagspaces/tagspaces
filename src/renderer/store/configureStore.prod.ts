@@ -25,8 +25,10 @@ import onlineListener from '../services/onlineListener';
 import { getEncryptCredentialsAtRest } from '../reducers/settings';
 import {
   setEncryptAtRestEnabled,
+  setKeySource,
   setPersistorRef,
 } from '../services/encryptAtRestState';
+import { inferKeySource } from '../services/credentialsBootstrap';
 
 const enhancer = compose(
   applyMiddleware(thunk), // , router)
@@ -36,15 +38,32 @@ const enhancer = compose(
 function configureStore(initialState) {
   const store = createStore(rootReducer, initialState, enhancer);
   onlineListener(store.dispatch);
-  const syncEncryptFlag = () => {
+  const syncEncryptState = () => {
     try {
-      setEncryptAtRestEnabled(getEncryptCredentialsAtRest(store.getState()));
+      const state: any = store.getState();
+      // CRITICAL: persistStore() synchronously dispatches PERSIST before
+      // the async REHYDRATE arrives. Without this gate, the subscription
+      // would fire on PERSIST while state.settings still holds defaults
+      // (flag=false, source='off'), overwrite the probe seed to 'off',
+      // and then transform.out during REHYDRATE would have no provider
+      // and blank every `tsenc:*:` value. Skip until rehydration is done.
+      if (!state._persist?.rehydrated) {
+        return;
+      }
+      const enabled = getEncryptCredentialsAtRest(state);
+      // Read raw so an undefined value (shipped users without the new
+      // field) takes the back-compat path inside `inferKeySource`.
+      const explicit = state.settings?.encryptCredentialsKeySource;
+      setEncryptAtRestEnabled(enabled);
+      setKeySource(inferKeySource(enabled, explicit, AppConfig.isElectron));
     } catch (e) {
       /* ignore */
     }
   };
-  syncEncryptFlag();
-  store.subscribe(syncEncryptFlag);
+  // The probe in index.tsx already seeded the singleton based on the
+  // persisted settings; the subscription only takes over once rehydration
+  // has run (the gate above).
+  store.subscribe(syncEncryptState);
   const persistor = persistStore(store, null, () => {
     // document.dispatchEvent(new Event('storeLoaded'));
     // console.log('Store rehydrated.');

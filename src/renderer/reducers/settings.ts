@@ -47,6 +47,8 @@ export const types = {
   SET_DEVMODE: 'SETTINGS/SET_DEVMODE',
   SET_ENABLE_WS: 'SETTINGS/SET_ENABLE_WS',
   SET_ENCRYPT_CREDENTIALS_AT_REST: 'SETTINGS/SET_ENCRYPT_CREDENTIALS_AT_REST',
+  SET_ENCRYPT_CREDENTIALS_KEY_SOURCE:
+    'SETTINGS/SET_ENCRYPT_CREDENTIALS_KEY_SOURCE',
   WARNING_OPENING_FILES_EXTERNALLY: 'SETTINGS/WARNING_OPENING_FILES_EXTERNALLY',
   SET_SAVE_TAGS_IN_LOCATION: 'SETTINGS/SET_SAVE_TAGS_IN_LOCATION',
   SET_TAG_DELIMITER: 'SETTINGS/SET_TAG_DELIMITER',
@@ -237,6 +239,12 @@ export default (state: any = defaultSettings, action: any) => {
       return {
         ...state,
         encryptCredentialsAtRest: action.encryptCredentialsAtRest,
+      };
+    }
+    case types.SET_ENCRYPT_CREDENTIALS_KEY_SOURCE: {
+      return {
+        ...state,
+        encryptCredentialsKeySource: action.encryptCredentialsKeySource,
       };
     }
     case types.WARNING_OPENING_FILES_EXTERNALLY: {
@@ -749,6 +757,12 @@ export const actions = {
     type: types.SET_ENCRYPT_CREDENTIALS_AT_REST,
     encryptCredentialsAtRest,
   }),
+  setEncryptCredentialsKeySource: (
+    encryptCredentialsKeySource: 'off' | 'keychain' | 'password',
+  ) => ({
+    type: types.SET_ENCRYPT_CREDENTIALS_KEY_SOURCE,
+    encryptCredentialsKeySource,
+  }),
   setWarningOpeningFilesExternally: (
     warningOpeningFilesExternally: boolean,
   ) => ({
@@ -1090,6 +1104,12 @@ export const getLastLinkType = (state: any): 'ts' | 'relative' => {
 export const getEnableWS = (state: any) => state.settings.enableWS;
 export const getEncryptCredentialsAtRest = (state: any) =>
   state.settings.encryptCredentialsAtRest === true;
+export const getEncryptCredentialsKeySource = (
+  state: any,
+): 'off' | 'keychain' | 'password' => {
+  const v = state.settings.encryptCredentialsKeySource;
+  return v === 'keychain' || v === 'password' ? v : 'off';
+};
 export const getDesktopMode = (state: any) => {
   if (typeof AppConfig.ExtDisplayMode === 'undefined') {
     return state.settings.desktopMode;

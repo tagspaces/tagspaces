@@ -5,6 +5,18 @@ import {
   createCredentialsTransform,
 } from '-/services/credentialsTransform';
 import {
+  PWENC_PREFIX,
+  checkVerifier,
+  decryptWithRawKey,
+  defaultKdfIterations,
+  deriveRawKey,
+  encryptWithRawKey,
+  isAnyRawEncrypted,
+  makeKdfSalt,
+  makeVerifier,
+} from '-/services/secure-crypto';
+import { inferKeySource } from '-/services/credentialsBootstrap';
+import {
   encryptWithKey,
   decryptWithKey,
   isRawEncrypted,
@@ -182,7 +194,7 @@ describe('credentialsTransform.transformSlice', () => {
     expect(transformSlice(input, 'locations', 'encrypt', makeFakeSync({ nullResult: true }))).toBe(input);
   });
 
-  test('undecryptable element → that field undefined, location otherwise intact', () => {
+  test('undecryptable element → that field becomes "" (safe for downstream), location otherwise intact', () => {
     const enc = [
       {
         uuid: 'l1',
@@ -196,7 +208,9 @@ describe('credentialsTransform.transformSlice', () => {
       values: values.map(() => null), // decrypt fails
     });
     const out = transformSlice(enc, 'locations', 'decrypt', sync);
-    expect(out[0].accessKeyId).toBeUndefined();
+    // Empty string — not undefined — so consumers (Leaflet templates,
+    // AWS SDK auth, etc.) won't crash on a missing value.
+    expect(out[0].accessKeyId).toBe('');
     expect(out[0].name).toBe('L1');
     expect(out[0].bucketName).toBe('b');
   });
@@ -231,5 +245,156 @@ describe('credentialsTransform factory', () => {
     const plain = [{ uuid: 'l', name: 'n', secretAccessKey: 'raw' }];
     const back = t.in(plain, 'locations');
     expect(back).toBe(plain);
+  });
+});
+
+describe('secure-crypto raw-key cipher (password mode)', () => {
+  const saltB64 = makeKdfSalt();
+  const iter = Math.min(defaultKdfIterations(), 5000); // fast for tests
+
+  test('deriveRawKey + encrypt/decrypt round-trip', async () => {
+    const key = await deriveRawKey('correct horse battery staple', saltB64, iter);
+    expect(key).toBeInstanceOf(Uint8Array);
+    expect(key.length).toBe(64);
+
+    const plain = 'AKIA-secret-value/+=';
+    const enc = encryptWithRawKey(plain, key);
+    expect(enc.startsWith(PWENC_PREFIX)).toBe(true);
+    expect(enc.includes(plain)).toBe(false);
+    expect(isAnyRawEncrypted(enc)).toBe(true);
+    expect(decryptWithRawKey(enc, key)).toBe(plain);
+  });
+
+  test('wrong password derives a different key → decrypt returns undefined', async () => {
+    const k1 = await deriveRawKey('right', saltB64, iter);
+    const k2 = await deriveRawKey('wrong', saltB64, iter);
+    const enc = encryptWithRawKey('hello', k1);
+    expect(decryptWithRawKey(enc, k2)).toBeUndefined();
+  });
+
+  test('tampered MAC is rejected', async () => {
+    const key = await deriveRawKey('pw', saltB64, iter);
+    const enc = encryptWithRawKey('hello', key);
+    const parts = enc.slice(PWENC_PREFIX.length).split('.');
+    // Flip the last char of the MAC hex.
+    parts[2] = parts[2].slice(0, -1) + (parts[2].slice(-1) === '0' ? '1' : '0');
+    const tampered = PWENC_PREFIX + parts.join('.');
+    expect(decryptWithRawKey(tampered, key)).toBeUndefined();
+  });
+
+  test('verifier accepts right key, rejects wrong key', async () => {
+    const right = await deriveRawKey('pw1', saltB64, iter);
+    const wrong = await deriveRawKey('pw2', saltB64, iter);
+    const blob = makeVerifier(right);
+    expect(checkVerifier(right, blob)).toBe(true);
+    expect(checkVerifier(wrong, blob)).toBe(false);
+  });
+
+  test('isAnyRawEncrypted detects v1 + p1, rejects plain', () => {
+    expect(isAnyRawEncrypted('tsenc:v1:abc')).toBe(true);
+    expect(isAnyRawEncrypted('tsenc:p1:abc')).toBe(true);
+    expect(isAnyRawEncrypted('plain')).toBe(false);
+    expect(isAnyRawEncrypted(undefined)).toBe(false);
+    expect(isAnyRawEncrypted(42)).toBe(false);
+  });
+});
+
+describe('inferKeySource (bootstrap back-compat)', () => {
+  test('flag off → off', () => {
+    expect(inferKeySource(false, undefined, true)).toBe('off');
+    expect(inferKeySource(false, 'password', true)).toBe('off');
+  });
+
+  test('explicit keychain / password is honored', () => {
+    expect(inferKeySource(true, 'keychain', true)).toBe('keychain');
+    expect(inferKeySource(true, 'password', false)).toBe('password');
+  });
+
+  test('shipped Electron-keychain back-compat: flag on, no explicit, Electron → keychain', () => {
+    expect(inferKeySource(true, undefined, true)).toBe('keychain');
+    expect(inferKeySource(true, 'off', true)).toBe('keychain');
+  });
+
+  test('non-Electron without explicit → off', () => {
+    expect(inferKeySource(true, undefined, false)).toBe('off');
+  });
+});
+
+describe('credentialsTransform with a password-style provider', () => {
+  // Round-trip-compatible fake using the real sync raw-key cipher
+  // construction (but with a non-derived key for speed).
+  const rawKey = Uint8Array.from(crypto.randomBytes(64));
+  const pwSync = (channel, values) => {
+    if (channel === 'encryptCredentials') {
+      return {
+        available: true,
+        values: values.map((v) => encryptWithRawKey(String(v), rawKey)),
+      };
+    }
+    return {
+      available: true,
+      values: values.map((v) =>
+        typeof v === 'string' ? (decryptWithRawKey(v, rawKey) ?? null) : null,
+      ),
+    };
+  };
+
+  test('locations round-trip uses tsenc:p1: and decrypts back', () => {
+    const input = [
+      {
+        uuid: 'l1',
+        name: 'L1',
+        accessKeyId: 'AKIA',
+        secretAccessKey: 'shhh',
+      },
+    ];
+    const enc = transformSlice(input, 'locations', 'encrypt', pwSync);
+    expect(enc[0].accessKeyId.startsWith('tsenc:p1:')).toBe(true);
+    expect(enc[0].secretAccessKey.startsWith('tsenc:p1:')).toBe(true);
+    const dec = transformSlice(enc, 'locations', 'decrypt', pwSync);
+    expect(dec[0].accessKeyId).toBe('AKIA');
+    expect(dec[0].secretAccessKey).toBe('shhh');
+  });
+
+  test('mapTileServers round-trip uses tsenc:p1: and decrypts back', () => {
+    const settings = {
+      mapTileServers: [
+        { uuid: 's1', name: 'M', serverURL: 'https://x?k=K', serverInfo: 'I' },
+      ],
+    };
+    const enc = transformSlice(settings, 'settings', 'encrypt', pwSync);
+    expect(enc.mapTileServers[0].serverURL.startsWith('tsenc:p1:')).toBe(true);
+    expect(enc.mapTileServers[0].serverInfo.startsWith('tsenc:p1:')).toBe(true);
+    const dec = transformSlice(enc, 'settings', 'decrypt', pwSync);
+    expect(dec.mapTileServers[0].serverURL).toBe('https://x?k=K');
+    expect(dec.mapTileServers[0].serverInfo).toBe('I');
+  });
+
+  test('mixed-scheme decrypt: p1 values blank-but-string when only keychain sync is wired (cross-mode safety)', () => {
+    // Same shape we'd see if a user switched key sources without disabling
+    // first: the persistor still holds tsenc:p1: values but the active
+    // provider only knows tsenc:v1:. decryptWithRawKey on a non-PWENC
+    // prefix returns undefined → provider null → field set to "" (not
+    // undefined — protects downstream consumers).
+    const v1Only = (channel, values) => {
+      // Mimic the keychain provider: returns null for anything it can't
+      // decrypt.
+      if (channel === 'decryptCredentials') {
+        return { available: true, values: values.map(() => null) };
+      }
+      return { available: false };
+    };
+    const enc = [
+      {
+        uuid: 'l1',
+        name: 'L1',
+        accessKeyId: encryptWithRawKey('AKIA', rawKey), // tsenc:p1:
+        bucketName: 'b',
+      },
+    ];
+    const out = transformSlice(enc, 'locations', 'decrypt', v1Only);
+    expect(out[0].accessKeyId).toBe('');
+    expect(out[0].bucketName).toBe('b');
+    expect(out[0].name).toBe('L1');
   });
 });
