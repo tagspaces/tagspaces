@@ -241,6 +241,27 @@ function TagsSelect(props: Props) {
           </Box>
         )}
         renderInput={(params) => {
+          // Backspace on an empty input removes the last selected tag.
+          // Wrap MUI's existing onKeyDown rather than replacing it so freeSolo
+          // Enter-to-commit still works. Pass the single tag to remove (not
+          // the new list) — 'remove-value' consumers like EntryProperties
+          // interpret the array as "tags to remove".
+          const existingOnKeyDown = params.slotProps.htmlInput.onKeyDown;
+          params.slotProps.htmlInput.onKeyDown = (event) => {
+            if (
+              event.key === 'Backspace' &&
+              (event.target as HTMLInputElement).value === '' &&
+              tags.length > 0
+            ) {
+              event.preventDefault();
+              event.stopPropagation();
+              handleRemoveTag(event, [tags[tags.length - 1]]);
+              return;
+            }
+            if (existingOnKeyDown) {
+              existingOnKeyDown(event);
+            }
+          };
           // Append the AI gen button to MUI's default endAdornment instead of
           // replacing it — overriding slotProps wholesale would drop
           // params.slotProps.htmlInput (which carries the onKeyDown that
