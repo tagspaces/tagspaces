@@ -17,10 +17,12 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { CloudLocationIcon, LocalLocationIcon } from '-/components/CommonIcons';
 import { ProLabel } from '-/components/HelperComponents';
 import TsButton from '-/components/TsButton';
 import TsSwitch from '-/components/TsSwitch';
 import TsTextField from '-/components/TsTextField';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEditedTagLibraryContext } from '-/hooks/useEditedTagLibraryContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
@@ -74,7 +76,15 @@ type Props = {
   onCancel: () => void;
 };
 
-type ItemRow = { id: string; label: string };
+type ItemRow = { id: string; label: string; icon?: React.ReactNode };
+
+const locationTypeIcon = (type: unknown): React.ReactNode => {
+  const t = type !== undefined && type !== null ? String(type) : '';
+  if (t === locationType.TYPE_CLOUD || t === locationType.TYPE_WEBDAV) {
+    return <CloudLocationIcon fontSize="small" />;
+  }
+  return <LocalLocationIcon fontSize="small" />;
+};
 
 const ALL_SECTIONS: TransferSection[] = [
   'settings',
@@ -210,7 +220,11 @@ function ExportImportPanel(props: Props) {
   const itemsFor = (s: TransferSection): ItemRow[] => {
     if (mode === 'export') {
       if (s === 'locations') {
-        return editableLocations.map((l) => ({ id: l.uuid, label: l.name }));
+        return editableLocations.map((l) => ({
+          id: l.uuid,
+          label: l.name,
+          icon: locationTypeIcon((l as TS.Location).type),
+        }));
       }
       if (s === 'tagGroups') {
         return (tagGroups || []).map((g) => ({ id: g.uuid, label: g.title }));
@@ -225,6 +239,7 @@ function ExportImportPanel(props: Props) {
       return validated.locations.map((l: TS.S3Location) => ({
         id: l.uuid,
         label: l.name,
+        icon: locationTypeIcon((l as any).type),
       }));
     }
     if (s === 'tagGroups' && validated.tagGroups) {
@@ -536,7 +551,23 @@ function ExportImportPanel(props: Props) {
                     onChange={(e) => toggleItem(s, row.id, e.target.checked)}
                   />
                 }
-                label={row.label}
+                label={
+                  row.icon ? (
+                    <Box
+                      component="span"
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.75,
+                      }}
+                    >
+                      {row.icon}
+                      {row.label}
+                    </Box>
+                  ) : (
+                    row.label
+                  )
+                }
               />
             ))}
           </div>
@@ -570,6 +601,12 @@ function ExportImportPanel(props: Props) {
                 }}
                 label={t('core:aesPassword')}
                 onChange={(event: any) => setAesPassword(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    handleDecrypt();
+                  }
+                }}
                 data-tid="aesPasswordTID"
               />
             </FormControl>
@@ -715,6 +752,12 @@ function ExportImportPanel(props: Props) {
                     onChange={(event: any) =>
                       setExportPassword(event.target.value)
                     }
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
+                        handleExport();
+                      }
+                    }}
                     updateValue={(value: string) => setExportPassword(value)}
                     retrieveValue={() => exportPassword}
                     data-tid="exportPasswordTID"
@@ -768,6 +811,12 @@ function ExportImportPanel(props: Props) {
                     onChange={(event: any) =>
                       setRetypePassword(event.target.value)
                     }
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
+                        handleExport();
+                      }
+                    }}
                     data-tid="retypePasswordTID"
                   />
                 </FormControl>
