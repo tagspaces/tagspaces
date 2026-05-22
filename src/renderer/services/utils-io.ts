@@ -948,52 +948,10 @@ export async function executePromisesInBatches<T>(
   return results;
 }
 
-/**
- * Worker-pool runner with a real concurrency cap. Unlike
- * `executePromisesInBatches`, the items are *factories* that are invoked only
- * when a worker slot becomes free — so the underlying work (IPC invokes, fs
- * ops) is throttled, not just the awaits. Important for big IO fanouts where
- * eager `.map(() => invoke(...))` would queue thousands of in-flight promises
- * and OOM the renderer.
- */
-export async function runConcurrent<I, R>(
-  items: I[],
-  worker: (item: I, index: number) => Promise<R>,
-  concurrency: number,
-  onSettled?: (item: I, index: number, result: PromiseSettledResult<R>) => void,
-  abortSignal?: AbortSignal,
-): Promise<PromiseSettledResult<R>[]> {
-  const results: PromiseSettledResult<R>[] = new Array(items.length);
-  let cursor = 0;
-  const slots = Math.max(1, Math.min(concurrency, items.length));
-
-  const runWorker = async () => {
-    while (true) {
-      if (abortSignal && abortSignal.aborted) {
-        return;
-      }
-      const idx = cursor++;
-      if (idx >= items.length) {
-        return;
-      }
-      const item = items[idx];
-      let result: PromiseSettledResult<R>;
-      try {
-        const value = await worker(item, idx);
-        result = { status: 'fulfilled', value };
-      } catch (reason) {
-        result = { status: 'rejected', reason };
-      }
-      results[idx] = result;
-      if (onSettled) {
-        onSettled(item, idx, result);
-      }
-    }
-  };
-
-  await Promise.all(Array.from({ length: slots }, runWorker));
-  return results;
-}
+// `runConcurrent` lives in a leaf module (no Pro / DOM imports) so it can
+// be unit-tested without dragging in this whole file. Re-exported here so
+// existing callers don't have to change their imports.
+export { runConcurrent } from '-/utils/runConcurrent';
 
 export function setZoomFactorElectron(zoomLevel) {
   if (AppConfig.isElectron) {

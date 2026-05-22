@@ -84,16 +84,21 @@ export const FileUploadDialogContextProvider = ({
         open.current = true;
         forceUpdate();
       }
-    } else if (len === 0) {
-      // Everything cleared (e.g. user clicked "Close and Clear") — reset.
+    } else if (!wasEmpty && len === 0) {
+      // Genuine N→0 transition (e.g. "Close and Clear"). Reset state and
+      // hide the dialog. We deliberately ignore 0→0 here so that callers
+      // like MoveCopyFilesDialog.handleCopy can dispatch resetProgress()
+      // and then synchronously call openFileUploadDialog() without us
+      // racing in to close what they just opened.
       userMinimized.current = false;
       if (open.current) {
         open.current = false;
         forceUpdate();
       }
     }
-    // Else: ongoing batch. Don't re-open if the user minimized — the
-    // indicator near the search bar continues to surface progress.
+    // Else: ongoing batch (N→M) or no-op 0→0. Don't re-open if the user
+    // minimized — the indicator near the search bar continues to surface
+    // progress.
   }, [progress]);
 
   function openDialog(tPath?: string, dTitle?: string) {

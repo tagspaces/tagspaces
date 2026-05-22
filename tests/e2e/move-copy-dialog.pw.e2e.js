@@ -9,6 +9,7 @@ import {
   expectElementExist,
   getGridFileSelector,
   reloadDirectory,
+  selectAllFiles,
   setInputValue,
 } from './general.helpers';
 import { startTestingApp, stopApp } from './hook';
@@ -218,6 +219,170 @@ test.describe('TST10 - Move/Copy dialog new features', () => {
     expect(await moveBtn.isDisabled()).toBe(true);
 
     await closeMoveCopyDialog();
+  });
+
+  test('TST1009 - Bulk multi-file copy renders single-row progress and lands on disk (regression) [electron,s3]', async () => {
+    // Regression guard for the bounded-fanout work in copyFilesWithProgress.
+    // Two things must hold for a multi-file copy:
+    //   1. The progress dialog uses the single-row batch-key shape — title
+    //      shows `(N%)`, not the misleading per-file `(0/1)`. Asserting on
+    //      "%" in the title text is the cheapest way to lock that in.
+    //   2. Every selected file actually arrives at the destination. If
+    //      runConcurrent's worker pool ever silently dropped tail items
+    //      this assertion would fail.
+    const destName = 'bulkcopy_dest_' + Date.now();
+
+    // Create the destination folder at the root.
+    await createNewDirectory(destName);
+    await expectElementExist(getGridFileSelector(destName), true, 10000);
+
+    // Select all files in the root listing (the supported-filestypes location
+    // ships with ~69 sample files — enough to exercise the pool but small
+    // enough that the copy completes in seconds, not minutes).
+    await selectAllFiles();
+
+    // Open the bulk move/copy dialog via the toolbar action.
+    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
+    // Make sure we're in Copy mode (the toggle is persisted — last test may
+    // have left it on Move).
+    await clickOnIfVisible('[data-tid=mcfModeCopy]');
+    await expectElementExist('[data-tid=confirmCopyFiles]', true, 5000);
+
+    // Pick the destination via the picker.
+    await setInputValue('[data-tid=folderBrowserSearch]', destName);
+    await expectElementExist(
+      '[data-tid=MoveTarget' + destName + ']',
+      true,
+      5000,
+    );
+    await clickOn('[data-tid=MoveTarget' + destName + ']');
+
+    // Fire the copy.
+    await clickOn('[data-tid=confirmCopyFiles]');
+
+    // Upload dialog should appear.
+    await expectElementExist(
+      '[data-tid=closeFileUploadTID]',
+      true,
+      15000,
+    );
+
+    // After completion the "Close and Clear" footer button becomes visible
+    // (it only renders when `!haveProgress`). Wait up to 60s — a clean
+    // copy of ~69 small files takes a couple seconds; the slack covers
+    // slower CI machines and S3-backed runs.
+    await expectElementExist(
+      '[data-tid=uploadCloseAndClearTID]',
+      true,
+      60000,
+    );
+
+    // Pull the actual dialog title text. The title encodes how progress is
+    // dispatched — and the load-bearing regression we want to guard against
+    // is "thousands of per-file rows". Two valid post-fix shapes:
+    //   `(N%)`   when a single copyFilesWithProgress call dispatched its
+    //            stable batch key (one row).
+    //   `(K/M)`  when copyDirs + copyFiles fanned into a few rows (one per
+    //            top-level dir + one per copyFilesWithProgress call). M is
+    //            always small here — never the total file count.
+    // Pre-fix this would have been `(N/69)` or similar (one row per file).
+    //
+    // Scope the selector: `#draggable-dialog-title` is reused by every
+    // TsDialogTitle in the app, and `keepMounted` leaves hidden dialogs in
+    // the DOM whose `.innerText()` returns "". Use `:has()` to pick the
+    // title that contains our close button — guaranteed to be the visible
+    // FileUploadDialog.
+    const titleText = await global.client
+      .locator('#draggable-dialog-title:has([data-tid=closeFileUploadTID])')
+      .innerText();
+    const pctMatch = titleText.match(/\((\d+)%\)/);
+    const countMatch = titleText.match(/\((\d+)\/(\d+)\)/);
+    expect(Boolean(pctMatch || countMatch)).toBe(true);
+    if (countMatch) {
+      // The denominator must be tiny (a handful of dispatches) — not the
+      // total number of files we just copied. 20 is generous and still
+      // catches a regression to per-file rows on our ~69-file dataset.
+      expect(parseInt(countMatch[2], 10)).toBeLessThan(20);
+    }
+
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
+
+    // The on-disk assertion: at least one well-known sample file from the
+    // root must now be inside the destination folder. We pick a small,
+    // text-y file so the assertion is cheap and not thumbnail-dependent.
+    await global.client.dblclick(getGridFileSelector(destName));
+    await expectElementExist(getGridFileSelector('sample.txt'), true, 10000);
+    await expectElementExist(getGridFileSelector('sample.json'), true, 5000);
+  });
+
+  test('TST1010 - Minimize hides dialog while indicator stays + reopens on click (regression) [electron,s3]', async () => {
+    // Regression guard for the minimize wiring: clicking the title X must
+    // hide the dialog WITHOUT clearing progress state, so the small
+    // CircularProgress indicator next to the search bar stays up and can
+    // restore the dialog. The pre-fix bug was that any progress dispatch
+    // re-opened the dialog via a useEffect on `progress`, making minimize
+    // visually flicker.
+    const destName = 'mincop_dest_' + Date.now();
+    await createNewDirectory(destName);
+    await expectElementExist(getGridFileSelector(destName), true, 10000);
+
+    await selectAllFiles();
+    await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
+    await clickOnIfVisible('[data-tid=mcfModeCopy]');
+    await expectElementExist('[data-tid=confirmCopyFiles]', true, 5000);
+
+    await setInputValue('[data-tid=folderBrowserSearch]', destName);
+    await expectElementExist(
+      '[data-tid=MoveTarget' + destName + ']',
+      true,
+      5000,
+    );
+    await clickOn('[data-tid=MoveTarget' + destName + ']');
+    await clickOn('[data-tid=confirmCopyFiles]');
+
+    // Wait for the upload dialog (title close button is the minimize gesture).
+    await expectElementExist(
+      '[data-tid=closeFileUploadTID]',
+      true,
+      15000,
+    );
+
+    // Click the title X — minimizes the dialog. The progress data must
+    // remain in the store so the indicator can read it.
+    await clickOn('[data-tid=closeFileUploadTID]');
+
+    // Dialog is gone (no Close/Clear visible).
+    await expectElementExist(
+      '[data-tid=uploadCloseAndClearTID]',
+      false,
+      3000,
+    );
+
+    // The background-process indicator next to the search bar is now the
+    // only surface showing progress. It only renders when `progress.length
+    // > 0`, so its presence after minimize is the load-bearing assertion.
+    await expectElementExist('#progressButton', true, 10000);
+
+    // Click the indicator to restore the dialog.
+    await clickOn('#progressButton');
+    // The dialog comes back — title X visible again.
+    await expectElementExist(
+      '[data-tid=closeFileUploadTID]',
+      true,
+      5000,
+    );
+
+    // Let it finish and dismiss for the next test's clean slate.
+    await expectElementExist(
+      '[data-tid=uploadCloseAndClearTID]',
+      true,
+      60000,
+    );
+    await clickOn('[data-tid=uploadCloseAndClearTID]');
+
+    // Once the user clicks Close and Clear, the indicator must disappear
+    // (resetProgress empties the array, FolderContainer hides the button).
+    await expectElementExist('#progressButton', false, 5000);
   });
 
   test('TST1008 - Folder move with same-name overwrite removes source on disk (regression) [electron]', async () => {
