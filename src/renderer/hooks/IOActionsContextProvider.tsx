@@ -43,10 +43,10 @@ import {
 import {
   cleanMetaData,
   downloadFile,
-  executePromisesInBatches,
   mergeFsEntryMeta,
   openDirectoryMessage,
   openFileMessage,
+  runConcurrent,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
@@ -575,57 +575,118 @@ export const IOActionsContextProvider = ({
       });
   }
 
+  // Conservative cap: each dir IO job is a recursive walk (fs.copy on local,
+  // per-key fanout on S3). 2 keeps disk/network from thrashing while still
+  // overlapping a small dir behind a large one. Renderer doesn't accumulate
+  // per-file promises here — only one PromiseSettledResult per top-level dir.
+  const DIR_IO_CONCURRENCY = 2;
+
+  /**
+   * Shared runner for copyDirs/moveDirs. Caps concurrency, threads an abort
+   * signal through runConcurrent (clicking abort on any in-flight row stops
+   * new dirs from being picked up AND triggers the inner per-dir abort), and
+   * keeps the post-batch reflect/progress wiring identical to the original.
+   */
+  function runDirIOJobs(
+    dirPaths: Array<any>,
+    targetPath: string,
+    locationID: string,
+    onProgress: any,
+    mode: 'copy' | 'move',
+  ): Promise<boolean> {
+    const controller = new AbortController();
+
+    // Wrap onProgress so the per-row abort fn calls both the inner per-dir
+    // abort (stops the current walk where supported — fs-extra filter; S3
+    // mutes further progress) and our controller.abort (prevents new dirs
+    // from starting). Same semantics as copyFilesWithProgress.
+    const wrappedProgress = onProgress
+      ? (progress: any, innerAbort: any, fileName: any) => {
+          const combinedAbort = () => {
+            if (typeof innerAbort === 'function') {
+              try {
+                innerAbort();
+              } catch (e) {
+                console.log('inner dir abort failed:', e);
+              }
+            }
+            controller.abort();
+          };
+          onProgress(progress, combinedAbort, fileName);
+        }
+      : undefined;
+
+    return runConcurrent(
+      dirPaths,
+      ({ path, count }) => {
+        const dirName = extractDirectoryName(
+          path,
+          currentLocation?.getDirSeparator(),
+        );
+        const newDirPath = joinPaths(
+          currentLocation?.getDirSeparator(),
+          targetPath,
+          dirName,
+        );
+        const param = { path, total: count, locationID };
+        const inner =
+          mode === 'move'
+            ? moveDirectoryPromise(param, newDirPath, wrappedProgress, false)
+            : copyDirectoryPromise(param, newDirPath, wrappedProgress, false);
+        return inner.then((resolved): Promise<TS.EditAction | undefined> => {
+          if (mode === 'move') {
+            return Promise.resolve({
+              action: 'move',
+              entry: currentLocation!.toFsEntry(resolved, false),
+              oldEntryPath: path,
+            });
+          }
+          return getAllPropertiesPromise(resolved).then(
+            (fsEntry: TS.FileSystemEntry) => ({
+              action: 'add',
+              entry: fsEntry,
+            }),
+          );
+        });
+      },
+      DIR_IO_CONCURRENCY,
+      undefined,
+      controller.signal,
+    ).then((settled) => {
+      const actions: TS.EditAction[] = [];
+      for (const r of settled) {
+        if (r && r.status === 'fulfilled' && r.value) {
+          actions.push(r.value as TS.EditAction);
+        } else if (r && r.status === 'rejected') {
+          console.log(mode + ' dirs failed:', r.reason);
+        }
+      }
+      if (actions.length !== settled.length) {
+        showNotification(t('core:copyingFoldersFailed'));
+      }
+      // If onProgress was wired, the dialog already shows in-flight rows.
+      // If not, mirror the previous behavior of emitting a final 100/0 list
+      // so consumers without progress callbacks still see completion state.
+      if (!onProgress) {
+        const progresses = actions
+          .map((a) => a && a.entry && { path: a.entry.path, progress: 100 })
+          .filter(Boolean) as { path: string; progress: number }[];
+        if (progresses.length > 0) {
+          dispatch(AppActions.setProgresses(progresses));
+        }
+      }
+      setReflectActions(...actions);
+      return true;
+    });
+  }
+
   function moveDirs(
     dirPaths: Array<any>,
     targetPath: string,
     locationID: string,
     onProgress = undefined,
   ): Promise<boolean> {
-    const progress = dirPaths.length > 10 ? undefined : onProgress;
-    const promises = dirPaths.map(({ path, count }) => {
-      const dirName = extractDirectoryName(
-        path,
-        currentLocation?.getDirSeparator(),
-      );
-      return moveDirectoryPromise(
-        { path: path, total: count, locationID },
-        joinPaths(currentLocation?.getDirSeparator(), targetPath, dirName),
-        progress,
-        false,
-      )
-        .then((newDirPath) => {
-          // console.log('Moving dir from ' + path + ' to ' + targetPath);
-          const action: TS.EditAction = {
-            action: 'move',
-            entry: currentLocation.toFsEntry(newDirPath, false),
-            oldEntryPath: path,
-          };
-          return action;
-        })
-        .catch((err) => {
-          console.log('Moving dirs failed ', err);
-          showNotification(t('core:copyingFoldersFailed'));
-          return undefined;
-        });
-    });
-    return executePromisesInBatches(promises).then((actions) => {
-      if (!progress) {
-        const progresses = actions.map((action) =>
-          action
-            ? {
-                path: action.entry.path,
-                progress: 100,
-              }
-            : {
-                path: action.entry.path,
-                progress: 0,
-              },
-        );
-        dispatch(AppActions.setProgresses(progresses));
-      }
-      setReflectActions(...actions.filter((value) => value !== undefined));
-      return true;
-    });
+    return runDirIOJobs(dirPaths, targetPath, locationID, onProgress, 'move');
   }
 
   function moveFiles(
@@ -643,14 +704,8 @@ export const IOActionsContextProvider = ({
         location.getDirSeparator() +
         extractFileName(path, location.getDirSeparator()),
     ]);
-    return moveFilesPromise(
-      moveJobs,
-      location.uuid,
-      paths.length > 10 ? undefined : onProgress,
-      false,
-      force,
-    )
-      .then((moveArray) => {
+    return moveFilesPromise(moveJobs, location!.uuid, onProgress, false, force)
+      .then(async (moveArray) => {
         if (moveArray !== undefined && moveArray.length > 0) {
           setSelectedEntries([]);
           const moveError = moveArray.find((err) => err instanceof Error);
@@ -726,8 +781,25 @@ export const IOActionsContextProvider = ({
               ]);
               return true;
             });
+            // Most files have no sidecar/thumb/pdf-text. Filter to only
+            // existing ones so we don't fan out thousands of guaranteed-to-fail
+            // IPC invokes — see the symmetric prefilter in copyFiles.
+            const sourceMetaPaths = moveMetaJobs.map((j) => j[0]);
+            const existenceResults = await runConcurrent(
+              sourceMetaPaths,
+              (p) =>
+                location
+                  .checkFileExist(p)
+                  .then((exists) => Boolean(exists))
+                  .catch(() => false),
+              16,
+            );
+            const existingMoveMetaJobs = moveMetaJobs.filter((_, i) => {
+              const r = existenceResults[i];
+              return r && r.status === 'fulfilled' && r.value === true;
+            });
             return moveFilesPromise(
-              moveMetaJobs,
+              existingMoveMetaJobs,
               location.uuid,
               undefined,
               false,
@@ -765,54 +837,7 @@ export const IOActionsContextProvider = ({
     locationID: string,
     onProgress = undefined,
   ): Promise<boolean> {
-    const progress = dirPaths.length > 10 ? undefined : onProgress;
-    const promises = dirPaths.map(({ path, count }) => {
-      const dirName = extractDirectoryName(
-        path,
-        currentLocation?.getDirSeparator(),
-      );
-      return copyDirectoryPromise(
-        { path: path, total: count, locationID },
-        joinPaths(currentLocation?.getDirSeparator(), targetPath, dirName),
-        progress,
-        false,
-      )
-        .then((newDirPath) => {
-          // console.log('Copy dir from ' + path + ' to ' + targetPath);
-          return getAllPropertiesPromise(newDirPath).then(
-            (fsEntry: TS.FileSystemEntry) => {
-              const action: TS.EditAction = {
-                action: 'add',
-                entry: fsEntry, //toFsEntry(newDirPath, false),
-              };
-              return action;
-            },
-          );
-        })
-        .catch((err) => {
-          console.log('Copy dirs failed ', err);
-          showNotification(t('core:copyingFoldersFailed'));
-          return undefined;
-        });
-    });
-    return executePromisesInBatches(promises).then((actions) => {
-      if (!progress) {
-        const progresses = actions.map((action) =>
-          action
-            ? {
-                path: action.entry.path,
-                progress: 100,
-              }
-            : {
-                path: action.entry.path,
-                progress: 0,
-              },
-        );
-        dispatch(AppActions.setProgresses(progresses));
-      }
-      setReflectActions(...actions.filter((value) => value !== undefined));
-      return true;
-    });
+    return runDirIOJobs(dirPaths, targetPath, locationID, onProgress, 'copy');
   }
 
   function copyFiles(
@@ -821,13 +846,8 @@ export const IOActionsContextProvider = ({
     locationID: string,
     onProgress,
   ): Promise<boolean> {
-    return copyFilesWithProgress(
-      paths,
-      targetPath,
-      locationID,
-      paths.length > 10 ? undefined : onProgress,
-    )
-      .then((success) => {
+    return copyFilesWithProgress(paths, targetPath, locationID, onProgress)
+      .then(async (success) => {
         if (success) {
           showNotification(t('core:filesCopiedSuccessful'));
           const metaPaths = paths.flatMap((path) =>
@@ -850,10 +870,31 @@ export const IOActionsContextProvider = ({
                 ],
           );
 
+          // Most files have no sidecar/thumb. Filter to only existing ones so
+          // we don't fan out thousands of guaranteed-to-fail IPC invokes —
+          // each failed call round-trips a full-path Error string back to the
+          // renderer, which previously OOM'd V8 on 3500+ file copies.
+          const sidecarLocation = findLocation(locationID);
+          const existenceResults = sidecarLocation
+            ? await runConcurrent(
+                metaPaths,
+                (p) =>
+                  sidecarLocation
+                    .checkFileExist(p)
+                    .then((exists) => Boolean(exists))
+                    .catch(() => false),
+                16,
+              )
+            : [];
+          const existingMetaPaths = metaPaths.filter((_, i) => {
+            const r = existenceResults[i];
+            return r && r.status === 'fulfilled' && r.value === true;
+          });
+
           return copyFilesWithProgress(
-            metaPaths,
+            existingMetaPaths,
             getMetaDirectoryPath(targetPath),
-            locationID, //metaPaths.length > 10 ? undefined : onProgress,
+            locationID, //existingMetaPaths.length > 10 ? undefined : onProgress,
             false,
           )
             .then(() => {

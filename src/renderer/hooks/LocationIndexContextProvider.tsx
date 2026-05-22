@@ -35,6 +35,8 @@ import Fuse from 'fuse.js';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import {
+  applyBulkCreateToIndex,
+  applyBulkUpdateToIndex,
   applyCreateToIndex,
   applyDeleteToIndex,
   applyUpdateToIndex,
@@ -189,6 +191,33 @@ export const LocationIndexContextProvider = ({
 
   useEffect(() => {
     if (!firstRender && actions && actions.length > 0) {
+      // Bulk fast paths. Calling reflectCreateEntry / reflectUpdateEntry per
+      // action does an O(n) array allocation each iteration — for a 3500-file
+      // bulk copy/move reflected into a 50k-entry index that's ~1.5 GB of
+      // intermediate arrays in one synchronous tick (the OOM the user saw).
+      // Detect uniform-add and uniform-move/update batches and apply them in
+      // a single allocation.
+      if (actions.length > 1 && actions.every((a) => a.action === 'add')) {
+        const next = applyBulkCreateToIndex(
+          index.current,
+          actions.map((a) => a.entry).filter(Boolean),
+        );
+        if (next) setIndex(next, currentLocation);
+        return;
+      }
+      if (
+        actions.length > 1 &&
+        actions.every((a) => a.action === 'move' || a.action === 'update')
+      ) {
+        const next = applyBulkUpdateToIndex(
+          index.current,
+          actions
+            .filter((a) => a.oldEntryPath && a.entry)
+            .map((a) => ({ oldPath: a.oldEntryPath, entry: a.entry })),
+        );
+        if (next) setIndex(next, currentLocation);
+        return;
+      }
       for (const action of actions) {
         if (action.action === 'add') {
           reflectCreateEntry(action.entry);

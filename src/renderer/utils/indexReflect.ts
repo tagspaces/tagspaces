@@ -60,6 +60,36 @@ export function applyCreateToIndex(
 }
 
 /**
+ * Bulk variant of applyCreateToIndex. Calling the single-entry helper N times
+ * in a loop is O(N*M) (each iteration re-scans + re-copies the growing
+ * index). For huge batches (e.g. a 3500-file copy reflected into a 50k-entry
+ * index) that's ~1.5 GB of intermediate allocations in a synchronous tick,
+ * which OOMs the renderer before GC gets a chance. This variant is O(N+M):
+ * one dedup Set, one combined copy.
+ */
+export function applyBulkCreateToIndex(
+  current: Index,
+  newEntries: TS.FileSystemEntry[],
+): TS.FileSystemEntry[] | null {
+  if (!current || current.length < 1) return null;
+  if (!newEntries || newEntries.length === 0) return null;
+  const existingPaths = new Set<string>();
+  for (let i = 0; i < current.length; i += 1) {
+    existingPaths.add(current[i].path);
+  }
+  const toAdd: TS.FileSystemEntry[] = [];
+  for (let i = 0; i < newEntries.length; i += 1) {
+    const e = newEntries[i];
+    if (e && !existingPaths.has(e.path)) {
+      existingPaths.add(e.path);
+      toAdd.push(e);
+    }
+  }
+  if (toAdd.length === 0) return null;
+  return [...current, ...toAdd];
+}
+
+/**
  * Replace the entry matching `oldPath` with `newEntry`. Used for both
  * `update` (same path, new meta) and `move` (new path) actions. Returns
  * the new array, or `null` if no entry matches `oldPath`.
@@ -72,4 +102,39 @@ export function applyUpdateToIndex(
   if (!current || current.length < 1) return null;
   if (!current.some((entry) => entry.path === oldPath)) return null;
   return current.map((entry) => (entry.path === oldPath ? newEntry : entry));
+}
+
+/**
+ * Bulk variant of applyUpdateToIndex. Same motivation as
+ * applyBulkCreateToIndex — a 3500-file move would otherwise re-scan +
+ * re-map the index 3500 times. This builds one path→entry replacement map
+ * and walks the index once: O(N + M).
+ */
+export function applyBulkUpdateToIndex(
+  current: Index,
+  updates: Array<{ oldPath: string; entry: TS.FileSystemEntry }>,
+): TS.FileSystemEntry[] | null {
+  if (!current || current.length < 1) return null;
+  if (!updates || updates.length === 0) return null;
+  const byOldPath = new Map<string, TS.FileSystemEntry>();
+  for (let i = 0; i < updates.length; i += 1) {
+    const u = updates[i];
+    if (u && u.oldPath && u.entry) {
+      byOldPath.set(u.oldPath, u.entry);
+    }
+  }
+  if (byOldPath.size === 0) return null;
+  let changed = false;
+  const next: TS.FileSystemEntry[] = new Array(current.length);
+  for (let i = 0; i < current.length; i += 1) {
+    const e = current[i];
+    const repl = byOldPath.get(e.path);
+    if (repl) {
+      next[i] = repl;
+      changed = true;
+    } else {
+      next[i] = e;
+    }
+  }
+  return changed ? next : null;
 }

@@ -21,6 +21,7 @@ import { CloseIcon, WarningIcon } from '-/components/CommonIcons';
 import DraggablePaper from '-/components/DraggablePaper';
 import InfoIcon from '-/components/InfoIcon';
 import TsButton from '-/components/TsButton';
+import TsTooltip from '-/components/TsTooltip';
 import TsDialogActions from '-/components/dialogs/components/TsDialogActions';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -31,9 +32,7 @@ import {
   AppDispatch,
   getProgress,
 } from '-/reducers/app';
-import { uploadAbort } from '-/services/utils-io';
 import { Grid, LinearProgress } from '@mui/material';
-import TsTooltip from '-/components/TsTooltip';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -67,20 +66,26 @@ function FileUploadDialog(props: Props) {
   const { uploadMeta, transferMeta } = useFileUploadContext();
   const progress = useSelector(getProgress);
 
-  const targetPath = React.useRef<string>(getTargetPath()); // todo ContextProvider
   const currentLocation = findLocation();
 
   useEffect(() => {
     if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('progress', (fileName, newProgress) => {
+      const handler = (fileName, newProgress) => {
         dispatch(AppActions.onUploadProgress(newProgress, undefined));
-      });
-
+      };
+      window.electronIO.ipcRenderer.on('progress', handler);
       return () => {
-        window.electronIO.ipcRenderer.removeAllListeners('progress');
+        // Best-effort cleanup: prefer removeListener so we don't kill listeners
+        // registered by other components on the same channel.
+        const ipc: any = window.electronIO.ipcRenderer;
+        if (typeof ipc.removeListener === 'function') {
+          ipc.removeListener('progress', handler);
+        } else {
+          ipc.removeAllListeners('progress');
+        }
       };
     }
-  }, []);
+  }, [dispatch]);
 
   function LinearProgressWithLabel(prop) {
     return (
@@ -109,32 +114,21 @@ function FileUploadDialog(props: Props) {
     );
   }
 
-  const stopAll = () => {
-    if (progress) {
-      if (currentLocation?.haveObjectStoreSupport()) {
-        const progresses = progress.map((fileProgress) => {
-          fileProgress.abort();
-          return { ...fileProgress, state: 'finished' };
-        });
-        dispatch(AppActions.setProgresses(progresses));
-      } else {
-        return uploadAbort();
-      }
-    }
-  };
+  // Derived view-model — computed once per render, no ref mutation inside .map.
+  const progressArr = Array.isArray(progress) ? progress : [];
+  // Defensive copy: progress comes from Redux; never sort the original in place.
+  const sortedProgress = React.useMemo(
+    () => [...progressArr].sort((a, b) => ('' + a.path).localeCompare(b.path)),
+    [progressArr],
+  );
+  const firstProgressPath = progressArr[0]?.path
+    ? progressArr[0].path.split('?')[0]
+    : undefined;
+  const targetPath = props.targetPath ?? firstProgressPath;
 
-  let haveProgress = false;
-
-  function getTargetPath() {
-    if (props.targetPath) {
-      return props.targetPath;
-    }
-    const pathProgress = progress.find((fileProgress) => fileProgress.path);
-    if (pathProgress) {
-      return pathProgress.path;
-    }
-    return undefined;
-  }
+  const haveProgress = sortedProgress.some(
+    (p) => p.progress > -1 && p.progress < 100 && p.state !== 'finished',
+  );
 
   function getTargetURL() {
     if (props.targetPath) {
@@ -168,14 +162,31 @@ function FileUploadDialog(props: Props) {
         );
       }
     }
-    if (targetPath.current) {
-      return targetPath.current;
+    if (targetPath) {
+      return targetPath;
     } else if (currentDirectoryPath) {
       return currentDirectoryPath;
     }
     return '/';
   }
-  const completed = progress?.filter((item) => item.progress === 100);
+
+  // Title counter: prefer the aggregate batch percentage for single-row
+  // batches (the common case after the single-row progress key change), fall
+  // back to the file count for multi-row batches (e.g. multi-dir copies).
+  const titleCounter = (() => {
+    if (!sortedProgress.length) {
+      return '';
+    }
+    if (sortedProgress.length === 1) {
+      const p = sortedProgress[0].progress;
+      if (p < 0) {
+        return '';
+      }
+      return ' (' + p + '%)';
+    }
+    const done = sortedProgress.filter((p) => p.progress === 100).length;
+    return ' (' + done + '/' + sortedProgress.length + ')';
+  })();
 
   return (
     <Dialog
@@ -194,10 +205,7 @@ function FileUploadDialog(props: Props) {
         dialogTitle={
           t(
             'core:' + (title && title.length > 0 ? title : 'importDialogTitle'),
-          ) +
-          (progress
-            ? ' (' + completed.length + '/' + progress.length + ')'
-            : '')
+          ) + titleCounter
         }
         closeButtonTestId="closeFileUploadTID"
         onClose={onClose}
@@ -211,82 +219,64 @@ function FileUploadDialog(props: Props) {
         }}
       >
         <p>{t('core:moveCopyToPath') + ': ' + getTargetURL()}</p>
-        {progress &&
-          progress
-            .sort((a, b) => ('' + a.path).localeCompare(b.path))
-            .map((fileProgress) => {
-              const percentage = fileProgress.progress;
-              const { path, filePath } = fileProgress;
-              targetPath.current = path.split('?')[0];
-              let { abort } = fileProgress;
-              if (
-                percentage > -1 &&
-                percentage < 100 &&
-                fileProgress.state !== 'finished'
-              ) {
-                haveProgress = true;
-              } /*else {
-                abort = undefined;
-              }*/
-
-              return (
-                <Grid
-                  key={path}
-                  container
-                  sx={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Grid
-                    size={{ xs: 10 }}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {filePath
-                      ? filePath
-                      : extractFileName(
-                          targetPath.current,
-                          currentLocation?.getDirSeparator(),
-                        )}
-                    {percentage === -1 && (
-                      <TsTooltip
-                        title={
-                          abort && typeof abort === 'string'
-                            ? abort
-                            : t('core:fileExist')
-                        }
-                      >
-                        <WarningIcon color="warning" />
-                      </TsTooltip>
-                    )}
-                  </Grid>
-                  <Grid size={{ xs: 2 }}>
-                    {abort &&
-                      typeof abort === 'function' &&
-                      percentage !== 100 && (
-                        <TsButton
-                          tooltip={t('core:abort')}
-                          onClick={() => abort()}
-                        >
-                          <CloseIcon />
-                        </TsButton>
-                      )}
-                  </Grid>
-                  <Grid size={{ xs: 12 }}>
-                    {percentage > -1 && (
-                      <LinearProgressWithLabel value={percentage} />
-                    )}
-                  </Grid>
-                </Grid>
+        {sortedProgress.map((fileProgress) => {
+          const percentage = fileProgress.progress;
+          const { path, filePath, abort } = fileProgress;
+          const rowName = filePath
+            ? filePath
+            : extractFileName(
+                path.split('?')[0],
+                currentLocation?.getDirSeparator(),
               );
-            })}
+
+          return (
+            <Grid
+              key={path}
+              container
+              sx={{
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Grid
+                size={{ xs: 10 }}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  wordBreak: 'break-word',
+                }}
+              >
+                {rowName}
+                {percentage === -1 && (
+                  <TsTooltip
+                    title={
+                      abort && typeof abort === 'string'
+                        ? abort
+                        : t('core:fileExist')
+                    }
+                  >
+                    <WarningIcon color="warning" />
+                  </TsTooltip>
+                )}
+              </Grid>
+              <Grid size={{ xs: 2 }}>
+                {abort && typeof abort === 'function' && percentage !== 100 && (
+                  <TsButton tooltip={t('core:abort')} onClick={() => abort()}>
+                    <CloseIcon />
+                  </TsButton>
+                )}
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                {percentage > -1 && (
+                  <LinearProgressWithLabel value={percentage} />
+                )}
+              </Grid>
+            </Grid>
+          );
+        })}
       </DialogContent>
       <TsDialogActions>
-        {progress && progress.length > 0 && !haveProgress && (
+        {sortedProgress.length > 0 && !haveProgress && (
           <>
             {transferMeta && AppConfig.isElectron && (
               <TsButton
@@ -314,11 +304,6 @@ function FileUploadDialog(props: Props) {
         <TsButton data-tid="uploadMinimizeDialogTID" onClick={onClose}>
           {t('core:minimize')}
         </TsButton>
-        {haveProgress && (
-          <TsButton data-tid="uploadStopAllTID" onClick={stopAll}>
-            {t('core:stopAll')}
-          </TsButton>
-        )}
       </TsDialogActions>
     </Dialog>
   );

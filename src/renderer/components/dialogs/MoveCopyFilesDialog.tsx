@@ -292,6 +292,13 @@ function MoveCopyFilesDialog(props: Props) {
   };
 
   function handleMove() {
+    if (
+      !skipTargetPicker &&
+      (selectedFiles.length > 0 || selectedDirs.length > 0)
+    ) {
+      dispatch(AppActions.resetProgress());
+      openFileUploadDialog(targetDir, 'moveEntriesTitle');
+    }
     if (selectedFiles.length > 0) {
       const filePaths = selectedFiles;
       const movePromise = moveFiles(
@@ -314,10 +321,6 @@ function MoveCopyFilesDialog(props: Props) {
       setTargetPath('');
     }
     if (selectedDirs.length > 0) {
-      if (!skipTargetPicker) {
-        dispatch(AppActions.resetProgress());
-        openFileUploadDialog(undefined, 'moveEntriesTitle');
-      }
       moveDirs(
         getEntriesCount(selectedDirs),
         targetPath,
