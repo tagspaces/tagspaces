@@ -19,19 +19,7 @@ import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { offlineRejectionIfRemote } from '-/utils/OfflineError';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
-
-// Capacitor IO is loaded dynamically to avoid breaking Electron/web builds
-// where the package isn't available. The variable indirection prevents
-// webpack from resolving the module statically.
-let capacitorIO: any;
-if (AppConfig.isCapacitor) {
-  try {
-    const capPkg = '@tagspaces/tagspaces-common-capacitor';
-    capacitorIO = require(capPkg);
-  } catch (e) {
-    console.warn('tagspaces-common-capacitor not available');
-  }
-}
+import * as capacitorIO from '@tagspaces/tagspaces-common-capacitor';
 
 /**
  * Shallow-clone `obj` dropping any function-valued properties.

@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import AVFoundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,8 +8,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        configureAudioSession()
         return true
+    }
+
+    private func configureAudioSession() {
+        // .playAndRecord supports both audiobook playback (continues when screen
+        // locks, paired with UIBackgroundModes=audio in Info.plist) and voice-memo
+        // recording. .defaultToSpeaker routes playback through the main speaker
+        // instead of the earpiece; .allowBluetoothA2DP keeps stereo headphones.
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord,
+                                    mode: .default,
+                                    options: [.defaultToSpeaker, .allowBluetoothA2DP])
+            try session.setActive(true)
+        } catch {
+            CAPLog.print("Failed to configure AVAudioSession: \(error)")
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

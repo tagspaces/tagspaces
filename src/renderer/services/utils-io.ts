@@ -1120,9 +1120,7 @@ export function getDevicePaths(): Promise<any> {
   if (AppConfig.isElectron) {
     return window.electronIO.ipcRenderer.invoke('getDevicePaths');
   } else if (AppConfig.isCapacitor) {
-    // Dynamic require to avoid webpack resolving this for Electron/web builds
-    const capPkg = '@tagspaces/tagspaces-common-capacitor';
-    const ioAPI = require(capPkg);
+    const ioAPI = require('@tagspaces/tagspaces-common-capacitor');
     return ioAPI.getDevicePaths();
   } else if (AppConfig.isCordova) {
     const ioAPI = require('@tagspaces/tagspaces-common-cordova');
@@ -1269,8 +1267,7 @@ export function selectDirectoryDialog(): Promise<any> {
   if (AppConfig.isElectron) {
     return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
   } else if (AppConfig.isCapacitor) {
-    const capPkg = '@tagspaces/tagspaces-common-capacitor';
-    const ioAPI = require(capPkg);
+    const ioAPI = require('@tagspaces/tagspaces-common-capacitor');
     return ioAPI.selectDirectoryDialog();
   } else if (AppConfig.isCordova) {
     const ioAPI = require('@tagspaces/tagspaces-common-cordova');

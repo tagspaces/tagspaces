@@ -181,6 +181,7 @@
     "@mui/x-date-pickers": "9.0.4",
     "@tagspaces/tagspaces-common": "4.8.6",
     "@tagspaces/tagspaces-common-aws3": "4.8.6",
+    "@tagspaces/tagspaces-common-capacitor": "4.8.6",
     "@tagspaces/tagspaces-common-cordova": "4.8.6",
     "@tagspaces/tagspaces-indexer": "4.8.6",
     "@tagspaces/tagspaces-search": "4.8.6",

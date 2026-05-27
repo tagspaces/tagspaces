@@ -36,7 +36,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>This app uses the camera to capture photos for tagging.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string></string>
+	<string>This app uses the microphone to record voice memos and audio notes.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app requires photo library access to save photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -53,7 +53,7 @@
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
