@@ -662,7 +662,13 @@ export const IOActionsContextProvider = ({
         }
       }
       if (actions.length !== settled.length) {
-        showNotification(t('core:copyingFoldersFailed'));
+        showNotification(
+          t(
+            mode === 'move'
+              ? 'core:movingFoldersFailed'
+              : 'core:copyingFoldersFailed',
+          ),
+        );
       }
       // If onProgress was wired, the dialog already shows in-flight rows.
       // If not, mirror the previous behavior of emitting a final 100/0 list
@@ -815,18 +821,18 @@ export const IOActionsContextProvider = ({
               });
           } else {
             showNotification(
-              t('core:copyingFilesFailed') + ' ' + moveError.message,
+              t('core:movingFilesFailed') + ' ' + moveError.message,
             );
             return false;
           }
         } else {
-          showNotification(t('core:copyingFilesFailed'));
+          showNotification(t('core:movingFilesFailed'));
           return false;
         }
       })
       .catch((err) => {
         console.log('Moving files failed with ' + err);
-        showNotification(t('core:copyingFilesFailed'));
+        showNotification(t('core:movingFilesFailed'));
         return false;
       });
   }
