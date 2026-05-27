@@ -6,8 +6,9 @@ import { mediaProtocol } from '@tagspaces/tagspaces-common/AppConfig';
 import { net, protocol } from 'electron';
 import { createReadStream } from 'fs';
 import * as fs from 'fs-extra';
-import { extname, normalize } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { extname } from 'path';
+import { pathToFileURL } from 'url';
+import { requestUrlToFilesystemPath, withCors } from './protocol-utils';
 
 const register = () => {
   //Logger.status(`Registering file protocol: ${mediaProtocol}`);
@@ -26,7 +27,13 @@ const register = () => {
         // Allows loading <video>/<audio> streaming elements
         stream: true,
 
-        // corsEnabled: true,
+        // Required so fetch() from extension iframes (file:// origin) can
+        // target tsfile:// resources. Without this Chromium rejects the
+        // request at the network layer with "Cross origin requests are only
+        // supported for protocol schemes: chrome, chrome-extension,
+        // chrome-untrusted, data, http, https." — before our protocol handler
+        // ever runs. Affects fetch() only; <video>/<img> never needed it.
+        corsEnabled: true,
         // codeCache: true, Code cache can only be enabled when the custom scheme is registered as standard scheme.
         // allowServiceWorkers: true,
         // bypassCSP: true,
@@ -44,14 +51,7 @@ const initialize = () => {
   }
 
   protocol.handle(mediaProtocol, async (request: any) => {
-    // Get the file path from the URL without the trailing slash
-    let filepath = request.url
-      .slice(`${mediaProtocol}://`.length)
-      .replace(/\/$/, '');
-    filepath = decodeURIComponent(filepath);
-    // Re-encode '#' characters to preserve them in the file URL
-    filepath = filepath.replace(/#/g, '%23');
-    const pathname = normalize(fileURLToPath(`file://${filepath}`)); //pathToFileURL(filepath).toString();
+    const pathname = requestUrlToFilesystemPath(request.url, mediaProtocol);
     const asFileUrl = pathToFileURL(pathname).toString();
 
     // Pre-check existence: net.fetch on a missing file yields ERR_UNEXPECTED
@@ -61,7 +61,7 @@ const initialize = () => {
     try {
       await fs.promises.access(pathname);
     } catch {
-      return new Response('', { status: 404 });
+      return withCors(new Response('', { status: 404 }), request);
     }
 
     // console.log(
@@ -75,9 +75,9 @@ const initialize = () => {
 
     const rangeHeader = request.headers.get('Range');
     if (!rangeHeader) {
-      return net.fetch(asFileUrl);
+      return withCors(await net.fetch(asFileUrl), request);
     } else {
-      return handleRangeRequest(request, pathname);
+      return withCors(await handleRangeRequest(request, pathname), request);
     }
   });
 };
