@@ -47,12 +47,14 @@ export default (state: Array<TS.SearchQuery> = initialState, action: any) => {
       );
 
       if (indexForEditing >= 0) {
+        // Strip maxSearchResults — it's a UI/settings cap, not part of the
+        // saved query (mirrors ADD_SEARCH). Without this, re-saving an
+        // existing stored search pins it to whatever cap was active at edit
+        // time and ignores later changes to the global setting.
+        const { maxSearchResults, ...search } = action.search;
         return [
           ...state.slice(0, indexForEditing),
-          {
-            // ...state[indexForEditing],
-            ...action.search,
-          },
+          { ...search },
           ...state.slice(indexForEditing + 1),
         ];
       }
