@@ -41,6 +41,18 @@
 	<string>This app requires photo library access to save photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires photo library access to organize and tag your photos.</string>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.org.tagspaces.mobileapp</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+			<key>NSUbiquitousContainerName</key>
+			<string>TagSpaces</string>
+		</dict>
+	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

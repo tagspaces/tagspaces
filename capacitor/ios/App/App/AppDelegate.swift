@@ -9,7 +9,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         configureAudioSession()
+        registerUbiquityContainer()
         return true
+    }
+
+    private func registerUbiquityContainer() {
+        // Touching the ubiquity URL once at launch makes iOS register the
+        // container with iCloud Drive, which is what surfaces the "TagSpaces"
+        // folder in the iOS Files app and macOS Finder. Without this, the
+        // folder can stay hidden until something in the app first reads/writes.
+        DispatchQueue.global(qos: .background).async {
+            guard let containerURL = FileManager.default.url(forUbiquityContainerIdentifier: nil) else {
+                return
+            }
+            let documents = containerURL.appendingPathComponent("Documents", isDirectory: true)
+            try? FileManager.default.createDirectory(at: documents,
+                                                    withIntermediateDirectories: true)
+        }
     }
 
     private func configureAudioSession() {
