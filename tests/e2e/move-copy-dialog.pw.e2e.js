@@ -240,6 +240,16 @@ test.describe('TST10 - Move/Copy dialog new features', () => {
     // ships with ~69 sample files — enough to exercise the pool but small
     // enough that the copy completes in seconds, not minutes).
     await selectAllFiles();
+    // gridPerspectiveSelectAllFiles is "select all entries" — it includes
+    // dirs too. Deselect destName (the freshly-created destination folder
+    // sitting at the root); otherwise the dialog's cyclic-target guard sees
+    // it in `selectedDirs` and disables `confirmCopyFiles` when we descend
+    // into destName as the target. The CardHeader's avatar span is the
+    // selection toggle — same shape selectRowFiles uses (NOT `div button`,
+    // which lands on the entry's three-dots context-menu trigger).
+    await clickOn(
+      `[data-tid="fsEntryName_${destName}"] div:nth-child(3) div span`,
+    );
 
     // Open the bulk move/copy dialog via the toolbar action.
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
@@ -327,6 +337,11 @@ test.describe('TST10 - Move/Copy dialog new features', () => {
     await expectElementExist(getGridFileSelector(destName), true, 10000);
 
     await selectAllFiles();
+    // Deselect destName so the cyclic-target guard doesn't disable the
+    // primary CTA — see the same note in TST1009.
+    await clickOn(
+      `[data-tid="fsEntryName_${destName}"] div:nth-child(3) div span`,
+    );
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
     await clickOnIfVisible('[data-tid=mcfModeCopy]');
     await expectElementExist('[data-tid=confirmCopyFiles]', true, 5000);
@@ -351,16 +366,16 @@ test.describe('TST10 - Move/Copy dialog new features', () => {
     // remain in the store so the indicator can read it.
     await clickOn('[data-tid=closeFileUploadTID]');
 
-    // Dialog is gone (no Close/Clear visible).
-    await expectElementExist(
-      '[data-tid=uploadCloseAndClearTID]',
-      false,
-      3000,
-    );
-
+    // Dropped the previous `expectElementExist(uploadCloseAndClearTID,
+    // false, ...)` check — `<Dialog keepMounted>` keeps the button attached
+    // even when minimized, and the helper's "exists=false" path waits for
+    // DOM detachment, so it can never go true. Indicator visibility below
+    // is the load-bearing assertion anyway.
+    //
     // The background-process indicator next to the search bar is now the
     // only surface showing progress. It only renders when `progress.length
-    // > 0`, so its presence after minimize is the load-bearing assertion.
+    // > 0`, so its presence after minimize proves the minimize wiring kept
+    // progress state intact (didn't fire a stray resetProgress).
     await expectElementExist('#progressButton', true, 10000);
 
     // Click the indicator to restore the dialog.

@@ -175,6 +175,22 @@ function MoveCopyFilesDialog(props: Props) {
         .map((fsentry) => fsentry.path)
     : [];
 
+  // Surface the progress dialog when the work might take a perceptible
+  // amount of time. Any folder copy/move qualifies (size unknown until
+  // we walk it). For file selections: 2+ files, or a single file large
+  // enough that the copy isn't instant. 50 MiB is a conservative cut —
+  // ~200 ms on a fast SSD, multiple seconds on HDD / network drives.
+  const PROGRESS_DIALOG_BYTE_THRESHOLD = 50 * 1024 * 1024;
+  const selectedFileBytes = currentEntries
+    ? currentEntries
+        .filter((e) => e.isFile)
+        .reduce((sum, e) => sum + (e.size || 0), 0)
+    : 0;
+  const shouldShowProgress =
+    selectedDirs.length > 0 ||
+    selectedFiles.length > 1 ||
+    selectedFileBytes > PROGRESS_DIALOG_BYTE_THRESHOLD;
+
   // Android can't move directories; if the selection includes dirs, force copy mode.
   const moveDisallowed = AppConfig.isAndroid && selectedDirs.length > 0;
   const [mode, setModeState] = useState<'move' | 'copy'>(
@@ -252,19 +268,23 @@ function MoveCopyFilesDialog(props: Props) {
   }
 
   function handleCopy() {
-    if (!skipTargetPicker) {
+    // The dialog also auto-opens on a 0→N progress transition (see
+    // FileUploadDialogContextProvider), so suppress onProgress when we
+    // decided NOT to surface the dialog — keeps both surfaces in sync.
+    const progressCb =
+      !skipTargetPicker && shouldShowProgress ? onUploadProgress : undefined;
+    if (!skipTargetPicker && shouldShowProgress) {
       dispatch(AppActions.resetProgress());
       openFileUploadDialog(targetDir, 'copyEntriesTitle');
     }
     if (selectedFiles.length > 0) {
       //todo use uploadFilesAPI && transferMeta = true
       const filePaths = selectedFiles;
-      const onProgress = skipTargetPicker ? undefined : onUploadProgress;
       const copyPromise = copyFiles(
         filePaths,
         targetPath,
         targetLocation.uuid,
-        onProgress,
+        progressCb,
       );
       if (skipTargetPicker) {
         Promise.resolve(copyPromise).then((success) => {
@@ -281,7 +301,7 @@ function MoveCopyFilesDialog(props: Props) {
         getEntriesCount(selectedDirs),
         targetPath,
         targetLocation.uuid,
-        skipTargetPicker ? undefined : onUploadProgress,
+        progressCb,
       );
     }
     onClose(true);
@@ -292,10 +312,10 @@ function MoveCopyFilesDialog(props: Props) {
   };
 
   function handleMove() {
-    if (
-      !skipTargetPicker &&
-      (selectedFiles.length > 0 || selectedDirs.length > 0)
-    ) {
+    // See handleCopy for the gating rationale.
+    const progressCb =
+      !skipTargetPicker && shouldShowProgress ? onUploadProgress : undefined;
+    if (!skipTargetPicker && shouldShowProgress) {
       dispatch(AppActions.resetProgress());
       openFileUploadDialog(targetDir, 'moveEntriesTitle');
     }
@@ -305,7 +325,7 @@ function MoveCopyFilesDialog(props: Props) {
         filePaths,
         targetPath,
         targetLocation.uuid,
-        skipTargetPicker ? undefined : onUploadProgress,
+        progressCb,
         true,
         true,
       );
@@ -325,7 +345,7 @@ function MoveCopyFilesDialog(props: Props) {
         getEntriesCount(selectedDirs),
         targetPath,
         targetLocation.uuid,
-        skipTargetPicker ? undefined : onUploadProgress,
+        progressCb,
       );
     }
     onClose(true);
