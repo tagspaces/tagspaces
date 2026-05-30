@@ -574,6 +574,8 @@
   "picturesFolder": "Pictures",
   "videosFolder": "Videos",
   "iCloudFolder": "iCloud Drive",
+  "useICloudDrive": "Use iCloud Drive",
+  "iCloudNotAvailable": "iCloud Drive is not available. Make sure you are signed in to iCloud and iCloud Drive is enabled in Settings.",
   "startImportButton": "Import",
   "startExportButton": "Export",
   "extractGeoCoordinates": "Extract geo-coordinates from files as tags",

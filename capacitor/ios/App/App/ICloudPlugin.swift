@@ -10,19 +10,38 @@ public class ICloudPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "startDownload", returnType: CAPPluginReturnPromise)
     ]
 
+    private static let containerID = "iCloud.org.tagspaces.mobileapp"
+
     @objc func getUbiquityContainer(_ call: CAPPluginCall) {
-        // forUbiquityContainerIdentifier: nil → use the first container declared
-        // in the entitlement (iCloud.org.tagspaces.mobileapp). Returns nil if
-        // iCloud Drive is disabled, the user isn't signed in, or the container
-        // hasn't been provisioned yet on Apple's side.
+        // Must run off the main thread — this call can block while iCloud sets
+        // up the container. Try the explicit container identifier first (passing
+        // nil is unreliable), then fall back to nil (first entitlement container).
         DispatchQueue.global(qos: .userInitiated).async {
-            guard let containerURL = FileManager.default.url(forUbiquityContainerIdentifier: nil) else {
-                call.resolve(["available": false])
+            let fm = FileManager.default
+            let token = fm.ubiquityIdentityToken
+            CAPLog.print("[ICloud] ubiquityIdentityToken present: \(token != nil)")
+
+            let containerURL = fm.url(forUbiquityContainerIdentifier: ICloudPlugin.containerID)
+                ?? fm.url(forUbiquityContainerIdentifier: nil)
+
+            guard let containerURL = containerURL else {
+                // token == nil → user not signed into iCloud / iCloud Drive off.
+                // token != nil but url nil → entitlement/container provisioning issue.
+                let reason = token == nil
+                    ? "not-signed-in"
+                    : "container-unavailable"
+                CAPLog.print("[ICloud] container URL is nil, reason: \(reason)")
+                call.resolve(["available": false, "reason": reason])
                 return
             }
+
             let documentsURL = containerURL.appendingPathComponent("Documents", isDirectory: true)
-            try? FileManager.default.createDirectory(at: documentsURL,
-                                                    withIntermediateDirectories: true)
+            do {
+                try fm.createDirectory(at: documentsURL, withIntermediateDirectories: true)
+            } catch {
+                CAPLog.print("[ICloud] createDirectory failed: \(error.localizedDescription)")
+            }
+            CAPLog.print("[ICloud] resolved documentsPath: \(documentsURL.path)")
             call.resolve([
                 "available": true,
                 "containerPath": containerURL.path,

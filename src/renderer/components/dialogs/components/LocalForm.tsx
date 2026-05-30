@@ -20,7 +20,8 @@ import AppConfig from '-/AppConfig';
 import TsButton from '-/components/TsButton';
 import TsTextField from '-/components/TsTextField';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { selectDirectoryDialog } from '-/services/utils-io';
+import { useNotificationContext } from '-/hooks/useNotificationContext';
+import { getICloudContainer, selectDirectoryDialog } from '-/services/utils-io';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
@@ -41,6 +42,37 @@ function LocalForm(props: Props) {
   const { errorTextPath, errorTextName, setName, setPath, path, name } = props;
   const { t } = useTranslation();
   const { findLocation } = useCurrentLocationContext();
+  const { showNotification } = useNotificationContext();
+
+  const useICloudDrive = () => {
+    getICloudContainer()
+      .then((result: any) => {
+        console.log('getICloudContainer result: ' + JSON.stringify(result));
+        if (result && result.available && result.documentsPath) {
+          setPath(result.documentsPath);
+          if (name.length < 1) {
+            setName('iCloud Drive');
+          }
+        } else {
+          const reason =
+            result && result.reason ? ' (' + result.reason + ')' : '';
+          showNotification(
+            t('core:iCloudNotAvailable') + reason,
+            'warning',
+            true,
+          );
+        }
+        return true;
+      })
+      .catch((err) => {
+        console.log('getICloudContainer failed with: ' + err);
+        showNotification(
+          t('core:iCloudNotAvailable') + ' (' + err + ')',
+          'warning',
+          true,
+        );
+      });
+  };
 
   const openDirectory = () => {
     selectDirectoryDialog()
@@ -100,6 +132,17 @@ function LocalForm(props: Props) {
               Examples: sdcard/DCIM, sdcard/Downloads or /storage/899D-1617 for
               ext. sd-card
             </FormHelperText>
+          )}
+          {AppConfig.isCapacitoriOS && (
+            <TsButton
+              size="small"
+              data-tid="useICloudDriveTID"
+              onClick={useICloudDrive}
+              variant="outlined"
+              sx={{ marginTop: '8px', alignSelf: 'flex-start' }}
+            >
+              {t('core:useICloudDrive')}
+            </TsButton>
           )}
         </FormControl>
       </Grid>
