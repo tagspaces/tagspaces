@@ -263,7 +263,7 @@ npx playwright test --project=electron-s3 folder.pw.e2e.js
 ### Structure
 
 - **Capacitor project**: `capacitor/` (parallel to `cordova/`, both can coexist)
-- **IO package**: `@tagspaces/tagspaces-common-capacitor` (source: `../tagspaces-common/packages/common-capacitor/`)
+- **IO module**: `src/renderer/services/io-capacitor.ts` (was external `@tagspaces/tagspaces-common-capacitor`; moved in-tree to drop the cross-repo symlink dance — single consumer, no other tool depends on it). Has `@ts-nocheck` for now; incremental typing is a future cleanup.
 - **Webpack configs**: `.erb/configs/webpack.config.capacitor.prod.ts` / `.dev.ts`
 - **Custom plugins**: `capacitor/android/app/src/main/java/org/tagspaces/plugins/` (StoragePermission, IntentHandler)
 - **Platform detection**: `AppConfig.isCapacitor`, `AppConfig.isCapacitorAndroid`, `AppConfig.isCapacitoriOS`, `AppConfig.isNativeMobile` (unified Cordova+Capacitor flag)
@@ -282,13 +282,13 @@ cd capacitor && npx cap open ios      # Open in Xcode
 
 ### Local Development Symlinks
 
-The `@tagspaces/tagspaces-common` and `@tagspaces/tagspaces-common-capacitor` packages in `release/app/node_modules/` must be symlinked to the source repos, otherwise `npm install` or `prepare-capacitor` overwrites Capacitor detection code:
+`@tagspaces/tagspaces-common` in `release/app/node_modules/` must be symlinked to the source repo, otherwise `npm install` or `prepare-capacitor` overwrites Capacitor detection code:
 
 ```bash
 ln -s /path/to/tagspaces-common/packages/common release/app/node_modules/@tagspaces/tagspaces-common
-ln -s /path/to/tagspaces-common/packages/common-capacitor release/app/node_modules/@tagspaces/tagspaces-common-capacitor
-ln -s /path/to/tagspaces-common/packages/common-capacitor node_modules/@tagspaces/tagspaces-common-capacitor
 ```
+
+(`tagspaces-common-capacitor` was removed; its code now lives in [src/renderer/services/io-capacitor.ts](src/renderer/services/io-capacitor.ts) and the 11 Capacitor plugin deps it relied on are declared explicitly in root `package.json`.)
 
 ### Key Pitfalls
 
