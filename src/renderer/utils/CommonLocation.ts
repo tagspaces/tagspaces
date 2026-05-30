@@ -19,7 +19,7 @@ import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { offlineRejectionIfRemote } from '-/utils/OfflineError';
 import * as cordovaIO from '@tagspaces/tagspaces-common-cordova';
-import * as capacitorIO from '@tagspaces/tagspaces-common-capacitor';
+import * as capacitorIO from '-/services/io-capacitor';
 
 /**
  * Shallow-clone `obj` dropping any function-valued properties.

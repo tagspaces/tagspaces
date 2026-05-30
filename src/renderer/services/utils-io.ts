@@ -16,9 +16,9 @@
  */
 
 import AppConfig from '-/AppConfig';
-import i18n from '-/services/i18n';
 import { Pro } from '-/pro';
 import defaultSettings from '-/reducers/settings-default';
+import i18n from '-/services/i18n';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
 import { prepareTagForExport } from '@tagspaces/tagspaces-common/misc';
@@ -27,7 +27,6 @@ import {
   cleanFrontDirSeparator,
   cleanRootPath,
   cleanTrailingDirSeparator,
-  extractContainingDirectoryPath,
   extractFileExtension,
   extractFileName,
   extractTagsAsObjects,
@@ -1120,7 +1119,7 @@ export function getDevicePaths(): Promise<any> {
   if (AppConfig.isElectron) {
     return window.electronIO.ipcRenderer.invoke('getDevicePaths');
   } else if (AppConfig.isCapacitor) {
-    const ioAPI = require('@tagspaces/tagspaces-common-capacitor');
+    const ioAPI = require('-/services/io-capacitor');
     return ioAPI.getDevicePaths();
   } else if (AppConfig.isCordova) {
     const ioAPI = require('@tagspaces/tagspaces-common-cordova');
@@ -1129,6 +1128,23 @@ export function getDevicePaths(): Promise<any> {
     console.log('getDevicePaths not supported');
     return Promise.resolve(undefined);
   }
+}
+
+/**
+ * iOS Capacitor only: resolve the iCloud Drive ubiquity container.
+ * Returns { available, containerPath, documentsPath }. `available` is false on
+ * any non-iOS platform or when the user isn't signed into iCloud.
+ */
+export function getICloudContainer(): Promise<{
+  available: boolean;
+  containerPath?: string;
+  documentsPath?: string;
+}> {
+  if (AppConfig.isCapacitor) {
+    const ioAPI = require('-/services/io-capacitor');
+    return ioAPI.getICloudContainer();
+  }
+  return Promise.resolve({ available: false });
 }
 
 function buildMetaLookup(
@@ -1267,7 +1283,7 @@ export function selectDirectoryDialog(): Promise<any> {
   if (AppConfig.isElectron) {
     return window.electronIO.ipcRenderer.invoke('selectDirectoryDialog');
   } else if (AppConfig.isCapacitor) {
-    const ioAPI = require('@tagspaces/tagspaces-common-capacitor');
+    const ioAPI = require('-/services/io-capacitor');
     return ioAPI.selectDirectoryDialog();
   } else if (AppConfig.isCordova) {
     const ioAPI = require('@tagspaces/tagspaces-common-cordova');
