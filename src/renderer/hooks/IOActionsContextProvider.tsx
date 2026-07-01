@@ -1466,7 +1466,12 @@ export const IOActionsContextProvider = ({
                 source: 'upload',
               });
               showNotification(
-                'File ' + fileTargetPath + ' successfully imported.',
+                t('core:fileImportedSuccess', {
+                  path: extractFileName(
+                    fileTargetPath,
+                    currentLocation?.getDirSeparator(),
+                  ),
+                }),
                 'default',
                 true,
               );
