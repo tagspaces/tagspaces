@@ -22,6 +22,7 @@ import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { isDesktopMode } from '-/reducers/settings';
 import useEventListener from '-/utils/useEventListener';
 import { Box } from '@mui/material';
 import { rgbToHex, useTheme } from '@mui/material/styles';
@@ -35,6 +36,7 @@ import {
   useRef,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface Props {
   fileViewer: MutableRefObject<HTMLIFrameElement>;
@@ -46,6 +48,7 @@ interface Props {
 function FileView(props: Props) {
   const { i18n } = useTranslation();
   const theme = useTheme();
+  const desktopMode = useSelector(isDesktopMode);
   const { openedEntry } = useOpenedEntryContext();
   const { isEditMode } = useFilePropertiesContext();
   const { setFullscreen, isFullscreen, toggleFullScreen } =
@@ -307,8 +310,12 @@ function FileView(props: Props) {
           onClick={() => toggleFullScreen(fileViewerContainer.current)}
         >
           <CloseIcon />
-          <br />
-          <span>ESC</span>
+          {desktopMode && (
+            <>
+              <br />
+              <span>ESC</span>
+            </>
+          )}
         </Box>
       )}
       {/* Note: allow-same-origin + allow-scripts is intentional — viewers are
