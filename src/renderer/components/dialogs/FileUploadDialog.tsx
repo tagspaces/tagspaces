@@ -41,9 +41,10 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   cleanFrontDirSeparator,
+  extractContainingDirectoryPath,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
-import React, { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -51,12 +52,41 @@ interface Props {
   open: boolean;
   title: string;
   targetPath?: string;
-  //transferMeta?: boolean;
   onClose: () => void;
 }
 
+// Module-level on purpose: defined inside the dialog component it would be a
+// new component type on every render, making React unmount/remount every
+// progress row on each progress tick (and killing the bar's CSS transition).
+function LinearProgressWithLabel({ value }: { value: number }) {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      <Box
+        sx={{
+          width: '100%',
+          mr: 1,
+        }}
+      >
+        <LinearProgress variant="determinate" value={value} />
+      </Box>
+      <Box
+        sx={{
+          minWidth: 35,
+        }}
+      >
+        <Typography variant="body2">{`${value}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
 function FileUploadDialog(props: Props) {
-  const { open = false, title, onClose } = props;
+  const { open = false, title, targetPath, onClose } = props;
   const { t } = useTranslation();
   const dispatch: AppDispatch = useDispatch();
   const theme = useTheme();
@@ -71,68 +101,50 @@ function FileUploadDialog(props: Props) {
   useEffect(() => {
     if (AppConfig.isElectron) {
       const handler = (fileName, newProgress) => {
-        dispatch(AppActions.onUploadProgress(newProgress, undefined));
+        dispatch(AppActions.onUploadProgress(newProgress, undefined, fileName));
       };
-      window.electronIO.ipcRenderer.on('progress', handler);
+      // The preload `on()` wraps the handler internally and returns the
+      // matching unsubscribe — removeListener(handler) would miss the wrapper
+      // and leak the listener; removeAllListeners would kill other listeners
+      // on the same channel.
+      const unsubscribe = window.electronIO.ipcRenderer.on('progress', handler);
       return () => {
-        // Best-effort cleanup: prefer removeListener so we don't kill listeners
-        // registered by other components on the same channel.
-        const ipc: any = window.electronIO.ipcRenderer;
-        if (typeof ipc.removeListener === 'function') {
-          ipc.removeListener('progress', handler);
-        } else {
-          ipc.removeAllListeners('progress');
+        if (typeof unsubscribe === 'function') {
+          unsubscribe();
         }
       };
     }
   }, [dispatch]);
 
-  function LinearProgressWithLabel(prop) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <Box
-          sx={{
-            width: '100%',
-            mr: 1,
-          }}
-        >
-          <LinearProgress variant="determinate" {...prop} />
-        </Box>
-        <Box
-          sx={{
-            minWidth: 35,
-          }}
-        >
-          <Typography variant="body2">{`${prop.value}%`}</Typography>
-        </Box>
-      </Box>
-    );
-  }
-
-  // Derived view-model — computed once per render, no ref mutation inside .map.
-  const progressArr = Array.isArray(progress) ? progress : [];
-  // Defensive copy: progress comes from Redux; never sort the original in place.
-  const sortedProgress = React.useMemo(
-    () => [...progressArr].sort((a, b) => ('' + a.path).localeCompare(b.path)),
-    [progressArr],
+  // Derived view-model. Defensive copy: progress comes from Redux; never sort
+  // the original in place.
+  const sortedProgress = useMemo(
+    () =>
+      Array.isArray(progress)
+        ? [...progress].sort((a, b) => String(a.path).localeCompare(b.path))
+        : [],
+    [progress],
   );
-  const firstProgressPath = progressArr[0]?.path
-    ? progressArr[0].path.split('?')[0]
+  // Progress rows hold per-file paths — when no explicit targetPath prop was
+  // provided, show the destination *folder* in the header, not the first
+  // file's own path (which duplicated the file name above the rows).
+  const firstProgressPath = sortedProgress[0]?.path
+    ? String(sortedProgress[0].path).split('?')[0]
     : undefined;
-  const targetPath = props.targetPath ?? firstProgressPath;
+  const fallbackTargetDir = firstProgressPath
+    ? extractContainingDirectoryPath(
+        firstProgressPath,
+        currentLocation?.getDirSeparator(),
+      )
+    : undefined;
 
   const haveProgress = sortedProgress.some(
     (p) => p.progress > -1 && p.progress < 100 && p.state !== 'finished',
   );
 
   function getTargetURL() {
-    if (props.targetPath) {
-      return props.targetPath;
+    if (targetPath) {
+      return targetPath;
     }
     if (currentLocation) {
       if (currentLocation.endpointURL) {
@@ -162,9 +174,10 @@ function FileUploadDialog(props: Props) {
         );
       }
     }
-    if (targetPath) {
-      return targetPath;
-    } else if (currentDirectoryPath) {
+    if (fallbackTargetDir) {
+      return fallbackTargetDir;
+    }
+    if (currentDirectoryPath) {
       return currentDirectoryPath;
     }
     return '/';
@@ -194,7 +207,7 @@ function FileUploadDialog(props: Props) {
       onClose={onClose}
       keepMounted
       scroll="paper"
-      fullWidth={true}
+      fullWidth
       fullScreen={smallScreen}
       maxWidth="sm"
       aria-labelledby="draggable-dialog-title"
@@ -222,12 +235,13 @@ function FileUploadDialog(props: Props) {
         {sortedProgress.map((fileProgress) => {
           const percentage = fileProgress.progress;
           const { path, filePath, abort } = fileProgress;
-          const rowName = filePath
-            ? filePath
-            : extractFileName(
-                path.split('?')[0],
-                currentLocation?.getDirSeparator(),
-              );
+          // filePath (when set) may be a bare name or a full path depending on
+          // the producer — extractFileName handles both; a bare name passes
+          // through unchanged.
+          const rowName = extractFileName(
+            String(filePath || path || '').split('?')[0],
+            currentLocation?.getDirSeparator(),
+          );
 
           return (
             <Grid

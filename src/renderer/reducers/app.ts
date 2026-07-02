@@ -232,11 +232,13 @@ export const actions = {
   onUploadProgress:
     (progress, abort, fileName = undefined) =>
     (dispatch: (action) => void) => {
-      const progressPercentage = Math.round(
-        (progress.loaded / progress.total) * 100,
-      );
-      console.log(progressPercentage);
-
+      // Pre-registration rows report {loaded: 0, total: 0} — guard the
+      // division so they start at 0% instead of NaN (a NaN row renders
+      // without a progress bar and never matches the -1 warning state).
+      const progressPercentage =
+        progress.total > 0
+          ? Math.round((progress.loaded / progress.total) * 100)
+          : 0;
       dispatch(
         actions.setProgress(progress.key, progressPercentage, abort, fileName),
       );

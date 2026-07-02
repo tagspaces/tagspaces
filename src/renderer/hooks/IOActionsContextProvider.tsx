@@ -1317,12 +1317,6 @@ export const IOActionsContextProvider = ({
     targetLocationId: string = undefined,
     sourceLocationId: string = undefined,
   ): Promise<TS.FileSystemEntry[]> {
-    if (onUploadProgress) {
-      for (let i = 0; i < files.length; i += 1) {
-        const key = cleanTrailingDirSeparator(targetPath) + '/' + files[i].name;
-        onUploadProgress({ key: key, loaded: 0, total: 0 }, undefined);
-      }
-    }
     // Path-based upload only works where the platform attaches a real native
     // path to each browser File object: Electron sets it via
     // `ipcRenderer.getPathForFile`.
@@ -1332,6 +1326,13 @@ export const IOActionsContextProvider = ({
     // — make sure `blobToBase64` in io-capacitor.ts handles ArrayBuffer.isView,
     // otherwise the writes silently produce garbage).
     if (AppConfig.isElectron) {
+      if (onUploadProgress) {
+        for (let i = 0; i < files.length; i += 1) {
+          const key =
+            cleanTrailingDirSeparator(targetPath) + '/' + files[i].name;
+          onUploadProgress({ key: key, loaded: 0, total: 0 }, undefined);
+        }
+      }
       return uploadFiles(
         files.map((f) => f.path),
         targetPath,
@@ -1343,6 +1344,68 @@ export const IOActionsContextProvider = ({
       );
     }
 
+    // FileReader path (web / Capacitor): resolve each file's final target
+    // path up front — the same key the upload later reports progress under —
+    // and pre-register the dialog rows with it. Keying the pre-registration
+    // by the raw file name diverges from the real upload key whenever the
+    // name gets transformed below (decodeURIComponent, the mobile capture
+    // timestamp tag), leaving a stale, bar-less duplicate row in the upload
+    // dialog next to the live one.
+    const usedTargetPaths = new Set<string>();
+    const targetFilePaths = files.map((file) => {
+      let fileName = file.name;
+      try {
+        fileName = decodeURIComponent(file.name);
+      } catch (ex) {}
+      const buildPath = (name: string) => {
+        let p = joinPaths(currentLocation?.getDirSeparator(), targetPath, name);
+        if (
+          currentLocation?.haveObjectStoreSupport() &&
+          (p.startsWith('\\') || p.startsWith('/'))
+        ) {
+          p = p.substr(1);
+        }
+        return p;
+      };
+      let filePath;
+      if (
+        AppConfig.isNativeMobile &&
+        (file.type?.startsWith('image/') || file.type?.startsWith('video/'))
+      ) {
+        // Camera / photo-library captures on mobile arrive with generic,
+        // colliding names (iOS names every capture "image.jpg", videos
+        // "video.mov"), so a second capture is skipped as "already exists".
+        // Tag imported images and videos with the capture timestamp to make
+        // each import unique, e.g. "image [20260612T122345].jpg". The tag is
+        // second-resolution and the whole batch is stamped in this one pass —
+        // bump the stamp until the path is unique so multi-selected captures
+        // don't collide with each other.
+        let stamp = new Date();
+        do {
+          filePath = buildPath(
+            generateFileName(
+              fileName,
+              [formatDateTime4Tag(stamp, true)],
+              tagDelimiter,
+              currentLocation?.getDirSeparator(),
+              ' ', // space before the [tag] container → "name [tag].ext"
+              true, // place the tag at the end of the filename
+            ),
+          );
+          stamp = new Date(stamp.getTime() + 1000);
+        } while (usedTargetPaths.has(filePath));
+      } else {
+        filePath = buildPath(fileName);
+      }
+      usedTargetPaths.add(filePath);
+      return filePath;
+    });
+    if (onUploadProgress) {
+      targetFilePaths.forEach((filePath) => {
+        onUploadProgress({ key: filePath, loaded: 0, total: 0 }, undefined);
+      });
+    }
+
     return new Promise(async (resolve) => {
       const fsEntries = [];
       // -> cannot upload meta data (for every upload in web browser its need to have <input> element)
@@ -1351,41 +1414,8 @@ export const IOActionsContextProvider = ({
       async function setupReader(inx) {
         const file = files[inx];
         const reader = new FileReader();
-        let fileName = file.name;
-        try {
-          fileName = decodeURIComponent(file.name);
-        } catch (ex) {}
-        // Camera / photo-library captures on mobile arrive with generic,
-        // colliding names (iOS names every capture "image.jpg", videos
-        // "video.mov"), so a second capture is skipped as "already exists".
-        // Tag imported images and videos with the capture timestamp to make
-        // each import unique, e.g. "image [20260612T122345].jpg".
-        if (
-          AppConfig.isNativeMobile &&
-          (file.type?.startsWith('image/') || file.type?.startsWith('video/'))
-        ) {
-          fileName = generateFileName(
-            fileName,
-            [formatDateTime4Tag(new Date(), true)],
-            tagDelimiter,
-            currentLocation?.getDirSeparator(),
-            ' ', // space before the [tag] container → "name [tag].ext"
-            true, // place the tag at the end of the filename
-          );
-        }
-        let filePath = joinPaths(
-          currentLocation?.getDirSeparator(),
-          targetPath,
-          fileName,
-        );
-        if (
-          currentLocation?.haveObjectStoreSupport() &&
-          (filePath.startsWith('\\') || filePath.startsWith('/'))
-        ) {
-          filePath = filePath.substr(1);
-        }
         reader.onload = async (event: any) => {
-          await readerLoaded(event, inx, filePath);
+          await readerLoaded(event, inx, targetFilePaths[inx]);
         };
         reader.readAsArrayBuffer(file);
       }
@@ -1399,6 +1429,10 @@ export const IOActionsContextProvider = ({
             'warning',
             true,
           );
+          // Flip the pre-registered progress row into the warning state
+          // (-1 → warning icon with the fileExist tooltip) instead of
+          // leaving it sitting at 0% forever.
+          dispatch(AppActions.setProgress(fileTargetPath, -1, undefined));
         } else {
           const result = event.currentTarget
             ? event.currentTarget.result
