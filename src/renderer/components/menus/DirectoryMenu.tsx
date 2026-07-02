@@ -267,10 +267,12 @@ function DirectoryMenu(props: Props) {
     openFileUpload(directoryPath);
   }
 
-  // The WebView file chooser behind "Add files" can't open the camera on
-  // mobile, so on Capacitor we offer a dedicated "Take picture" entry that
+  // Android WebView's file chooser behind "Add files" can't open the camera,
+  // so on Capacitor Android we offer a dedicated "Take picture" entry that
   // drives the native camera plugin and feeds the photo into the same upload
-  // pipeline.
+  // pipeline. Not offered on iOS: WKWebView's file chooser already includes
+  // "Take Photo", and the camera plugin's native presentation leaves the
+  // WKWebView shifted after dismissal (same bug family as native fullscreen).
   function cameraTakePicture() {
     openCameraCapture(directoryPath);
   }
@@ -380,7 +382,7 @@ function DirectoryMenu(props: Props) {
         importMacTags,
         switchPerspectives ? perspectiveSwitch : undefined,
         showProperties,
-        AppConfig.isCapacitor ? cameraTakePicture : undefined,
+        AppConfig.isCapacitorAndroid ? cameraTakePicture : undefined,
         showAddRemoveTagsDialog,
         openInNewWindow,
         changeFolderThumbnail,

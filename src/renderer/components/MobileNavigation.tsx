@@ -528,10 +528,13 @@ function MobileNavigation(props: Props) {
                       </ListItemIcon>
                       <ListItemText primary={t('core:addFiles')} />
                     </MenuItem>
-                    {/* Capacitor-only: the WebView file chooser can't open the
-                        camera, so offer a dedicated trigger for the native
-                        camera plugin. */}
-                    {AppConfig.isCapacitor && (
+                    {/* Capacitor Android only: its WebView file chooser can't
+                        open the camera, so offer a dedicated trigger for the
+                        native camera plugin. On iOS the file chooser behind
+                        "Add files" already includes "Take Photo", and the
+                        camera plugin's native presentation leaves the
+                        WKWebView shifted after dismissal. */}
+                    {AppConfig.isCapacitorAndroid && (
                       <MenuItem
                         key="cameraTakePicture"
                         data-tid="cameraTakePictureTID"
