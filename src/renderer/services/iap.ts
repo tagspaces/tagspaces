@@ -27,9 +27,12 @@
 // re-evaluates the Pro gate with the new value.
 //
 // The CdvPurchase store is event-driven: register product → set up
-// listeners → initialize. The verified→finish flow is mandatory on
-// StoreKit 2 / Play Billing v8 (otherwise the platforms keep retrying).
-// No-op on desktop and web.
+// listeners → initialize. Finishing every approved transaction is
+// mandatory on StoreKit 2 / Play Billing v8 — otherwise the platforms keep
+// retrying and payment is never captured. With no receipt validator wired
+// up (receipts stay on-device), we finish() directly on `approved`;
+// verify() would wait on a validation service that isn't there, stranding
+// the purchase unfinished. No-op on desktop and web.
 
 import AppConfig from '-/AppConfig';
 import { openURLExternally } from '-/services/utils-io';
@@ -100,6 +103,23 @@ function reloadAfterEntitlementChange(): void {
   }, 250);
 }
 
+/**
+ * Mark Pro unlocked and, on a LITE→Pro transition, reload so the module-load
+ * Pro gate (src/renderer/pro/index.ts) re-evaluates. Centralizing "set cache +
+ * reload" here means whichever event wins the race — the `.finished` listener,
+ * the owned()/receipt sync, or an explicit restore — triggers exactly one
+ * reload; later calls see the cache already true and no-op. Splitting these
+ * (one path setting the cache, another owning the reload) previously left the
+ * entitlement true but the UI stranded in LITE with no restart — the restore bug.
+ */
+function grantEntitlement(): void {
+  const wasUnlocked = isProUnlockedSync();
+  setEntitlementCache(true);
+  if (!wasUnlocked) {
+    reloadAfterEntitlementChange();
+  }
+}
+
 // --- CdvPurchase plugin singleton ---
 
 type CdvStore = any;
@@ -128,11 +148,10 @@ async function loadPlugin(): Promise<CdvPurchaseModule | null> {
 
 /**
  * Initialize the CdvPurchase store once at app boot. Registers our Pro
- * product against both platforms, wires the verify→finish purchase
- * lifecycle, and queries current ownership. If the entitlement state
- * changes during init (fresh install with prior purchase, or refund
- * detected since last launch) we reload so the Pro module gate at
- * src/renderer/pro/index.ts re-evaluates.
+ * product for the current platform, wires the approved→finish purchase
+ * lifecycle, and queries current ownership. If a prior purchase is detected
+ * during init (fresh install with the product already owned) grantEntitlement
+ * reloads so the Pro module gate at src/renderer/pro/index.ts re-evaluates.
  *
  * Safe to call on any platform — no-ops off-Capacitor. Idempotent: extra
  * calls return the in-flight or completed promise.
@@ -145,8 +164,6 @@ export async function initializeIap(): Promise<void> {
     if (!mod) return;
     const { store, ProductType, Platform } = mod;
     if (!store) return;
-
-    const wasUnlocked = isProUnlockedSync();
 
     // Only ever touch the current device's store. Registering / initializing a
     // foreign platform (e.g. Apple on Android) makes cdv-purchase wait on a
@@ -171,33 +188,34 @@ export async function initializeIap(): Promise<void> {
       return;
     }
 
-    // Purchase lifecycle: approved → verify (server-side or local) →
-    // finish. For a non-consumable IAP with no backend, the plugin's
-    // built-in local verification is enough; once finished we mark the
-    // entitlement cache and reload.
+    // Purchase lifecycle without a receipt validator: approved → finish →
+    // grant. StoreKit 2 / Play Billing only surface OS-verified transactions,
+    // so finishing directly is safe. transaction.verify() is intentionally NOT
+    // used — it dispatches to a validation service we don't run, so `.verified`
+    // (and therefore finish()) would never fire, leaving the purchase stranded.
     try {
       store
         .when()
         .approved((transaction: any) => {
           try {
-            return transaction.verify();
+            return transaction.finish();
           } catch (e) {
-            console.warn('[iap] verify call failed:', e);
+            console.warn('[iap] transaction.finish failed:', e);
             return undefined;
           }
         })
-        .verified((receipt: any) => {
-          try {
-            return receipt.finish();
-          } catch (e) {
-            console.warn('[iap] receipt.finish failed:', e);
-            return undefined;
-          }
-        })
-        .finished((_transaction: any) => {
-          if (store.owned?.(PRO_PRODUCT_ID)) {
-            setEntitlementCache(true);
-            reloadAfterEntitlementChange();
+        .finished((transaction: any) => {
+          // We register exactly one product (PRO_PRODUCT_ID), so any finished
+          // transaction is the Pro unlock. Grant from the transaction rather
+          // than store.owned(), which can report false for a genuinely owned
+          // product when no validator is configured. grantEntitlement() handles
+          // the false→true reload (and is a no-op once already unlocked, so the
+          // OS re-emitting the entitlement on later launches can't loop).
+          const coversPro =
+            !transaction?.products ||
+            transaction.products.some?.((p: any) => p?.id === PRO_PRODUCT_ID);
+          if (coversPro) {
+            grantEntitlement();
           }
         })
         .productUpdated(() => {
@@ -230,19 +248,25 @@ export async function initializeIap(): Promise<void> {
     }
 
     // After initialize the store has refreshed receipts and products.
+    // syncOwnedToCache → grantEntitlement reloads if this transitioned us from
+    // LITE to Pro (fresh install with a prior purchase, or restore on launch).
     syncOwnedToCache(store);
-    const isUnlocked = isProUnlockedSync();
-    if (wasUnlocked !== isUnlocked) {
-      reloadAfterEntitlementChange();
-    }
   })();
   return initializePromise;
 }
 
 function syncOwnedToCache(store: CdvStore): void {
   try {
-    const owned = Boolean(store.owned?.(PRO_PRODUCT_ID));
-    setEntitlementCache(owned);
+    // Upgrade-only. store.owned() is trustworthy when it returns true, but on
+    // StoreKit 2 without a validator it can return false for a genuinely owned
+    // product — and clearing the cache on that false reading would revoke Pro
+    // immediately after a purchase/restore. So only ever grant here (never
+    // clear). grantEntitlement() also drives the reload when this owned() read
+    // is what flips LITE→Pro (e.g. restore, where `.finished` won't re-fire for
+    // an already-finished transaction).
+    if (store.owned?.(PRO_PRODUCT_ID)) {
+      grantEntitlement();
+    }
   } catch (e) {
     console.warn('[iap] owned() lookup failed:', e);
   }
@@ -308,8 +332,8 @@ export async function purchasePro(): Promise<IAPPurchaseResult> {
       }
       return { success: false, error: err.message ?? 'Purchase failed' };
     }
-    // No error returned — purchase succeeded or is pending verification.
-    // Entitlement cache + reload is handled by the verify→finish listener.
+    // No error returned — purchase succeeded or is pending. Entitlement cache +
+    // reload is handled by the approved→finish→grantEntitlement listener.
     return { success: true };
   } catch (e: any) {
     const msg = e?.message ?? String(e);
@@ -321,9 +345,10 @@ export async function purchasePro(): Promise<IAPPurchaseResult> {
 }
 
 /**
- * User-triggered restore. Asks the store to refresh and re-emit any
- * receipts; if the user already owns Pro, the verify→finish listener
- * updates the cache and reloads.
+ * User-triggered restore. Asks the store to refresh and re-emit any receipts;
+ * if the user owns Pro, syncOwnedToCache → grantEntitlement updates the cache
+ * and reloads (the `.finished` listener also grants when restore re-emits an
+ * unfinished transaction). Returns the resulting entitlement state.
  */
 export async function restoreProPurchase(): Promise<{ restored: boolean }> {
   if (!isIapAvailable()) return { restored: false };
@@ -342,11 +367,12 @@ export async function restoreProPurchase(): Promise<{ restored: boolean }> {
 }
 
 /**
- * Open the platform's promo-code redemption UI. iOS uses StoreKit's
- * native redemption sheet (CdvPurchase exposes it via
- * store.manageSubscriptions / a dedicated method depending on plugin
- * version); Android has no in-app API, so we deep-link to the Play
- * Store's promo redemption page.
+ * Open the platform's code redemption UI. iOS presents StoreKit's native
+ * redemption sheet via the Capacitor plugin's presentCodeRedemptionSheet()
+ * (which calls AppStore.presentOfferCodeRedeemSheet under the hood). After a
+ * successful redemption the transaction flows through the normal
+ * approved→finish→grantEntitlement listener, so Pro unlocks automatically.
+ * Android has no in-app API, so we deep-link to the Play Store's promo page.
  */
 export async function presentCodeRedemption(): Promise<void> {
   if (!isIapAvailable()) return;
@@ -355,14 +381,17 @@ export async function presentCodeRedemption(): Promise<void> {
       await initializeIap();
       const mod = await loadPlugin();
       if (!mod) return;
-      const { store } = mod;
-      // CdvPurchase 13+ exposes redeemCode() on iOS for the offer code
-      // redemption sheet. Older versions used presentCodeRedemptionSheet
-      // on the iOS adapter directly; try both for forward compatibility.
-      const redeem =
-        store?.redeemCode ?? store?.iosAdapter?.presentCodeRedemptionSheet;
-      if (typeof redeem === 'function') {
-        await redeem.call(store);
+      // The redemption sheet lives on the raw Capacitor plugin export
+      // (registerPlugin('PurchasePlugin')), NOT on the CdvPurchase `store`
+      // object — store.redeemCode / store.iosAdapter don't exist, which is why
+      // the button previously no-oped silently.
+      const { PurchasePlugin } = mod;
+      if (typeof PurchasePlugin?.presentCodeRedemptionSheet === 'function') {
+        await PurchasePlugin.presentCodeRedemptionSheet();
+      } else {
+        console.warn(
+          '[iap] presentCodeRedemptionSheet not exposed by plugin build',
+        );
       }
       return;
     }
