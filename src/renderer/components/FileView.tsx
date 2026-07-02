@@ -23,6 +23,7 @@ import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { isDesktopMode } from '-/reducers/settings';
+import { suspendContainingBlocks } from '-/utils/cssContainment';
 import useEventListener from '-/utils/useEventListener';
 import { Box } from '@mui/material';
 import { rgbToHex, useTheme } from '@mui/material/styles';
@@ -63,30 +64,29 @@ function FileView(props: Props) {
         // @ts-ignore
         fileViewer?.current?.contentWindow?.togglePlay();
       });
-
-      return () => {
-        if (window.electronIO.ipcRenderer) {
-          window.electronIO.ipcRenderer.removeAllListeners('play-pause');
-        }
-      };
     }
-    if (!AppConfig.isIOS) {
-      if (fscreen.fullscreenEnabled) {
-        fscreen.addEventListener(
-          'fullscreenchange',
-          handleFullscreenChange,
-          false,
-        );
-        fscreen.addEventListener(
-          'fullscreenerror',
-          handleFullscreenError,
-          false,
-        );
-      }
+    // Track native fullscreen so `isFullscreen` (close/ESC button, viewer
+    // enter/exitFullscreen notifications) follows enter AND exit — including
+    // exits the browser performs itself (ESC key). Electron needs this too:
+    // an early `return` here used to skip the registration in the desktop
+    // app, leaving `isFullscreen` stuck on false so the close button never
+    // appeared. iOS is excluded — it uses CSS fullscreen, which flips the
+    // state directly without native fullscreen events.
+    const useFscreen = !AppConfig.isIOS && fscreen.fullscreenEnabled;
+    if (useFscreen) {
+      fscreen.addEventListener(
+        'fullscreenchange',
+        handleFullscreenChange,
+        false,
+      );
+      fscreen.addEventListener('fullscreenerror', handleFullscreenError, false);
     }
 
     return () => {
-      if (!AppConfig.isIOS) {
+      if (AppConfig.isElectron && window.electronIO?.ipcRenderer) {
+        window.electronIO.ipcRenderer.removeAllListeners('play-pause');
+      }
+      if (useFscreen) {
         fscreen.removeEventListener('fullscreenchange', handleFullscreenChange);
         fscreen.removeEventListener('fullscreenerror', handleFullscreenError);
       }
@@ -228,51 +228,14 @@ function FileView(props: Props) {
   // :fullscreen pseudo-class. Other platforms use the real Fullscreen API.
   const cssFullscreen = isFullscreen && AppConfig.isCapacitoriOS;
 
-  // `position: fixed` is contained — not viewport-relative — by any ancestor
-  // with `contain`/`transform`/`filter`/`perspective`/`will-change` (the
-  // Splitter panes set `contain: layout paint`). That trapped the overlay
-  // inside the file-view pane. While CSS-fullscreen is active, neutralize those
-  // properties up the ancestor chain so the overlay fills the real viewport,
-  // and restore them on exit. (Portaling to <body> would escape it too, but
-  // moving the iframe in the DOM reloads it and loses editor state.)
+  // While CSS-fullscreen is active, neutralize containing-block properties up
+  // the ancestor chain so the fixed overlay fills the real viewport instead of
+  // being trapped inside the file-view pane, and restore them on exit. (See
+  // suspendContainingBlocks; portaling to <body> would escape the trap too,
+  // but moving the iframe in the DOM reloads it and loses editor state.)
   useEffect(() => {
     if (!cssFullscreen) return undefined;
-    const start = fileViewerContainer.current?.parentElement;
-    const saved: Array<{ node: HTMLElement; props: Record<string, string> }> =
-      [];
-    const RESET: Record<string, string> = {
-      contain: 'none',
-      transform: 'none',
-      filter: 'none',
-      perspective: 'none',
-      willChange: 'auto',
-    };
-    let node: HTMLElement | null = start || null;
-    while (node && node !== document.body) {
-      const cs = getComputedStyle(node);
-      const traps =
-        (cs.contain && cs.contain !== 'none') ||
-        (cs.transform && cs.transform !== 'none') ||
-        (cs.filter && cs.filter !== 'none') ||
-        (cs.perspective && cs.perspective !== 'none') ||
-        (cs.willChange && cs.willChange !== 'auto');
-      if (traps) {
-        const props: Record<string, string> = {};
-        Object.keys(RESET).forEach((k) => {
-          props[k] = node!.style[k as any];
-          node!.style[k as any] = RESET[k];
-        });
-        saved.push({ node, props });
-      }
-      node = node.parentElement;
-    }
-    return () => {
-      saved.forEach(({ node: n, props }) => {
-        Object.keys(props).forEach((k) => {
-          n.style[k as any] = props[k];
-        });
-      });
-    };
+    return suspendContainingBlocks(fileViewerContainer.current?.parentElement);
   }, [cssFullscreen]);
 
   return (
