@@ -9,6 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 
+import type { UtilityProcess } from 'electron';
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
@@ -19,7 +20,6 @@ import {
   shell,
   utilityProcess,
 } from 'electron';
-import type { UtilityProcess } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
 import fs from 'fs';
@@ -581,11 +581,14 @@ app.on('quit', () => {
 });
 
 app.on('web-contents-created', (event, contents) => {
-  contents.on('will-navigate', (event, navigationUrl) => {
-    const parsedUrl = new URL(navigationUrl);
-    if (parsedUrl.origin !== 'file://') {
-      event.preventDefault();
-    }
+  contents.on('will-navigate', (event) => {
+    // The renderer never performs a legitimate top-level navigation: routing
+    // is in-page (hash router) and reloads go through webContents.reload() /
+    // loadURL from the main process, neither of which emits 'will-navigate'.
+    // So block every navigation attempt. This keeps the window — and its
+    // privileged preload / IPC bridge — from being pointed at any other
+    // document, including arbitrary local file:// URLs.
+    event.preventDefault();
   });
 
   contents.on('will-attach-webview', (event, webPreferences, params) => {

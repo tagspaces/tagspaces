@@ -77,6 +77,25 @@ function safeT(key: string, fallback: string) {
   }
 }
 
+/**
+ * Reload the whole app from the crash screen. In Electron a page-initiated
+ * window.location.reload() can be swallowed (sandboxed file:// renderer), so
+ * prefer the main-process reload used everywhere else in the app (Settings,
+ * app menu). Fall back to window.location.reload() on web / mobile.
+ */
+function reloadApplication() {
+  try {
+    const io = (window as any).electronIO?.ipcRenderer;
+    if (AppConfig.isElectron && io) {
+      io.sendMessage('reloadWindow');
+      return;
+    }
+  } catch (e) {
+    console.error('reloadApplication via IPC failed, falling back:', e);
+  }
+  window.location.reload();
+}
+
 function TopLevelFallback({ error }: { error?: Error }) {
   const isDev = process.env.NODE_ENV !== 'production';
   return (
@@ -113,7 +132,7 @@ function TopLevelFallback({ error }: { error?: Error }) {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => window.location.reload()}
+          onClick={reloadApplication}
           sx={{
             borderRadius: AppConfig.defaultCSSRadius,
             textTransform: 'none',
