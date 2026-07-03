@@ -98,7 +98,8 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
     }, [formattedChatContent]);
 
     function formatChatItems(chatItems: ChatItem[] = []): string {
-      if (!chatItems.length || !chatItems[0]) return '';
+      if (!Array.isArray(chatItems) || !chatItems.length || !chatItems[0])
+        return '';
       const user = author || 'You';
       return [...chatItems]
         .reverse()
@@ -111,7 +112,9 @@ const ChatMdEditor = React.forwardRef<CrepeRef, ChatMdEditorProps>(
           const responseStr = item.response
             ? `**AI/LLM (${modelName})**:\\\n${item.response}`
             : '';
-          const imagesStr = (item.imagePaths ?? [])
+          const imagesStr = (
+            Array.isArray(item.imagePaths) ? item.imagePaths : []
+          )
             .map(
               (img) =>
                 `![chat image](${AppConfig.metaFolder}/${AppConfig.aiFolder}/${img})`,

@@ -129,7 +129,7 @@ function ChatView() {
     if (savedPrompts) {
       try {
         const parsed = JSON.parse(savedPrompts);
-        setAiPrompts(parsed);
+        setAiPrompts(Array.isArray(parsed) ? parsed : defaultPrompts);
       } catch (e) {
         console.error('Failed to parse saved prompts:', e);
         setAiPrompts(defaultPrompts);

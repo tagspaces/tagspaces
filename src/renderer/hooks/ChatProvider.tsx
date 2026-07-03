@@ -334,7 +334,9 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
             const historyModel = loadJSONString(jsonContent) as HistoryModel;
             if (historyModel) {
               refreshOllamaModels(historyModel.lastModelName);
-              return historyModel.history ? historyModel.history : [];
+              return Array.isArray(historyModel.history)
+                ? historyModel.history
+                : [];
             }
           }
           return [];

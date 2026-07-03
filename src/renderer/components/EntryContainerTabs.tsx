@@ -18,6 +18,7 @@
 
 import AppConfig from '-/AppConfig';
 import EntryContainerButtons from '-/components/EntryContainerButtons';
+import { ErrorBoundary } from '-/components/ErrorBoundary';
 import LoadingLazy from '-/components/LoadingLazy';
 import TsTabPanel from '-/components/TsTabPanel';
 import TsTooltip from '-/components/TsTooltip';
@@ -240,9 +241,11 @@ function EntryContainerTabs(props: EntryContainerTabsProps) {
       {tabsArray.current.map((tab, index) => (
         <TsTabPanel key={tab.name} value={selectedTabIndex} index={index}>
           {selectedTabIndex === index && (
-            <React.Suspense fallback={<LoadingLazy />}>
-              {getTabContainer(tab.name)}
-            </React.Suspense>
+            <ErrorBoundary label={tab.name} resetKeys={[openedEntry?.path]}>
+              <React.Suspense fallback={<LoadingLazy />}>
+                {getTabContainer(tab.name)}
+              </React.Suspense>
+            </ErrorBoundary>
           )}
         </TsTabPanel>
       ))}
