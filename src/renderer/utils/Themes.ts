@@ -17,7 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { createTheme } from '@mui/material';
+import { alpha, createTheme } from '@mui/material';
 
 export const createTSTheme = (themeName: string, isDark: boolean = false) => {
   let palette = isDark
@@ -65,12 +65,21 @@ export const createTSTheme = (themeName: string, isDark: boolean = false) => {
           }),
         },
       },
-      // Round the corners of every context menu / dropdown menu surface.
+      // Round the corners of every context menu / dropdown menu surface and
+      // give it the macOS/iOS frosted-glass look: a translucent paper color
+      // with a backdrop blur, so the content behind shines through.
       MuiMenu: {
         styleOverrides: {
-          paper: {
+          paper: ({ theme }) => ({
             borderRadius: AppConfig.defaultCSSRadius,
-          },
+            backgroundColor: alpha(theme.palette.background.paper, 0.7),
+            // Remove the semi-opaque elevation overlay MUI paints on dark
+            // paper — it would dull the translucency.
+            backgroundImage: 'none',
+            backdropFilter: 'blur(18px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(18px) saturate(180%)',
+            border: `1px solid ${alpha(theme.palette.divider, 0.4)}`,
+          }),
         },
       },
     },
