@@ -421,6 +421,7 @@ export namespace TS {
     | 'grid'
     | 'list'
     | 'gallery'
+    | 'stream'
     | 'mapique'
     | 'kanban'
     | 'unspecified';
@@ -429,6 +430,7 @@ export namespace TS {
     grid?: FolderSettings;
     list?: FolderSettings;
     gallery?: FolderSettings;
+    stream?: FolderSettings;
     mapique?: FolderSettings;
     kanban?: FolderSettings;
     wiki?: FolderSettings;
@@ -462,6 +464,10 @@ export namespace TS {
     // Cap of visible tag chips per cell in Grid/List perspectives. 0 disables.
     maxVisibleTags?: number;
     galleryTypeGroup?: string[];
+    // Stream perspective
+    zoomLevel?: number;
+    dataSource?: 'folder' | 'index' | 'search';
+    streamTypeGroups?: string[];
     // isLocal?: boolean;
   }
 

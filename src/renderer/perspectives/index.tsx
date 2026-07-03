@@ -20,6 +20,7 @@ import GalleryPerspectiveIcon from '@mui/icons-material/Camera';
 import ExtensionIcon from '@mui/icons-material/Extension';
 import FolderVizPerspectiveIcon from '@mui/icons-material/Hub';
 import MapiquePerspectiveIcon from '@mui/icons-material/Map';
+import StreamPerspectiveIcon from '@mui/icons-material/BurstMode';
 import KanbanPerspectiveIcon from '@mui/icons-material/ViewKanban';
 import ListPerspectiveIcon from '@mui/icons-material/ViewList';
 import GridPerspectiveIcon from '@mui/icons-material/ViewModule';
@@ -33,6 +34,7 @@ export const PerspectiveIDs = {
   GRID: 'grid',
   LIST: 'list',
   GALLERY: 'gallery',
+  STREAM: 'stream',
   FOLDERVIZ: 'folderviz',
   MAPIQUE: 'mapique',
   KANBAN: 'kanban',
@@ -84,6 +86,15 @@ export const GalleryPerspectiveMeta = {
   beta: false,
   icon: <GalleryPerspectiveIcon />,
   title: 'Gallery Perspective',
+};
+
+export const StreamPerspectiveMeta = {
+  id: PerspectiveIDs.STREAM,
+  key: 'openStreamPerspective',
+  pro: true,
+  beta: true,
+  icon: <StreamPerspectiveIcon />,
+  title: 'Stream Perspective',
 };
 
 export const FolderVizPerspectiveMeta = {
@@ -140,6 +151,7 @@ export const AvailablePerspectives: PerspectiveMeta[] = [
   GridPerspectiveMeta,
   ListPerspectiveMeta,
   GalleryPerspectiveMeta,
+  StreamPerspectiveMeta,
   MapiquePerspectiveMeta,
   KanbanPerspectiveMeta,
   FolderVizPerspectiveMeta,

@@ -104,6 +104,22 @@ function GalleryPerspectiveAsync(props) {
   );
 }
 
+let StreamPerspective = React.Fragment;
+if (Pro && Pro.Perspectives && Pro.Perspectives.StreamPerspective) {
+  StreamPerspective = Pro.Perspectives.StreamPerspective;
+}
+function StreamPerspectiveAsync(props) {
+  return (
+    <React.Suspense fallback={<LoadingLazy />}>
+      <PerspectiveSettingsContextProvider>
+        <ThumbGenerationContextProvider>
+          <StreamPerspective {...props} />
+        </ThumbGenerationContextProvider>
+      </PerspectiveSettingsContextProvider>
+    </React.Suspense>
+  );
+}
+
 let MapiquePerspective = React.Fragment;
 if (Pro && Pro.Perspectives && Pro.Perspectives.MapiquePerspective) {
   // MapiquePerspective = React.lazy(() => import(/* webpackChunkName: "MapiquePerspective" */ '../node_modules/@tagspaces/pro/modules/perspectives/mapique'));
@@ -297,6 +313,9 @@ function RenderPerspective(props: Props) {
     }
     if (Pro && currentPerspective === PerspectiveIDs.GALLERY) {
       return wrap(PerspectiveIDs.GALLERY, <GalleryPerspectiveAsync />);
+    }
+    if (Pro && currentPerspective === PerspectiveIDs.STREAM) {
+      return wrap(PerspectiveIDs.STREAM, <StreamPerspectiveAsync />);
     }
     if (Pro && currentPerspective === PerspectiveIDs.MAPIQUE) {
       return wrap(PerspectiveIDs.MAPIQUE, <MapiquePerspectiveAsync />);

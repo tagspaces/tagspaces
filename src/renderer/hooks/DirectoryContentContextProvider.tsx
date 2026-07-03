@@ -673,6 +673,8 @@ export const DirectoryContentContextProvider = ({
     } else if (Pro) {
       if (perspective === PerspectiveIDs.GALLERY) {
         return Pro.Perspectives.GalleryDefaultSettings;
+      } else if (perspective === PerspectiveIDs.STREAM) {
+        return Pro.Perspectives.StreamDefaultSettings;
       } else if (perspective === PerspectiveIDs.MAPIQUE) {
         return Pro.Perspectives.MapiqueDefaultSettings;
       } else if (perspective === PerspectiveIDs.CALENDAR) {
