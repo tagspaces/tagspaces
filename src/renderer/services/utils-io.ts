@@ -1452,6 +1452,25 @@ export function toTsLocation(location: CommonLocation): TS.S3Location {
 export { toBase64Image } from '-/services/base64';
 
 /**
+ * Extensions for a search type group, validated. Group names can come from
+ * persisted per-folder settings (tsm.json travels with the folder) and
+ * SearchTypeGroups itself can be overridden by external config
+ * (ExtSearchTypeGroups), so unknown or inherited keys ('constructor',
+ * '__proto__') and non-array values must yield [] instead of
+ * Object.prototype members.
+ */
+export function getSearchTypeGroupExts(group: string): string[] {
+  const groups = AppConfig.SearchTypeGroups;
+  const exts =
+    groups && Object.prototype.hasOwnProperty.call(groups, group)
+      ? groups[group]
+      : undefined;
+  return Array.isArray(exts)
+    ? exts.filter((ext): ext is string => typeof ext === 'string')
+    : [];
+}
+
+/**
  * shallow compare Entries array (and optional mtime)
  * @param a
  * @param b

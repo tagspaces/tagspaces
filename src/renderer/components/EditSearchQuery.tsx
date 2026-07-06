@@ -17,6 +17,7 @@
  */
 
 import AppConfig from '-/AppConfig';
+import { getSearchTypeGroupExts } from '-/services/utils-io';
 import {
   ArchiveIcon,
   AudioIcon,
@@ -172,7 +173,7 @@ function EditSearchQuery(props: Props) {
     const { target } = event;
     const { value, name } = target;
 
-    const types = AppConfig.SearchTypeGroups[value];
+    const types = getSearchTypeGroupExts(value);
     setTempSearchQuery({ fileTypes: types });
   };
 

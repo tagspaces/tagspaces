@@ -245,7 +245,7 @@ export class CommonLocation implements TS.Location {
 
   getEntryThumbPath = (
     entry: TS.FileSystemEntry,
-    dt = undefined,
+    dt?: number,
   ): Promise<string | undefined> => {
     if (entry) {
       return this.getThumbPath(this.getThumbEntryPath(entry), dt);
@@ -280,7 +280,7 @@ export class CommonLocation implements TS.Location {
    */
   getFolderThumbPath = (
     path: string,
-    dt = undefined,
+    dt?: number,
   ): Promise<string | undefined> => {
     if (path) {
       return this.getThumbPath(
@@ -299,7 +299,7 @@ export class CommonLocation implements TS.Location {
    */
   getThumbPath = (
     thumbPath: string,
-    dt = undefined,
+    dt?: number,
     expirationInSeconds = 900,
   ): Promise<string | undefined> => {
     if (!thumbPath) {
@@ -341,7 +341,7 @@ export class CommonLocation implements TS.Location {
 
   getFolderBgndPath = (
     path: string,
-    dt = undefined,
+    dt?: number,
   ): Promise<string | undefined> => {
     if (path !== undefined) {
       return this.getBgndPath(
@@ -354,7 +354,7 @@ export class CommonLocation implements TS.Location {
 
   getBgndPath = (
     bgndPath: string,
-    dt = undefined,
+    dt?: number,
     expirationInSeconds = 900,
   ): Promise<string | undefined> => {
     if (!bgndPath) {
