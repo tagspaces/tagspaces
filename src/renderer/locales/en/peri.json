@@ -167,5 +167,12 @@
   "purchaseFailed": "Purchase could not be completed.",
   "restoreCompleteReloading": "Purchase restored. Restarting…",
   "noPurchaseFoundToRestore": "No previous purchase found on this account.",
-  "priceUnavailable": "Price unavailable"
+  "priceUnavailable": "Price unavailable",
+  "streamSourceLocation": "Show whole location (search index)",
+  "streamSearchNotActive": "No active search — start a search to show its results here",
+  "streamNoIndex": "No search index found for this location — use the refresh button to create one",
+  "streamNoDateSection": "No date",
+  "streamWallView": "3D wall view",
+  "streamOptionsFileTypes": "Show file types",
+  "streamOptionsDateGrouping": "Group and sort by date"
 }
