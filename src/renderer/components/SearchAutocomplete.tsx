@@ -38,10 +38,10 @@ import {
   scope,
 } from '-/components/SearchOptions';
 import { getSearchOptions } from '-/components/SearchOptionsMenu';
-import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
+import TsTooltip from '-/components/TsTooltip';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
@@ -465,8 +465,8 @@ function SearchAutocomplete(props: Props) {
         title={
           <Box sx={{ fontSize: '14px' }}>
             The search query consists of a tag part and a search term. This term
-            is optional and can be a single word. The tag part can have one or
-            more tags preceded by the following symbols:
+            is optional and can be one or more words. The tag part can have one
+            or more tags preceded by the following symbols:
             <ul>
               <li>
                 + will add only entries having this tag in the search results
@@ -480,6 +480,18 @@ function SearchAutocomplete(props: Props) {
                 - will exclude entries having this tags from the search results
               </li>
             </ul>
+            In fuzzy search mode the search term also supports these operators:
+            <ul>
+              <li>
+                !word will exclude entries containing this word from the results
+              </li>
+              <li>| word will match entries having either word (logical OR)</li>
+              <li>'word requires an exact (non-fuzzy) match of this word</li>
+              <li>
+                ^word / word$ match entries where a field starts / ends with the
+                word
+              </li>
+            </ul>
             Example queries:
             <ul>
               <li>
@@ -489,6 +501,10 @@ function SearchAutocomplete(props: Props) {
               <li>
                 "|beach |sunset" - will find all files and folder having the
                 tags beach or sunset
+              </li>
+              <li>
+                "report !draft" - will find entries matching report but not
+                containing the word draft
               </li>
             </ul>
           </Box>
