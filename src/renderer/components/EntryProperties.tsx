@@ -126,7 +126,7 @@ function EntryProperties({ tileServer }: Props) {
   const { openedEntry, sharingLink, getOpenedDirProps, fileChanged } =
     useOpenedEntryContext();
   const { openMoveCopyFilesDialog } = useMenuContext();
-  const { isEditMode } = useFilePropertiesContext();
+  const { isEditMode, setEditMode } = useFilePropertiesContext();
   const {
     renameDirectory,
     renameFile,
@@ -154,6 +154,9 @@ function EntryProperties({ tileServer }: Props) {
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const disableConfirmButton = useRef<boolean>(true);
   const fileNameError = useRef<boolean>(false);
+  const renameDisabledTooltipTimer = useRef<ReturnType<
+    typeof setTimeout
+  > | null>(null);
   const location = findLocation(openedEntry?.locationID);
 
   const entryName = useMemo(() => {
@@ -164,6 +167,8 @@ function EntryProperties({ tileServer }: Props) {
   }, [openedEntry, location]);
 
   const [editName, setEditName] = useState<string>();
+  const [renameDisabledTooltipOpen, setRenameDisabledTooltipOpen] =
+    useState(false);
   const [showSharingLinkDialog, setShowSharingLinkDialog] = useState(false);
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
@@ -244,6 +249,15 @@ function EntryProperties({ tileServer }: Props) {
       fileNameRef.current.focus();
     }
   }, [editName, entryName]);
+
+  useEffect(
+    () => () => {
+      if (renameDisabledTooltipTimer.current) {
+        clearTimeout(renameDisabledTooltipTimer.current);
+      }
+    },
+    [],
+  );
 
   const renameEntry = useCallback(() => {
     if (editName !== undefined && openedEntry) {
@@ -495,72 +509,99 @@ function EntryProperties({ tileServer }: Props) {
     <>
       <Grid container>
         <Grid size={12}>
-          <TsTextField
-            key={editName === undefined ? entryName : 'editing'}
-            error={fileNameError.current}
-            title={isEditMode && t('core:renameDisableTooltip')}
-            label={
-              openedEntry.isFile ? t('core:fileName') : t('core:folderName')
-            }
-            slotProps={{
-              input: {
-                readOnly: editName === undefined,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {!location.isReadOnly && !isEditMode && (
-                      <Box sx={{ textAlign: 'right' }}>
-                        {editName !== undefined ? (
-                          <>
+          <TsTooltip
+            title={t('core:renameDisableTooltip')}
+            open={renameDisabledTooltipOpen}
+            onClose={() => setRenameDisabledTooltipOpen(false)}
+            // disableFocusListener
+            // disableHoverListener
+            // disableTouchListener
+          >
+            <TsTextField
+              key={editName === undefined ? entryName : 'editing'}
+              error={fileNameError.current}
+              label={
+                openedEntry.isFile ? t('core:fileName') : t('core:folderName')
+              }
+              slotProps={{
+                input: {
+                  readOnly: editName === undefined,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {!location.isReadOnly && !isEditMode && (
+                        <Box sx={{ textAlign: 'right' }}>
+                          {editName !== undefined ? (
+                            <>
+                              <TsButton
+                                data-tid="cancelRenameEntryTID"
+                                onClick={deactivateEditNameField}
+                                variant="text"
+                              >
+                                {t('core:cancel')}
+                              </TsButton>
+                              <TsButton
+                                data-tid="confirmRenameEntryTID"
+                                onClick={renameEntry}
+                                variant="contained"
+                                disabled={disableConfirmButton.current}
+                              >
+                                {t('core:confirmSaveButton')}
+                              </TsButton>
+                            </>
+                          ) : (
                             <TsButton
-                              data-tid="cancelRenameEntryTID"
-                              onClick={deactivateEditNameField}
+                              data-tid="startRenameEntryTID"
                               variant="text"
+                              onClick={activateEditNameField}
                             >
-                              {t('core:cancel')}
+                              {t('core:rename')}
                             </TsButton>
-                            <TsButton
-                              data-tid="confirmRenameEntryTID"
-                              onClick={renameEntry}
-                              variant="contained"
-                              disabled={disableConfirmButton.current}
-                            >
-                              {t('core:confirmSaveButton')}
-                            </TsButton>
-                          </>
-                        ) : (
-                          <TsButton
-                            data-tid="startRenameEntryTID"
-                            variant="text"
-                            onClick={activateEditNameField}
-                          >
-                            {t('core:rename')}
-                          </TsButton>
-                        )}
-                      </Box>
-                    )}
-                  </InputAdornment>
-                ),
-              },
-            }}
-            name="name"
-            data-tid="fileNameProperties"
-            defaultValue={entryName}
-            inputRef={fileNameRef}
-            retrieveValue={() => fileNameRef.current.value}
-            onClick={() => {
-              if (!isEditMode && editName === undefined) {
+                          )}
+                        </Box>
+                      )}
+                    </InputAdornment>
+                  ),
+                },
+              }}
+              name="name"
+              data-tid="fileNameProperties"
+              defaultValue={entryName}
+              inputRef={fileNameRef}
+              retrieveValue={() => fileNameRef.current.value}
+              onClick={() => {
+                if (editName !== undefined) {
+                  return;
+                }
+                if (isEditMode) {
+                  // Clicking the name field while the file is open in edit
+                  // mode leaves edit mode and starts renaming — but only when
+                  // there are no unsaved changes that would be lost. Otherwise
+                  // surface a tooltip explaining why renaming is blocked.
+                  if (fileChanged) {
+                    setRenameDisabledTooltipOpen(true);
+                    if (renameDisabledTooltipTimer.current) {
+                      clearTimeout(renameDisabledTooltipTimer.current);
+                    }
+                    renameDisabledTooltipTimer.current = setTimeout(
+                      () => setRenameDisabledTooltipOpen(false),
+                      3000,
+                    );
+                    return;
+                  }
+                  setEditMode(false);
+                }
                 activateEditNameField();
-              }
-            }}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' && !fileNameError.current) {
-                renameEntry();
-              } else if (event.key === 'Escape') {
-                deactivateEditNameField();
-              }
-            }}
-            onChange={handleFileNameChange}
-          />
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !fileNameError.current) {
+                  renameEntry();
+                } else if (event.key === 'Escape') {
+                  deactivateEditNameField();
+                }
+              }}
+              onChange={handleFileNameChange}
+            />
+          </TsTooltip>
           {fileNameError.current && (
             <FormHelperText sx={{ marginTop: 0 }}>
               {t(
