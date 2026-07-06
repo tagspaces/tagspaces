@@ -281,25 +281,19 @@ test.describe('TST51 - Perspective Grid', () => {
   });
 
   test('TST0529 - Import EXIF information as Tags [web,s3,electron,_pro]', async () => {
-    await openFile('sample_exif[iptc].jpg', 'showPropertiesTID');
-
-    await clickOn('[data-tid=openGalleryPerspective]');
-    await expectElementExist(
-      '[data-tid=perspectiveGalleryToolbar]',
-      true,
-      5000,
-    );
-    await clickOn('[data-tid=perspectiveGalleryImportEXIF]');
+    // The default location root (open directory) holds sample_exif[iptc].jpg.
+    // EXIF extraction now runs from the unified "Extract tags" dialog opened
+    // from the current-directory menu, over the current directory's JPEGs.
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await clickOn('[data-tid=extractTags]');
     await global.client.check('input[value=exifGeo]');
     await clickOn('[data-tid=confirmImportExif]');
 
     await expectElementExist(
       '[data-tid="tagContainer_8FWH4HVG+3V"]',
       true,
-      5000,
+      10000,
     );
-    await clickOn('[data-tid=openDefaultPerspective]');
-    await expectElementExist('[data-tid=gridperspectiveToolbar]', true, 5000);
   });
 
   test('TST0530 - Adding sidecar geo or custom date tag with dnd [web,s3,electron,_pro]', async () => {

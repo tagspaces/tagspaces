@@ -104,21 +104,17 @@ test.describe('TST57 - Perspective Gallery smoke (writable)', () => {
     );
   });
 
-  test('TST5701 - toolbar renders with EXIF-import enabled on writable [s3,electron,_pro]', async () => {
-    // Smoke guard: gallery toolbar mounts, the always-present back button
-    // is there, and the EXIF-import button is ENABLED on a writable
-    // location (disabled={currentLocation?.isReadOnly} in gallery/MainToolbar.tsx).
-    // Buttons like perspectiveGalleryToggleThumbs only render when
-    // !isMasonryEnabled, so we don't assert them here.
+  test('TST5701 - toolbar renders on writable [s3,electron,_pro]', async () => {
+    // Smoke guard: gallery toolbar mounts and the always-present back button
+    // is there. EXIF/tag extraction moved out of the gallery toolbar into the
+    // unified "Extract tags" directory menu (see TST0529). Buttons like
+    // perspectiveGalleryToggleThumbs only render when !isMasonryEnabled, so we
+    // don't assert them here.
     await expectElementExist(
       '[data-tid=galleryPerspectiveBackButton]',
       true,
       4000,
     );
-    const exifButton = global.client.locator(
-      '[data-tid=perspectiveGalleryImportEXIF]',
-    );
-    await expect(exifButton).toBeEnabled();
   });
 });
 
@@ -158,13 +154,13 @@ test.describe('TST58 - Perspective Gallery on read-only location', () => {
     );
   });
 
-  test('TST5810 - EXIF-import button is disabled on readonly [s3,electron,_pro]', async () => {
-    // Regression guard for the readonly guard in gallery MainToolbar:
-    // perspectiveGalleryImportEXIF is disabled when currentLocation.isReadOnly.
-    const exifButton = global.client.locator(
-      '[data-tid=perspectiveGalleryImportEXIF]',
-    );
-    await expect(exifButton).toBeDisabled();
+  test('TST5810 - Extract tags menu item hidden on readonly [s3,electron,_pro]', async () => {
+    // Regression guard for the readonly gate on the unified extraction entry:
+    // the "Extract tags" directory-menu item is built with !isReadOnlyMode, so
+    // it must not appear on a read-only location.
+    await clickOn('[data-tid=folderContainerOpenDirMenu]');
+    await expectElementExist('[data-tid=extractTags]', false, 4000);
+    await global.client.keyboard.press('Escape');
   });
 
   test('TST5811 - opens on readonly without "read only Location" toast [s3,electron,_pro]', async () => {

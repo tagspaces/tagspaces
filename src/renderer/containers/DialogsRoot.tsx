@@ -23,7 +23,6 @@ import { CreateEditLocationDialogContextProvider } from '-/components/dialogs/ho
 import { DeleteMultipleEntriesDialogContextProvider } from '-/components/dialogs/hooks/DeleteMultipleEntriesDialogContextProvider';
 import { DownloadUrlContextProvider } from '-/components/dialogs/hooks/DownloadUrlDialogContextProvider';
 import { EntryExistDialogContextProvider } from '-/components/dialogs/hooks/EntryExistDialogContextProvider';
-import { ImportMacTagDialogContextProvider } from '-/components/dialogs/hooks/ImportMacTagDialogContextProvider';
 import { KeyboardDialogContextProvider } from '-/components/dialogs/hooks/KeyboardDialogContextProvider';
 import { LicenseDialogContextProvider } from '-/components/dialogs/hooks/LicenseDialogContextProvider';
 import { FilePickerDialogContextProvider } from '-/components/dialogs/hooks/FilePickerDialogContextProvider';
@@ -88,7 +87,6 @@ const providers = [
   AiGenerationDialogContextProvider,
   ResolveConflictContextProvider,
   DownloadUrlContextProvider,
-  ImportMacTagDialogContextProvider,
   MenuContextProvider,
 ];
 

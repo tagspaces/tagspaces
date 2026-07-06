@@ -190,11 +190,15 @@ const ProFeatureStack: React.FC = () => (
           <Pro.contextProviders.AiTemplatesContextProvider>
             <Pro.contextProviders.FileTemplatesContextProvider>
               <Pro.contextProviders.WorkSpacesContextProvider>
-                <ChatContextProvider>
-                  <DialogsRoot>
-                    <MainPage />
-                  </DialogsRoot>
-                </ChatContextProvider>
+                <Pro.contextProviders.ExifExtractionContextProvider>
+                  <Pro.contextProviders.ExtractTagsDialogContextProvider>
+                    <ChatContextProvider>
+                      <DialogsRoot>
+                        <MainPage />
+                      </DialogsRoot>
+                    </ChatContextProvider>
+                  </Pro.contextProviders.ExtractTagsDialogContextProvider>
+                </Pro.contextProviders.ExifExtractionContextProvider>
               </Pro.contextProviders.WorkSpacesContextProvider>
             </Pro.contextProviders.FileTemplatesContextProvider>
           </Pro.contextProviders.AiTemplatesContextProvider>

@@ -53,7 +53,7 @@ export function getDirectoryMenuItems(
   setFolderThumbnail?: () => void,
   copySharingLink?: () => void,
   copyRelativePath?: () => void,
-  importMacTags?: () => void,
+  extractTags?: () => void,
   switchPerspective?: (perspectiveId: string) => void,
   showProperties?: () => void,
   cameraTakePicture?: () => void,
@@ -363,21 +363,15 @@ export function getDirectoryMenuItems(
     );
   }
 
-  if (
-    !hideProFeatures &&
-    AppConfig.isElectron &&
-    AppConfig.isMacLike &&
-    !perspectiveMode &&
-    importMacTags
-  ) {
+  if (!hideProFeatures && !isReadOnlyMode && extractTags) {
     menuItems.push(
       <MenuItem
-        key="importMacTags"
-        data-tid="importMacTags"
+        key="extractTags"
+        data-tid="extractTags"
         disabled={!Pro}
         onClick={() => {
           onClose();
-          importMacTags();
+          extractTags();
         }}
       >
         <ListItemIcon>
@@ -386,7 +380,7 @@ export function getDirectoryMenuItems(
         <ListItemText
           primary={
             <>
-              {t('core:importMacTags')}
+              {t('core:extractTags')}
               {!Pro && <ProLabel />}
             </>
           }

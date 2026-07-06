@@ -329,8 +329,21 @@ export namespace TS {
     IPTCTags?: boolean;
   };
 
+  type ExtractProgress = { processed: number; total: number };
+
   type ExifExtractionContextData = {
-    extractAndSaveContent: (options: extractOptions) => Promise<boolean>;
+    extractAndSaveContent: (
+      options: extractOptions,
+      progressOpts?: {
+        signal?: AbortSignal;
+        onProgress?: (progress: TS.ExtractProgress) => void;
+      },
+    ) => Promise<boolean>;
+  };
+
+  type ExtractTagsDialogContextData = {
+    openExtractTagsDialog: (directoryPath: string) => void;
+    closeExtractTagsDialog: () => void;
   };
 
   type HistoryContextData = {

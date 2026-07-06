@@ -57,7 +57,6 @@ import { useDeleteMultipleEntriesDialogContext } from '-/components/dialogs/hook
 import { useFileUploadContext } from '-/hooks/useFileUploadContext';
 import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useMenuContext } from '-/components/dialogs/hooks/useMenuContext';
-import { useImportMacTagDialogContext } from '-/components/dialogs/hooks/useImportMacTagDialogContext';
 
 interface Props {
   open: boolean;
@@ -105,9 +104,15 @@ function DirectoryMenu(props: Props) {
   const { setReflectActions } = useEditedEntryContext();
   const { openNewAudioDialog } = useNewAudioDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
-  const { openImportMacTagDialog } = useImportMacTagDialogContext();
   const { openDeleteMultipleEntriesDialog } =
     useDeleteMultipleEntriesDialogContext();
+
+  const extractTagsDialogContext = Pro?.contextProviders
+    ?.ExtractTagsDialogContext
+    ? useContext<TS.ExtractTagsDialogContextData>(
+        Pro.contextProviders.ExtractTagsDialogContext,
+      )
+    : undefined;
 
   const thumbDialogContext = Pro?.contextProviders?.ThumbDialogContext
     ? useContext<TS.ThumbDialogContextData>(
@@ -277,8 +282,8 @@ function DirectoryMenu(props: Props) {
     openCameraCapture(directoryPath);
   }
 
-  function importMacTags() {
-    openImportMacTagDialog(directoryPath);
+  function extractTags() {
+    extractTagsDialogContext?.openExtractTagsDialog(directoryPath);
   }
 
   function setFolderThumbnail() {
@@ -379,7 +384,7 @@ function DirectoryMenu(props: Props) {
         setFolderThumbnail,
         copySharingLink,
         copyRelativePath,
-        importMacTags,
+        extractTags,
         switchPerspectives ? perspectiveSwitch : undefined,
         showProperties,
         AppConfig.isCapacitorAndroid ? cameraTakePicture : undefined,
