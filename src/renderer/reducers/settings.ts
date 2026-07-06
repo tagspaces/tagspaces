@@ -1118,10 +1118,23 @@ export const getDesktopMode = (state: any) => {
 };
 export const isDevMode = (state: any) =>
   AppConfig.ExtDevMode ? AppConfig.ExtDevMode : state.settings.devMode;
-export const isHideProFeatures = (state: any) =>
-  AppConfig.ExtHideProFeatures !== undefined
+export const isHideProFeatures = (state: any) => {
+  // In a Pro build never hide licensed Pro features — the "Hide Pro features"
+  // switch (and the extconfig override) exist only to suppress Pro teasers in
+  // the Lite build. Resolve Pro lazily to avoid a reducer↔Pro import cycle.
+  try {
+    // eslint-disable-next-line global-require
+    const { Pro } = require('-/pro');
+    if (Pro) {
+      return false;
+    }
+  } catch (e) {
+    // Pro module not available (Lite build) — fall through to the flag
+  }
+  return AppConfig.ExtHideProFeatures !== undefined
     ? AppConfig.ExtHideProFeatures
     : state.settings.hideProFeatures;
+};
 export const isAutoSaveDescription = (state: any) =>
   state.settings.autoSaveDescription;
 export const isRevisionsEnabled = (state: any) =>
