@@ -331,11 +331,10 @@ function GridCell(props: Props) {
     ];
   }, [fileSystemEntryTags, fileNameTags]);
 
-  // In multi-select (selectionMode) the drag operation is on the cell, not on
-  // the tag (file move, not tag reorder). Skip the per-tag DnD wiring in that
-  // mode — same logic as on read-only locations. Drops 2× useDrag/useDrop per
-  // tag × N tags × M cells of overhead during multi-select.
-  const useStaticTags = gridCellLocation.isReadOnly || selectionMode;
+  // Keep per-tag DnD wiring active during multi-select: dragging a tag onto one
+  // of the selected entries applies it to the whole selection (see endDrag in
+  // TagContainerDnd). Only read-only locations fall back to static tags.
+  const useStaticTags = gridCellLocation.isReadOnly;
   // Cap the number of inline tag chips. Files with more get a "+N" chip that
   // opens the rest in a popover. 0 disables the cap.
   const cap =
