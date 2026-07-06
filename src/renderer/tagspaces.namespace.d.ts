@@ -468,6 +468,12 @@ export namespace TS {
     zoomLevel?: number;
     dataSource?: 'folder' | 'index' | 'search';
     streamTypeGroups?: string[];
+    // Which date sources drive the timeline sort/grouping (priority:
+    // parent-folder date > date smart tag > last-modified > created).
+    streamGroupByDateTags?: boolean;
+    streamGroupByFolderName?: boolean;
+    streamGroupByLastModifiedDate?: boolean;
+    streamGroupByCreationDate?: boolean;
     // isLocal?: boolean;
   }
 
