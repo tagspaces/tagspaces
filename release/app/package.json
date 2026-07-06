@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@tagspaces/extensions": "1.0.255",
-    "@tagspaces/tagspaces-common-node": "4.8.8",
-    "@tagspaces/tagspaces-ws": "4.8.8",
+    "@tagspaces/tagspaces-common-node": "4.8.9",
+    "@tagspaces/tagspaces-ws": "4.8.9",
     "wasm-vips": "0.0.17",
     "ws": "8.19.0"
   },
