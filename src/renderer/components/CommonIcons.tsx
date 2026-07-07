@@ -51,6 +51,10 @@ export const MarkdownFileIcon = (props) => (
 
 export { default as WorkspacesIcon } from '@mui/icons-material/WorkspacesOutlined';
 
+export { default as IosAppIcon } from '@mui/icons-material/Apple';
+
+export { default as AndroidAppIcon } from '@mui/icons-material/Android';
+
 export const NavigateToFolderIcon = (props) => (
   <KeyboardReturnIcon {...props} />
 );

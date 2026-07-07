@@ -106,6 +106,7 @@ export const types = {
   SET_FIRST_RUN: 'SETTINGS/SET_FIRST_RUN',
   SET_ONBOARDING_COMPLETED: 'SETTINGS/SET_ONBOARDING_COMPLETED',
   SET_HIDE_HOWTOSTART: 'SETTINGS/SET_HIDE_HOWTOSTART',
+  SET_HIDE_MOBILE_TEASER: 'SETTINGS/SET_HIDE_MOBILE_TEASER',
   SET_ONBOARDING_VERSION: 'SETTINGS/SET_ONBOARDING_VERSION',
   TOGGLE_TAGGROUP: 'TOGGLE_TAGGROUP',
   ADD_MAPTILE_SERVER: 'SET_MAPTILE_SERVER',
@@ -288,6 +289,9 @@ export default (state: any = defaultSettings, action: any) => {
     }
     case types.SET_HIDE_HOWTOSTART: {
       return { ...state, hideHowToStart: action.hideHowToStart };
+    }
+    case types.SET_HIDE_MOBILE_TEASER: {
+      return { ...state, hideMobileTeaser: action.hideMobileTeaser };
     }
     case types.SET_ONBOARDING_VERSION: {
       return { ...state, onboardingVersion: action.onboardingVersion };
@@ -994,6 +998,10 @@ export const actions = {
     type: types.SET_HIDE_HOWTOSTART,
     hideHowToStart,
   }),
+  setHideMobileTeaser: (hideMobileTeaser: boolean) => ({
+    type: types.SET_HIDE_MOBILE_TEASER,
+    hideMobileTeaser,
+  }),
   setOnboardingVersion: (onboardingVersion: number) => ({
     type: types.SET_ONBOARDING_VERSION,
     onboardingVersion,
@@ -1284,6 +1292,8 @@ export const isOnboardingCompleted = (state: any) =>
   state.settings.onboardingCompleted === true;
 export const isHowToStartHidden = (state: any) =>
   state.settings.hideHowToStart === true;
+export const isMobileTeaserHidden = (state: any) =>
+  state.settings.hideMobileTeaser === true;
 export const getOnboardingVersion = (state: any) =>
   state.settings.onboardingVersion || 0;
 

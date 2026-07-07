@@ -28,6 +28,7 @@ import { LicenseDialogContextProvider } from '-/components/dialogs/hooks/License
 import { FilePickerDialogContextProvider } from '-/components/dialogs/hooks/FilePickerDialogContextProvider';
 import { LinkDialogContextProvider } from '-/components/dialogs/hooks/LinkDialogContextProvider';
 import { MenuContextProvider } from '-/components/dialogs/hooks/MenuContextProvider';
+import { MobileTeaserDialogContextProvider } from '-/components/dialogs/hooks/MobileTeaserDialogContextProvider';
 import { NewAudioDialogContextProvider } from '-/components/dialogs/hooks/NewAudioDialogContextProvider';
 import { NewFileDialogContextProvider } from '-/components/dialogs/hooks/NewFileDialogContextProvider';
 import { OnboardingDialogContextProvider } from '-/components/dialogs/hooks/OnboardingDialogContextProvider';
@@ -84,6 +85,7 @@ const providers = [
   KeyboardDialogContextProvider,
   LinkDialogContextProvider,
   ProTeaserDialogContextProvider,
+  MobileTeaserDialogContextProvider,
   AiGenerationDialogContextProvider,
   ResolveConflictContextProvider,
   DownloadUrlContextProvider,

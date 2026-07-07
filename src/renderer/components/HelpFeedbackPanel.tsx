@@ -18,11 +18,13 @@
 
 import {
   AboutIcon,
+  AndroidAppIcon,
   CancelSubscriptionIcon,
   ChangeLogIcon,
   EmailIcon,
   ForumIcon,
   HelpIcon,
+  IosAppIcon,
   IssueIcon,
   KeyShortcutsIcon,
   MastodonIcon,
@@ -34,10 +36,12 @@ import {
   WebClipperIcon,
   XIcon,
 } from '-/components/CommonIcons';
+import AppConfig from '-/AppConfig';
 import { useAboutDialogContext } from '-/components/dialogs/hooks/useAboutDialogContext';
 import { useKeyboardDialogContext } from '-/components/dialogs/hooks/useKeyboardDialogContext';
 import { useOnboardingDialogContext } from '-/components/dialogs/hooks/useOnboardingDialogContext';
 import { useProTeaserDialogContext } from '-/components/dialogs/hooks/useProTeaserDialogContext';
+import { useMobileTeaserDialogContext } from '-/components/dialogs/hooks/useMobileTeaserDialogContext';
 import { Pro } from '-/pro';
 import { isIapAvailable, restoreProPurchase } from '-/services/iap';
 import { AppDispatch } from '-/reducers/app';
@@ -70,6 +74,7 @@ function HelpFeedbackPanel() {
   const { openOnboardingDialog } = useOnboardingDialogContext();
   const { openKeyboardDialog } = useKeyboardDialogContext();
   const { openProTeaserDialog } = useProTeaserDialogContext();
+  const { openMobileTeaserDialog } = useMobileTeaserDialogContext();
 
   return (
     <Box
@@ -166,6 +171,32 @@ function HelpFeedbackPanel() {
             <ListItemText>{t('core:webClipper')}</ListItemText>
           </ListItemButton>
         </ListItem>
+        {!AppConfig.isNativeMobile && (
+          <>
+            <ListItem disablePadding>
+              <ListItemButton
+                data-tid="getIosAppTID"
+                onClick={() => openMobileTeaserDialog('ios')}
+              >
+                <ListItemIcon>
+                  <IosAppIcon />
+                </ListItemIcon>
+                <ListItemText>{t('core:getIosApp')}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                data-tid="getAndroidAppTID"
+                onClick={() => openMobileTeaserDialog('android')}
+              >
+                <ListItemIcon>
+                  <AndroidAppIcon />
+                </ListItemIcon>
+                <ListItemText>{t('core:getAndroidApp')}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          </>
+        )}
         <Divider />
         <ListItem disablePadding>
           <ListItemButton
