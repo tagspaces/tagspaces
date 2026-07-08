@@ -80,10 +80,17 @@ export function MobileTeaserDialogContextProvider({
   // Fresh installs get the license/onboarding flow instead (excluded via
   // firstRunAtMount); native mobile and the web app never auto-show. Shows on
   // every startup until the user ticks "Do not show this again".
+  //
+  // When first-run/onboarding is controlled via extconfig (AppConfig.ExtIsFirstRun
+  // is explicitly false — e.g. managed deployments and the e2e suite that boots
+  // with scripts/extconfig.js), suppress the auto-open too: those environments
+  // opt out of startup dialogs, and it keeps the teaser from popping over tests.
+  // The Help-menu entries still open it on demand.
   useEffect(() => {
     if (
       AppConfig.isElectron &&
       !AppConfig.isNativeMobile &&
+      AppConfig.ExtIsFirstRun !== false &&
       !firstRunAtMount.current &&
       !teaserHidden
     ) {
