@@ -245,7 +245,21 @@ const TagContainerDnd = (props: Props) => {
   drag(drop(tagContainerRef));
 
   return (
-    <span ref={tagContainerRef} {...rest}>
+    <span
+      ref={tagContainerRef}
+      {...rest}
+      // Stop only the bubbling `drag` event so it doesn't reach the grid / list
+      // Card's `onDrag` selection handler, which would otherwise collapse a
+      // multi-selection down to the dragged-from entry — breaking "drag a tag
+      // onto the selected entries to tag them all" whenever the tag's own entry
+      // is not part of the selection. `dragstart` is deliberately left to bubble
+      // up to react-dnd's window-level handlers; stopping it there disables the
+      // empty drag preview (browser draws the chip + surroundings instead) and
+      // breaks drop detection. The `drag` event is not used by react-dnd, so
+      // suppressing it here is safe — the Card already does the same via
+      // handleCellClick.
+      onDrag={(event) => event.stopPropagation()}
+    >
       <TagContainer
         tag={tag}
         tagGroup={tagGroup}
