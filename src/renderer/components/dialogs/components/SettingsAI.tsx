@@ -89,6 +89,8 @@ function SettingsAI(props: Props) {
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const providersAlive = React.useRef({});
   const aiTemplates = React.useRef({});
+  const [focusedTemplate, setFocusedTemplate] =
+    React.useState<string>(undefined);
   const [openedNewAIMenu, setOpenedNewAIMenu] = React.useState(false);
 
   const aiTemplatesContext = Pro?.contextProviders?.AiTemplatesContext
@@ -195,37 +197,70 @@ function SettingsAI(props: Props) {
     forceUpdate();
   }
 
+  // Keep Save/Reset/Cancel visible whenever the field is focused, there is a
+  // pending edit (even one that cleared the field to empty), OR the effective
+  // prompt is empty/missing — so the buttons show as soon as the user starts
+  // interacting and an accidentally-cleared or lost prompt can always be reset
+  // to default. The previous truthiness guard hid the buttons the moment a
+  // prompt became empty, stranding the user with a blank prompt and no recovery.
+  function showTemplateActions(key: string): boolean {
+    if (focusedTemplate === key) {
+      return true;
+    }
+    const pendingEdit = aiTemplates.current[key];
+    if (pendingEdit !== undefined) {
+      return true;
+    }
+    return !aiTemplatesContext?.getTemplate(key);
+  }
+
+  const handleTemplateFocus = (key: string) => () => setFocusedTemplate(key);
+
+  const handleTemplateBlur = (key: string) => () =>
+    setFocusedTemplate((prev) => (prev === key ? undefined : prev));
+
   const externalConfig = typeof AppConfig.ExtAI !== 'undefined';
 
-  const actionButtons = (key) => (
-    <InputAdornment
-      position="end"
-      sx={{ flexDirection: 'column', marginTop: '-70px' }}
-    >
-      <TsButton
-        variant="text"
-        data-tid={'save' + key + 'TID'}
-        onClick={() => saveTemplate(key)}
+  const actionButtons = (key) => {
+    const pendingEdit = aiTemplates.current[key];
+    // Only a non-empty pending edit is worth saving; an empty field or no edit
+    // leaves Save disabled while Reset/Cancel stay available for recovery.
+    const canSave = typeof pendingEdit === 'string' && pendingEdit.length > 0;
+    return (
+      <InputAdornment
+        position="end"
+        sx={{ flexDirection: 'column', marginTop: '-70px' }}
+        // Keep the field focused when a button is clicked: without this, the
+        // input blurs on mousedown, showTemplateActions() flips to false and the
+        // buttons unmount before the click lands (so Reset/Cancel never fire).
+        onMouseDown={(event) => event.preventDefault()}
       >
-        {t('core:save')}
-      </TsButton>
-      <TsButton
-        variant="text"
-        tooltip={t('peri:resetsToDefaultPrompt')}
-        data-tid={'reset' + key + 'TID'}
-        onClick={() => resetTemplate(key)}
-      >
-        {t('core:resetBtn')}
-      </TsButton>
-      <TsButton
-        variant="text"
-        data-tid={'cancel' + key + 'TID'}
-        onClick={() => cancelSavingTemplate(key)}
-      >
-        {t('core:cancel')}
-      </TsButton>
-    </InputAdornment>
-  );
+        <TsButton
+          variant="text"
+          disabled={!canSave}
+          data-tid={'save' + key + 'TID'}
+          onClick={() => saveTemplate(key)}
+        >
+          {t('core:save')}
+        </TsButton>
+        <TsButton
+          variant="text"
+          tooltip={t('peri:resetsToDefaultPrompt')}
+          data-tid={'reset' + key + 'TID'}
+          onClick={() => resetTemplate(key)}
+        >
+          {t('core:resetBtn')}
+        </TsButton>
+        <TsButton
+          variant="text"
+          data-tid={'cancel' + key + 'TID'}
+          onClick={() => cancelSavingTemplate(key)}
+        >
+          {t('core:cancel')}
+        </TsButton>
+      </InputAdornment>
+    );
+  };
 
   return (
     <Box
@@ -549,10 +584,12 @@ function SettingsAI(props: Props) {
                 aiTemplates.current['DEFAULT_QUESTION_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
+              onFocus={handleTemplateFocus('DEFAULT_QUESTION_PROMPT')}
+              onBlur={handleTemplateBlur('DEFAULT_QUESTION_PROMPT')}
               slotProps={{
                 input: {
                   endAdornment:
-                    aiTemplates.current['DEFAULT_QUESTION_PROMPT'] &&
+                    showTemplateActions('DEFAULT_QUESTION_PROMPT') &&
                     actionButtons('DEFAULT_QUESTION_PROMPT'),
                 },
               }}
@@ -573,10 +610,12 @@ function SettingsAI(props: Props) {
                 aiTemplates.current['DEFAULT_SYSTEM_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
+              onFocus={handleTemplateFocus('DEFAULT_SYSTEM_PROMPT')}
+              onBlur={handleTemplateBlur('DEFAULT_SYSTEM_PROMPT')}
               slotProps={{
                 input: {
                   endAdornment:
-                    aiTemplates.current['DEFAULT_SYSTEM_PROMPT'] &&
+                    showTemplateActions('DEFAULT_SYSTEM_PROMPT') &&
                     actionButtons('DEFAULT_SYSTEM_PROMPT'),
                 },
               }}
@@ -595,10 +634,12 @@ function SettingsAI(props: Props) {
                 aiTemplates.current['SUMMARIZE_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
+              onFocus={handleTemplateFocus('SUMMARIZE_PROMPT')}
+              onBlur={handleTemplateBlur('SUMMARIZE_PROMPT')}
               slotProps={{
                 input: {
                   endAdornment:
-                    aiTemplates.current['SUMMARIZE_PROMPT'] &&
+                    showTemplateActions('SUMMARIZE_PROMPT') &&
                     actionButtons('SUMMARIZE_PROMPT'),
                 },
               }}
@@ -622,10 +663,12 @@ function SettingsAI(props: Props) {
                   e.target.value;
                 forceUpdate();
               }}
+              onFocus={handleTemplateFocus('IMAGE_DESCRIPTION_PROMPT')}
+              onBlur={handleTemplateBlur('IMAGE_DESCRIPTION_PROMPT')}
               slotProps={{
                 input: {
                   endAdornment:
-                    aiTemplates.current['IMAGE_DESCRIPTION_PROMPT'] &&
+                    showTemplateActions('IMAGE_DESCRIPTION_PROMPT') &&
                     actionButtons('IMAGE_DESCRIPTION_PROMPT'),
                 },
               }}
@@ -652,12 +695,16 @@ function SettingsAI(props: Props) {
                   e.target.value;
                 forceUpdate();
               }}
+              onFocus={handleTemplateFocus(
+                'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
+              )}
+              onBlur={handleTemplateBlur('IMAGE_DESCRIPTION_STRUCTURED_PROMPT')}
               slotProps={{
                 input: {
                   endAdornment:
-                    aiTemplates.current[
-                      'IMAGE_DESCRIPTION_STRUCTURED_PROMPT'
-                    ] && actionButtons('IMAGE_DESCRIPTION_STRUCTURED_PROMPT'),
+                    showTemplateActions(
+                      'IMAGE_DESCRIPTION_STRUCTURED_PROMPT',
+                    ) && actionButtons('IMAGE_DESCRIPTION_STRUCTURED_PROMPT'),
                 },
               }}
             />
@@ -677,10 +724,12 @@ function SettingsAI(props: Props) {
                 aiTemplates.current['TEXT_DESCRIPTION_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
+              onFocus={handleTemplateFocus('TEXT_DESCRIPTION_PROMPT')}
+              onBlur={handleTemplateBlur('TEXT_DESCRIPTION_PROMPT')}
               slotProps={{
                 input: {
                   endAdornment:
-                    aiTemplates.current['TEXT_DESCRIPTION_PROMPT'] &&
+                    showTemplateActions('TEXT_DESCRIPTION_PROMPT') &&
                     actionButtons('TEXT_DESCRIPTION_PROMPT'),
                 },
               }}
@@ -701,10 +750,12 @@ function SettingsAI(props: Props) {
                 aiTemplates.current['IMAGE_TAGS_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
+              onFocus={handleTemplateFocus('IMAGE_TAGS_PROMPT')}
+              onBlur={handleTemplateBlur('IMAGE_TAGS_PROMPT')}
               slotProps={{
                 input: {
                   endAdornment:
-                    aiTemplates.current['IMAGE_TAGS_PROMPT'] &&
+                    showTemplateActions('IMAGE_TAGS_PROMPT') &&
                     actionButtons('IMAGE_TAGS_PROMPT'),
                 },
               }}
@@ -725,10 +776,12 @@ function SettingsAI(props: Props) {
                 aiTemplates.current['TEXT_TAGS_PROMPT'] = e.target.value;
                 forceUpdate();
               }}
+              onFocus={handleTemplateFocus('TEXT_TAGS_PROMPT')}
+              onBlur={handleTemplateBlur('TEXT_TAGS_PROMPT')}
               slotProps={{
                 input: {
                   endAdornment:
-                    aiTemplates.current['TEXT_TAGS_PROMPT'] &&
+                    showTemplateActions('TEXT_TAGS_PROMPT') &&
                     actionButtons('TEXT_TAGS_PROMPT'),
                 },
               }}
