@@ -5,6 +5,7 @@ import {
   getDevicePathsForPlatform,
   binaryToBase64,
   classifyWriteContent,
+  isResolvedWebViewUrl,
 } from '-/services/capacitor-io-utils';
 
 const {
@@ -53,6 +54,54 @@ describe('capacitor-io-utils', () => {
       expect(res.path).toBe(
         'file:///private/var/mobile/Library/Mobile%20Documents/iCloud~org/Documents/My%20File.jpg',
       );
+    });
+  });
+
+  // A2. Idempotency guard for already-resolved WebView URLs.
+  // Regression: meta.thumbPath holds a raw native path for files but an
+  // already-resolved URL for folders (getDirMeta pre-resolves it). Callers
+  // re-resolve it, so without this guard folder thumbnails were converted twice
+  // and 404'd on mobile — resolveCapacitorPath treats a URL as a relative path.
+  describe('isResolvedWebViewUrl', () => {
+    test('true for Capacitor.convertFileSrc output (Android + iOS)', () => {
+      expect(
+        isResolvedWebViewUrl(
+          'https://localhost/_capacitor_file_/storage/emulated/0/Docs/.ts/tst.jpg',
+        ),
+      ).toBe(true);
+      expect(
+        isResolvedWebViewUrl('capacitor://localhost/_capacitor_file_/var/.ts/tst.jpg'),
+      ).toBe(true);
+      expect(isResolvedWebViewUrl('http://localhost/_capacitor_file_/x.jpg')).toBe(
+        true,
+      );
+    });
+    test('true for file/blob/data URLs', () => {
+      expect(isResolvedWebViewUrl('file:///var/mobile/x.jpg')).toBe(true);
+      expect(isResolvedWebViewUrl('blob:http://localhost/abc-123')).toBe(true);
+      expect(isResolvedWebViewUrl('data:image/jpeg;base64,AAAA')).toBe(true);
+    });
+    test('false for raw native paths (which still need resolving)', () => {
+      expect(
+        isResolvedWebViewUrl('/storage/emulated/0/Docs/sub/.ts/tst.jpg'),
+      ).toBe(false);
+      expect(isResolvedWebViewUrl('/.ts/tst.jpg')).toBe(false);
+      expect(isResolvedWebViewUrl('sdcard/DCIM/.ts/tst.jpg')).toBe(false);
+      expect(isResolvedWebViewUrl('.ts/tst.jpg')).toBe(false);
+    });
+    test('false for empty/undefined input', () => {
+      expect(isResolvedWebViewUrl('')).toBe(false);
+      expect(isResolvedWebViewUrl(undefined)).toBe(false);
+    });
+    test('documents WHY the guard is needed: resolveCapacitorPath mangles a URL', () => {
+      // Without the guard, an already-converted folder thumb URL is fed back in
+      // and treated as a *relative* path under ExternalStorage/Documents.
+      const converted =
+        'https://localhost/_capacitor_file_/storage/emulated/0/Docs/.ts/tst.jpg';
+      expect(android(converted).path).toBe(converted); // relative → file:///…/https:/… → 404
+      expect(android(converted).directory).toBe('EXTERNAL_STORAGE');
+      // The guard short-circuits before this ever happens.
+      expect(isResolvedWebViewUrl(converted)).toBe(true);
     });
   });
 

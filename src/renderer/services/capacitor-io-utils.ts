@@ -35,6 +35,22 @@ export interface ResolvedCapacitorPath {
 }
 
 /**
+ * True when a path has already been converted into a URL the WebView can load —
+ * i.e. Capacitor.convertFileSrc output (https://localhost/_capacitor_file_/… on
+ * Android, capacitor://localhost/… on iOS) or a file/blob/data URL.
+ *
+ * Native filesystem paths never carry a scheme, so this cleanly separates "raw
+ * path, still needs resolving" from "already resolved". Callers use it as an
+ * idempotency guard: feeding an already-converted URL back into
+ * resolveCapacitorPath() would treat it as a *relative* path and produce
+ * file:///…/https:/localhost/_capacitor_file_/… , which 404s.
+ */
+export function isResolvedWebViewUrl(path: string): boolean {
+  if (!path) return false;
+  return /^(https?|capacitor|file|blob|data):/i.test(path);
+}
+
+/**
  * Determine the Capacitor Directory enum value and relative path from an
  * absolute/location-relative path.
  * - iOS: relative to Directory.Documents (the App Documents location stores "/",

@@ -15,6 +15,7 @@ import {
 } from '@tagspaces/tagspaces-common/paths';
 import { getUuid, loadJSONString } from '@tagspaces/tagspaces-common/utils-io';
 //import * as objectStoreAPI from '@tagspaces/tagspaces-common-aws';
+import { isResolvedWebViewUrl } from '-/services/capacitor-io-utils';
 import { getFulfilledResults, getMimeType } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { offlineRejectionIfRemote } from '-/utils/OfflineError';
@@ -319,6 +320,16 @@ export class CommonLocation implements TS.Location {
     // stores path "/", so a naive file:///.ts/<name>.jpg points at the device
     // root and the thumb never loads.
     if (AppConfig.isCapacitor) {
+      // Idempotency guard. meta.thumbPath is a raw native path for files but an
+      // already-resolved WebView URL for folders (getDirMeta pre-resolves it),
+      // and callers re-resolve it. Re-converting a converted URL makes
+      // resolveCapacitorPath treat it as a *relative* path, yielding
+      // file:///…/https:/localhost/_capacitor_file_/… → folder thumbs 404 on
+      // mobile. The S3 (isSignedURL) and Electron (normalizeUrl protocol check)
+      // branches are already idempotent; Capacitor was the only one that wasn't.
+      if (isResolvedWebViewUrl(thumbPath)) {
+        return Promise.resolve(thumbPath);
+      }
       const ioAPI = require('-/services/io-capacitor');
       if (ioAPI.getNativeFileUrlAsync) {
         return ioAPI
