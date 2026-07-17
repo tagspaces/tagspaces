@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Одиночный щелчок открывает файл во внешней программе",
   "singleClickSelects": "Одиночный щелчок только выделяет",
   "parentDirNotInLocation": "Навигация невозможна: достигнут корень каталога.",
+  "pressBackAgainToExit": "Нажмите «Назад» ещё раз, чтобы выйти",
   "mustContainTheseTags": "Должен содержать все эти теги",
   "atLeastOneOfTheseTags": "Хотя бы один из этих тегов",
   "noneOfTheseTags": "Ни один из этих тегов",

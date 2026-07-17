@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Pojedyncze kliknięcie otwiera plik zewnętrznie",
   "singleClickSelects": "Pojedyncze kliknięcie tylko zaznacza",
   "parentDirNotInLocation": "Nie można nawigować, osiągnięto korzeń lokalizacji.",
+  "pressBackAgainToExit": "Naciśnij ponownie wstecz, aby wyjść",
   "mustContainTheseTags": "Musi zawierać wszystkie te tagi",
   "atLeastOneOfTheseTags": "Co najmniej jeden z tych tagów",
   "noneOfTheseTags": "Żaden z tych tagów",

@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Clique simples abre arquivo externamente",
   "singleClickSelects": "Clique simples apenas seleciona",
   "parentDirNotInLocation": "Não é possível navegar, a raiz do local foi atingida.",
+  "pressBackAgainToExit": "Pressione voltar novamente para sair",
   "mustContainTheseTags": "Deve conter todas essas tags",
   "atLeastOneOfTheseTags": "Pelo menos uma dessas tags",
   "noneOfTheseTags": "Nenhuma dessas tags",

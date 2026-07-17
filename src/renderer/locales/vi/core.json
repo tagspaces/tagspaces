@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Nhấp đơn mở tệp bên ngoài",
   "singleClickSelects": "Nhấp đơn chỉ chọn",
   "parentDirNotInLocation": "Không thể điều hướng, đã đến thư mục gốc của vị trí.",
+  "pressBackAgainToExit": "Nhấn quay lại lần nữa để thoát",
   "mustContainTheseTags": "Phải chứa tất cả các thẻ này",
   "atLeastOneOfTheseTags": "Ít nhất một trong các thẻ này",
   "noneOfTheseTags": "Không có thẻ nào trong số này",

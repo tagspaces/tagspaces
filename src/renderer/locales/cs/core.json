@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Jeden klik otevře soubor externě",
   "singleClickSelects": "Jeden klik pouze vybere",
   "parentDirNotInLocation": "Nelze navigovat, byl dosažen kořen umístění.",
+  "pressBackAgainToExit": "Opětovným stisknutím tlačítka zpět aplikaci ukončíte",
   "mustContainTheseTags": "Musí obsahovat všechny tyto štítky",
   "atLeastOneOfTheseTags": "Alespoň jeden z těchto štítků",
   "noneOfTheseTags": "Žádný z těchto štítků",

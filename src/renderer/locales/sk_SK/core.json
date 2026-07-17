@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Jedno kliknutie otvorí súbor externe",
   "singleClickSelects": "Jedno kliknutie iba vyberie",
   "parentDirNotInLocation": "Navigácia nie je možná, dosiahnutý koreň miesta.",
+  "pressBackAgainToExit": "Opätovným stlačením tlačidla späť aplikáciu ukončíte",
   "mustContainTheseTags": "Musí obsahovať všetky tieto značky",
   "atLeastOneOfTheseTags": "Aspoň jedna z týchto značiek",
   "noneOfTheseTags": "Žiadna z týchto značiek",

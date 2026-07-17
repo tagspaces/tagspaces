@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Un simple clic ouvre le fichier en externe",
   "singleClickSelects": "Un simple clic sélectionne seulement",
   "parentDirNotInLocation": "Impossible de remonter plus haut, car vous êtes à la racine de l'emplacement.",
+  "pressBackAgainToExit": "Appuyez à nouveau sur retour pour quitter",
   "mustContainTheseTags": "Doit contenir toutes ces étiquettes",
   "atLeastOneOfTheseTags": "Au moins une de ces étiquette",
   "noneOfTheseTags": "Aucun de ces étiquettes",

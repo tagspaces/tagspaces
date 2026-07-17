@@ -1,3 +1,21 @@
+/**
+ * TagSpaces - universal file and folder organizer
+ * Copyright (C) 2026-present TagSpaces GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License (version 3) as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 // @ts-nocheck
 /**
  * TagSpaces Capacitor IO implementation
@@ -18,6 +36,7 @@ const {
 } = require('@tagspaces/tagspaces-common/paths');
 // Pure (native-free) helpers, separated so they can be unit-tested in Node.
 const U = require('./capacitor-io-utils');
+const { BACK_BUTTON_EVENT } = require('./mobileBackAction');
 
 // Capacitor imports
 const { Capacitor, CapacitorHttp } = require('@capacitor/core');
@@ -341,7 +360,11 @@ async function onDeviceReady() {
 }
 
 function onDeviceBackButton(e) {
-  // Send event to main app — prevent default handled by Capacitor
+  // Registering any backButton listener disables Capacitor's default
+  // behavior, so this must dispatch to the app or back is a dead button.
+  // e.canGoBack refers to WebView history — irrelevant for this SPA.
+  // Handled by useMobileBackHandler (mounted in MainPage).
+  window.dispatchEvent(new CustomEvent(BACK_BUTTON_EVENT));
 }
 
 function handleOpenURL(url) {
@@ -1448,57 +1471,57 @@ if (Capacitor.isNativePlatform()) {
 // --- Exports (matching io-cordova.js interface exactly) ---
 
 export {
-  onDeviceReady,
-  setupStatusBar,
-  onDeviceBackButton,
-  handleOpenURL,
-  normalizePath,
-  onDeviceResume,
-  onApplicationLoad,
-  getDirSystemPromise,
-  resolveFullPath,
-  getAppStorageFileSystem,
-  getFileSystem,
-  saveSettingsFile,
-  loadSettingsFile,
-  saveSettings,
-  loadSettings,
-  loadSettingsTags,
-  sendFile,
-  getDevicePaths,
-  getICloudContainer,
-  handleStartParameters,
-  quitApp,
-  listMetaDirectoryPromise,
-  listDirectoryPromise,
-  getEntryMeta,
-  getPropertiesPromise,
-  loadTextFilePromise,
-  getFileContentPromise,
-  saveFilePromise,
-  saveTextFilePromise,
-  saveBinaryFilePromise,
-  createDirectoryPromise,
-  copyFilePromise,
-  renameFilePromise,
-  checkFileExist,
   checkDirExist,
-  renameDirectoryPromise,
-  moveDirectoryPromise,
+  checkFileExist,
   copyDirectoryPromise,
-  deleteFilePromise,
+  copyFilePromise,
+  createDirectoryPromise,
   deleteDirectoryPromise,
-  selectDirectory,
-  selectFile,
-  selectDirectoryDialog,
-  takePicture,
+  deleteFilePromise,
+  downloadFile,
+  focusWindow,
+  getAppStorageFileSystem,
+  getDevicePaths,
+  getDirSystemPromise,
+  getEntryMeta,
+  getFileContentPromise,
+  getFileSystem,
+  getICloudContainer,
+  getNativeFileUrlAsync,
+  getPropertiesPromise,
+  handleOpenURL,
+  handleStartParameters,
+  httpGet,
+  httpHead,
+  listDirectoryPromise,
+  listMetaDirectoryPromise,
+  loadSettings,
+  loadSettingsFile,
+  loadSettingsTags,
+  loadTextFilePromise,
+  moveDirectoryPromise,
+  normalizePath,
+  onApplicationLoad,
+  onDeviceBackButton,
+  onDeviceReady,
+  onDeviceResume,
   openDirectory,
   openFile,
   openUrl,
-  focusWindow,
+  quitApp,
+  renameDirectoryPromise,
+  renameFilePromise,
+  resolveFullPath,
+  saveBinaryFilePromise,
+  saveFilePromise,
+  saveSettings,
+  saveSettingsFile,
+  saveTextFilePromise,
+  selectDirectory,
+  selectDirectoryDialog,
+  selectFile,
+  sendFile,
+  setupStatusBar,
   shareFiles,
-  downloadFile,
-  httpGet,
-  httpHead,
-  getNativeFileUrlAsync,
+  takePicture,
 };

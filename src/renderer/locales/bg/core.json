@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Единично кликване отваря файла външно",
   "singleClickSelects": "Единично кликване само избира",
   "parentDirNotInLocation": "Навигацията е невъзможна, достигнат е коренът на местоположението.",
+  "pressBackAgainToExit": "Натиснете отново назад, за да излезете",
   "mustContainTheseTags": "Трябва да съдържа всички тези етикети",
   "atLeastOneOfTheseTags": "Поне един от тези етикети",
   "noneOfTheseTags": "Нито един от тези етикети",

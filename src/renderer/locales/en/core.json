@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Single click opens file externally",
   "singleClickSelects": "Single click selects only",
   "parentDirNotInLocation": "Unable to navigate, location root reached.",
+  "pressBackAgainToExit": "Press back again to exit",
   "mustContainTheseTags": "Must contain all of these tags",
   "atLeastOneOfTheseTags": "At least one of these tags",
   "noneOfTheseTags": "None of these tags",

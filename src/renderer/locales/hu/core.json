@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Egyszeri kattintás külső megnyitást végez",
   "singleClickSelects": "Egyszeri kattintás csak kijelöl",
   "parentDirNotInLocation": "Nem lehet navigálni, a hely gyökerét elérték.",
+  "pressBackAgainToExit": "A kilépéshez nyomja meg újra a vissza gombot",
   "mustContainTheseTags": "Tartalmaznia kell az összes címkét",
   "atLeastOneOfTheseTags": "Legalább egy ezek közül a címkék közül",
   "noneOfTheseTags": "Egyik sem ezek közül a címkék közül",

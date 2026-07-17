@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Einfach-Klick öffnet die Datei extern",
   "singleClickSelects": "Auswahl durch Einfach-Klick",
   "parentDirNotInLocation": "Navigation nicht möglich, Speicherortstamm erreicht.",
+  "pressBackAgainToExit": "Zum Beenden erneut Zurück drücken",
   "mustContainTheseTags": "Muss alle diesen Tags enthalten",
   "atLeastOneOfTheseTags": "Mindestens ein von diesen Tags",
   "noneOfTheseTags": "Kein von diesen Tags",

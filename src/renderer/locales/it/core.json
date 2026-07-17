@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Singolo clic per aprire il file esternamente",
   "singleClickSelects": "Singolo clic per selezionare",
   "parentDirNotInLocation": "Impossibile navigare, raggiunta la radice del percorso.",
+  "pressBackAgainToExit": "Premi di nuovo indietro per uscire",
   "mustContainTheseTags": "Deve contenere tutte queste etichette",
   "atLeastOneOfTheseTags": "Può contenere almeno una di queste etichette",
   "noneOfTheseTags": "Non deve contenere nessuna di queste etichette",

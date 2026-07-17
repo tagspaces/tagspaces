@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Tek tıklama dosyayı harici olarak açar",
   "singleClickSelects": "Tek tıklama dosyayı yalnızca seçer",
   "parentDirNotInLocation": "Gezinilemiyor, konum kökü ulaşıldı.",
+  "pressBackAgainToExit": "Çıkmak için tekrar geri tuşuna basın",
   "mustContainTheseTags": "Bu etiketlerin tümünü içermeli",
   "atLeastOneOfTheseTags": "Bu etiketlerden en az biri",
   "noneOfTheseTags": "Bu etiketlerden hiçbiri",

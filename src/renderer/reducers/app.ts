@@ -162,7 +162,12 @@ export default (state: any = initialState, action: any) => {
 };
 
 function disableBackGestureMac() {
-  if (AppConfig.isMacLike) {
+  // isMacLike also matches iPhone/iPad. Keep the suppressor for macOS
+  // Electron (trackpad history swipe) and iOS Safari web (browser back
+  // gesture), but not for the Capacitor app: WKWebView's history gestures
+  // are off there anyway, and preventDefault would kill taps near the
+  // edges plus the edge-swipe-back gesture (useSwipeBack).
+  if (AppConfig.isMacLike && !AppConfig.isCapacitor) {
     const element = document.getElementById('root');
     element.addEventListener('touchstart', (e: MouseEvent) => {
       // is not near edge of view, exit

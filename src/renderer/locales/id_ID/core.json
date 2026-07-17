@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Sekali klik membuka file dengan eksternal",
   "singleClickSelects": "Sekali klik hanya memilih",
   "parentDirNotInLocation": "Tidak dapat menavigasi, telah mencapai root lokasi.",
+  "pressBackAgainToExit": "Tekan kembali sekali lagi untuk keluar",
   "mustContainTheseTags": "Harus terdapat semua tag ini",
   "atLeastOneOfTheseTags": "Minimal ada satu dari tag ini",
   "noneOfTheseTags": "Tidak ada tag ini",

@@ -21,10 +21,13 @@ import PageNotification from '-/containers/PageNotification';
 import { FilePropertiesContextProvider } from '-/hooks/FilePropertiesContextProvider';
 import { FullScreenContextProvider } from '-/hooks/FullScreenContextProvider';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import useMobileBackHandler from '-/hooks/useMobileBackHandler';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
+import { CLOSE_ENTRY_REQUEST_EVENT } from '-/services/mobileBackAction';
 import useEventListener from '-/utils/useEventListener';
+import { useSwipeBack } from '-/utils/useSwipeBack';
 import { Box, useMediaQuery } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
@@ -98,6 +101,31 @@ function MainPage() {
 
   const [drawerOpened, setDrawerOpened] = useState<boolean>(true);
   const isDesktopMode: boolean = useSelector(getDesktopMode);
+  // Same condition as the drawer-variant branch in the JSX below: persistent
+  // Drawer (desktop) vs temporary SwipeableDrawer (mobile/web).
+  const persistentDrawer =
+    isDesktopMode || (AppConfig.ExtIsAmplify && !isLoggedIn());
+
+  // Android hardware back button / system back gesture.
+  useMobileBackHandler(drawerOpened && !persistentDrawer, () =>
+    setDrawerOpened(false),
+  );
+
+  // iOS edge-swipe-back on the full-screen entry overlay. While a drag is in
+  // progress the FolderContainer below is un-hidden so it shows through.
+  const entryOverlayRef = useRef<HTMLDivElement>(null);
+  const [swipeInProgress, setSwipeInProgress] = useState<boolean>(false);
+  const { edgeStripRef, edgeStripStyle } = useSwipeBack({
+    enabled: AppConfig.isCapacitoriOS && smallScreen && !!openedEntry,
+    targetRef: entryOverlayRef,
+    onDragActiveChange: setSwipeInProgress,
+    // dispatchEvent returns false when EntryContainer preventDefault()s,
+    // i.e. an unsaved-changes confirm dialog appears instead of a close.
+    onCommitRequest: () =>
+      window.dispatchEvent(
+        new CustomEvent(CLOSE_ENTRY_REQUEST_EVENT, { cancelable: true }),
+      ),
+  });
   const keyBindings = useSelector(getKeyBindingObject);
   const mainSplitSize = useSelector(getMainVerticalSplitSize);
   const drawerWidth = useSelector(getLeftPanelWidth);
@@ -326,12 +354,14 @@ function MainPage() {
       return (
         <Box sx={{ position: 'relative', height: '100%', width: '100%' }}>
           <FolderContainer
-            hidden={!!openedEntry}
+            hidden={!!openedEntry && !swipeInProgress}
             toggleDrawer={toggleDrawer}
             drawerOpened={drawerOpened}
           />
           {openedEntry && (
             <Box
+              ref={entryOverlayRef}
+              data-tid="mobileEntryOverlay"
               sx={{
                 position: 'absolute',
                 inset: 0,
@@ -339,6 +369,13 @@ function MainPage() {
               }}
             >
               {entryContainer}
+              {AppConfig.isCapacitoriOS && (
+                <div
+                  data-tid="swipeBackStrip"
+                  ref={edgeStripRef}
+                  style={edgeStripStyle}
+                />
+              )}
             </Box>
           )}
         </Box>
@@ -382,7 +419,7 @@ function MainPage() {
               } !important;}
           `}
           </style>
-          {isDesktopMode || (AppConfig.ExtIsAmplify && !isLoggedIn()) ? (
+          {persistentDrawer ? (
             <>
               <Drawer
                 sx={{
@@ -423,6 +460,10 @@ function MainPage() {
                 hysteresis={0.1}
                 disableBackdropTransition={!AppConfig.isIOS}
                 disableDiscovery={AppConfig.isIOS}
+                // While an entry overlay covers the screen, the drawer's
+                // fixed left-edge SwipeArea would steal the edge-swipe-back
+                // gesture from the overlay's strip.
+                disableSwipeToOpen={smallScreen && !!openedEntry}
               >
                 <MobileNavigation
                   width={MOBILE_DRAWER_WIDTH}

@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Enkeltklikk åpner filen eksternt",
   "singleClickSelects": "Enkeltklikk markerer bare",
   "parentDirNotInLocation": "Kan ikke navigere, lokasjonsroten er nådd.",
+  "pressBackAgainToExit": "Trykk tilbake igjen for å avslutte",
   "mustContainTheseTags": "Må inneholde alle disse stikkordene",
   "atLeastOneOfTheseTags": "Minst ett av disse stikkordene",
   "noneOfTheseTags": "Ingen av disse stikkordene",

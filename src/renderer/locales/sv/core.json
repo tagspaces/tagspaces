@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Enkelklick öppnar filen externt",
   "singleClickSelects": "Enkelklick markerar endast",
   "parentDirNotInLocation": "Det går inte att navigera, platsens rot har nåtts.",
+  "pressBackAgainToExit": "Tryck på bakåt igen för att avsluta",
   "mustContainTheseTags": "Måste innehålla alla dessa taggar",
   "atLeastOneOfTheseTags": "Minst en av dessa taggar",
   "noneOfTheseTags": "Ingen av dessa taggar",

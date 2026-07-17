@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Одинарний клік відкриває файл зовнішньо",
   "singleClickSelects": "Одинарний клік лише вибирає",
   "parentDirNotInLocation": "Неможливо перейти, досягнуто кореня місця.",
+  "pressBackAgainToExit": "Натисніть «Назад» ще раз, щоб вийти",
   "mustContainTheseTags": "Має містити всі ці мітки",
   "atLeastOneOfTheseTags": "Хоча б одна з цих міток",
   "noneOfTheseTags": "Жодної з цих міток",

@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "單點在外部開啟檔案",
   "singleClickSelects": "單點只選擇檔案",
   "parentDirNotInLocation": "無法導航，已到達根目錄。",
+  "pressBackAgainToExit": "再按一次返回鍵即可結束",
   "mustContainTheseTags": "須包含以下所有標籤",
   "atLeastOneOfTheseTags": "至少包含以下一個標籤",
   "noneOfTheseTags": "不包含以下標籤",

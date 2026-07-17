@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "El clic únic obre el fitxer externament",
   "singleClickSelects": "El clic únic només selecciona",
   "parentDirNotInLocation": "No es pot navegar, s'ha arribat a l'arrel de la ubicació.",
+  "pressBackAgainToExit": "Torneu a prémer enrere per sortir",
   "mustContainTheseTags": "Ha de contenir totes aquestes etiquetes",
   "atLeastOneOfTheseTags": "Almenys una d'aquestes etiquetes",
   "noneOfTheseTags": "Cap d'aquestes etiquetes",

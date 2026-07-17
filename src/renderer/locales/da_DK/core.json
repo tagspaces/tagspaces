@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "Enkelt klik åbner filen eksternt",
   "singleClickSelects": "Enkelt klik vælger kun",
   "parentDirNotInLocation": "Kan ikke navigere. Placeringens rod er nået.",
+  "pressBackAgainToExit": "Tryk tilbage igen for at afslutte",
   "mustContainTheseTags": "Skal indeholde alle disse mærker",
   "atLeastOneOfTheseTags": "Mindst ét af disse mærker",
   "noneOfTheseTags": "Ingen af disse mærker",

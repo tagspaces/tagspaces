@@ -42,9 +42,11 @@ import {
   getKeyBindingObject,
   isDesktopMode,
 } from '-/reducers/settings';
+import { CLOSE_ENTRY_REQUEST_EVENT } from '-/services/mobileBackAction';
 import { getResizedImageThumbnail } from '-/services/thumbsgenerator';
 import { TS } from '-/tagspaces.namespace';
 import { base64ToUint8Array } from '-/utils/dom';
+import useEventListener from '-/utils/useEventListener';
 import { useMediaQuery } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
@@ -74,8 +76,13 @@ function EntryContainer() {
   } = useOpenedEntryContext();
   const { setActions } = usePerspectiveActionsContext();
   const { toggleFullScreen } = useFullScreenContext();
-  const { saveDescription, isEditMode, setEditMode, closeOpenedEntries } =
-    useFilePropertiesContext();
+  const {
+    saveDescription,
+    isEditMode,
+    setEditMode,
+    closeOpenedEntries,
+    isDescriptionChanged,
+  } = useFilePropertiesContext();
   const { findLocation } = useCurrentLocationContext();
   const { openFilePickerDialog } = useFilePickerDialogContext();
   const { saveFileOpen } = useResolveConflictContext();
@@ -499,6 +506,18 @@ function EntryContainer() {
   const closeFile = () => {
     closeOpenedEntries();
   };
+
+  // Close request from the mobile back chain (Android back button/gesture)
+  // or the iOS edge-swipe gesture. Handled here because this component owns
+  // the unsaved-changes-aware close path. preventDefault() tells gesture
+  // callers a confirm dialog will appear instead of an immediate close.
+  useEventListener(CLOSE_ENTRY_REQUEST_EVENT, (event: Event) => {
+    const needsConfirm = (fileChanged && isEditMode) || isDescriptionChanged;
+    if (needsConfirm && event.cancelable) {
+      event.preventDefault();
+    }
+    startClosingEntry(null);
+  });
 
   const startSavingFile = () => {
     if (isEditMode) {

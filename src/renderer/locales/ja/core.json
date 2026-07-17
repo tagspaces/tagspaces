@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "シングルクリックは外部的にファイルを開く",
   "singleClickSelects": "シングルクリックは選択のみ",
   "parentDirNotInLocation": "ナビゲートできません。ロケーションのルートに到達しました。",
+  "pressBackAgainToExit": "もう一度戻るボタンを押すと終了します",
   "mustContainTheseTags": "これらのタグをすべて含む必要があります",
   "atLeastOneOfTheseTags": "これらのタグの少なくとも1つ",
   "noneOfTheseTags": "これらのタグ以外",

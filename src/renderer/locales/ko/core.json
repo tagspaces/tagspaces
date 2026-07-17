@@ -476,6 +476,7 @@
   "singleClickOpenExternally": "한 번 클릭시 외부에서 파일 열기",
   "singleClickSelects": "한번 클릭시 파일 선택",
   "parentDirNotInLocation": "탐색할 수 없습니다. 위치 루트에 도달했습니다.",
+  "pressBackAgainToExit": "종료하려면 뒤로 버튼을 한 번 더 누르세요",
   "mustContainTheseTags": "다음 태그를 모두 포함해야 함",
   "atLeastOneOfTheseTags": "다음 태그중 적어도 한개",
   "noneOfTheseTags": "다음 태그 모두 포함 안함",
