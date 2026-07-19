@@ -977,7 +977,7 @@
   "doubleClickToEdit": "双击进行编辑",
   "tsLinksHelp": "TagSpaces 链接以 ts://? 开头，用于内部共用文件和文件夹",
   "pasteImageFromClipboard": "按下以从剪贴板粘贴图像",
-  "parentFolder": "父文件夹",
+  "parentFolder": "主文件夹",
   "remove": "移除",
   "send": "寄送",
   "appendSelectionToPrompt": "将所选文本附加到提示词",
