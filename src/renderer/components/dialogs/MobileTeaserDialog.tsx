@@ -154,7 +154,7 @@ function Slide(props: SlideProps) {
         />
         <img
           src={mockupURL}
-          alt=""
+          alt="Mobile app mockup"
           style={{
             position: 'relative',
             zIndex: 1,
@@ -200,7 +200,7 @@ function Slide(props: SlideProps) {
           <Box sx={{ mt: 1, lineHeight: 0 }}>
             <img
               src={badgeURL}
-              alt=""
+              alt="Badge pointing to the app store"
               style={{
                 width: smallScreen ? 110 : 130,
                 display: 'inline-block',

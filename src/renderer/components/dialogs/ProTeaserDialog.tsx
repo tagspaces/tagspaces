@@ -137,7 +137,7 @@ function Slide(props: SlideProps) {
                 maxWidth: '95%',
               }}
               src={pictureURL}
-              alt=""
+              alt="slide picture"
             />
           </a>
         )}

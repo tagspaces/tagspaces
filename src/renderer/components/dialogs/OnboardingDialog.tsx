@@ -23,10 +23,11 @@ import NewLook from '-/assets/images/desktop.svg';
 import LocationConcept from '-/assets/images/organize.svg';
 import TagsDemoVideo from '-/assets/videos/tags-demo.mp4';
 import { NavigateBeforeIcon, NavigateNextIcon } from '-/components/CommonIcons';
-import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
+import TsSwitch from '-/components/TsSwitch';
+import TsTooltip from '-/components/TsTooltip';
 import TsDialogTitle from '-/components/dialogs/components/TsDialogTitle';
 import { useCreateEditLocationDialogContext } from '-/components/dialogs/hooks/useCreateEditLocationDialogContext';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
@@ -59,7 +60,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import TsSwitch from '-/components/TsSwitch';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -486,7 +486,7 @@ function OnboardingDialog(props: Props) {
                     display: 'block',
                   }}
                   src={NewLook}
-                  alt=""
+                  alt="Illustration of a desktop computer with TagSpaces open"
                 />
                 <Typography variant="body1" sx={{ marginTop: '12px' }}>
                   {t('peri:obWelcomeBody')}
@@ -541,7 +541,7 @@ function OnboardingDialog(props: Props) {
                     paddingBottom: 12,
                   }}
                   src={LocationConcept}
-                  alt=""
+                  alt="Illustration of a files connected to a folder, representing a location "
                 />
                 <Typography variant="body1">
                   {t('peri:obSlide2Body')}
@@ -801,7 +801,7 @@ function OnboardingDialog(props: Props) {
                     display: 'block',
                   }}
                   src={WizardFinished}
-                  alt=""
+                  alt="Illustration of a desktop computer with TagSpaces open, representing the completion of the onboarding wizard"
                 />
                 <Typography variant="body1" sx={{ marginTop: '12px' }}>
                   {t('peri:obSlide4Body')}

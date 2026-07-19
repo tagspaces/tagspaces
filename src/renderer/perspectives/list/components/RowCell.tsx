@@ -28,8 +28,8 @@ import TagContainer from '-/components/TagContainer';
 import TagContainerDnd from '-/components/TagContainerDnd';
 import TagsOverflowChip from '-/components/TagsOverflowChip';
 import TagsPreview from '-/components/TagsPreview';
-import TsTooltip from '-/components/TsTooltip';
 import TsIconButton from '-/components/TsIconButton';
+import TsTooltip from '-/components/TsTooltip';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
@@ -490,7 +490,7 @@ function RowCell(props: Props) {
             }}
           >
             <img
-              alt="thumbnail"
+              alt="entry thumbnail"
               src={
                 fsEntry.meta.thumbPath +
                 (!currentLocation.haveObjectStoreSupport() &&
