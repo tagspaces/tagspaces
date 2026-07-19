@@ -603,7 +603,7 @@ function SettingsFileTypes() {
             '& .MuiDataGrid-row:hover': {
               backgroundColor: 'transparent',
             },
-            '& .MuiDataGrid-cell:focus': {
+            '& .MuiDataGrid-cell:focus:not(:focus-visible)': {
               outline: 'none',
             },
             '& .MuiDataGrid-cell:focus-within': {

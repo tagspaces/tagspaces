@@ -57,6 +57,11 @@ function App({ children }: Props) {
   }, [currentTheme, defaultDarkTheme, defaultRegularTheme, systemDarkMode]);
 
   useEffect(() => {
+    // Expose the active UI language to assistive technologies (WCAG 3.1.1)
+    document.documentElement.lang = i18n.language.replace('_', '-');
+  }, [i18n.language]);
+
+  useEffect(() => {
     const darkMode = theme.palette.mode === 'dark';
     // For 3th party css like TailwindCSS
     document.documentElement.setAttribute(

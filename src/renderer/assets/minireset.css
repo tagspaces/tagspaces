@@ -34,6 +34,7 @@ img { border: 0; pointer-events: none; }
     cursor: default;
 } 
 
-input, button, textarea, :focus {
-    outline: none; 
+/* Hide outlines for pointer focus only; keyboard focus stays visible (WCAG 2.4.7) */
+:focus:not(:focus-visible) {
+    outline: none;
 }
