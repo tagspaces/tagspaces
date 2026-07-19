@@ -145,7 +145,8 @@ function Slide(props: SlideProps) {
           <video
             src={videoURL}
             poster={videoPosterUrl}
-            autoPlay={true}
+            autoPlay
+            muted
             loop
             controls
             style={{ width: '100%', marginBottom: 15 }}
