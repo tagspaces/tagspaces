@@ -490,7 +490,7 @@ function RowCell(props: Props) {
             }}
           >
             <img
-              alt="entry thumbnail"
+              alt={t('core:thumbnailOfEntry', { name: fsEntry.name })}
               src={
                 fsEntry.meta.thumbPath +
                 (!currentLocation.haveObjectStoreSupport() &&

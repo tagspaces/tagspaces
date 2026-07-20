@@ -1101,6 +1101,7 @@
   "downloadFileError": "Download file error: {{message}}",
   "thumbnailCreationFailed": "Thumbnail creation failed.",
   "thumbnailCreatedFor": "Thumbnail created for: {{path}}",
+  "thumbnailOfEntry": "Thumbnail of {{name}}",
   "backgroundCreatedFor": "Background created for: {{path}}",
   "backgroundCreationFailed": "Background creation failed.",
   "cantEditTagsFileOpened": "You can't edit tags, because '{{path}}' is opened for editing",

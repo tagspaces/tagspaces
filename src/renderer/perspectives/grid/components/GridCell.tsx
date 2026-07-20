@@ -537,7 +537,7 @@ function GridCell(props: Props) {
             component="img"
             loading="lazy"
             onError={handleThumbError}
-            alt={t('core:thumbnailImage')}
+            alt={t('core:thumbnailOfEntry', { name: fsEntry.name })}
             data-tid="imageThumbnailTID"
             height="auto"
             src={thumbSrc.replace(/#/g, '%23')}

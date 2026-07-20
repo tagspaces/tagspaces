@@ -319,7 +319,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10385;
+				CURRENT_PROJECT_VERSION = 10396;
 				DEVELOPMENT_TEAM = DLK22E2679;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -327,7 +327,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.13.11;
+				MARKETING_VERSION = 6.13.12;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = org.tagspaces.mobileapp;
 				PRODUCT_NAME = TagSpaces;
@@ -345,7 +345,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10385;
+				CURRENT_PROJECT_VERSION = 10396;
 				DEVELOPMENT_TEAM = DLK22E2679;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -353,7 +353,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.13.11;
+				MARKETING_VERSION = 6.13.12;
 				PRODUCT_BUNDLE_IDENTIFIER = org.tagspaces.mobileapp;
 				PRODUCT_NAME = TagSpaces;
 				PROVISIONING_PROFILE_SPECIFIER = "";
