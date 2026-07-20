@@ -17,7 +17,7 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
-    "@tagspaces/extensions": "1.0.255",
+    "@tagspaces/extensions": "1.0.256",
     "@tagspaces/tagspaces-common-node": "4.8.9",
     "@tagspaces/tagspaces-ws": "4.8.9",
     "wasm-vips": "0.0.17",
