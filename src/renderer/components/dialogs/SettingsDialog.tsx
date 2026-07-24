@@ -48,7 +48,7 @@ import Tabs from '@mui/material/Tabs';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Links from 'assets/links';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export enum SettingsTab {
@@ -81,9 +81,35 @@ function SettingsDialog(props: Props) {
   const [currentTab, setCurrentTab] = useState<SettingsTab>(
     tab || SettingsTab.General,
   );
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const extFilterRef = useRef<HTMLInputElement>(null);
   // const desktopMode = useSelector(isDesktopMode);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  // Focus the filter/search field that belongs to a given tab. General and
+  // File Types are the two tabs that carry a filter box at their top.
+  const focusTabField = (nextTab: SettingsTab) => {
+    if (nextTab === SettingsTab.General) {
+      searchInputRef.current?.focus();
+    } else if (nextTab === SettingsTab.FileTypes) {
+      extFilterRef.current?.focus();
+    }
+  };
+
+  // Move focus to the current tab's filter field when the user switches tabs.
+  // The initial dialog-open case is handled by the transition's onEntered
+  // (below), which fires after MUI's focus trap has settled; skipping the first
+  // run here avoids racing that transition.
+  const didFocusMount = useRef(false);
+  useEffect(() => {
+    if (!didFocusMount.current) {
+      didFocusMount.current = true;
+      return;
+    }
+    focusTabField(currentTab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTab]);
 
   const handleTabClick = (
     event: React.SyntheticEvent,
@@ -230,8 +256,12 @@ function SettingsDialog(props: Props) {
           width: smallScreen ? '100%' : 600,
         }}
       >
-        {currentTab === SettingsTab.General && <SettingsGeneral />}
-        {currentTab === SettingsTab.FileTypes && <SettingsFileTypes />}
+        {currentTab === SettingsTab.General && (
+          <SettingsGeneral searchInputRef={searchInputRef} />
+        )}
+        {currentTab === SettingsTab.FileTypes && (
+          <SettingsFileTypes filterInputRef={extFilterRef} />
+        )}
         {currentTab === SettingsTab.Templates && <SettingsTemplates />}
         {currentTab === SettingsTab.KeyBindings && <SettingsKeyBindings />}
         {currentTab === SettingsTab.Extensions && <SettingsExtensions />}
@@ -260,6 +290,14 @@ function SettingsDialog(props: Props) {
       keepMounted
       scroll="paper"
       onClose={onClose}
+      // The dialog is keepMounted, so autoFocus on a field would fire once
+      // while hidden and never again. Focus the current tab's filter field
+      // after the open transition completes, once MUI's focus trap has settled.
+      slotProps={{
+        transition: {
+          onEntered: () => focusTabField(currentTab),
+        },
+      }}
     >
       <TsDialogTitle
         dialogTitle={t('core:settings')}

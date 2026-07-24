@@ -84,6 +84,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import {
+  Ref,
   useContext,
   useEffect,
   useMemo,
@@ -95,7 +96,11 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import MapTileServerDialog from '../MapTileServerDialog';
 
-function SettingsGeneral() {
+interface Props {
+  searchInputRef?: Ref<HTMLInputElement>;
+}
+
+function SettingsGeneral({ searchInputRef }: Props = {}) {
   const { i18n, t } = useTranslation();
   const { openCurrentDirectory } = useDirectoryContentContext();
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
@@ -1835,6 +1840,7 @@ function SettingsGeneral() {
       <Box sx={{ padding: '8px 16px 0 16px' }}>
         <TsTextField
           data-tid="settingsFilterText"
+          inputRef={searchInputRef}
           fullWidth
           placeholder={t('core:searchSettings')}
           value={filterText}

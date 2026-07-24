@@ -38,13 +38,35 @@ type TSTextFieldProps = TextFieldProps & {
 
 const TsTextField = React.forwardRef<HTMLDivElement, TSTextFieldProps>(
   function TsTextField(props, ref) {
-    const { updateValue, retrieveValue, children, sx, label, ...restProps } =
-      props;
+    const {
+      updateValue,
+      retrieveValue,
+      children,
+      sx,
+      label,
+      inputRef: externalInputRef,
+      ...restProps
+    } = props;
     const theme = useTheme();
     const { t } = useTranslation();
     const desktopMode = useSelector(isDesktopMode);
     const textFieldRef = React.useRef<HTMLInputElement | HTMLTextAreaElement>(
       null,
+    );
+
+    // Keep the internal ref (used by copy/paste below) while also honoring an
+    // inputRef passed by the caller, e.g. to focus the field imperatively.
+    const setInputRef = React.useCallback(
+      (node: HTMLInputElement | HTMLTextAreaElement | null) => {
+        textFieldRef.current = node;
+        if (typeof externalInputRef === 'function') {
+          externalInputRef(node);
+        } else if (externalInputRef) {
+          (externalInputRef as React.MutableRefObject<typeof node>).current =
+            node;
+        }
+      },
+      [externalInputRef],
     );
 
     const [contextMenu, setContextMenu] = React.useState<{
@@ -127,7 +149,7 @@ const TsTextField = React.forwardRef<HTMLDivElement, TSTextFieldProps>(
           </FormHelperText>
         )}
         <TextField
-          inputRef={textFieldRef}
+          inputRef={setInputRef}
           onContextMenu={handleContextMenu}
           margin="dense"
           size={desktopMode ? 'small' : 'medium'}

@@ -251,7 +251,11 @@ const ActionCell = React.memo(({ item, onRemoveItem, t }: ActionCellProps) => (
 ));
 ActionCell.displayName = 'ActionCell';
 
-function SettingsFileTypes() {
+interface Props {
+  filterInputRef?: React.Ref<HTMLInputElement>;
+}
+
+function SettingsFileTypes({ filterInputRef }: Props = {}) {
   const { t } = useTranslation();
   const { extensions } = useExtensionsContext();
   const { openConfirmDialog } = useNotificationContext();
@@ -531,6 +535,7 @@ function SettingsFileTypes() {
         }}
       >
         <TsTextField
+          inputRef={filterInputRef}
           placeholder={t('filterByFileExtension')}
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}
