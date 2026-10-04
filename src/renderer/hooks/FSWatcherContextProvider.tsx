@@ -16,21 +16,16 @@
  *
  */
 
-import React, { createContext, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useMemo, useRef } from 'react';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import AppConfig from '-/AppConfig';
 import {
   extractContainingDirectoryPath,
   getFileLocationFromMetaFile,
 } from '@tagspaces/tagspaces-common/paths';
-import { locationType } from '@tagspaces/tagspaces-common/misc';
-import { PerspectiveIDs } from '-/perspectives';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { Changed } from '../../main/chokidarWatcher';
 import { useEditedEntryContext } from '-/hooks/useEditedEntryContext';
 import { TS } from '-/tagspaces.namespace';
-import { watchFolderMessage } from '-/services/utils-io';
-import { Pro } from '-/pro';
 
 type FSWatcherContextData = {
   ignored: string[];
@@ -59,50 +54,19 @@ export type FSWatcherContextProviderProps = {
 export const FSWatcherContextProvider = ({
   children,
 }: FSWatcherContextProviderProps) => {
-  const { currentLocationId, findLocation } = useCurrentLocationContext();
+  const { findLocation } = useCurrentLocationContext();
   const {
     getAllPropertiesPromise,
     currentDirectoryEntries,
     loadDirectoryContent,
-    currentDirectoryPath,
-    currentPerspective,
   } = useDirectoryContentContext();
   const { setReflectActions, reflectUpdateMeta } = useEditedEntryContext();
   const ignored = useRef<string[]>([]);
+  // Folder watching was removed; kept so the ignore list API stays a no-op
   const watchingFolderPath = useRef<string>(undefined);
   let timer; // Timer variable to delay batch execution
   const actionsQueue: TS.EditAction[] = [];
   const currentLocation = findLocation();
-
-  useEffect(() => {
-    if (
-      currentLocation &&
-      currentLocation.watchForChanges &&
-      currentLocation.type !== locationType.TYPE_CLOUD
-    ) {
-      if (currentDirectoryPath && currentDirectoryPath.length > 0) {
-        const depth = currentPerspective === PerspectiveIDs.KANBAN ? 3 : 1;
-
-        watchFolder(currentDirectoryPath, depth);
-      }
-    } else {
-      stopWatching();
-    }
-  }, [currentLocationId, currentDirectoryPath]);
-
-  function watchFolder(locationPath, depth) {
-    if (
-      Pro &&
-      currentLocation &&
-      !currentLocation.haveObjectStoreSupport() &&
-      !currentLocation.haveWebDavSupport()
-    ) {
-      console.log('Start watching: ' + locationPath);
-      stopWatching();
-      watchingFolderPath.current = locationPath;
-      watchFolderMessage(locationPath, depth);
-    }
-  }
 
   function executeBatchActions() {
     if (actionsQueue.length > 0) {
@@ -226,19 +190,6 @@ export const FSWatcherContextProvider = ({
       }
     };
   }, [currentDirectoryEntries, ignored.current]);
-
-  useEffect(() => {
-    if (AppConfig.isElectron) {
-      window.electronIO.ipcRenderer.on('folderChanged', (message: Changed) => {
-        const { path, eventName } = message;
-        folderChanged(eventName, path);
-      });
-
-      return () => {
-        window.electronIO.ipcRenderer.removeAllListeners('folderChanged');
-      };
-    }
-  }, [folderChanged]);
 
   function stopWatching() {
     watchingFolderPath.current = undefined;

@@ -409,9 +409,6 @@ export const LocationIndexContextProvider = ({
     forceFullReindex = false,
   ): Promise<TS.FileSystemEntry[]> {
     if (isWalking()) {
-      if (Pro && Pro.Watcher) {
-        Pro.Watcher.stopWatching();
-      }
       return isWorkerAvailable().then((isWorkerAvailable) => {
         const loc = findLocation(param.locationID);
         const dirPath = cleanTrailingDirSeparator(param.path);

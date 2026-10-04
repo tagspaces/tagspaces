@@ -1085,16 +1085,6 @@ export function resolveRelativePath(path: string): Promise<string> {
   return Promise.resolve(path);
 }
 
-export function watchFolderMessage(locationPath, depth) {
-  if (AppConfig.isElectron) {
-    window.electronIO.ipcRenderer.sendMessage(
-      'watchFolder',
-      locationPath,
-      depth,
-    );
-  }
-}
-
 export function openDirectoryMessage(dirPath: string): void {
   if (AppConfig.isElectron) {
     window.electronIO.ipcRenderer.sendMessage('openDirectory', dirPath);

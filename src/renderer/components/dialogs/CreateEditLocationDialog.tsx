@@ -181,9 +181,10 @@ function CreateEditLocationDialog(props: Props) {
   const [workSpaceId, setWorkSpaceId] = useState<string>(
     selectedLocation ? selectedLocation.workSpaceId || '' : '',
   );
-  const [watchForChanges, setWatchForChanges] = useState<boolean>(
-    selectedLocation ? selectedLocation.watchForChanges : false,
-  );
+  // folder watching was removed, the stored flag is only carried over on save
+  const watchForChanges = selectedLocation
+    ? selectedLocation.watchForChanges
+    : false;
   const [disableIndexing, setIndexDisable] = useState<boolean>(
     selectedLocation ? selectedLocation.disableIndexing : false,
   );
@@ -873,33 +874,6 @@ function CreateEditLocationDialog(props: Props) {
                   </>
                 }
               />
-              {devMode && (
-                <FormControlLabel
-                  disabled={
-                    !Pro ||
-                    type === locationType.TYPE_CLOUD ||
-                    AppConfig.isNativeMobile
-                  }
-                  labelPlacement="start"
-                  sx={{ justifyContent: 'space-between', marginLeft: 0 }}
-                  control={
-                    <TsSwitch
-                      data-tid="changeWatchForChanges"
-                      name="watchForChanges"
-                      checked={watchForChanges}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        setWatchForChanges(event.target.checked)
-                      }
-                    />
-                  }
-                  label={
-                    <>
-                      {t('core:watchForChangesInLocation')}
-                      {!Pro && <ProLabel />}
-                    </>
-                  }
-                />
-              )}
               <FormControlLabel
                 labelPlacement="start"
                 sx={{ justifyContent: 'space-between', marginLeft: 0 }}

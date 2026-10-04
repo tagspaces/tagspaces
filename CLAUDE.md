@@ -65,11 +65,12 @@ HTTP server (localhost-only) providing REST API for indexing and thumbnail gener
 - **POST /thumb-gen** — Body: JSON array of file paths. Query: `?pdf=true`. Returns thumbnail metadata
 - **POST /indexer** — Body: `{ directoryPath, extractText, extractLinks, ignorePatterns }`. Creates `.ts/tsi.json`
 - **POST /extract-pdf** — Body: `{ filePath }`. Extracts PDF text content
-- **POST /watch-folder** — Body: `{ directoryPath }`. Monitors filesystem changes
 - **POST /hide-folder** — Body: `{ directoryPath }`. Marks folder as hidden
 - **GET /** — Health check
 
-Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers`, `@tagspaces/tagspaces-pdf-extraction`, `ws`, `jsonwebtoken`, `wasm-vips`.
+Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers`, `@tagspaces/tagspaces-pdf-extraction`, `jsonwebtoken`, `wasm-vips`.
+
+Folder watching was removed: there is no `/watch-folder` endpoint and no `chokidar`/`ws`/`find-free-ports` dependency. `FSWatcherContextProvider`'s ignore list is kept but inert (`isWatching()` is always false), and the `watchForChanges` location flag is no longer exposed in the location dialog.
 
 ### Supporting packages
 
