@@ -29,6 +29,7 @@ import {
   getDirProperties,
   isDirectory,
 } from '@tagspaces/tagspaces-common-node/io-node';
+import { execFile } from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
 import { Readable } from 'stream';
@@ -47,6 +48,60 @@ import registerSecureStorageEvents from './secureStorage';
 
 //let watcher: FSWatcher;
 const progress = {};
+
+/**
+ * Routes the renderer is allowed to reach on the local worker server, with the
+ * query parameters each one may carry. Anything else is refused.
+ */
+const ALLOWED_WS_ROUTES: Record<string, string[]> = {
+  '/indexer': [],
+  '/thumb-gen': ['pdf', 'pdfContent'],
+};
+
+/**
+ * Rebuild a renderer-supplied worker endpoint from the allowlist, or return
+ * undefined if it is not one we serve. Returning a freshly built string (rather
+ * than validating and passing the original through) means no unexpected path
+ * segment, fragment or query parameter can ride along.
+ */
+function sanitizeWsEndpoint(endpoint: unknown): string | undefined {
+  if (typeof endpoint !== 'string' || !endpoint.startsWith('/')) {
+    return undefined;
+  }
+  let parsed: URL;
+  try {
+    parsed = new URL(endpoint, 'http://127.0.0.1');
+  } catch (e) {
+    return undefined;
+  }
+  const allowedParams = ALLOWED_WS_ROUTES[parsed.pathname];
+  if (!allowedParams) {
+    return undefined;
+  }
+  const params = new URLSearchParams();
+  allowedParams.forEach((name) => {
+    const value = parsed.searchParams.get(name);
+    if (value !== null) {
+      params.set(name, value);
+    }
+  });
+  const query = params.toString();
+  return query ? `${parsed.pathname}?${query}` : parsed.pathname;
+}
+
+/** `attrib +h` on a directory. Windows only; resolves even when attrib fails. */
+function hideFolderOnWindows(dirPath: string): Promise<void> {
+  return new Promise((resolve) => {
+    // execFile with an argument array — never a shell string — so a folder
+    // name cannot be read as part of a command.
+    execFile('attrib', ['+h', dirPath], { windowsHide: true }, (err) => {
+      if (err) {
+        console.error(`Hide folder failed: ${dirPath}`, err.message);
+      }
+      resolve();
+    });
+  });
+}
 
 // A desktop-Chrome User-Agent so remote servers treat our downloads like a
 // regular browser request. Many sites reject the default Electron/Node agent
@@ -302,13 +357,28 @@ export default function loadMainEvents() {
     });
   });
   ipcMain.handle('postRequest', async (event, payload, endpoint, requestId) => {
+    // The renderer used to be able to name any endpoint here, so a single
+    // injection in renderer-displayed content (a crafted HTML/Markdown
+    // preview, a compromised extension) could reach every worker route with
+    // an arbitrary payload. Only the two routes the app actually uses are
+    // accepted, and the endpoint is rebuilt from scratch so no unexpected
+    // query parameter survives.
+    const safeEndpoint = sanitizeWsEndpoint(endpoint);
+    if (!safeEndpoint) {
+      console.error('postRequest: rejected endpoint', endpoint);
+      return false;
+    }
     let controller;
     if (requestId) {
       controller = new AbortController();
       controllers.set(requestId, controller);
     }
     try {
-      const result = await postRequest(payload, endpoint, controller?.signal);
+      const result = await postRequest(
+        payload,
+        safeEndpoint,
+        controller?.signal,
+      );
       return result;
     } catch (err) {
       console.error('postRequest error:', err);
@@ -359,13 +429,12 @@ export default function loadMainEvents() {
   ipcMain.handle('createDirectoryPromise', async (event, dirPath) => {
     const result = await createDirectoryPromise(dirPath);
     if (process.platform === 'win32' && dirPath.endsWith('\\.ts')) {
-      // hide .ts folder on Windows
-      const wssPost = await postRequest(
-        JSON.stringify({ path: dirPath }),
-        '/hide-folder',
-      );
-      // @ts-ignore
-      console.log('Hide folder: ' + dirPath + ' - ' + wssPost.success);
+      // Hide the .ts folder on Windows. This used to be a /hide-folder round
+      // trip to the worker server, which meant exposing "run attrib +h on an
+      // arbitrary directory" as a network-reachable route for the sake of one
+      // local call. The worker never did anything the main process could not,
+      // so the endpoint is gone and the call happens here.
+      await hideFolderOnWindows(dirPath);
     }
     return result;
   });

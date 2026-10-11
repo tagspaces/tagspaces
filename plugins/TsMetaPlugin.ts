@@ -85,53 +85,14 @@ export class TsMetaPlugin {
       });
     }
 
-    /**
-     * generate JWT token
-     */
-    async function generateJWT() {
-      const envPath = path.resolve(webpackPaths.appPath, '.env');
-      try {
-        // Try to read the file metadata; if it doesn't exist, we'll catch below
-        await fsPromises.access(envPath);
-        // file exists — nothing to do
-      } catch {
-        console.log(
-          chalk.black.bgYellow.bold(
-            'The env files are missing. Sit back while we generate them for you with "KEY=testDevKey"',
-          ),
-        );
-        console.log(
-          chalk.red.bgWhiteBright.bold("Don't forget to change this KEY!"),
-        );
-        // write the file atomically
-        fs.writeFileSync(envPath, 'KEY=testDevKey\n', {
-          encoding: 'utf8',
-          flag: 'wx',
-        });
-      }
-
-      const cwd = path.resolve(webpackPaths.rootPath);
-      const script = path.join(cwd, 'scripts', 'jwt_generate.js');
-
-      await new Promise<void>((resolve, reject) => {
-        const child = spawn(process.execPath, [script], {
-          cwd,
-          stdio: 'inherit',
-          shell: false,
-        });
-        child.on('error', reject);
-        child.on('exit', (code, signal) => {
-          if (signal) return reject(new Error(`killed by signal ${signal}`));
-          if (code !== 0) return reject(new Error(`exit code ${code}`));
-          resolve();
-        });
-      });
-    }
     // beforeRun fires once, before compiling begins
+    //
+    // There is deliberately no key or JWT generation step here any more. The
+    // worker-server key is created in memory at app launch (src/main/wsAuth.ts),
+    // so no secret is written into the build or shipped in the package.
     compiler.hooks.beforeRun.tapPromise('TsMetaPlugin', async () => {
       await checkVersionJson();
       await checkThirdPartyTxt();
-      await generateJWT();
     });
   }
 }

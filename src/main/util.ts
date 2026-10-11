@@ -4,6 +4,7 @@ import path from 'path';
 import { BrowserWindow } from 'electron';
 import http from 'http';
 import settings from './settings';
+import { hasWsKey, mintWsToken } from './wsAuth';
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
@@ -13,6 +14,16 @@ export function resolveHtmlPath(htmlFileName: string) {
     return url.href;
   }
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
+}
+
+/**
+ * The pathname a token must be minted for. The worker checks the token's `sub`
+ * against the route being called, so the query string (which the route table
+ * ignores) must be stripped here.
+ */
+function endpointSubject(endpoint: string): string {
+  const queryStart = endpoint.indexOf('?');
+  return queryStart === -1 ? endpoint : endpoint.substring(0, queryStart);
 }
 
 /**
@@ -43,7 +54,9 @@ export function postRequest(payload, endpoint, signal = undefined) {
         method: 'POST',
         path: endpoint,
         headers: {
-          Authorization: 'Bearer ' + settings.getToken(),
+          // Minted per request: valid for ~60s and only for this endpoint, so
+          // a captured token cannot be replayed later or against another route.
+          Authorization: `Bearer ${mintWsToken(endpointSubject(endpoint))}`,
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(payload, 'utf8'),
         },
@@ -176,7 +189,6 @@ export function ollamaGetRequest(endpoint, ollamaApiUrl) {
       method: 'GET',
       path: endpoint,
       headers: {
-        //Authorization: 'Bearer ' + settings.getToken(),
         'Content-Type': 'application/json',
         //'Content-Length': Buffer.byteLength(payload, 'utf8'),
       },
@@ -227,7 +239,6 @@ export function ollamaDeleteRequest(
       method: 'DELETE',
       path: endpoint,
       headers: {
-        //Authorization: 'Bearer ' + settings.getToken(),
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(payload, 'utf8'),
       },
@@ -267,7 +278,6 @@ export function ollamaPostRequest(
       method: 'POST',
       path: endpoint,
       headers: {
-        //Authorization: 'Bearer ' + settings.getToken(),
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(payload, 'utf8'),
       },
@@ -323,43 +333,45 @@ export function ollamaPostRequest(
 }
 
 /**
- * needs to run in init this function always return false first time
+ * Probe whether the worker process is up and answering.
+ *
+ * The probe is authenticated like every other route — the worker no longer
+ * serves an unauthenticated landing page, which previously let anything that
+ * could reach the port confirm it had found TagSpaces.
  */
 export function isWorkerAvailable(): Promise<boolean> {
-  /*if (settings.getToken() !== undefined) {
-    return Promise.resolve(settings.getToken() !== 'not');
-  }*/
-  if (settings.getUsedWsPort()) {
-    try {
-      return fetch('http://127.0.0.1:' + settings.getUsedWsPort(), {
-        method: 'HEAD',
-      })
-        .then((res) => {
-          if (res.status === 200) {
-            const config = require('./config/config.json');
-            if (config && config.jwt) {
-              settings.setToken(config.jwt);
-              return true;
-            } else {
-              console.error('jwt token not generated');
-              settings.setToken('not');
-            }
-          }
-          return false;
-        })
-        .catch((e) => {
-          console.debug('isWorkerAvailable:', e);
-          return false;
-        });
-    } catch (e) {
-      if (e && e.code && e.code === 'MODULE_NOT_FOUND') {
-        console.error('WS error MODULE_NOT_FOUND');
-        settings.setToken('not');
-      }
-      console.debug('isWorkerAvailable:', e);
-    }
+  const port = settings.getUsedWsPort();
+  if (!port || !hasWsKey()) {
+    return Promise.resolve(false);
   }
-  return Promise.resolve(false);
+  return new Promise<boolean>((resolve) => {
+    const req = http.request(
+      {
+        hostname: '127.0.0.1',
+        port,
+        method: 'GET',
+        path: '/',
+        headers: { Authorization: `Bearer ${mintWsToken('/')}` },
+        timeout: 5000,
+      },
+      (resp) => {
+        // 204 is the current reply; 200 is tolerated so a newer app paired with
+        // an older worker build still detects it.
+        const ok = resp.statusCode === 204 || resp.statusCode === 200;
+        resp.resume(); // drain so the socket can be released
+        resolve(ok);
+      },
+    );
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(false);
+    });
+    req.on('error', (e) => {
+      console.debug('isWorkerAvailable:', e.message);
+      resolve(false);
+    });
+    req.end();
+  });
 }
 
 export function newProgress(key, total) {

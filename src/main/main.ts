@@ -24,7 +24,6 @@ import windowStateKeeper from 'electron-window-state';
 import findFreePorts from 'find-free-ports';
 import fs from 'fs';
 import path from 'path';
-import propertiesReader from 'properties-reader';
 import i18nInit from '../renderer/services/i18nInit';
 import buildDockMenu from './electron-dock-menu';
 import buildDesktopMenu from './electron-menus';
@@ -33,6 +32,7 @@ import { getExtensions } from './extension-utils';
 import loadMainEvents from './mainEvents';
 import protocol from './protocol';
 import settings from './settings';
+import { clearWsKey, generateWsKey } from './wsAuth';
 import { Extensions } from './types';
 import { resolveHtmlPath } from './util';
 
@@ -380,31 +380,35 @@ async function findPort() {
 
 function startWS() {
   try {
-    let filepath, script, envPath;
+    let filepath;
+    let script;
     if (app.isPackaged) {
       filepath = process.resourcesPath;
       script = 'app.asar/node_modules/@tagspaces/tagspaces-ws/build/index.js';
-      envPath = path.join(filepath, 'app.asar/.env');
     } else {
       filepath = path.join(
         __dirname,
         '../node_modules/@tagspaces/tagspaces-ws/build',
       );
       script = 'index.js';
-      envPath = path.join(__dirname, '../.env');
     }
-    const properties = propertiesReader(envPath);
+    // The key is generated here, in memory, once per launch — it is never read
+    // from a shipped .env and never written to disk. It is handed over through
+    // the environment rather than argv, because a process command line is
+    // readable by other local processes (`ps`, WMIC) while its environment is
+    // not. The worker deletes TS_WS_KEY from its env after reading it, so the
+    // thumbnail/indexer children it spawns do not inherit the key.
+    const wsKey = generateWsKey();
     findPort()
       .then((freePort) => {
         const scriptPath = path.join(filepath, script);
-        wsProcess = utilityProcess.fork(
-          scriptPath,
-          ['-p', String(freePort), '-k', String(properties.get('KEY') ?? '')],
-          { cwd: filepath, serviceName: 'TagspacesWS' },
-        );
+        wsProcess = utilityProcess.fork(scriptPath, ['-p', String(freePort)], {
+          cwd: filepath,
+          serviceName: 'TagspacesWS',
+          env: { ...process.env, TS_WS_KEY: wsKey },
+        });
         wsProcess.on('spawn', () => {
           settings.setUsedWsPort(freePort);
-          mainWindow?.webContents.send('start_ws', { port: freePort });
           console.debug(
             `start_ws:${freePort} - Tagspaces WS pid (${wsProcess?.pid})`,
           );
@@ -412,6 +416,8 @@ function startWS() {
         wsProcess.on('exit', (code) => {
           console.debug('Tagspaces WS exit code', code);
           wsProcess = null;
+          settings.setUsedWsPort(undefined);
+          clearWsKey();
         });
       })
       .catch((err) => console.error('startWS err:', err));

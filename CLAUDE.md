@@ -59,14 +59,22 @@ Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers` (th
 
 ### @tagspaces/tagspaces-ws (`packages/tagspaces-ws`)
 
-HTTP server (localhost-only) providing REST API for indexing and thumbnail generation. Used by the Electron main process to offload heavy work.
+HTTP server (localhost-only) providing a REST API for indexing and thumbnail generation. Used by the Electron main process to offload heavy work.
 
-- **Start**: Listens on `127.0.0.1:<port>` (default 40352), optional JWT auth key
-- **POST /thumb-gen** — Body: JSON array of file paths. Query: `?pdf=true`. Returns thumbnail metadata
-- **POST /indexer** — Body: `{ directoryPath, extractText, extractLinks, ignorePatterns }`. Creates `.ts/tsi.json`
-- **POST /extract-pdf** — Body: `{ filePath }`. Extracts PDF text content
-- **POST /hide-folder** — Body: `{ directoryPath }`. Marks folder as hidden
-- **GET /** — Health check
+- **Start**: Listens on `127.0.0.1:<port>` (default 40352). The HMAC key is **required** and comes from the `TS_WS_KEY` environment variable (`-k` remains only for standalone CLI use — a process command line is readable by other local processes, an environment is not)
+- **POST /thumb-gen** — Body: JSON array of file paths. Query: `?pdf=`, `?pdfContent=`. Returns thumbnail metadata
+- **POST /indexer** — Body: `{ directoryPath, extractText, extractLinks, ignorePatterns, forceFullReindex, extendedExtraction }`. Creates `.ts/tsi.json`
+- **GET /** — Health check. Authenticated like every other route, and replies `204` with no body
+
+`/extract-pdf` and `/hide-folder` were removed. `/extract-pdf` had no callers at all (PDF text goes through the indexer's `extendedExtraction`) and was an arbitrary-file-read primitive; `/hide-folder` had exactly one caller — the main process — which now runs `attrib +h` itself in `mainEvents.ts`. Do not reintroduce either: every route here is reachable by anything that can talk to the port.
+
+**Auth and transport rules** (`auth.js`, `ws.js`) — all four matter, none is redundant:
+
+- The key is generated in memory per app launch in [src/main/wsAuth.ts](src/main/wsAuth.ts) and handed over via `env`. Nothing is read from `.env` and no key or token is ever written to disk or packaged. Builds must not write a key — a shipped key is a public key.
+- Tokens are minted per request, valid ~60s, and carry `iss`/`aud` plus a `sub` naming the single endpoint they may be used against. `jwt.verify` pins `algorithms: ['HS256']` and requires all of them.
+- **Host must exactly match** `127.0.0.1|localhost|[::1]:<port>`, else the socket is destroyed. This is what stops DNS rebinding; parsing the URL against a fixed base does not.
+- Requests carrying `Origin`, `Referer`, `Cookie` or any `Sec-Fetch-*` header get `403`. The only legitimate client is main's `http.request`, which sends none of these; every browser sends some. This blocks page-driven attacks even once rebinding has removed the CORS preflight.
+- Unknown paths get a bare `404` with no body. The old catch-all HTML landing page made the port trivial to fingerprint from a scan.
 
 Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers`, `@tagspaces/tagspaces-pdf-extraction`, `jsonwebtoken`, `wasm-vips`.
 

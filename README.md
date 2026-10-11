@@ -84,15 +84,11 @@ Install the following tools:
     git checkout develop  # or 'master' for stable release
     npm install
 
-#### Set Up Local Web Service
+#### Local Web Service
 
-Create a .env file in release/app/ with a custom key to avoid conflicts:
+The desktop version of the application uses a web service which runs locally as a separate process. The web service is responsible for the search index creation and the generation of the thumbnails for most of the image formats.
 
-The desktop version of the application uses a web service which is running locally as a separate process. The web service is responsible for the search index creation and the generation of the thumbnails for most of the images formats. A key is required in order for the main application to communicate with the web server. It should be generated from webpack script in the `.env` file located in `release/app` folder. This is an example for an .env file.
-
-    KEY=a_custom_key
-
-> Having a custom key, ensures that another instance of TagSpaces will not communicate with the web service of the initial instance, since it is always running on the same port.
+No setup is needed. The application authenticates to this service with a key that is generated in memory on every launch and passed to the worker process through its environment (see `src/main/wsAuth.ts`). Nothing is read from a `.env` file and no key is written to disk, so each running instance only ever talks to its own web service.
 
 #### Build & Start
 
