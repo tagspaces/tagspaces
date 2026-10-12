@@ -21,7 +21,6 @@ import {
   utilityProcess,
 } from 'electron';
 import windowStateKeeper from 'electron-window-state';
-import findFreePorts from 'find-free-ports';
 import fs from 'fs';
 import path from 'path';
 import i18nInit from '../renderer/services/i18nInit';
@@ -31,10 +30,9 @@ import buildTrayMenu from './electron-tray-menu';
 import { getExtensions } from './extension-utils';
 import loadMainEvents from './mainEvents';
 import protocol from './protocol';
-import settings from './settings';
-import { clearWsKey, generateWsKey } from './wsAuth';
 import { Extensions } from './types';
 import { resolveHtmlPath } from './util';
+import { attachWorker, detachWorker } from './wsClient';
 
 // --- App State ---
 let isMacLike = process.platform === 'darwin';
@@ -364,20 +362,12 @@ function bindAppMenu(i18n: any) {
   );
 }
 
-// --- WebSocket Server ---
-async function findPort() {
-  if (isDebug || testMode) return 2000;
-  const defaultWSPort = settings.getInitWsPort();
-  try {
-    const [port] = await findFreePorts(1, { startPort: defaultWSPort });
-    return port;
-  } catch (e) {
-    console.error('Error findPort:', e);
-  }
-  console.log('Using default WS port:' + defaultWSPort);
-  return defaultWSPort;
-}
-
+// --- Worker process (indexing + thumbnails) ---
+//
+// The worker is reached over the utilityProcess message port, so it listens on
+// no port and needs no key. The message port exists only between
+// this process and the child, which is a guarantee from the OS rather than
+// something we have to enforce.
 function startWS() {
   try {
     let filepath;
@@ -392,35 +382,19 @@ function startWS() {
       );
       script = 'index.js';
     }
-    // The key is generated here, in memory, once per launch — it is never read
-    // from a shipped .env and never written to disk. It is handed over through
-    // the environment rather than argv, because a process command line is
-    // readable by other local processes (`ps`, WMIC) while its environment is
-    // not. The worker deletes TS_WS_KEY from its env after reading it, so the
-    // thumbnail/indexer children it spawns do not inherit the key.
-    const wsKey = generateWsKey();
-    findPort()
-      .then((freePort) => {
-        const scriptPath = path.join(filepath, script);
-        wsProcess = utilityProcess.fork(scriptPath, ['-p', String(freePort)], {
-          cwd: filepath,
-          serviceName: 'TagspacesWS',
-          env: { ...process.env, TS_WS_KEY: wsKey },
-        });
-        wsProcess.on('spawn', () => {
-          settings.setUsedWsPort(freePort);
-          console.debug(
-            `start_ws:${freePort} - Tagspaces WS pid (${wsProcess?.pid})`,
-          );
-        });
-        wsProcess.on('exit', (code) => {
-          console.debug('Tagspaces WS exit code', code);
-          wsProcess = null;
-          settings.setUsedWsPort(undefined);
-          clearWsKey();
-        });
-      })
-      .catch((err) => console.error('startWS err:', err));
+    const scriptPath = path.join(filepath, script);
+    wsProcess = utilityProcess.fork(scriptPath, [], {
+      cwd: filepath,
+      serviceName: 'TagspacesWS',
+    });
+    attachWorker(wsProcess);
+    wsProcess.on('spawn', () => {
+      console.debug(`Tagspaces WS started - pid (${wsProcess?.pid})`);
+    });
+    wsProcess.on('exit', (code) => {
+      console.debug('Tagspaces WS exit code', code);
+      wsProcess = null;
+    });
   } catch (ex) {
     console.error('startWS exception __dirname:' + __dirname, ex);
   }
@@ -509,6 +483,7 @@ const createWindow = async (i18n: any) => {
     (_, { reason, exitCode }) => {
       wsProcess?.kill();
       wsProcess = null;
+      detachWorker();
       globalShortcut.unregisterAll();
       app.quit();
     },
@@ -583,6 +558,7 @@ app.on('activate', (event, hasVisibleWindows) => {
 app.on('quit', () => {
   wsProcess?.kill();
   wsProcess = null;
+  detachWorker();
   globalShortcut.unregisterAll();
 });
 

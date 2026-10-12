@@ -59,24 +59,34 @@ Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers` (th
 
 ### @tagspaces/tagspaces-ws (`packages/tagspaces-ws`)
 
-HTTP server (localhost-only) providing a REST API for indexing and thumbnail generation. Used by the Electron main process to offload heavy work.
+Worker process for search-index creation and thumbnail generation. The Electron main process forks it to keep heavy work off the UI thread.
 
-- **Start**: Listens on `127.0.0.1:<port>` (default 40352). The HMAC key is **required** and comes from the `TS_WS_KEY` environment variable (`-k` remains only for standalone CLI use — a process command line is readable by other local processes, an environment is not)
-- **POST /thumb-gen** — Body: JSON array of file paths. Query: `?pdf=`, `?pdfContent=`. Returns thumbnail metadata
-- **POST /indexer** — Body: `{ directoryPath, extractText, extractLinks, ignorePatterns, forceFullReindex, extendedExtraction }`. Creates `.ts/tsi.json`
-- **GET /** — Health check. Authenticated like every other route, and replies `204` with no body
+**It is not a server, and there is no HTTP transport.** The app runs it as an Electron `utilityProcess` and talks to it over `process.parentPort`. It opens no socket, listens on no port and holds no key — the message port exists only between the worker and the process that forked it, which the OS guarantees. There is nothing for another local process, a port scan or a (DNS-rebound) web page to reach.
 
-`/extract-pdf` and `/hide-folder` were removed. `/extract-pdf` had no callers at all (PDF text goes through the indexer's `extendedExtraction`) and was an arbitrary-file-read primitive; `/hide-folder` had exactly one caller — the main process — which now runs `attrib +h` itself in `mainEvents.ts`. Do not reintroduce either: every route here is reachable by anything that can talk to the port.
+Layout — four files:
 
-**Auth and transport rules** (`auth.js`, `ws.js`) — all four matter, none is redundant:
+- **`operations.js`** — the work: `runIndexer`, `runThumbGen`. Transport-agnostic, and what the tests drive directly. **Add features here.**
+- **`ipc.js`** — the message-port transport. Protocol: main→worker `{id, op, params}` and `{op:'cancel', target}`; worker→main `{id, ok:true, result}` or `{id, ok:false, error, name}`. Ops: `ping`, `indexer`, `thumbGen`. Unknown ops are refused, inherited `Object` properties (`__proto__`, `constructor`, …) are not reachable as op names, and malformed messages are ignored rather than crashing the worker.
+- **`index.js`** — entry point. Exits with an error if `process.parentPort` is missing, i.e. if something tries to run it outside Electron.
+- **`security.js`** — path validation only (`validatePath`, `validatePaths`).
 
-- The key is generated in memory per app launch in [src/main/wsAuth.ts](src/main/wsAuth.ts) and handed over via `env`. Nothing is read from `.env` and no key or token is ever written to disk or packaged. Builds must not write a key — a shipped key is a public key.
-- Tokens are minted per request, valid ~60s, and carry `iss`/`aud` plus a `sub` naming the single endpoint they may be used against. `jwt.verify` pins `algorithms: ['HS256']` and requires all of them.
-- **Host must exactly match** `127.0.0.1|localhost|[::1]:<port>`, else the socket is destroyed. This is what stops DNS rebinding; parsing the URL against a fixed base does not.
-- Requests carrying `Origin`, `Referer`, `Cookie` or any `Sec-Fetch-*` header get `403`. The only legitimate client is main's `http.request`, which sends none of these; every browser sends some. This blocks page-driven attacks even once rebinding has removed the CORS preflight.
-- Unknown paths get a bare `404` with no body. The old catch-all HTML landing page made the port trivial to fingerprint from a scan.
+To drive an operation outside Electron (a script, a one-off, a test), `require('./operations.js')` directly. **Do not reopen a port for it.**
 
-Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers`, `@tagspaces/tagspaces-pdf-extraction`, `jsonwebtoken`, `wasm-vips`.
+Main-process side:
+
+- [src/main/wsClient.ts](src/main/wsClient.ts) — `attachWorker`/`detachWorker`, `callWorker(op, params, signal)`, `pingWorker()`. Correlates replies by id, bounds each call with a timeout, rejects everything in flight if the worker exits, and forwards aborts to the worker so a cancelled index walk actually stops. An abort rejects with `name: 'AbortError'`, the contract `mainEvents.ts` maps to `{error:'AbortError'}`.
+- [src/main/util.ts](src/main/util.ts) — `postRequest(payload, endpoint, signal)` keeps the endpoint-string API (`'/indexer'`, `'/thumb-gen?pdfContent=true'`) the renderer call sites are written against and translates it to an op. The names are vestigial; no HTTP is involved. This is also where the renderer's JSON is parsed, so it carries the prototype-pollution guard and the payload size cap that the HTTP body reader used to provide — **don't drop those**, they moved here with the parse.
+- [src/main/mainEvents.ts](src/main/mainEvents.ts) — the `postRequest` IPC handler rebuilds the endpoint from an allowlist (`sanitizeWsEndpoint`) instead of forwarding a renderer-supplied string, so a renderer-side injection cannot reach an arbitrary operation with an arbitrary payload.
+
+**History — do not undo any of this.** The worker was a loopback HTTP server whose JWT key was `production-<version>`, shipped in `app.asar/.env`, with a never-expiring token baked into the bundle as well. Anyone who knew the public version number could forge a token and index, write, thumbnail or read any directory. The whole HTTP transport (`ws.js`, `auth.js`, `endpoints/`, `jsonwebtoken`) has since been deleted — nothing used it — which removes that entire class of bug rather than defending against it. Rules that follow:
+
+- **Never add a listening socket here.** Every mitigation the HTTP transport needed (a key, pinned JWT algorithm/claims, a `Host` allowlist against DNS rebinding, `Sec-Fetch-*`/`Origin` rejection, a bare-404 route table) existed only to re-establish what the message port gets for free.
+- **Builds must never write a key.** A key that ships is a public key. There is no `.env` in the packaged `files` list and no build-time JWT step.
+- `/extract-pdf` and `/hide-folder` are gone. `/extract-pdf` had no callers (PDF text goes through the indexer's `extendedExtraction`) and was an arbitrary-file-read primitive; `/hide-folder` had one caller — the main process — which now runs `attrib +h` itself.
+- `security.js` `validatePath` requires an absolute path, rejects null bytes and Windows **device namespaces** (`\?\`, `\.\`), collapses `..` via `path.resolve`, and canonicalizes through `realpath` so a symlink cannot redirect a checked write. A plain UNC share (`\server\share\…`) is **deliberately allowed** — blocking it broke network-share locations on Windows. It does **not** restrict *which* directory may be touched; that is an authorization decision, and main has no trusted source of location roots (they live in renderer Redux), so it is still open.
+- Tests: `__tests__/ipc.test.js` (message transport, incl. a real PNG so the thumbnail payload actually crosses the port — structured clone rejects what JSON would have accepted) and `__tests__/security.test.js` (the full Windows/POSIX path matrix as pure string logic, so Windows cases are checked from any host). `npx jest` in the package; no testdata clone needed.
+
+Dependencies: `@tagspaces/tagspaces-indexer`, `@tagspaces/tagspaces-workers`, `@tagspaces/tagspaces-pdf-extraction`, `wasm-vips`.
 
 Folder watching was removed: there is no `/watch-folder` endpoint and no `chokidar`/`ws`/`find-free-ports` dependency. `FSWatcherContextProvider`'s ignore list is kept but inert (`isWatching()` is always false), and the `watchForChanges` location flag is no longer exposed in the location dialog.
 

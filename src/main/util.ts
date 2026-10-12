@@ -3,8 +3,7 @@ import { URL } from 'url';
 import path from 'path';
 import { BrowserWindow } from 'electron';
 import http from 'http';
-import settings from './settings';
-import { hasWsKey, mintWsToken } from './wsAuth';
+import { callWorker, isWorkerAttached, pingWorker } from './wsClient';
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
@@ -17,162 +16,84 @@ export function resolveHtmlPath(htmlFileName: string) {
 }
 
 /**
- * The pathname a token must be minted for. The worker checks the token's `sub`
- * against the route being called, so the query string (which the route table
- * ignores) must be stripped here.
+ * Translate the endpoint string the renderer uses into a worker operation.
+ *
+ * The renderer still speaks in paths ('/indexer', '/thumb-gen?pdfContent=true')
+ * because that is what its call sites and the IPC allowlist in mainEvents.ts
+ * are written against. There is no HTTP behind them any more: the request goes
+ * over the worker's message port. Returns undefined for anything unrecognised.
  */
-function endpointSubject(endpoint: string): string {
-  const queryStart = endpoint.indexOf('?');
-  return queryStart === -1 ? endpoint : endpoint.substring(0, queryStart);
+// The worker used to parse the renderer's JSON itself and carried both of
+// these guards there. Now that the parse happens here, the guards come along:
+// dropping one silently when the code moved would have been a quiet regression.
+
+// Worker payloads are path lists and config objects. The old HTTP transport
+// capped the request body at 1 MB; keep an equivalent ceiling so a runaway (or
+// compromised) renderer cannot make the main process parse an unbounded string.
+const MAX_WORKER_PAYLOAD_BYTES = 2 * 1024 * 1024;
+
+/** JSON.parse that drops prototype-polluting keys. */
+function safeJsonParse(jsonString: string): any {
+  return JSON.parse(jsonString, (key, value) => {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      return undefined;
+    }
+    return value;
+  });
+}
+
+function toWorkerCall(
+  endpoint: string,
+  payload: string,
+): { op: string; params: any } | undefined {
+  const url = new URL(endpoint, 'http://127.0.0.1');
+  if (
+    payload &&
+    Buffer.byteLength(payload, 'utf8') > MAX_WORKER_PAYLOAD_BYTES
+  ) {
+    throw new Error('worker payload too large');
+  }
+  const body = payload ? safeJsonParse(payload) : undefined;
+
+  if (url.pathname === '/indexer') {
+    return { op: 'indexer', params: body };
+  }
+  if (url.pathname === '/thumb-gen') {
+    return {
+      op: 'thumbGen',
+      params: {
+        paths: body,
+        pdf: url.searchParams.has('pdf') ? url.searchParams.get('pdf') : false,
+        pdfContent: url.searchParams.has('pdfContent')
+          ? url.searchParams.get('pdfContent')
+          : false,
+      },
+    };
+  }
+  return undefined;
 }
 
 /**
- * @param payload: string
- * @param endpoint: string
- * @param signal
+ * Run a worker operation, addressed by the endpoint string the renderer uses.
+ *
+ * @param payload JSON string — the operation's arguments
+ * @param endpoint '/indexer' or '/thumb-gen' (with optional query parameters)
+ * @param signal cancels the operation inside the worker too
  */
 export function postRequest(payload, endpoint, signal = undefined) {
-  return isWorkerAvailable().then((workerAvailable) => {
-    if (!workerAvailable) {
-      return Promise.reject(new Error('no Worker Available!'));
-    }
-
-    return new Promise((resolve, reject) => {
-      // quick abort check
-      if (signal && signal.aborted) {
-        const e = new Error('Aborted before sending');
-        e.name = 'AbortError';
-        return reject(e);
-      }
-
-      let settled = false; // ensure we resolve/reject only once
-      let respRef = null; // keep response to remove listeners on cleanup
-
-      const options = {
-        hostname: '127.0.0.1',
-        port: settings.getUsedWsPort(),
-        method: 'POST',
-        path: endpoint,
-        headers: {
-          // Minted per request: valid for ~60s and only for this endpoint, so
-          // a captured token cannot be replayed later or against another route.
-          Authorization: `Bearer ${mintWsToken(endpointSubject(endpoint))}`,
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(payload, 'utf8'),
-        },
-      };
-      const reqPost = http.request(options, (resp) => {
-        respRef = resp;
-        let data = '';
-
-        const onData = (chunk) => {
-          data += chunk;
-        };
-
-        // The whole response has been received. Print out the result.
-        const onEnd = () => {
-          if (settled) return;
-          settled = true;
-          cleanup();
-          if (data) {
-            try {
-              resolve(JSON.parse(data));
-            } catch (ex) {
-              reject(ex);
-            }
-          } else {
-            reject(new Error('Error: no data'));
-          }
-        };
-
-        const onRespError = (err) => {
-          if (settled) return;
-          settled = true;
-          cleanup();
-          reject(err);
-        };
-
-        resp.on('data', onData);
-        resp.on('end', onEnd);
-        resp.on('error', onRespError);
-      });
-
-      // handle request-level errors
-      const onReqError = (err) => {
-        if (settled) return;
-        // If the signal caused abort, we'll already reject from the abort handler.
-        // But http.request abort may also emit an 'error' (ECONNRESET). If signal was aborted,
-        // map this to AbortError for consistency.
-        if (signal && signal.aborted) {
-          const e = new Error('Request aborted');
-          e.name = 'AbortError';
-          settled = true;
-          cleanup();
-          return reject(e);
-        }
-        settled = true;
-        cleanup();
-        reject(err);
-      };
-
-      reqPost.on('error', onReqError);
-
-      // cleanup removes listeners
-      const cleanup = () => {
-        if (signal && typeof signal.removeEventListener === 'function') {
-          try {
-            signal.removeEventListener('abort', onSignalAbort);
-          } catch (ex) {}
-        }
-        reqPost.removeListener('error', onReqError);
-        if (respRef) {
-          respRef.removeAllListeners('data');
-          respRef.removeAllListeners('end');
-          respRef.removeAllListeners('error');
-        }
-      };
-
-      // abort handler
-      const onSignalAbort = () => {
-        if (settled) return;
-        // mark settled first to avoid race with req 'error' emission
-        settled = true;
-        cleanup();
-
-        // destroy/abort the underlying request. We don't pass an Error here
-        // because it may synchronously emit 'error' events that could be
-        // reentrant; we've already set settled and removed listeners.
-        try {
-          reqPost.destroy();
-        } catch (ex) {
-          /* ignore */
-        }
-
-        const abortErr = new Error('Request aborted by signal');
-        abortErr.name = 'AbortError';
-        reject(abortErr);
-      };
-
-      // attach abort listener once
-      if (signal && typeof signal.addEventListener === 'function') {
-        // use { once: true } so handler runs only once
-        signal.addEventListener('abort', onSignalAbort, { once: true });
-      }
-
-      // send payload
-      try {
-        reqPost.write(payload);
-        reqPost.end();
-      } catch (err) {
-        // synchronous error writing the payload
-        if (!settled) {
-          settled = true;
-          cleanup();
-          reject(err);
-        }
-      }
-    });
-  });
+  if (!isWorkerAttached()) {
+    return Promise.reject(new Error('no Worker Available!'));
+  }
+  let call;
+  try {
+    call = toWorkerCall(endpoint, payload);
+  } catch (e) {
+    return Promise.reject(new Error(`malformed worker payload: ${e.message}`));
+  }
+  if (!call) {
+    return Promise.reject(new Error(`unknown worker endpoint: ${endpoint}`));
+  }
+  return callWorker(call.op, call.params, signal);
 }
 
 /**
@@ -335,43 +256,11 @@ export function ollamaPostRequest(
 /**
  * Probe whether the worker process is up and answering.
  *
- * The probe is authenticated like every other route — the worker no longer
- * serves an unauthenticated landing page, which previously let anything that
- * could reach the port confirm it had found TagSpaces.
+ * Checks the message loop rather than just process liveness, since a forked
+ * process that never got as far as registering its handler is of no use.
  */
 export function isWorkerAvailable(): Promise<boolean> {
-  const port = settings.getUsedWsPort();
-  if (!port || !hasWsKey()) {
-    return Promise.resolve(false);
-  }
-  return new Promise<boolean>((resolve) => {
-    const req = http.request(
-      {
-        hostname: '127.0.0.1',
-        port,
-        method: 'GET',
-        path: '/',
-        headers: { Authorization: `Bearer ${mintWsToken('/')}` },
-        timeout: 5000,
-      },
-      (resp) => {
-        // 204 is the current reply; 200 is tolerated so a newer app paired with
-        // an older worker build still detects it.
-        const ok = resp.statusCode === 204 || resp.statusCode === 200;
-        resp.resume(); // drain so the socket can be released
-        resolve(ok);
-      },
-    );
-    req.on('timeout', () => {
-      req.destroy();
-      resolve(false);
-    });
-    req.on('error', (e) => {
-      console.debug('isWorkerAvailable:', e.message);
-      resolve(false);
-    });
-    req.end();
-  });
+  return pingWorker();
 }
 
 export function newProgress(key, total) {

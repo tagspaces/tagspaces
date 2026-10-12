@@ -84,11 +84,11 @@ Install the following tools:
     git checkout develop  # or 'master' for stable release
     npm install
 
-#### Local Web Service
+#### Local Worker Process
 
-The desktop version of the application uses a web service which runs locally as a separate process. The web service is responsible for the search index creation and the generation of the thumbnails for most of the image formats.
+The desktop version of the application runs a separate worker process, responsible for search index creation and for generating thumbnails for most image formats.
 
-No setup is needed. The application authenticates to this service with a key that is generated in memory on every launch and passed to the worker process through its environment (see `src/main/wsAuth.ts`). Nothing is read from a `.env` file and no key is written to disk, so each running instance only ever talks to its own web service.
+No setup is needed. The worker is started as an Electron `utilityProcess` and the application talks to it over that process's message port (see `src/main/wsClient.ts`), so it opens no network port and needs no key or `.env` file. Each running instance only ever talks to its own worker.
 
 #### Build & Start
 
