@@ -710,7 +710,12 @@ function EntryContainer() {
         // collapse the splitter to the natural height of the title bar
         // and tab strip and disable dragging; the file content (size,
         // scroll, in-flight loads) survives the toggle untouched.
-        const CLOSED_TOP_PANE_HEIGHT = 108; // title (48) + tab strip (60)
+        // title (48) + tab strip (60). Outside desktop mode the buttons
+        // next to the tabs are finger sized (medium buttons, padded
+        // switch), so the strip needs ~12px more - without it the bottom
+        // of the auto-save toggle falls outside the pane, which has
+        // overflow: hidden, and taps there never reach it.
+        const CLOSED_TOP_PANE_HEIGHT = desktopMode ? 108 : 120;
         return (
           <Box sx={{ height: '100%' }}>
             <Splitter

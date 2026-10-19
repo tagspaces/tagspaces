@@ -18,17 +18,17 @@
 
 import AppConfig from '-/AppConfig';
 import { CloseEditIcon, SaveIcon, UndoIcon } from '-/components/CommonIcons';
+import TsSwitch from '-/components/TsSwitch';
+import TsTooltip from '-/components/TsTooltip';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useEntryPropsTabsContext } from '-/hooks/useEntryPropsTabsContext';
 import { useFilePropertiesContext } from '-/hooks/useFilePropertiesContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import TsSwitch from '-/components/TsSwitch';
 import { Pro } from '-/pro';
 import { isDesktopMode, isRevisionsEnabled } from '-/reducers/settings';
 import { Box, ButtonGroup } from '@mui/material';
-import TsTooltip from '-/components/TsTooltip';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -81,11 +81,10 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
       <span>
         <TsSwitch
           data-tid="autoSaveTID"
-          checked={openedEntry.meta && openedEntry.meta.autoSave}
+          checked={!!(openedEntry.meta && openedEntry.meta.autoSave)}
           onChange={toggleAutoSave}
           size="small"
           name="autoSave"
-          disabled={!Pro}
         />
       </span>
     </TsTooltip>
@@ -182,7 +181,7 @@ function EntryContainerButtons(props: EntryContainerButtonsProps) {
         display: 'flex',
         flexDirection: 'column',
         marginRight: '10px',
-        alignItems: 'anchor-center',
+        alignItems: 'center',
       }}
     >
       {editFile}
