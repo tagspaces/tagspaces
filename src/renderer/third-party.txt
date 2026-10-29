@@ -6136,8 +6136,8 @@ SOFTWARE.
 The following npm packages may be included in this product:
 
  - @capacitor/browser@8.0.3
- - @capacitor/camera@8.0.2
- - @capacitor/share@8.0.1
+ - @capacitor/camera@8.2.5
+ - @capacitor/share@8.0.3
 
 These packages each contain the following license:
 
@@ -6169,10 +6169,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @capacitor/app@8.1.0
- - @capacitor/device@8.0.2
- - @capacitor/splash-screen@8.0.1
- - @capacitor/status-bar@8.0.2
+ - @capacitor/app@8.1.2
+ - @capacitor/device@8.0.3
+ - @capacitor/splash-screen@8.0.2
+ - @capacitor/status-bar@8.0.4
 
 These packages each contain the following license:
 
@@ -8326,7 +8326,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @capacitor/core@8.3.4
+ - @capacitor/core@8.5.3
 
 This package contains the following license:
 
@@ -9303,7 +9303,7 @@ SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @capacitor/filesystem@8.1.2
+ - @capacitor/filesystem@8.1.4
  - @capacitor/synapse@1.0.4
 
 These packages each contain the following license:
