@@ -27,7 +27,7 @@ import { Pro } from '-/pro';
 import { tagsValidation } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { isDateTimeTag, isYear, isYearMonth } from '-/utils/dates';
-import { isGeoTag } from '-/utils/geo';
+import { getDefaultMapBounds, isGeoTag } from '-/utils/geo';
 import useValidation from '-/utils/useValidation';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -160,9 +160,15 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
         </FormControl>
         {!manualEditing && showGeoEditor && (
           <GeoTagEditor
-            geoTag={tag?.title}
+            geoTag={titleRef.current}
             onChange={setTitle}
-            // zoom={title === defaultTagLocation ? 2 : undefined} TODO defaultTagLocation can be in MGRS format
+            // a new geo tag still sits on the default center: show the whole default area
+            fitBounds={
+              tag?.functionality === 'geoTagging' &&
+              titleRef.current === tag.title
+                ? getDefaultMapBounds()
+                : undefined
+            }
             showAdvancedMode={showAdvancedMode}
             haveError={haveError}
             setError={setError}

@@ -42,7 +42,7 @@ import { setTagLibrary } from '-/services/taglibrary-utils';
 import { getAllTags } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { CommonLocation } from '-/utils/CommonLocation';
-import { isGeoTag } from '-/utils/geo';
+import { getDefaultGeoCenter, isGeoTag } from '-/utils/geo';
 import { isDateTimeTag } from '-/utils/dates';
 import {
   formatDateTime4Tag,
@@ -300,10 +300,11 @@ export const TaggingActionsContextProvider = ({
         delete tag.description;
         if (tag.functionality === 'geoTagging') {
           if (Pro) {
+            const { lat, lng } = getDefaultGeoCenter();
             tag.title =
               geoTaggingFormat.toLowerCase() === 'mgrs'
-                ? mgrs.forward([0, 51.48])
-                : OpenLocationCode.encode(51.48, 0, undefined);
+                ? mgrs.forward([lng, lat])
+                : OpenLocationCode.encode(lat, lng, undefined);
             openEditEntryTagDialog(entries, tag);
           } else {
             showNotification(

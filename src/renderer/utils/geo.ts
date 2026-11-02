@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+import AppConfig from '-/AppConfig';
 import mgrs from 'mgrs';
 import OpenLocationCode from 'open-location-code-typescript';
 
@@ -67,6 +68,57 @@ export function parseGeoLocation(code: string): Coordinates | undefined {
   }
 
   return undefined;
+}
+
+export interface GeoBounds {
+  southWest: { lat: number; lng: number };
+  northEast: { lat: number; lng: number };
+}
+
+// Greenwich, used when ExtDefaultMapBounds is missing or malformed
+const FALLBACK_GEO_CENTER = { lat: 51.48, lng: 0 };
+
+/**
+ * Returns AppConfig.ExtDefaultMapBounds with its corners normalized, so that
+ * a config with swapped south/north values still describes the same area
+ * @returns the normalized bounds, or undefined if the config is incomplete
+ */
+export function getDefaultMapBounds(): GeoBounds | undefined {
+  const { southWest, northEast } = AppConfig.ExtDefaultMapBounds ?? {};
+  const values = [
+    southWest?.lat,
+    southWest?.lng,
+    northEast?.lat,
+    northEast?.lng,
+  ];
+  if (!values.every((v) => typeof v === 'number' && Number.isFinite(v))) {
+    return undefined;
+  }
+  return {
+    southWest: {
+      lat: Math.min(southWest.lat, northEast.lat),
+      lng: Math.min(southWest.lng, northEast.lng),
+    },
+    northEast: {
+      lat: Math.max(southWest.lat, northEast.lat),
+      lng: Math.max(southWest.lng, northEast.lng),
+    },
+  };
+}
+
+/**
+ * Returns the center of AppConfig.ExtDefaultMapBounds, the initial position
+ * of newly added geo tags
+ */
+export function getDefaultGeoCenter(): { lat: number; lng: number } {
+  const bounds = getDefaultMapBounds();
+  if (!bounds) {
+    return FALLBACK_GEO_CENTER;
+  }
+  return {
+    lat: (bounds.southWest.lat + bounds.northEast.lat) / 2,
+    lng: (bounds.southWest.lng + bounds.northEast.lng) / 2,
+  };
 }
 
 /**
