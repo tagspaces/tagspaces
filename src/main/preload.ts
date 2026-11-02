@@ -15,6 +15,7 @@ export type Channels =
   | 'isDirectory'
   | 'resolveRelativePaths'
   | 'set-language'
+  | 'set-native-theme'
   | 'setZoomFactor'
   | 'global-shortcuts-enabled'
   | 'show-main-window'

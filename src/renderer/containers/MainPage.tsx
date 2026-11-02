@@ -105,6 +105,14 @@ function MainPage() {
   // Drawer (desktop) vs temporary SwipeableDrawer (mobile/web).
   const persistentDrawer =
     isDesktopMode || (AppConfig.ExtIsAmplify && !isLoggedIn());
+  // On macOS Electron the window has sidebar vibrancy (see main.ts). The page
+  // is made transparent and only the content area paints a background, so the
+  // material shows through the docked drawer only.
+  const nativeVibrancy =
+    AppConfig.isElectron && AppConfig.isMacLike && persistentDrawer;
+  const pageBackground = nativeVibrancy
+    ? 'transparent'
+    : theme.palette.background.default;
 
   // Android hardware back button / system back gesture.
   useMobileBackHandler(drawerOpened && !persistentDrawer, () =>
@@ -408,15 +416,13 @@ function MainPage() {
         <PageNotification />
         <Box
           sx={{
-            backgroundColor: theme.palette.background.default,
+            backgroundColor: pageBackground,
             height: '100%',
           }}
         >
           <style>
             {`
-              body { background-color: ${
-                theme.palette.background.default
-              } !important;}
+              body { background-color: ${pageBackground} !important;}
           `}
           </style>
           {persistentDrawer ? (
@@ -428,7 +434,10 @@ function MainPage() {
                   // drawer's right edge (SplitterGutter's invisible hit zone).
                   // Without this, the Paper allows a few pixels of horizontal
                   // scroll into that empty overflow.
-                  '& .MuiDrawer-paper': { overflowX: 'hidden' },
+                  '& .MuiDrawer-paper': {
+                    overflowX: 'hidden',
+                    ...(nativeVibrancy && { backgroundColor: 'transparent' }),
+                  },
                 }}
                 variant="persistent"
                 anchor="left"
@@ -437,6 +446,7 @@ function MainPage() {
                 <MobileNavigation
                   width={drawerWidth}
                   widthVar={DRAWER_WIDTH_VAR}
+                  translucent={nativeVibrancy}
                 />
                 <DrawerResizeHandle
                   width={drawerWidth}
@@ -447,6 +457,16 @@ function MainPage() {
                 className={clsx(classes.content, {
                   [classes.contentShift]: !drawerOpened,
                 })}
+                style={
+                  nativeVibrancy
+                    ? {
+                        // paddingLeft reserves the drawer's area; keep it
+                        // unpainted so the vibrancy stays visible there
+                        backgroundColor: theme.palette.background.default,
+                        backgroundClip: 'content-box',
+                      }
+                    : undefined
+                }
               >
                 {renderContainers()}
               </main>

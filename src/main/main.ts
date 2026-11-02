@@ -17,6 +17,7 @@ import {
   dialog,
   globalShortcut,
   ipcMain,
+  nativeTheme,
   shell,
   utilityProcess,
 } from 'electron';
@@ -96,6 +97,13 @@ const browserWindowOptions: BrowserWindowConstructorOptions = {
   center: true,
   autoHideMenuBar: true,
   titleBarStyle: isMacLike ? 'hidden' : 'default',
+  // macOS sidebar material behind a transparent page; the renderer keeps
+  // everything except the left drawer opaque (see MainPage.tsx).
+  ...(isMacLike && {
+    vibrancy: 'sidebar',
+    visualEffectState: 'followWindow',
+    backgroundColor: '#00000000',
+  }),
   webPreferences: {
     spellcheck: true,
     // Renderer is fully isolated: all main-process access goes through the
@@ -697,6 +705,12 @@ app
       });
       ipcMain.on('set-language', (e, language) => {
         i18n.changeLanguage(language);
+      });
+      ipcMain.on('set-native-theme', (e, themeSource) => {
+        // Keeps the macOS vibrancy material in sync with the app theme
+        if (['system', 'light', 'dark'].includes(themeSource)) {
+          nativeTheme.themeSource = themeSource;
+        }
       });
       ipcMain.on('setZoomFactor', (event, zoomLevel) => {
         BrowserWindow.getFocusedWindow()?.webContents.setZoomFactor(zoomLevel);

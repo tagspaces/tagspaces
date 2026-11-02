@@ -16,6 +16,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import {
   getCurrentTheme,
   getDefaultDarkTheme,
@@ -70,6 +71,15 @@ function App({ children }: Props) {
     );
     document.documentElement.classList.toggle('dark', darkMode);
   }, [theme.palette.mode]);
+
+  useEffect(() => {
+    if (AppConfig.isElectron) {
+      window.electronIO.ipcRenderer.sendMessage(
+        'set-native-theme',
+        ['light', 'dark'].includes(currentTheme) ? currentTheme : 'system',
+      );
+    }
+  }, [currentTheme]);
 
   return (
     <StyledEngineProvider injectFirst>
