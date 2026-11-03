@@ -4,11 +4,11 @@
 @import 'assets/fonts/roboto/index.css';
 @import '~leaflet/dist/leaflet.css';
 @import 'assets/milkdown.css';
-@import 'react-leaflet-markercluster/styles';
+@import '~leaflet.markercluster/dist/MarkerCluster.css';
+@import '~leaflet.markercluster/dist/MarkerCluster.Default.css';
 @import 'swiper/css';
 @import 'swiper/css/navigation';
 @import 'rc-table/assets/index.css';
-@import 'react-leaflet-fullscreen/styles.css';
 
 /* Needed to disable border on focused HotKey element */
 div[tabindex='-1']:focus {
@@ -33,19 +33,20 @@ body {
   height: 100%;
 }
 
-/* needed for crepe */ 
+/* needed for crepe */
 .full-height {
   height: 100%;
 }
 
 /* needed for crepe */
-.mx-auto{
+.mx-auto {
   margin-left: auto;
   margin-right: auto;
 }
 
 @media print {
-  html, body {
+  html,
+  body {
     height: auto;
   }
 }

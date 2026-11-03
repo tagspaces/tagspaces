@@ -16,9 +16,9 @@
  *
  */
 
-import { createTileLayerComponent, updateGridLayer } from '@react-leaflet/core';
+import { TileLayer } from '-/components/leaflet';
 import L from 'leaflet';
-import { TileLayerProps } from 'react-leaflet';
+import { ComponentProps, createElement } from 'react';
 
 const ElectronTileLayerClass = L.TileLayer.extend({
   createTile(coords: L.Coords, done: L.DoneCallback) {
@@ -44,17 +44,17 @@ const ElectronTileLayerClass = L.TileLayer.extend({
   },
 });
 
-const ElectronTileLayer = createTileLayerComponent<L.TileLayer, TileLayerProps>(
-  ({ url, ...options }, context) => ({
-    instance: new (ElectronTileLayerClass as any)(url, options),
-    context,
-  }),
-  (instance, props, prevProps) => {
-    updateGridLayer(instance, props, prevProps);
-    if (props.url !== prevProps.url) {
-      instance.setUrl(props.url);
-    }
-  },
-);
+const createElectronTileLayer = (url: string, options: L.TileLayerOptions) =>
+  new (ElectronTileLayerClass as any)(url, options) as L.TileLayer;
+
+/** Tile layer that fetches tiles through the main process on Electron. */
+function ElectronTileLayer(
+  props: Omit<ComponentProps<typeof TileLayer>, 'createLayer'>,
+) {
+  return createElement(TileLayer, {
+    ...props,
+    createLayer: createElectronTileLayer,
+  });
+}
 
 export default ElectronTileLayer;

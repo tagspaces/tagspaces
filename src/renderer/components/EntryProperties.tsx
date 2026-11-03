@@ -99,11 +99,10 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import {
   AttributionControl,
-  LayerGroup,
   MapContainer,
   Marker,
   Popup,
-} from 'react-leaflet';
+} from '-/components/leaflet';
 import { useSelector } from 'react-redux';
 import { Pro } from '../pro';
 
@@ -654,53 +653,51 @@ function EntryProperties({ tileServer }: Props) {
               ) : (
                 <NoTileServer />
               )}
-              <LayerGroup>
-                <Marker
-                  icon={iconFileMarker}
-                  position={[geoLocation.lat, geoLocation.lng]}
-                >
-                  <Popup>
-                    <Box
-                      sx={{
-                        marginBottom: '-15px',
-                        marginTop: '-22px',
-                        marginLeft: '-22px',
-                        marginRight: '-25px',
-                        padding: '10px',
-                        backgroundColor: 'background.default',
-                        borderRadius: AppConfig.defaultCSSRadius,
-                      }}
-                    >
-                      <Typography sx={{ color: 'text.primary' }}>
-                        {`${t('core:lat')}: ${geoLocation.lat}, ${t('core:lng')}: ${geoLocation.lng}`}
-                      </Typography>
-                      <Box sx={{ display: 'inline-flex' }}>
-                        <TsButton
-                          onClick={() => {
-                            openUrl(
-                              `https://www.openstreetmap.org/?mlat=${geoLocation.lat}&mlon=${geoLocation.lng}#map=10/${geoLocation.lat}/${geoLocation.lng}`,
-                            );
-                          }}
-                        >
-                          {t('core:openInApp', { appName: 'OpenStreetMap' })}
-                        </TsButton>
-                        <TsButton
-                          sx={{
-                            marginLeft: AppConfig.defaultSpaceBetweenButtons,
-                          }}
-                          onClick={() => {
-                            openUrl(
-                              `https://maps.google.com/?q=${geoLocation.lat},${geoLocation.lng}&ll=${geoLocation.lat},${geoLocation.lng}&z=10`,
-                            );
-                          }}
-                        >
-                          {t('core:openInApp', { appName: 'Google Maps' })}
-                        </TsButton>
-                      </Box>
+              <Marker
+                icon={iconFileMarker}
+                position={[geoLocation.lat, geoLocation.lng]}
+              >
+                <Popup>
+                  <Box
+                    sx={{
+                      marginBottom: '-15px',
+                      marginTop: '-22px',
+                      marginLeft: '-22px',
+                      marginRight: '-25px',
+                      padding: '10px',
+                      backgroundColor: 'background.default',
+                      borderRadius: AppConfig.defaultCSSRadius,
+                    }}
+                  >
+                    <Typography sx={{ color: 'text.primary' }}>
+                      {`${t('core:lat')}: ${geoLocation.lat}, ${t('core:lng')}: ${geoLocation.lng}`}
+                    </Typography>
+                    <Box sx={{ display: 'inline-flex' }}>
+                      <TsButton
+                        onClick={() => {
+                          openUrl(
+                            `https://www.openstreetmap.org/?mlat=${geoLocation.lat}&mlon=${geoLocation.lng}#map=10/${geoLocation.lat}/${geoLocation.lng}`,
+                          );
+                        }}
+                      >
+                        {t('core:openInApp', { appName: 'OpenStreetMap' })}
+                      </TsButton>
+                      <TsButton
+                        sx={{
+                          marginLeft: AppConfig.defaultSpaceBetweenButtons,
+                        }}
+                        onClick={() => {
+                          openUrl(
+                            `https://maps.google.com/?q=${geoLocation.lat},${geoLocation.lng}&ll=${geoLocation.lat},${geoLocation.lng}&z=10`,
+                          );
+                        }}
+                      >
+                        {t('core:openInApp', { appName: 'Google Maps' })}
+                      </TsButton>
                     </Box>
-                  </Popup>
-                </Marker>
-              </LayerGroup>
+                  </Box>
+                </Popup>
+              </Marker>
               <AttributionControl position="bottomright" prefix="" />
             </MapContainer>
           </Grid>
