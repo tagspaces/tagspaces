@@ -172,6 +172,12 @@ export const HistoryContextProvider = ({
     if (!firstRender && actions && actions.length > 0) {
       for (const action of actions) {
         if (action.action === 'edit') {
+          // without a location id the link would be tslid=undefined and
+          // could not be opened from the history
+          const lid = action.entry.locationID ?? currentLocation?.uuid;
+          if (!lid) {
+            continue;
+          }
           const relativePath = getRelativeEntryPath(
             currentLocationPath,
             action.entry.path,
@@ -180,9 +186,10 @@ export const HistoryContextProvider = ({
             historyKeys.fileEditKey,
             {
               creationTimeStamp: new Date().getTime(),
-              path: relativePath,
-              url: generateSharingLink(action.entry.locationID, relativePath),
-              lid: action.entry.locationID,
+              // absolute like the opened files / folders history
+              path: action.entry.path,
+              url: generateSharingLink(lid, relativePath),
+              lid,
             },
             fileEditHistorySettings,
           );

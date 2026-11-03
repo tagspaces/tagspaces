@@ -206,10 +206,11 @@ export const ResolveConflictContextProvider = ({
       )
         .then((entry) => {
           reflectUpdateOpenedFileContent(entry);
-          // send action to save in history
+          // send action to save in history. The saved entry comes from the
+          // IO layer without a locationID, which the history link needs
           const action: TS.EditAction = {
             action: 'edit',
-            entry: entry,
+            entry: { ...entry, locationID: fileOpen.locationID },
           };
           setReflectActions(action);
           return true;
