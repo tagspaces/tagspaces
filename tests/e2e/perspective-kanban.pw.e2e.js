@@ -581,4 +581,28 @@ test.describe('TST49 - Perspective KanBan', () => {
     await expectElementExist('[data-tid=kanBanImportDialogTID]', true, 5000);
     await clickOn('[data-tid=closeImportDialogTID]');
   });
+
+  test('TST4919 - Load more cards on column scroll [web,s3,electron,_pro]', async () => {
+    if (await isDisplayed('[data-tid=showFolderContentTID]')) {
+      await clickOn('[data-tid=showFolderContentTID]');
+    }
+    await expectElementExist(getGridFileSelector('sample.bmp'), true, 8000);
+
+    // the current folder column holds more entries than one page (filesLimit)
+    const column = global.client
+      .locator('[data-tid$="CTID"]')
+      .filter({ has: global.client.locator(getGridFileSelector('sample.bmp')) });
+    const cards = column.locator('[data-entry-id]');
+    const loadMore = column.locator('[data-tid=kanbanLoadMoreTID]');
+
+    // keep scrolling to the last card until every page is loaded and the
+    // load-more stub is gone
+    await expect(async () => {
+      await cards.last().scrollIntoViewIfNeeded();
+      await expect(loadMore).toHaveCount(0, { timeout: 1000 });
+    }).toPass({ timeout: 30000 });
+
+    // more than the first page (default filesLimit 15, fetched as 15 + 1)
+    expect(await cards.count()).toBeGreaterThan(16);
+  });
 });

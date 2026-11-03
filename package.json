@@ -214,7 +214,7 @@
     "react-hotkeys": "2.0.0",
     "react-i18next": "^13.2.2",
     "react-image-gallery": "2.1.2",
-    "react-infinite-scroller": "1.2.6",
+    "react-intersection-observer": "11.0.1",
     "react-leaflet": "4.2.1",
     "react-leaflet-fullscreen": "4.1.1",
     "react-leaflet-markercluster": "4.2.1",
