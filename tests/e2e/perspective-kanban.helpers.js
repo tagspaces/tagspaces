@@ -56,7 +56,7 @@ export async function getColumnEntries(column) {
 export async function dragKanBanColumn(sourceColumn, targetColumn) {
   const src = global.client.locator(
     '[data-tid="' + sourceColumn + 'KanBanColumnTID"]',
-  ); //`[data-rbd-draggable-id="${sourceColumn}"]`);
+  ); //`[data-rfd-draggable-id="${sourceColumn}"]`);
   const tgt = global.client.locator(
     '[data-tid="' + targetColumn + 'KanBanColumnTID"]',
   );
@@ -82,7 +82,7 @@ export async function dragKanBanColumn(sourceColumn, targetColumn) {
 
 export async function getColumnsIds() {
   const draggables = global.client.locator(
-    '[data-tid="perspectiveGridFileTable"] [data-rbd-draggable-id]',
+    '[data-tid="perspectiveGridFileTable"] [data-rfd-draggable-id]',
   );
 
   // 2. Count how many there are
@@ -91,7 +91,7 @@ export async function getColumnsIds() {
   // 3. Loop and collect their IDs
   const ids = [];
   for (let i = 0; i < count; i++) {
-    const id = await draggables.nth(i).getAttribute('data-rbd-draggable-id');
+    const id = await draggables.nth(i).getAttribute('data-rfd-draggable-id');
     if (id) ids.push(id);
   }
 

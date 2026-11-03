@@ -32,7 +32,7 @@ import { getLocations } from '-/reducers/locations';
 import { TS } from '-/tagspaces.namespace';
 import { Box, InputAdornment, List, Typography } from '@mui/material';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
