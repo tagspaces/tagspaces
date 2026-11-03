@@ -274,8 +274,6 @@ export { default as DuplicateFile } from '@mui/icons-material/DifferenceOutlined
 
 export { default as DefaultLocationIcon } from '@mui/icons-material/HighlightOutlined';
 
-export { default as MoreInfoIcon } from '@mui/icons-material/OfflineBoltOutlined';
-
 export { default as ArrowLeftIcon } from '@mui/icons-material/ArrowCircleLeftOutlined';
 
 export { default as ArrowRightIcon } from '@mui/icons-material/ArrowCircleRightOutlined';
