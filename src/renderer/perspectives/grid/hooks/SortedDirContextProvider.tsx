@@ -19,6 +19,7 @@
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
 import { defaultSettings } from '-/perspectives/grid';
+import { foldersFirst } from '-/perspectives/grid/hooks/foldersFirst';
 import { getSearchFilter } from '-/reducers/app';
 import { TS } from '-/tagspaces.namespace';
 import { sortByCriteria } from '@tagspaces/tagspaces-common/misc';
@@ -98,11 +99,13 @@ export const SortedDirContextProvider = ({
     }
   }*/
 
-  const sortedDirContent = useMemo(() => {
+  const sortedDirContent = useMemo<TS.FileSystemEntry[]>(() => {
     if (searchFilter) {
       const needle = searchFilter.toLowerCase();
-      return sortByCriteria(currentDirectoryEntries, sortBy, orderBy).filter(
-        (entry) => entry.name.toLowerCase().includes(needle),
+      return foldersFirst(
+        sortByCriteria(currentDirectoryEntries, sortBy, orderBy).filter(
+          (entry) => entry.name.toLowerCase().includes(needle),
+        ),
       );
     }
     if (sortBy === 'byRelevance') {
@@ -114,7 +117,9 @@ export const SortedDirContextProvider = ({
       }
     }
     // not in search mode
-    return sortByCriteria(currentDirectoryEntries, sortBy, orderBy);
+    return foldersFirst(
+      sortByCriteria(currentDirectoryEntries, sortBy, orderBy),
+    );
   }, [currentDirectoryEntries, searchFilter, sortBy, orderBy]);
 
   const context = useMemo(() => {
