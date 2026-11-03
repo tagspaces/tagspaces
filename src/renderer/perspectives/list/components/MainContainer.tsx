@@ -26,6 +26,7 @@ import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useKeyBindings } from '-/hooks/useKeyBindings';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
@@ -47,7 +48,6 @@ import useFirstRender from '-/utils/useFirstRender';
 import { Box } from '@mui/material';
 import Links from 'assets/links';
 import React, { useEffect, useRef, useState } from 'react';
-import { GlobalHotKeys } from 'react-hotkeys';
 import { useSelector } from 'react-redux';
 import { ListCellsStyleContextProvider } from '../hooks/ListCellsStyleProvider';
 
@@ -277,6 +277,7 @@ function ListPerspective(props: Props) {
       openDirectory(currentDirectoryPath);
     },
   };
+  useKeyBindings(keyMap, keyBindingHandlers);
 
   const getCellContent = (
     fsEntry: TS.FileSystemEntry,
@@ -330,24 +331,18 @@ function ListPerspective(props: Props) {
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
       />
-      <GlobalHotKeys
-        keyMap={keyMap}
-        handlers={keyBindingHandlers}
-        allowChanges={true}
-      >
-        <ListCellsStyleContextProvider>
-          <GridPagination
-            //directories={sortedDirectories}
-            desktopMode={desktopMode}
-            //files={sortedFiles}
-            getCellContent={getCellContent}
-            currentDirectoryPath={currentDirectoryPath}
-            onClick={onClick}
-            setSelectedEntries={handleSetSelectedEntries}
-            clearSelection={clearSelection}
-          />
-        </ListCellsStyleContextProvider>
-      </GlobalHotKeys>
+      <ListCellsStyleContextProvider>
+        <GridPagination
+          //directories={sortedDirectories}
+          desktopMode={desktopMode}
+          //files={sortedFiles}
+          getCellContent={getCellContent}
+          currentDirectoryPath={currentDirectoryPath}
+          onClick={onClick}
+          setSelectedEntries={handleSetSelectedEntries}
+          clearSelection={clearSelection}
+        />
+      </ListCellsStyleContextProvider>
       {isAddTagDialogOpened !== undefined && (
         <AddTagToTagGroupDialog
           open={true}

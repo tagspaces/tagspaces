@@ -26,6 +26,7 @@ import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePanelsContext } from '-/hooks/usePanelsContext';
 import { useUserContext } from '-/hooks/useUserContext';
 import { CLOSE_ENTRY_REQUEST_EVENT } from '-/services/mobileBackAction';
+import { useKeyBindings } from '-/hooks/useKeyBindings';
 import useEventListener from '-/utils/useEventListener';
 import { useSwipeBack } from '-/utils/useSwipeBack';
 import { Box, useMediaQuery } from '@mui/material';
@@ -40,7 +41,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { GlobalHotKeys } from 'react-hotkeys';
 import { useDispatch, useSelector } from 'react-redux';
 import EntryContainer from '../components/EntryContainer';
 import FolderContainer from '../components/FolderContainer';
@@ -304,6 +304,7 @@ function MainPage() {
     }),
     [keyBindings],
   );
+  useKeyBindings(keyMap, keyBindingHandlers);
 
   const hideSplit = !openedEntry || isEntryInFullWidth;
 
@@ -412,89 +413,87 @@ function MainPage() {
 
   return (
     <Root>
-      <GlobalHotKeys handlers={keyBindingHandlers} keyMap={keyMap}>
-        <PageNotification />
-        <Box
-          sx={{
-            backgroundColor: pageBackground,
-            height: '100%',
-          }}
-        >
-          <style>
-            {`
+      <PageNotification />
+      <Box
+        sx={{
+          backgroundColor: pageBackground,
+          height: '100%',
+        }}
+      >
+        <style>
+          {`
               body { background-color: ${pageBackground} !important;}
           `}
-          </style>
-          {persistentDrawer ? (
-            <>
-              <Drawer
-                sx={{
-                  backgroundColor: 'unset',
-                  // The DrawerResizeHandle's hit area extends 6.5px past the
-                  // drawer's right edge (SplitterGutter's invisible hit zone).
-                  // Without this, the Paper allows a few pixels of horizontal
-                  // scroll into that empty overflow.
-                  '& .MuiDrawer-paper': {
-                    overflowX: 'hidden',
-                    ...(nativeVibrancy && { backgroundColor: 'transparent' }),
-                  },
-                }}
-                variant="persistent"
-                anchor="left"
-                open={drawerOpened}
-              >
-                <MobileNavigation
-                  width={drawerWidth}
-                  widthVar={DRAWER_WIDTH_VAR}
-                  translucent={nativeVibrancy}
-                />
-                <DrawerResizeHandle
-                  width={drawerWidth}
-                  onChange={setLeftPanelWidth}
-                />
-              </Drawer>
-              <main
-                className={clsx(classes.content, {
-                  [classes.contentShift]: !drawerOpened,
-                })}
-                style={
-                  nativeVibrancy
-                    ? {
-                        // paddingLeft reserves the drawer's area; keep it
-                        // unpainted so the vibrancy stays visible there
-                        backgroundColor: theme.palette.background.default,
-                        backgroundClip: 'content-box',
-                      }
-                    : undefined
-                }
-              >
-                {renderContainers()}
-              </main>
-            </>
-          ) : (
-            <>
-              <SwipeableDrawer
-                open={drawerOpened}
-                onClose={() => setDrawerOpened(false)}
-                onOpen={() => setDrawerOpened(true)}
-                hysteresis={0.1}
-                disableBackdropTransition={!AppConfig.isIOS}
-                disableDiscovery={AppConfig.isIOS}
-                // While an entry overlay covers the screen, the drawer's
-                // fixed left-edge SwipeArea would steal the edge-swipe-back
-                // gesture from the overlay's strip.
-                disableSwipeToOpen={smallScreen && !!openedEntry}
-              >
-                <MobileNavigation
-                  width={MOBILE_DRAWER_WIDTH}
-                  hideDrawer={() => setDrawerOpened(false)}
-                />
-              </SwipeableDrawer>
+        </style>
+        {persistentDrawer ? (
+          <>
+            <Drawer
+              sx={{
+                backgroundColor: 'unset',
+                // The DrawerResizeHandle's hit area extends 6.5px past the
+                // drawer's right edge (SplitterGutter's invisible hit zone).
+                // Without this, the Paper allows a few pixels of horizontal
+                // scroll into that empty overflow.
+                '& .MuiDrawer-paper': {
+                  overflowX: 'hidden',
+                  ...(nativeVibrancy && { backgroundColor: 'transparent' }),
+                },
+              }}
+              variant="persistent"
+              anchor="left"
+              open={drawerOpened}
+            >
+              <MobileNavigation
+                width={drawerWidth}
+                widthVar={DRAWER_WIDTH_VAR}
+                translucent={nativeVibrancy}
+              />
+              <DrawerResizeHandle
+                width={drawerWidth}
+                onChange={setLeftPanelWidth}
+              />
+            </Drawer>
+            <main
+              className={clsx(classes.content, {
+                [classes.contentShift]: !drawerOpened,
+              })}
+              style={
+                nativeVibrancy
+                  ? {
+                      // paddingLeft reserves the drawer's area; keep it
+                      // unpainted so the vibrancy stays visible there
+                      backgroundColor: theme.palette.background.default,
+                      backgroundClip: 'content-box',
+                    }
+                  : undefined
+              }
+            >
               {renderContainers()}
-            </>
-          )}
-        </Box>
-      </GlobalHotKeys>
+            </main>
+          </>
+        ) : (
+          <>
+            <SwipeableDrawer
+              open={drawerOpened}
+              onClose={() => setDrawerOpened(false)}
+              onOpen={() => setDrawerOpened(true)}
+              hysteresis={0.1}
+              disableBackdropTransition={!AppConfig.isIOS}
+              disableDiscovery={AppConfig.isIOS}
+              // While an entry overlay covers the screen, the drawer's
+              // fixed left-edge SwipeArea would steal the edge-swipe-back
+              // gesture from the overlay's strip.
+              disableSwipeToOpen={smallScreen && !!openedEntry}
+            >
+              <MobileNavigation
+                width={MOBILE_DRAWER_WIDTH}
+                hideDrawer={() => setDrawerOpened(false)}
+              />
+            </SwipeableDrawer>
+            {renderContainers()}
+          </>
+        )}
+      </Box>
     </Root>
   );
 }

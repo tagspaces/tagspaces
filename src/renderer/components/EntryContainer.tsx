@@ -32,6 +32,7 @@ import { useFullScreenContext } from '-/hooks/useFullScreenContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { useKeyBindings } from '-/hooks/useKeyBindings';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
 import { usePlatformFacadeContext } from '-/hooks/usePlatformFacadeContext';
 import { AppDispatch } from '-/reducers/app';
@@ -59,7 +60,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -604,35 +604,40 @@ function EntryContainer() {
     [isPanelOpened, isSavingInProgress.current, fileChanged],
   );
 
-  if (!openedEntry || openedEntry.path === undefined) {
+  const hasOpenedEntry = !!openedEntry && openedEntry.path !== undefined;
+  useKeyBindings(
+    hasOpenedEntry
+      ? {
+          closeViewer: keyBindings.closeViewer,
+          saveDocument: keyBindings.saveDocument,
+          editDocument: keyBindings.editDocument,
+          nextDocument: keyBindings.nextDocument,
+          prevDocument: keyBindings.prevDocument,
+          reloadDocument: keyBindings.reloadDocument,
+          deleteDocument: keyBindings.deleteDocument,
+          openInFullWidth: keyBindings.openInFullWidth,
+          toggleFullScreen: keyBindings.toggleFullScreen,
+        }
+      : {},
+    {
+      closeViewer: startClosingEntry,
+      saveDocument: startSavingFile,
+      editDocument: editOpenedFile,
+      nextDocument: openNextFileAction,
+      prevDocument: openPrevFileAction,
+      reloadDocument: reloadDocument,
+      deleteDocument: () => {}, // TODO move delete functionality from entry container menu
+      openInFullWidth: toggleEntryFullWidth,
+      toggleFullScreen: () => toggleFullScreen(fileViewerContainer.current),
+    },
+  );
+
+  if (!hasOpenedEntry) {
     return <div>{t('core:noEntrySelected')}</div>;
   }
 
   return (
-    <GlobalHotKeys
-      handlers={{
-        closeViewer: startClosingEntry,
-        saveDocument: startSavingFile,
-        editDocument: editOpenedFile,
-        nextDocument: openNextFileAction,
-        prevDocument: openPrevFileAction,
-        reloadDocument: reloadDocument,
-        deleteDocument: () => {}, // TODO move delete functionality from entry container menu
-        openInFullWidth: toggleEntryFullWidth,
-        toggleFullScreen: () => toggleFullScreen(fileViewerContainer.current),
-      }}
-      keyMap={{
-        closeViewer: keyBindings.closeViewer,
-        saveDocument: keyBindings.saveDocument,
-        editDocument: keyBindings.editDocument,
-        nextDocument: keyBindings.nextDocument,
-        prevDocument: keyBindings.prevDocument,
-        reloadDocument: keyBindings.reloadDocument,
-        deleteDocument: keyBindings.deleteDocument,
-        openInFullWidth: keyBindings.openInFullWidth,
-        toggleFullScreen: keyBindings.toggleFullScreen,
-      }}
-    >
+    <>
       {(() => {
         const topPane = (
           <Box
@@ -733,7 +738,7 @@ function EntryContainer() {
           </Box>
         );
       })()}
-    </GlobalHotKeys>
+    </>
   );
 }
 

@@ -26,6 +26,7 @@ import { TabNames } from '-/hooks/EntryPropsTabsContextProvider';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
 import { useIOActionsContext } from '-/hooks/useIOActionsContext';
+import { useKeyBindings } from '-/hooks/useKeyBindings';
 import { useNotificationContext } from '-/hooks/useNotificationContext';
 import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
 import { usePerspectiveActionsContext } from '-/hooks/usePerspectiveActionsContext';
@@ -48,7 +49,6 @@ import AppConfig from '-/AppConfig';
 import { Box } from '@mui/material';
 import Links from 'assets/links';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { GlobalHotKeys } from 'react-hotkeys';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import GridCell from './GridCell';
@@ -303,6 +303,7 @@ function GridPerspective(props: Props) {
       openDirectory(currentDirectoryPath);
     },
   };
+  useKeyBindings(keyMap, keyBindingHandlers);
 
   const getCellContent = useCallback(
     (
@@ -359,22 +360,16 @@ function GridPerspective(props: Props) {
         handleExportCsvMenu={handleExportCsvMenu}
         openSettings={openSettings}
       />
-      <GlobalHotKeys
-        keyMap={keyMap}
-        handlers={keyBindingHandlers}
-        allowChanges={true}
-      >
-        <GridCellsStyleContextProvider>
-          <GridPagination
-            desktopMode={desktopMode}
-            getCellContent={getCellContent}
-            currentDirectoryPath={currentDirectoryPath}
-            onClick={onClick}
-            setSelectedEntries={handleSetSelectedEntries}
-            clearSelection={clearSelection}
-          />
-        </GridCellsStyleContextProvider>
-      </GlobalHotKeys>
+      <GridCellsStyleContextProvider>
+        <GridPagination
+          desktopMode={desktopMode}
+          getCellContent={getCellContent}
+          currentDirectoryPath={currentDirectoryPath}
+          onClick={onClick}
+          setSelectedEntries={handleSetSelectedEntries}
+          clearSelection={clearSelection}
+        />
+      </GridCellsStyleContextProvider>
       {isAddTagDialogOpened !== undefined && (
         <AddTagToTagGroupDialog
           open={true}
