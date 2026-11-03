@@ -26,8 +26,8 @@ import {
   SmallArrowDownIcon,
   SmallArrowRightIcon,
 } from '-/components/CommonIcons';
+import QuickAccessRow from '-/components/QuickAccessRow';
 import RenderHistory from '-/components/RenderHistory';
-import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsTextField from '-/components/TsTextField';
 import BookmarksMenu from '-/components/menus/BookmarksMenu';
@@ -51,14 +51,20 @@ import { TS } from '-/tagspaces.namespace';
 import { Box, InputAdornment } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import React, { useContext, useReducer, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Pro } from '../pro';
+import SidePanelTitle from './SidePanelTitle';
 import { SettingsTab } from './dialogs/SettingsDialog';
 import { useSettingsDialogContext } from './dialogs/hooks/useSettingsDialogContext';
-import SidePanelTitle from './SidePanelTitle';
 
 interface Props {
   style?: any;
@@ -73,6 +79,39 @@ interface Props {
   setFileOpenHistory: (value: boolean) => void;
   setFolderOpenHistory: (value: boolean) => void;
   setFileEditHistory: (value: boolean) => void;
+}
+
+/**
+ * Short summary of a saved search in the search box syntax, e.g.
+ * `invoice +2024 |tax -draft`, shown as second line of its quick access row
+ */
+function getSearchSummary(search: TS.SearchQuery): string {
+  const tagParts = (tags: TS.Tag[] | undefined, prefix: string) =>
+    (tags || []).map((tag) => prefix + tag.title);
+  return [
+    search.textQuery?.trim(),
+    ...tagParts(search.tagsAND, '+'),
+    ...tagParts(search.tagsOR, '|'),
+    ...tagParts(search.tagsNOT, '-'),
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+// a stable empty list, so the memoized filtering keeps its result without Pro
+const NO_BOOKMARKS: Array<TS.BookmarkItem> = [];
+
+/**
+ * @param query lowercased filter text, an empty query keeps all items
+ */
+function filterByPath<T extends { path?: string }>(
+  items: T[] | undefined,
+  query: string,
+): T[] {
+  if (!query) {
+    return items || [];
+  }
+  return (items || []).filter((it) => it.path?.toLowerCase().includes(query));
 }
 
 function StoredSearches(props: Props) {
@@ -141,21 +180,31 @@ function StoredSearches(props: Props) {
   const bookmarkItems: Array<TS.BookmarkItem> =
     Pro && bookmarksContext
       ? bookmarksContext.bookmarks //getBookmarks()
-      : [];
+      : NO_BOOKMARKS;
 
   const filterActive = !!query;
-  const filterItems = (items: any[]) =>
-    filterActive
-      ? (items || []).filter((it) => it.path?.toLowerCase().includes(query))
-      : items || [];
 
   const filteredSearches = filterActive
     ? searches.filter((s) => s.title?.toLowerCase().includes(query))
     : searches;
-  const filteredBookmarks = filterItems(bookmarkItems);
-  const filteredFileOpen = filterItems(fileOpenHistory);
-  const filteredFileEdit = filterItems(fileEditHistory);
-  const filteredFolderOpen = filterItems(folderOpenHistory);
+  // memoized so the React.memo'd RenderHistory lists keep their props while
+  // filtering; a new array per render would re-render every list each time
+  const filteredBookmarks = useMemo(
+    () => filterByPath(bookmarkItems, query),
+    [bookmarkItems, query],
+  );
+  const filteredFileOpen = useMemo(
+    () => filterByPath(fileOpenHistory, query),
+    [fileOpenHistory, query],
+  );
+  const filteredFileEdit = useMemo(
+    () => filterByPath(fileEditHistory, query),
+    [fileEditHistory, query],
+  );
+  const filteredFolderOpen = useMemo(
+    () => filterByPath(folderOpenHistory, query),
+    [folderOpenHistory, query],
+  );
 
   const noSearchesFound = filteredSearches.length < 1;
   const bookmarksAvailable = filteredBookmarks.length > 0;
@@ -357,56 +406,35 @@ function StoredSearches(props: Props) {
             </Grid>
           )}
         </Grid>
-        <Grid>
-          {searchesExpanded &&
-            filteredSearches.map((search) => (
-              <Grid container direction="row" key={search.uuid}>
-                <Grid size={10}>
-                  <TsButton
-                    tooltip={t('core:searchTitle')}
-                    data-tid={
-                      'StoredSearchTID' +
-                      search.title.trim().replaceAll(/\s+/g, '-')
-                    }
-                    variant="text"
-                    sx={{
-                      textTransform: 'none',
-                      fontWeight: 'normal',
-                      justifyContent: 'start',
-                      width: '100%',
-                      minWidth: 0,
-                    }}
-                    onClick={() => findFromSavedSearch(search.uuid)}
-                  >
-                    <SearchIcon />
-                    &nbsp;
-                    <Box
-                      sx={{
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        flex: 1,
-                        minWidth: 0,
-                        textAlign: 'left',
-                      }}
-                    >
-                      {search.title}
-                    </Box>
-                  </TsButton>
-                </Grid>
-                <Grid size={2}>
+        {searchesExpanded &&
+          filteredSearches.map((search) => {
+            const summary = getSearchSummary(search);
+            return (
+              <QuickAccessRow
+                key={search.uuid}
+                icon={<SearchIcon fontSize="small" />}
+                primary={search.title}
+                // secondary={summary}
+                tooltip={summary && `${t('core:searchTitle')}: ${summary}`}
+                dataTid={
+                  'StoredSearchTID' +
+                  search.title.trim().replaceAll(/\s+/g, '-')
+                }
+                onClick={() => findFromSavedSearch(search.uuid)}
+                action={
                   <TsIconButton
                     tooltip={t('core:editSavedSearchTitle')}
                     aria-label={t('core:searchEditBtn')}
                     onClick={() => openSaveSearchDialog(search.uuid)}
                     data-tid="editSearchTID"
+                    size="small"
                   >
                     <EditIcon fontSize="small" />
                   </TsIconButton>
-                </Grid>
-              </Grid>
-            ))}
-        </Grid>
+                }
+              />
+            );
+          })}
         {showBookmarksSection && (
           <Grid container direction="row">
             <Grid size={10} sx={{ alignSelf: 'center' }}>

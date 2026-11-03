@@ -18,36 +18,168 @@
 
 import AppConfig from '-/AppConfig';
 import {
+  CloudLocationIcon,
   CopyToClipboardIcon,
   EntryBookmarkIcon,
-  HistoryIcon,
+  FileIcon,
+  FolderIcon,
   MoreMenuIcon,
   OpenFileIcon,
   OpenNewWindowIcon,
   RemoveIcon,
 } from '-/components/CommonIcons';
-import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
+import { historyKeys } from '-/hooks/HistoryContextProvider';
 import { useBrowserHistoryContext } from '-/hooks/useBrowserHistoryContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useHistoryContext } from '-/hooks/useHistoryContext';
 import { Pro } from '-/pro';
 import { dataTidFormat } from '-/services/test';
 import { createNewInstance } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { Box } from '@mui/material';
-import ListItem from '@mui/material/ListItem';
+import { CommonLocation } from '-/utils/CommonLocation';
+import Box from '@mui/material/Box';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { locationType } from '@tagspaces/tagspaces-common/misc';
 import {
+  extractContainingDirectoryPath,
   extractDirectoryName,
   extractFileName,
 } from '@tagspaces/tagspaces-common/paths';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import TsTooltip from './TsTooltip';
+import QuickAccessRow from './QuickAccessRow';
 import TsMenuList from './TsMenuList';
+
+type HistoryEntry = TS.HistoryItem | TS.BookmarkItem;
+
+const cloudBadgeWrapperSx = { position: 'relative', display: 'inline-flex' };
+const cloudBadgeSx = {
+  position: 'absolute',
+  right: -5,
+  bottom: -3,
+  fontSize: 12,
+  padding: '1px',
+  borderRadius: '50%',
+  color: 'primary.main',
+  backgroundColor: 'background.paper',
+};
+
+/**
+ * History items carry the location id in `lid`, bookmarks only in the tslid
+ * parameter of their url
+ */
+function getItemLocationId(item: HistoryEntry): string | undefined {
+  const lid =
+    (item as TS.HistoryItem).lid ?? item.url?.match(/[?&]tslid=([^&]+)/)?.[1];
+  return lid ? decodeURIComponent(lid) : undefined;
+}
+
+interface HistoryRowProps {
+  item: HistoryEntry;
+  historyKey: string;
+  location: CommonLocation | undefined;
+  showMenu: boolean;
+  menuVisible: boolean;
+  onOpen: (item: TS.HistoryItem) => void;
+  onMenuOpen: (
+    event: React.MouseEvent<HTMLElement>,
+    item: HistoryEntry,
+  ) => void;
+}
+
+/**
+ * Memoized, so a row re-renders only when its own item, location or menu
+ * state changes, e.g. opening one item's menu does not re-render the others
+ */
+const HistoryRow = React.memo(function HistoryRow({
+  item,
+  historyKey,
+  location,
+  showMenu,
+  menuVisible,
+  onOpen,
+  onMenuOpen,
+}: HistoryRowProps) {
+  const { t } = useTranslation();
+  // cloud paths always use '/', also on Windows
+  const dirSeparator = location?.getDirSeparator() ?? AppConfig.dirSeparator;
+  // folder history paths are stored without a trailing separator
+  const isFolder =
+    historyKey === historyKeys.folderOpenKey ||
+    item.path.endsWith(dirSeparator);
+  const itemName = isFolder
+    ? extractDirectoryName(item.path, dirSeparator)
+    : extractFileName(item.path, dirSeparator);
+  const parentName = extractDirectoryName(
+    extractContainingDirectoryPath(item.path, dirSeparator),
+    dirSeparator,
+  );
+
+  let itemIcon = isFolder ? (
+    <FolderIcon fontSize="small" />
+  ) : (
+    <FileIcon fontSize="small" />
+  );
+  if (historyKey === Pro?.keys.bookmarksKey) {
+    itemIcon = <EntryBookmarkIcon fontSize="small" />;
+  }
+  if (location?.type === locationType.TYPE_CLOUD) {
+    itemIcon = (
+      <Box sx={cloudBadgeWrapperSx}>
+        {itemIcon}
+        <CloudLocationIcon
+          data-tid="historyItemCloudBadgeTID"
+          sx={cloudBadgeSx}
+        />
+      </Box>
+    );
+  }
+
+  return (
+    <QuickAccessRow
+      icon={itemIcon}
+      primary={itemName}
+      // secondary={parentName}
+      dataTid={historyKey + 'TID' + dataTidFormat(itemName)}
+      onClick={() => onOpen(item as TS.HistoryItem)}
+      actionVisible={menuVisible}
+      action={
+        showMenu && (
+          <TsIconButton
+            tooltip={t('options')}
+            aria-label={t('options')}
+            onClick={(e) => onMenuOpen(e, item)}
+            data-tid={'historyItemMenuTID' + dataTidFormat(itemName)}
+            size="small"
+          >
+            <MoreMenuIcon fontSize="small" />
+          </TsIconButton>
+        )
+      }
+      tooltip={
+        <span>
+          <b>{t('core:filePath')}:</b> {item.path}
+          <br />
+          {location && (
+            <>
+              <b>{t('core:location')}:</b> {location.name}
+              <br />
+            </>
+          )}
+          <b>{t('creationDate')}:&nbsp;</b>
+          {new Date(item.creationTimeStamp)
+            .toISOString()
+            .substring(0, 19)
+            .replace('T', ' ')}
+        </span>
+      }
+    />
+  );
+});
 
 interface Props {
   historyKey: string;
@@ -67,22 +199,18 @@ function RenderHistory({
   const { t } = useTranslation();
   const { openHistoryItem } = useBrowserHistoryContext();
   const { delHistory } = useHistoryContext();
+  const { locations } = useCurrentLocationContext();
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)
     : undefined;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedItem, setSelectedItem] = useState<
-    TS.HistoryItem | TS.BookmarkItem | null
-  >(null);
+  const [selectedItem, setSelectedItem] = useState<HistoryEntry | null>(null);
 
   const menuOpen = Boolean(anchorEl);
 
   const handleMenuOpen = useCallback(
-    (
-      event: React.MouseEvent<HTMLElement>,
-      item: TS.HistoryItem | TS.BookmarkItem,
-    ) => {
+    (event: React.MouseEvent<HTMLElement>, item: HistoryEntry) => {
       setAnchorEl(event.currentTarget);
       setSelectedItem(item);
     },
@@ -157,7 +285,17 @@ function RenderHistory({
     handleMenuClose,
   ]);
 
-  // Memoize the sliced items for performance
+  // Keyed on the locations array instead of findLocation: the location
+  // context changes for unrelated reasons (e.g. a location menu opening),
+  // which would otherwise hand every row a new location and re-render it.
+  // Items without a location id get no location, as findLocation would fall
+  // back to the current one.
+  const locationsById = useMemo(() => {
+    const map = new Map<string, CommonLocation>();
+    locations?.forEach((location) => map.set(location.uuid, location));
+    return map;
+  }, [locations]);
+
   const displayedItems = useMemo(
     () => items?.slice(0, maxItems ?? items.length) ?? [],
     [items, maxItems],
@@ -166,75 +304,18 @@ function RenderHistory({
   return (
     <>
       {displayedItems.map((item) => {
-        const itemName = item.path.endsWith(AppConfig.dirSeparator)
-          ? extractDirectoryName(item.path, AppConfig.dirSeparator)
-          : extractFileName(item.path, AppConfig.dirSeparator);
+        const lid = getItemLocationId(item);
         return (
-          <ListItem
-            dense
-            sx={{ paddingLeft: 0, height: 40, gap: '4px' }}
+          <HistoryRow
             key={item.creationTimeStamp}
-          >
-            <TsButton
-              data-tid={historyKey + 'TID' + dataTidFormat(itemName)}
-              variant="text"
-              sx={{
-                textTransform: 'none',
-                fontWeight: 'normal',
-                justifyContent: 'start',
-                flex: 1,
-                minWidth: 0,
-              }}
-              onClick={() => openHistoryItem(item as TS.HistoryItem)}
-            >
-              <TsTooltip
-                title={
-                  <span>
-                    <b>{t('core:filePath')}:</b> {item.path}
-                    <br />
-                    <br />
-                    <b>{t('creationDate')}:&nbsp;</b>
-                    {new Date(item.creationTimeStamp)
-                      .toISOString()
-                      .substring(0, 19)
-                      .replace('T', ' ')}
-                  </span>
-                }
-              >
-                {historyKey === Pro?.keys.bookmarksKey ? (
-                  <EntryBookmarkIcon />
-                ) : (
-                  <HistoryIcon />
-                )}
-              </TsTooltip>
-              <TsTooltip title={itemName}>
-                <Box
-                  sx={{
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    overflow: 'hidden',
-                    flex: 1,
-                    minWidth: 0,
-                    marginLeft: '5px',
-                    textAlign: 'left',
-                  }}
-                >
-                  {itemName}
-                </Box>
-              </TsTooltip>
-            </TsButton>
-            {showMenu && (
-              <TsIconButton
-                tooltip={t('options')}
-                aria-label={t('options')}
-                onClick={(e) => handleMenuOpen(e, item)}
-                data-tid={'historyItemMenuTID' + dataTidFormat(itemName)}
-                size="small"
-              >
-                <MoreMenuIcon />
-              </TsIconButton>
-            )}
-          </ListItem>
+            item={item}
+            historyKey={historyKey}
+            location={lid ? locationsById.get(lid) : undefined}
+            showMenu={showMenu}
+            menuVisible={selectedItem === item}
+            onOpen={openHistoryItem}
+            onMenuOpen={handleMenuOpen}
+          />
         );
       })}
 

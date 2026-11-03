@@ -2,15 +2,21 @@
 Copyright (c) 2024-present The TagSpaces GmbH. All rights reserved.
 */
 
-import React, { createContext, useEffect, useReducer, useRef } from 'react';
+import AppConfig from '-/AppConfig';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
+import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
+import { FixedSizeArray } from '-/services/FixedSizeArray';
+import { getRelativeEntryPath } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { generateSharingLink } from '@tagspaces/tagspaces-common/paths';
-import { useOpenedEntryContext } from '-/hooks/useOpenedEntryContext';
-import { getRelativeEntryPath } from '-/services/utils-io';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
-import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import AppConfig from '-/AppConfig';
-import { FixedSizeArray } from '-/services/FixedSizeArray';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from 'react';
 
 type BrowserHistoryContextData = {
   historyIndex: number;
@@ -176,14 +182,30 @@ export const BrowserHistoryContextProvider = ({
     }
   }
 
-  const context = {
-    historyIndex: historyIndex.current,
-    canGoBack: historyIndex.current > 0,
-    canGoForward: historyIndex.current < history.current.getArray().length - 1,
-    goBack,
-    goForward,
-    openHistoryItem,
-  };
+  const latestActions = useRef({ goBack, goForward, openHistoryItem });
+  latestActions.current = { goBack, goForward, openHistoryItem };
+  const stableActions = useMemo(
+    () => ({
+      goBack: () => latestActions.current.goBack(),
+      goForward: () => latestActions.current.goForward(),
+      openHistoryItem: (item: TS.HistoryItem) =>
+        latestActions.current.openHistoryItem(item),
+    }),
+    [],
+  );
+
+  const currentIndex = historyIndex.current;
+  const canGoBack = currentIndex > 0;
+  const canGoForward = currentIndex < history.current.getArray().length - 1;
+  const context = useMemo(
+    () => ({
+      historyIndex: currentIndex,
+      canGoBack,
+      canGoForward,
+      ...stableActions,
+    }),
+    [currentIndex, canGoBack, canGoForward, stableActions],
+  );
 
   return (
     <BrowserHistoryContext.Provider value={context}>
