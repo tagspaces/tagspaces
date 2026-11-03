@@ -60,7 +60,7 @@ export const CreateDirectoryDialogContextProvider = ({
   const skipSelection = useRef<boolean>(false);
   const callbackFn = useRef<(newDirPath: string) => void>(undefined);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (AppConfig.isElectron) {

@@ -59,7 +59,7 @@ function LinksTab(props: Props) {
   const [view, setView] = useState<'graph' | 'list'>(
     LinksGraph ? 'graph' : 'list',
   );
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const location = findLocation(openedEntry.locationID);
 

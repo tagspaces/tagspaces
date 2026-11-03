@@ -54,7 +54,11 @@ const TargetMoveFileBox = (props: Props) => {
     }),
   });
   return (
-    <div ref={drop}>
+    <div
+      ref={(node) => {
+        drop(node);
+      }}
+    >
       {canDrop && isOver && (
         <div
           style={{

@@ -85,7 +85,7 @@ function EntryContainerMenu(props: Props) {
   const warningOpeningFilesExternally = useSelector(
     getWarningOpeningFilesExternally,
   );
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceUpdate] = useReducer((x: number) => x + 1, 0);
 
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)

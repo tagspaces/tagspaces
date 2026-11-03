@@ -151,7 +151,7 @@ function StoredSearches(props: Props) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const menuHistoryKey = useRef<string>(undefined);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const handleSearchMenu = (event: any) => {
     setSearchMenuAnchorEl(event.currentTarget);

@@ -86,7 +86,7 @@ function NewFileDialog(props: Props) {
       )
     : undefined;
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const firstRender = useFirstRender();

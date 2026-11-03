@@ -43,7 +43,7 @@ export const NewAudioDialogContextProvider = ({
   const open = useRef<boolean>(false);
   const title = useRef<string>(undefined);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function openDialog(t = undefined) {
     open.current = true;

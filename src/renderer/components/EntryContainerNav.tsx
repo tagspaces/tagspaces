@@ -34,7 +34,7 @@ function EntryContainerNav(props: Props) {
   const { openedEntry, sharingLink, fileChanged } = useOpenedEntryContext();
   const { showNotification } = useNotificationContext();
   const { t } = useTranslation();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const bookmarksContext = Pro?.contextProviders?.BookmarksContext
     ? useContext<TS.BookmarksContextData>(Pro.contextProviders.BookmarksContext)

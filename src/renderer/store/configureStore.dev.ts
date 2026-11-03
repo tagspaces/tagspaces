@@ -19,7 +19,7 @@
 /* eslint no-undef: "error" */
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore } from 'redux-persist';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import AppConfig from '-/AppConfig';
 import rootReducer from '../reducers';

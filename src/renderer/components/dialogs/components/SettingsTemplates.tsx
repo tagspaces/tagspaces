@@ -53,7 +53,11 @@ function SettingsTemplates(props: Props) {
   const { t } = useTranslation();
   const { showNotification } = useNotificationContext();
   const editedTemplate = React.useRef<TS.FileTemplate>(undefined);
-  const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = React.useReducer(
+    (x: number) => x + 1,
+    0,
+    undefined,
+  );
 
   const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext
     ? useContext<TS.FileTemplatesContextData>(

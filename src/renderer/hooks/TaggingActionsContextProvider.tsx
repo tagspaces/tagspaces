@@ -224,7 +224,7 @@ export const TaggingActionsContextProvider = ({
   //const locations: CommonLocation[] = useSelector(getLocations);
   const saveTagInLocation: boolean = useSelector(getSaveTagInLocation);
   const filenameTagPlacedAtEnd = useSelector(getFileNameTagPlace);
-  //const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  //const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const currentLocation = findLocation();
 
   function setConfirmReindexDialogOpened(tg: TS.TagGroup) {

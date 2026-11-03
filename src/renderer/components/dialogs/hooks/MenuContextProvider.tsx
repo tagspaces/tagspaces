@@ -134,7 +134,7 @@ export const MenuContextProvider = ({ children }: MenuContextProviderProps) => {
   const reorderBottom = useRef<(entry: TS.FileSystemEntry) => void>(undefined);
   const menuItems = useRef<React.ReactNode>(undefined);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const ShareFilesDialog = Pro && Pro.UI ? Pro.UI.ShareFilesDialog : false;
 

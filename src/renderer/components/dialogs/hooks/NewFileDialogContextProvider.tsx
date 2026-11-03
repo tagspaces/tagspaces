@@ -53,7 +53,7 @@ export const NewFileDialogContextProvider = ({
   const fileType = useRef<TS.FileType>(undefined);
   const fileName = useRef<string>(undefined);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (AppConfig.isElectron) {

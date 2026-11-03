@@ -62,7 +62,7 @@ function EditEntryTagDialog({ open, entries, tag, onClose }: Props) {
   const [manualEditing, setManualEditing] = useState(false);
   const { setError, haveError } = useValidation();
   const titleRef = useRef<string>(tag?.title || '');
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceUpdate] = useReducer((x: number) => x + 1, 0);
 
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));

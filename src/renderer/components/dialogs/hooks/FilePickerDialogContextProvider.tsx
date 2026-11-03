@@ -119,7 +119,7 @@ export const FilePickerDialogContextProvider = ({
   const open = useRef<boolean>(false);
   const options = useRef<FilePickerDialogOpenOptions | undefined>(undefined);
 
-  const [, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function openDialog(next: FilePickerDialogOpenOptions) {
     open.current = true;

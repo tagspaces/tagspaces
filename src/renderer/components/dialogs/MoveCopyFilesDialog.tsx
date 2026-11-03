@@ -92,7 +92,7 @@ function MoveCopyFilesDialog(props: Props) {
   );
   const dirProp = useRef({});
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const sourceLocation = findLocation();
   const [activeTargetLocationId, setActiveTargetLocationId] = useState<

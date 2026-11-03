@@ -127,7 +127,7 @@ function SearchAutocomplete(props: Props) {
       ? searchQuery.fileTypes
       : AppConfig.SearchTypeGroups?.any,
   );
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const actionValues = useRef<Array<SearchOptionType>>([]);
   const [searchBoxing, setSearchBoxing] = useState<ScopeType>(
     searchQuery.searchBoxing || scope.location,

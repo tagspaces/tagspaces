@@ -83,7 +83,7 @@ function CreateTagGroupDialog(props: Props) {
   const locationId = useRef<string>(defaultTagGroupLocation);
   const [workSpaceId, setWorkSpaceId] = useState<string>('');
   // eslint-disable-next-line no-unused-vars
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0);
 
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
     ? useContext<TS.WorkSpacesContextData>(

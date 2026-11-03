@@ -84,7 +84,11 @@ function SettingsAI(props: Props) {
   const aiDefaultProvider: AIProvider = useSelector(getDefaultAIProvider);
   const aiProviders: AIProvider[] = useSelector(getAIProviders);
   //const ollamaAlive = useRef<boolean | null>(null);
-  const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = React.useReducer(
+    (x: number) => x + 1,
+    0,
+    undefined,
+  );
   const dispatch: AppDispatch = useDispatch();
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const providersAlive = React.useRef({});

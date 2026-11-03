@@ -62,7 +62,7 @@ function CreateLink(props: Props) {
   // relative link into it after the user picks an internal entry.
   const [linkUrl, setLinkUrl] = useState<string>('');
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const noSuitableLocation = !targetDirectoryPath;
 

@@ -49,7 +49,7 @@ export const AiGenerationDialogContextProvider = ({
   const option = useRef<generateOptionType>(undefined);
   const selected = useRef<TS.FileSystemEntry[]>(undefined);
   const AiGenerationDialog = Pro && Pro.UI ? Pro.UI.AiGenerationDialog : false;
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function openDialog(
     optionSelected: generateOptionType = undefined,

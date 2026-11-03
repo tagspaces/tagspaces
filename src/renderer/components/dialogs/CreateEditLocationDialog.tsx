@@ -922,7 +922,7 @@ function CreateEditLocationDialog(props: Props) {
                     type="number"
                     data-tid="maxIndexAgeTID"
                     slotProps={{
-                      input: { inputMode: 'numeric', min: 0 },
+                      htmlInput: { inputMode: 'numeric', min: 0 },
                     }}
                     value={maxIndexAge / (1000 * 60)}
                     onChange={(event) => changeMaxIndexAge(event.target.value)}

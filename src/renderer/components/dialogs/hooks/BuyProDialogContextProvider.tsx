@@ -41,7 +41,7 @@ export const BuyProDialogContextProvider = ({
   children,
 }: BuyProDialogContextProviderProps) => {
   const open = useRef<boolean>(false);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function openDialog() {
     open.current = true;

@@ -197,7 +197,7 @@ export const OpenedEntryContextProvider = ({
   const sharingLink = useRef<string>(undefined);
   const sharingParentFolderLink = useRef<string>(undefined);
   const firstRender = useFirstRender();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const currentLocation = findLocation();
 
   /**

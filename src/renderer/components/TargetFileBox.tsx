@@ -205,7 +205,9 @@ function TargetFileBox(props: Props) {
   const { isActive, handlerId } = collectedProps;
   return (
     <div
-      ref={drop}
+      ref={(node) => {
+        drop(node);
+      }}
       style={{
         ...style,
         ...(isActive && {

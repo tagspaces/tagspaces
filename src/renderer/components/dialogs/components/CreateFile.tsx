@@ -83,7 +83,7 @@ function CreateFile(props: Props) {
   const fileContentRef = useRef<HTMLInputElement | null>(null);
   const fileNameRef = useRef<HTMLInputElement | null>(null);
   const firstRender = useFirstRender();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const noSuitableLocation = !targetDirectoryPath;
 
   const fileTemplatesContext = Pro?.contextProviders?.FileTemplatesContext

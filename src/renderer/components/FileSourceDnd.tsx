@@ -49,7 +49,12 @@ const FileSourceDnd: React.FC<Props> = ({ entry, children }) => {
   const { isDragging, ...rest } = collected;
 
   return (
-    <span ref={drag} {...rest}>
+    <span
+      ref={(node) => {
+        drag(node);
+      }}
+      {...rest}
+    >
       {children}
     </span>
   );

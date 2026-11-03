@@ -136,7 +136,7 @@ function SettingsGeneral({ searchInputRef }: Props = {}) {
       )
     : undefined;
   const workSpaces = workSpacesContext?.getWorkSpaces() ?? [];
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (AppConfig.isElectron) {
@@ -1261,7 +1261,7 @@ function SettingsGeneral({ searchInputRef }: Props = {}) {
               <TsTextField
                 type="number"
                 slotProps={{
-                  input: { inputMode: 'numeric', min: 0 },
+                  htmlInput: { inputMode: 'numeric', min: 0 },
                 }}
                 sx={{ maxWidth: '92px' }}
                 data-tid="prefixTagContainerTID"

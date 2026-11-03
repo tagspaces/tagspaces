@@ -55,7 +55,7 @@ export const DeleteMultipleEntriesDialogContextProvider = ({
   const open = useRef<boolean>(false);
   const callback = useRef<() => void>(undefined);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function openDialog(callbackFn?: () => void) {
     open.current = true;

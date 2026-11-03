@@ -81,7 +81,7 @@ export const ResolveConflictContextProvider = ({
 
   const revisionsEnabled = useSelector(isRevisionsEnabled);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function openDialog(oEntry: TS.OpenedEntry, fContent: string) {
     open.current = true;

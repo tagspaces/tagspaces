@@ -46,7 +46,7 @@ export const ProTeaserDialogContextProvider = ({
   const open = useRef<boolean>(false);
   const slideIndex = useRef<number>(-1);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function getProTeaserSlideIndex(slideName: string): number {
     if (!slideName) {

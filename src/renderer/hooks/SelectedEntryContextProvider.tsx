@@ -54,7 +54,7 @@ export const SelectedEntryContextProvider = ({
   const { currentLocationId } = useCurrentLocationContext();
   const selectedEntries = useRef<TS.FileSystemEntry[]>([]);
   const firstRender = useFirstRender();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (!firstRender && !currentLocationId) {

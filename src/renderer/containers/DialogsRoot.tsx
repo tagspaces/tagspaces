@@ -96,7 +96,7 @@ function DialogsRoot({ children }: DialogsRootProps) {
   return providers.reduceRight(
     (acc, Provider) => <Provider>{acc}</Provider>,
     children as any,
-  ) as JSX.Element;
+  ) as React.JSX.Element;
 }
 
 export default DialogsRoot;

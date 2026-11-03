@@ -107,7 +107,7 @@ function ChatView() {
   const milkdownDivRef = useRef<HTMLDivElement>(null);
   const chatMsg = useRef<string>('');
   const textInputRef = useRef<HTMLInputElement>(null);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [promptAnchorEl, setPromptAnchorEl] =
     React.useState<null | HTMLElement>(null);

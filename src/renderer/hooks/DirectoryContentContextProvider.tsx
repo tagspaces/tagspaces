@@ -276,7 +276,7 @@ export const DirectoryContentContextProvider = ({
   const currentDirectoryFiles = useRef<TS.OrderVisibilitySettings[]>([]);
   const currentDirectoryDirs = useRef<TS.OrderVisibilitySettings[]>([]);
   const firstRender = useFirstRender();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const broadcast = new BroadcastChannel('ts-directory-channel');
 
   const defaultColumnsToShow = 3; //KanBan

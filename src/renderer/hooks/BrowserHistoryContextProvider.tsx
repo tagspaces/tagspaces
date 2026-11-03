@@ -55,7 +55,7 @@ export const BrowserHistoryContextProvider = ({
   const isNavigating = useRef<boolean>(false);
   const goBackRef = useRef<(() => void) | null>(null);
   const goForwardRef = useRef<(() => void) | null>(null);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const currentLocation = findLocation();
 
   useEffect(() => {

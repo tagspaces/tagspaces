@@ -34,7 +34,7 @@ export default function ZoomComponent(props: Props) {
   const { preview, showTitle } = props;
   const { entrySize, setSettings, saveSettings } =
     usePerspectiveSettingsContext();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const theme = useTheme();
   const entrySizePercent = mapEntrySizeToPercent();
   const { t } = useTranslation();

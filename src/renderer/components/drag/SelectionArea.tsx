@@ -67,5 +67,13 @@ export const SelectionArea: React.FC<SelectionAreaProps> = ({
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
 
-  return <div ref={drag}>{children}</div>;
+  return (
+    <div
+      ref={(node) => {
+        drag(node);
+      }}
+    >
+      {children}
+    </div>
+  );
 };

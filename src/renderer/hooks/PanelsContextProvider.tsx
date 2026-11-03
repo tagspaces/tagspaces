@@ -42,7 +42,11 @@ export const PanelsContextProvider = ({
   children,
 }: PanelsContextProviderProps) => {
   const currentOpenedPanel = useRef<PanelType>('locationManagerPanel');
-  const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = React.useReducer(
+    (x: number) => x + 1,
+    0,
+    undefined,
+  );
 
   useEffect(() => {
     if (AppConfig.isElectron) {

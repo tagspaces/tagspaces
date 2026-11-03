@@ -148,7 +148,7 @@ function EntryProperties({ tileServer }: Props) {
     : undefined;
   const tagDelimiter: string = useSelector(getTagDelimiter);
 
-  const dirProps = useRef<TS.DirProp>();
+  const dirProps = useRef<TS.DirProp>(undefined);
   const fileNameRef = useRef<HTMLInputElement>(null);
   const sharingLinkRef = useRef<HTMLInputElement>(null);
   const disableConfirmButton = useRef<boolean>(true);
@@ -174,7 +174,7 @@ function EntryProperties({ tileServer }: Props) {
   const backgroundImage = useRef<string>('none');
   const thumbImage = useRef<string>('none');
 
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceUpdate] = useReducer((x: number) => x + 1, 0);
   const firstRender = useFirstRender();
 
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(

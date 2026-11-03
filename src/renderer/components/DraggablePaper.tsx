@@ -16,13 +16,17 @@
  *
  */
 
-import React from 'react';
+import { useRef } from 'react';
 import Paper, { PaperProps } from '@mui/material/Paper';
 import Draggable from 'react-draggable';
 
 function DraggablePaper(props: PaperProps) {
+  // react-draggable falls back to ReactDOM.findDOMNode without a nodeRef;
+  // findDOMNode was removed in React 19.
+  const nodeRef = useRef<HTMLDivElement>(null);
   return (
     <Draggable
+      nodeRef={nodeRef}
       handle="#draggable-dialog-title"
       // Exclude the dialog body and any buttons living in the draggable title
       // (close, back, action slots) from initiating a drag. On touch devices
@@ -33,7 +37,7 @@ function DraggablePaper(props: PaperProps) {
       // through.
       cancel={'[class*="MuiDialogContent-root"], button'}
     >
-      <Paper {...props} />
+      <Paper {...props} ref={nodeRef} />
     </Draggable>
   );
 }

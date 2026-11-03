@@ -47,7 +47,7 @@ export const PerspectiveActionsContextProvider = ({
 }: PerspectiveActionsContextProviderProps) => {
   const actions = useRef<TS.PerspectiveActions[]>(undefined);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (AppConfig.isElectron) {

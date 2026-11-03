@@ -60,7 +60,7 @@ function SaveSearchDialog(props: Props) {
   const title = useRef<string>(getTitle());
   const titleChanged = useRef<boolean>(false);
   const dispatch: AppDispatch = useDispatch();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   useEffect(() => {
     titleChanged.current = false;

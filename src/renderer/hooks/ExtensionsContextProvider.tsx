@@ -60,7 +60,7 @@ export const ExtensionsContextProvider = ({
   const dispatch: AppDispatch = useDispatch();
   const extensionsFound = useSelector(getExtensionsFound);
   const extensions = useRef<TS.Extension[]>(extensionsFound);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const enableExtensionsKey = 'ENABLE_EXTENSION';
 
   useEffect(() => {

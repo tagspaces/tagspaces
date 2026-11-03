@@ -86,7 +86,7 @@ function RenameEntryDialog(props: Props) {
   const name = useRef<string>(defaultName);
 
   // eslint-disable-next-line no-unused-vars
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const onInputFocus = (event) => {
     if (name.current) {

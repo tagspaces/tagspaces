@@ -286,7 +286,7 @@ function SettingsFileTypes({ filterInputRef }: Props = {}) {
   );
   const [filterValue, setFilterValue] = useState<string>('');
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
 
   //const extensions = useSelector(getExtensions);

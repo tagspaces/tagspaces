@@ -18,7 +18,7 @@
 
 import { compose, createStore, applyMiddleware } from 'redux';
 import { persistStore } from 'redux-persist';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import AppConfig from '-/AppConfig';
 import rootReducer from '../reducers';
 import onlineListener from '../services/onlineListener';

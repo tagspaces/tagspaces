@@ -114,7 +114,7 @@ function EntryContainer() {
   const smallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   // eslint-disable-next-line no-unused-vars
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const isSavingInProgress = useRef<boolean>(false);
   const fileViewer: MutableRefObject<HTMLIFrameElement> =
     useRef<HTMLIFrameElement>(null);

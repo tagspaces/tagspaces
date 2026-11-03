@@ -55,7 +55,7 @@ function AddRemoveTagsDialog(props: Props) {
   const { selectedEntries } = useSelectedEntriesContext();
   const [newlyAddedTags, setNewlyAddedTags] = useState<TS.Tag[]>([]);
   const inputTags = useRef<TS.Tag[]>([]);
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const currentEntries = selected || selectedEntries;
 
   const handleChange = (name: string, value: Array<TS.Tag>, action: string) => {

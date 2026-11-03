@@ -40,7 +40,7 @@ export const EditedEntryMetaContextProvider = ({
 }: EditedEntryMetaContextProviderProps) => {
   const metaActions = useRef<TS.EditMetaAction[]>(undefined);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function setReflectMetaActions(...actionsArray: TS.EditMetaAction[]) {
     metaActions.current = actionsArray;

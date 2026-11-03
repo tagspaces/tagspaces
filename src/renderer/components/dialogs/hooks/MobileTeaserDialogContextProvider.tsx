@@ -63,7 +63,7 @@ export function MobileTeaserDialogContextProvider({
   // it targets returning users only.
   const firstRunAtMount = useRef<boolean>(firstRun);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   function openDialog(page?: 'ios' | 'android') {
     slideIndex.current = page === 'android' ? 1 : 0;

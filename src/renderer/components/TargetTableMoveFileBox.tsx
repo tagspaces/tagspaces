@@ -51,7 +51,14 @@ const TargetTableMoveFileBox = (props: Props) => {
   if (canDrop && isOver) {
     restProps.className += ' dropzone'; // TODO set props.location type and add dropzonecopy based on this type
   }
-  return <tr ref={drop} {...restProps} />;
+  return (
+    <tr
+      ref={(node) => {
+        drop(node);
+      }}
+      {...restProps}
+    />
+  );
 };
 
 export default TargetTableMoveFileBox;

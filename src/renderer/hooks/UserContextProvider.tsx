@@ -66,7 +66,11 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const user = useRef<TsUser>(
     AppConfig.ExtDemoUser ? createUser(AppConfig.ExtDemoUser) : undefined,
   );
-  const [ignored, forceUpdate] = React.useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = React.useReducer(
+    (x: number) => x + 1,
+    0,
+    undefined,
+  );
 
   function loggedIn(authData: TsUser) {
     user.current = authData;

@@ -131,8 +131,4 @@ function SettingsBackupRestore(props: Props) {
   );
 }
 
-SettingsBackupRestore.defaultProps = {
-  backup: undefined,
-};
-
 export default SettingsBackupRestore;

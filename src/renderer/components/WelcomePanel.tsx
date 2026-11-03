@@ -95,7 +95,7 @@ function WelcomePanel() {
   const desktopMode = useSelector(getDesktopMode);
   const howToStartHidden = useSelector(isHowToStartHidden);
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   const showMenu = false;
   const maxRecentItems = 5;

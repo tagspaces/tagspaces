@@ -91,7 +91,7 @@ export const HistoryContextProvider = ({
   const searchHistoryKeySettings = useSelector(
     (state: any) => state.settings[historyKeys.searchHistoryKey],
   );
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const firstRender = useFirstRender();
   const broadcast = new BroadcastChannel('history-sync');
   const currentLocation = findLocation();

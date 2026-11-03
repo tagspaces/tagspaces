@@ -47,7 +47,7 @@ interface Props {
   confirmDialogContentTID?: string;
   prompt?: string;
   helpText?: string;
-  list: string[];
+  list?: string[];
   entriesList?: TS.FileSystemEntry[];
   confirmCallback: (result: boolean | string) => void;
   onClose: () => void;
@@ -64,11 +64,11 @@ function ConfirmDialog(props: Props) {
     helpText,
     customCancelText,
     customConfirmText,
-    list,
+    list = [],
     entriesList,
-    confirmDialogContentTID,
-    cancelDialogTID,
-    confirmDialogTID,
+    confirmDialogContentTID = 'confirmDialogContentTID',
+    cancelDialogTID = 'confirmDialogCancelButton',
+    confirmDialogTID = 'confirmDialogOkButton',
   } = props;
   const { t } = useTranslation();
   const [promptValue, setPromptValue] = useState<string>('');
@@ -139,12 +139,5 @@ function ConfirmDialog(props: Props) {
     </Dialog>
   );
 }
-
-ConfirmDialog.defaultProps = {
-  cancelDialogTID: 'confirmDialogCancelButton',
-  confirmDialogTID: 'confirmDialogOkButton',
-  confirmDialogContentTID: 'confirmDialogContentTID',
-  list: [],
-};
 
 export default ConfirmDialog;

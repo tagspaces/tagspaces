@@ -229,7 +229,7 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const aiClient = useRef<AiClient>(undefined);
   const lastProviderId = useRef<string>(defaultAiProvider?.id);
   const dispatch: AppDispatch = useDispatch();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const currentLocation = findLocation();
   const firstRender = useFirstRender();
 

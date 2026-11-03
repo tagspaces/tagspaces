@@ -111,7 +111,7 @@ export const PerspectiveSettingsContextProvider = ({
   const { metaActions } = useEditedEntryMetaContext();
   const { removeFolderCustomSettings, saveCurrentLocationMetaData } =
     useIOActionsContext();
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const settings = useRef<TS.FolderSettings>(
     getSettings(currentPerspective, directoryMeta),
   );

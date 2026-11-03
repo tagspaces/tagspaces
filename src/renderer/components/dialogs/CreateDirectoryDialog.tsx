@@ -74,7 +74,7 @@ function CreateDirectoryDialog(props: Props) {
   const [disableConfirmButton, setDisableConfirmButton] = useState(true);
   const [name, setName] = useState('');
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const { open, onClose, selectedDirectoryPath, skipSelection } = props;
 
   function handleValidation(dirName) {

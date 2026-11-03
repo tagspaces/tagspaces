@@ -167,7 +167,7 @@ export const CurrentLocationContextProvider = ({
     setLocationDirectoryContextMenuAnchorEl,
   ] = useState<null | HTMLElement>(null);
 
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceUpdate] = useReducer((x: number) => x + 1, 0);
 
   useEffect(() => {
     // Initialize BroadcastChannel

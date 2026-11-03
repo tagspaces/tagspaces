@@ -57,7 +57,7 @@ export const SavedSearchesContextProvider = ({
   const defaultTextColor = useSelector(getTagTextColor);
   const showUnixHiddenEntries = useSelector(getShowUnixHiddenEntries);
   const searches = useRef<TS.SearchQuery[]>(getAllSearches());
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
   const broadcast = new BroadcastChannel('searches-sync');
 
   useEffect(() => {

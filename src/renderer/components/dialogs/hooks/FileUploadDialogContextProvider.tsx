@@ -64,7 +64,7 @@ export const FileUploadDialogContextProvider = ({
   const progress = useSelector(getProgress);
   const firstRender = useFirstRender();
 
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0, undefined);
+  const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
 
   useEffect(() => {
     if (firstRender) {
