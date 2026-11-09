@@ -291,11 +291,11 @@ function LocationView(props: Props) {
         noWrap
       >
         <TsTooltip title={locationNameTitle}>
-          <>{location.name}</>
+          <span>{location.name}</span>
         </TsTooltip>
         {workspace && (
           <TsTooltip title={t('core:workspace') + ': ' + workspace.fullName}>
-            <>{' - ' + workspace.shortName}</>
+            <span>{' - ' + workspace.shortName}</span>
           </TsTooltip>
         )}
       </Typography>
