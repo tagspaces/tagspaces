@@ -62,10 +62,12 @@ import { useTheme } from '@mui/material/styles';
 import Links from 'assets/links';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import useScrollFade from '-/utils/useScrollFade';
 import SidePanelTitle from './SidePanelTitle';
 
 function HelpFeedbackPanel() {
   const { t } = useTranslation();
+  const listRef = useScrollFade<HTMLUListElement>();
   const theme = useTheme();
   const desktopMode = useSelector(isDesktopMode);
   const howToStartHidden = useSelector(isHowToStartHidden);
@@ -92,6 +94,7 @@ function HelpFeedbackPanel() {
         dense={desktopMode}
         component="nav"
         aria-label="main help area"
+        ref={listRef}
         sx={{
           flex: 1,
           minHeight: 0,

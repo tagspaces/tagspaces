@@ -35,6 +35,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import useScrollFade from '-/utils/useScrollFade';
 
 interface Props {
   style?: any;
@@ -43,6 +44,7 @@ interface Props {
 
 function LocationManager(props: Props) {
   const { t } = useTranslation();
+  const listRef = useScrollFade<HTMLUListElement>();
   const {
     moveLocation,
     setSelectedLocation,
@@ -216,6 +218,7 @@ function LocationManager(props: Props) {
           />
         )}
         <List
+          ref={listRef}
           data-tid="locationList"
           sx={{
             flex: 1,

@@ -61,6 +61,7 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import useScrollFade from '-/utils/useScrollFade';
 import { Pro } from '../pro';
 import SidePanelTitle from './SidePanelTitle';
 import { SettingsTab } from './dialogs/SettingsDialog';
@@ -116,6 +117,7 @@ function filterByPath<T extends { path?: string }>(
 
 function StoredSearches(props: Props) {
   const { t } = useTranslation();
+  const listRef = useScrollFade();
   const { searches, findFromSavedSearch } = useSavedSearchesContext();
   const { openSaveSearchDialog } = useSearchQueryContext();
   const { delAllHistory, fileOpenHistory, fileEditHistory, folderOpenHistory } =
@@ -321,6 +323,7 @@ function StoredSearches(props: Props) {
         />
       )}
       <Box
+        ref={listRef}
         sx={{
           paddingTop: 0,
           marginTop: 0,

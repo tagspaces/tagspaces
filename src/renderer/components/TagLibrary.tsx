@@ -68,9 +68,11 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import useScrollFade from '-/utils/useScrollFade';
 
 function TagLibrary() {
   const { t } = useTranslation();
+  const listRef = useScrollFade();
   const {
     createTagGroup,
     removeTagGroup,
@@ -507,6 +509,7 @@ function TagLibrary() {
           overflowY: 'auto',
           overflowX: 'hidden',
         }}
+        ref={listRef}
         data-tid="tagLibraryTagGroupList"
       >
         {noMatches ? (

@@ -56,6 +56,7 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import useScrollFade from '-/utils/useScrollFade';
 import GridCellsContainer from './GridCellsContainer';
 
 // Utility: Check if Two Rectangles Intersect
@@ -140,6 +141,7 @@ function GridPagination(props: Props) {
   const [backgroundImage, setBackgroundImage] = useState<string>('none');
   const [thumbImage, setThumbImage] = useState<string>('none');
   const containerEl = useRef<HTMLDivElement>(null);
+  useScrollFade({ ref: containerEl });
 
   useEffect(() => {
     if (containerEl.current) {
