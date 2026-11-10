@@ -844,6 +844,7 @@
   "generatedHTMLCopied": "Download links copied to clipboard",
   "generatedHTMLFailed": "Error while copying to clipboard",
   "details": "Details",
+  "appearance": "Appearance",
   "togglePreviewSize": "Toggle file preview size",
   "newAudioRecording": "New Audio File",
   "audioRecorder": "Audio Recorder",
