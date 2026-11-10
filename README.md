@@ -60,7 +60,6 @@ src/
 capacitor/          # Mobile (Android/iOS) build
 dll/                # Live reload support for development
 docker/             # Docker container setup
-internals/          # Flow and ESLint configurations
 resources/          # Images and build resources
 scripts/            # NPM task-related scripts
 test/               # Unit and E2E tests
