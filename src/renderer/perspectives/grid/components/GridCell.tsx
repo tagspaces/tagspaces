@@ -200,6 +200,7 @@ function GridCell(props: Props) {
         // Opaque base so the text stays readable on dark/coloured folder
         // backgrounds; the selection tint is layered on top of it.
         backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
         backgroundImage: selected
           ? tintLayer(alpha(primary, isDark ? 0.2 : 0.08))
           : 'none',

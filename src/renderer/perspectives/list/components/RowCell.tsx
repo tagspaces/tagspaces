@@ -210,6 +210,7 @@ function RowCell(props: Props) {
         backgroundColor: hasFolderColor
           ? folderBgColor
           : theme.palette.background.default,
+        color: theme.palette.text.primary,
         backgroundImage: selected
           ? tintLayer(alpha(primary, isDark ? 0.24 : 0.12))
           : 'none',

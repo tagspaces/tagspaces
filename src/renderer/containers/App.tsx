@@ -23,6 +23,7 @@ import {
   getDefaultRegularTheme,
 } from '-/reducers/settings';
 import { createTSTheme } from '-/utils/Themes';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useEffect, useMemo } from 'react';
@@ -84,6 +85,13 @@ function App({ children }: Props) {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
+        {/* Theme text colour for everything that doesn't set its own (plain
+            Box/div text), so it can't fall back to the browser's black in
+            dark mode. Deliberately not CssBaseline: that would also change
+            box-sizing, backgrounds and typography app-wide. */}
+        <GlobalStyles
+          styles={(t) => ({ body: { color: t.palette.text.primary } })}
+        />
         <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
       </ThemeProvider>
     </StyledEngineProvider>
