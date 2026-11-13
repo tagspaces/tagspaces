@@ -86,7 +86,7 @@ function SearchPopover(props: Props) {
   };
 
   const indexStatus = getIndex()
-    ? '(' + getIndex().length + ' indexed entries)'
+    ? t('core:indexedEntriesCount', { count: getIndex().length })
     : t('core:indexEmpty');
   return (
     <div
@@ -238,7 +238,7 @@ function SearchPopover(props: Props) {
             }}
           >
             {isIndexing !== undefined
-              ? 'Search disabled while indexing'
+              ? t('core:searchDisabledWhileIndexing')
               : t('searchTitle')}
           </TsButton>
         </div>

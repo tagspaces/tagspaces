@@ -1,4 +1,5 @@
 import { Pro } from '-/pro';
+import i18n from '-/services/i18n';
 import {
   SearchActions,
   SearchOptionType,
@@ -13,7 +14,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchActions.LOCATION.shortName,
     fullName: SearchActions.LOCATION.fullName,
     action: SearchActions.LOCATION.shortName,
-    descr: 'find and open a location',
+    descr: i18n.t('core:searchOptLocation'),
     group: 'actions',
   });
   options.push({
@@ -21,7 +22,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchActions.FILTER.shortName,
     fullName: SearchActions.FILTER.fullName,
     action: SearchActions.FILTER.shortName,
-    descr: 'filter the entries from the current folder',
+    descr: i18n.t('core:searchOptFilter'),
     group: 'actions',
   });
   if (Pro) {
@@ -30,7 +31,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       label: SearchActions.HISTORY.shortName,
       fullName: SearchActions.HISTORY.fullName,
       action: SearchActions.HISTORY.shortName,
-      descr: 'find recently used files and folders',
+      descr: i18n.t('core:searchOptHistory'),
       group: 'actions',
     });
   }
@@ -40,7 +41,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       label: SearchActions.BOOK.shortName,
       fullName: SearchActions.BOOK.fullName,
       action: SearchActions.BOOK.shortName,
-      descr: 'find bookmarks',
+      descr: i18n.t('core:searchOptBookmarks'),
       group: 'actions',
     });
   }
@@ -50,7 +51,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchActions.SEARCH.shortName,
     fullName: SearchActions.SEARCH.fullName,
     action: SearchActions.SEARCH.shortName,
-    descr: 'find and execute saved search queries',
+    descr: i18n.t('core:searchOptSavedSearches'),
     group: 'actions',
   });
 
@@ -60,7 +61,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
       label: SearchActions.SEARCH_HISTORY.shortName,
       fullName: SearchActions.SEARCH_HISTORY.fullName,
       action: SearchActions.SEARCH_HISTORY.shortName,
-      descr: 'Execute search queries from history',
+      descr: i18n.t('core:searchOptSearchHistory'),
       group: 'actions',
     });
   }
@@ -68,24 +69,21 @@ export function getSearchOptions(): Array<SearchOptionType> {
     id: SearchQueryComposition.TAG_AND.shortName,
     label: SearchQueryComposition.TAG_AND.shortName,
     action: SearchQueryComposition.TAG_AND.shortName,
-    descr:
-      'entries should have this tag to be included in the results (logical AND)',
+    descr: i18n.t('core:searchOptTagAnd'),
     group: 'query',
   });
   options.push({
     id: SearchQueryComposition.TAG_NOT.shortName,
     label: SearchQueryComposition.TAG_NOT.shortName,
     action: SearchQueryComposition.TAG_NOT.shortName,
-    descr:
-      'entries should not have this tag to be included in the results (logical NOT)',
+    descr: i18n.t('core:searchOptTagNot'),
     group: 'query',
   });
   options.push({
     id: SearchQueryComposition.TAG_OR.shortName,
     label: SearchQueryComposition.TAG_OR.shortName,
     action: SearchQueryComposition.TAG_OR.shortName,
-    descr:
-      'allows searching for entries having one tag or another (logical OR)',
+    descr: i18n.t('core:searchOptTagOr'),
     group: 'query',
   });
   options.push({
@@ -93,7 +91,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchQueryComposition.TYPE.shortName,
     fullName: SearchQueryComposition.TYPE.fullName,
     action: SearchQueryComposition.TYPE.shortName,
-    descr: 'filter by file type: document, video, files, folders',
+    descr: i18n.t('core:searchOptType'),
     group: 'query',
   });
 
@@ -102,7 +100,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchQueryComposition.SIZE.shortName,
     fullName: SearchQueryComposition.SIZE.fullName,
     action: SearchQueryComposition.SIZE.shortName,
-    descr: 'list sizes from advanced search',
+    descr: i18n.t('core:searchOptSize'),
     group: 'query',
   });
 
@@ -111,7 +109,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchQueryComposition.LAST_MODIFIED.shortName,
     fullName: SearchQueryComposition.LAST_MODIFIED.fullName,
     action: SearchQueryComposition.LAST_MODIFIED.shortName,
-    descr: 'list last modified options from advanced search',
+    descr: i18n.t('core:searchOptLastModified'),
     group: 'query',
   });
   options.push({
@@ -119,7 +117,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchQueryComposition.DATE_CREATED.shortName,
     fullName: SearchQueryComposition.DATE_CREATED.fullName,
     action: SearchQueryComposition.DATE_CREATED.shortName,
-    descr: 'list date created options from advanced search',
+    descr: i18n.t('core:searchOptDateCreated'),
     group: 'query',
   });
 
@@ -128,7 +126,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchQueryComposition.SCOPE.shortName,
     fullName: SearchQueryComposition.SCOPE.fullName,
     action: SearchQueryComposition.SCOPE.shortName,
-    descr: 'scope of the search: location, folder, global',
+    descr: i18n.t('core:searchOptScope'),
     group: 'query',
   });
   options.push({
@@ -136,7 +134,7 @@ export function getSearchOptions(): Array<SearchOptionType> {
     label: SearchQueryComposition.ACCURACY.shortName,
     fullName: SearchQueryComposition.ACCURACY.fullName,
     action: SearchQueryComposition.ACCURACY.shortName,
-    descr: 'accuracy: fuzzy, semi strict, strict',
+    descr: i18n.t('core:searchOptAccuracy'),
     group: 'query',
   });
   return options;
