@@ -159,7 +159,9 @@ function MainPage() {
     // openLink() with attacker-controlled URLs.
     const trusted = e.origin === window.location.origin || e.origin === 'null';
     if (!trusted) return;
-    if (typeof e.data === 'string') {
+    // Our messages are JSON objects; ignore other strings posted to the
+    // window (e.g. the "setImmediate$…" ticks of scheduler polyfills).
+    if (typeof e.data === 'string' && e.data.trimStart().startsWith('{')) {
       try {
         const data = JSON.parse(e.data);
         if (
