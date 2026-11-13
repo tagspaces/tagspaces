@@ -44,13 +44,9 @@ export const GridCellsStyleContextProvider = ({
     return {
       cellsStyle: {
         margin: 0,
-        marginTop: -5,
         display: 'grid',
-        gridGap: '5px 5px',
-        padding: 5,
-        paddingTop: 10,
-        paddingBottom: 70,
-        // background: 'red',
+        gap: 10,
+        padding: '6px 10px 70px 10px',
         gridTemplateColumns:
           'repeat(auto-fit,minmax(' +
           calculateEntryWidth(entrySize) +

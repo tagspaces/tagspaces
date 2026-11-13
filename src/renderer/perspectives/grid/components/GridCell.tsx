@@ -17,74 +17,44 @@
  */
 
 import AppConfig from '-/AppConfig';
-import {
-  FolderOutlineIcon,
-  MoreMenuIcon,
-  SelectedIcon,
-  UnSelectedIcon,
-} from '-/components/CommonIcons';
+import { MoreMenuIcon } from '-/components/CommonIcons';
 import EntryIcon from '-/components/EntryIcon';
-import FileExtBadge from '-/components/FileExtBadge';
-import TagContainer from '-/components/TagContainer';
-import TagContainerDnd from '-/components/TagContainerDnd';
-import TagsOverflowChip from '-/components/TagsOverflowChip';
-import TagsPreview from '-/components/TagsPreview';
-import TsTooltip from '-/components/TsTooltip';
 import TsIconButton from '-/components/TsIconButton';
+import TsTooltip from '-/components/TsTooltip';
 import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
-import { useEditedEntryMetaContext } from '-/hooks/useEditedEntryMetaContext';
 import { usePerspectiveSettingsContext } from '-/hooks/usePerspectiveSettingsContext';
-import { useSelectedEntriesContext } from '-/hooks/useSelectedEntriesContext';
-import { useTaggingActionsContext } from '-/hooks/useTaggingActionsContext';
-import { useCellVisibility } from '-/perspectives/grid/hooks/CellVisibilityContext';
+import {
+  CELL_MENU_BUTTON_CLASS,
+  EntryBadge,
+  EntryTags,
+  revealOnHoverSx,
+  tintLayer,
+  useDescriptionPreview,
+  useEntryTags,
+  useEntryThumbnail,
+} from '-/perspectives/common/EntryCellParts';
 import {
   getDefaultFolderColor,
   getSupportedFileTypes,
-  getTagDelimiter,
-  isReorderTags,
 } from '-/reducers/settings';
-import i18n from '-/services/i18n';
 import { dataTidFormat } from '-/services/test';
 import {
   findBackgroundColorForFolder,
   findColorForEntry,
-  getDescriptionPreview,
 } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
-import { arrayBufferToDataURL } from '-/utils/dom';
-import useFirstRender from '-/utils/useFirstRender';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 import {
   formatDateTime,
   formatFileSize,
 } from '@tagspaces/tagspaces-common/misc';
-import {
-  cleanFrontDirSeparator,
-  cleanTrailingDirSeparator,
-  extractTagsAsObjects,
-  extractTitle,
-  getThumbFileLocationForFile,
-} from '@tagspaces/tagspaces-common/paths';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { extractTitle } from '@tagspaces/tagspaces-common/paths';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { defaultSettings } from '../index';
-
-export function urlGetDelim(url) {
-  return url.indexOf('?') > 0 ? '&' : '?';
-}
 
 // Centralize entry size config for maintainability
 const ENTRY_SIZES = {
@@ -94,6 +64,9 @@ const ENTRY_SIZES = {
   huge: 300,
   normal: 200,
 } as const;
+
+// Height reserved below the thumbnail for title, description and meta row.
+const FOOTER_HEIGHT = 70;
 
 export function calculateEntryWidth(entrySize: TS.EntrySizes) {
   return ENTRY_SIZES[entrySize] ?? ENTRY_SIZES.normal;
@@ -127,7 +100,6 @@ function GridCell(props: Props) {
     handleGridCellDblClick,
     handleGridCellClick,
     selectionMode,
-    isLast,
   } = props;
 
   const { t } = useTranslation();
@@ -139,251 +111,42 @@ function GridCell(props: Props) {
     thumbnailMode,
     maxVisibleTags,
   } = usePerspectiveSettingsContext();
-  const { metaActions } = useEditedEntryMetaContext();
-  // Intentionally do not subscribe to selectedEntries here. The cell receives
-  // its own `selected` boolean from the parent; selectEntry is only used in
-  // event handlers, where reading the latest selection from a ref is fine.
-  const { selectEntry } = useSelectedEntriesContext();
-  const { addTag, editTagForEntry } = useTaggingActionsContext();
   const { findLocation } = useCurrentLocationContext();
   const supportedFileTypes = useSelector(getSupportedFileTypes);
   const defaultFolderColor = useSelector(getDefaultFolderColor);
-  const reorderTags: boolean = useSelector(isReorderTags);
-  const tagDelimiter: string = useSelector(getTagDelimiter);
-  const firstRender = useFirstRender();
+  const location = findLocation(fsEntry.locationID);
 
-  const fileSystemEntryColor = useMemo(
+  const cellHeight = calculateEntryHeight(entrySize);
+  const thumbHeight = cellHeight - FOOTER_HEIGHT;
+  const isSmall = entrySize === 'tiny' || entrySize === 'small';
+
+  const { cellRef, thumbSrc, onThumbError } = useEntryThumbnail(
+    fsEntry,
+    location,
+  );
+  const { entryTags, visibleTags, overflowTags } = useEntryTags(
+    fsEntry,
+    location,
+    maxVisibleTags,
+  );
+  const description = useDescriptionPreview(
+    fsEntry,
+    showEntriesDescription,
+    defaultSettings.maxDescriptionPreviewLength,
+  );
+
+  const badgeColor = useMemo(
     () => findColorForEntry(fsEntry, supportedFileTypes, defaultFolderColor),
     [fsEntry, supportedFileTypes, defaultFolderColor],
   );
-  const maxHeight = calculateEntryHeight(entrySize);
-  const entryPath = fsEntry.path;
-  const isSmall = entrySize === 'tiny' || entrySize === 'small';
-  const gridCellLocation = findLocation(fsEntry.locationID);
-
-  // Thumbnail state and helpers
-  const [thumbSrc, setThumbSrc] = useState<string | undefined>(undefined);
-  // Visibility-driven loading: defer setThumbPath until the cell scrolls
-  // close to the viewport. The visibility context owns one shared
-  // IntersectionObserver for the whole page.
-  const cellRootRef = useRef<HTMLElement | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const visibility = useCellVisibility();
-
-  const getThumbUrl = useCallback(async (): Promise<string | undefined> => {
-    if (!gridCellLocation) return undefined;
-    try {
-      const tmbPath = await gridCellLocation.getThumbPath(
-        fsEntry.meta.thumbPath,
-        fsEntry.meta?.lastUpdated,
-      );
-      return tmbPath ?? undefined;
-    } catch {
-      return undefined;
-    }
-  }, [gridCellLocation, fsEntry.meta?.thumbPath, fsEntry.meta?.lastUpdated]);
-
-  const setThumbPath = useCallback(async () => {
-    if (!gridCellLocation || !fsEntry.meta?.thumbPath) {
-      setThumbSrc(undefined);
-      return;
-    }
-    if (gridCellLocation.encryptionKey) {
-      try {
-        const thumbFilePath = getThumbFileLocationForFile(
-          fsEntry.path,
-          gridCellLocation.getDirSeparator(),
-          false,
-        );
-        const arrayBuffer = await gridCellLocation.getFileContentPromise(
-          thumbFilePath,
-          'arraybuffer',
-        );
-        if (arrayBuffer) {
-          const dataUrl = await arrayBufferToDataURL(arrayBuffer, 'image/jpeg');
-          setThumbSrc(dataUrl);
-          return;
-        }
-      } catch {
-        // fallback below
-      }
-    }
-    const url = await getThumbUrl();
-    setThumbSrc(url);
-    // Depend on the stable thumbnail identity (path + cache-bust key), NOT the
-    // whole `meta` object — the latter gets a new reference on every staged
-    // directory re-set (base listing -> meta -> thumbnails), which would
-    // otherwise re-resolve and visibly blank an unchanged thumbnail on reload.
-    // `lastUpdated` is covered transitively through getThumbUrl's deps.
-  }, [gridCellLocation, fsEntry.path, fsEntry.meta?.thumbPath, getThumbUrl]);
-
-  useEffect(() => {
-    if (isVisible) setThumbPath();
-  }, [isVisible, setThumbPath]);
-
-  // Subscribe the cell root to the shared IntersectionObserver. We only flip
-  // isVisible on first transition to true — once a cell has loaded its thumb
-  // we don't need to react further (the WeakSet inside the provider keeps
-  // visibility state for any future scroll-back re-render). Cells that go
-  // off-screen and come back will already have thumbSrc cached.
-  useEffect(() => {
-    const el = cellRootRef.current;
-    if (!el) return;
-    const cb = (visible: boolean) => {
-      if (visible) setIsVisible(true);
-    };
-    const initial = visibility.observe(el, cb);
-    if (initial) setIsVisible(true);
-    return () => visibility.unobserve(el, cb);
-  }, [visibility]);
-
-  useEffect(() => {
-    if (!firstRender && metaActions && metaActions.length > 0) {
-      for (const action of metaActions) {
-        if (
-          action.entry &&
-          cleanTrailingDirSeparator(cleanFrontDirSeparator(fsEntry.path)) ===
-            cleanTrailingDirSeparator(cleanFrontDirSeparator(action.entry.path))
-        ) {
-          fsEntry.meta = { ...action.entry.meta };
-          if (action.action === 'thumbChange') {
-            setThumbSrc(undefined);
-            setThumbPath();
-          } else if (
-            action.action === 'bgdColorChange' ||
-            action.action === 'descriptionChange'
-          ) {
-            setThumbPath();
-          }
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [metaActions]);
-
-  if (!gridCellLocation && fsEntry.locationID) {
-    return null;
-  }
-
-  // Memoized callbacks and derived data
-  const handleEditTag = useCallback(
-    (path: string, tag: TS.Tag, newTagTitle?: string) => {
-      editTagForEntry(path, tag, newTagTitle);
-    },
-    [editTagForEntry],
-  );
-
-  const handleAddTag = useCallback(
-    (tag: TS.Tag, parentTagGroupUuid: TS.Uuid) => {
-      addTag([tag], parentTagGroupUuid);
-    },
-    [addTag],
-  );
+  const folderBgColor = findBackgroundColorForFolder(fsEntry);
 
   const entryTitle = useMemo(
     () =>
-      extractTitle(
-        fsEntry.name,
-        !fsEntry.isFile,
-        gridCellLocation?.getDirSeparator(),
-      ),
-    [fsEntry.name, fsEntry.isFile, gridCellLocation],
+      extractTitle(fsEntry.name, !fsEntry.isFile, location?.getDirSeparator()),
+    [fsEntry.name, fsEntry.isFile, location],
   );
 
-  const description = useMemo(() => {
-    if (!showEntriesDescription) return undefined;
-    let desc = fsEntry.meta?.description;
-    if (desc && desc.length > defaultSettings.maxDescriptionPreviewLength) {
-      desc = getDescriptionPreview(
-        desc,
-        defaultSettings.maxDescriptionPreviewLength,
-      );
-    }
-    return desc;
-  }, [showEntriesDescription, fsEntry.meta?.description]);
-
-  // Prefer the value pre-parsed at load time by DirectoryContentContextProvider.
-  // Fallback to a fresh parse if the entry came in through a path that did not
-  // enrich it (defensive — should not normally happen for cells in the grid).
-  const fileNameTags = useMemo(() => {
-    if (!fsEntry.isFile) return [];
-    if (fsEntry.parsedNameTags !== undefined) return fsEntry.parsedNameTags;
-    return extractTagsAsObjects(
-      fsEntry.name,
-      tagDelimiter,
-      gridCellLocation?.getDirSeparator(),
-    );
-  }, [
-    fsEntry.isFile,
-    fsEntry.name,
-    fsEntry.parsedNameTags,
-    tagDelimiter,
-    gridCellLocation,
-  ]);
-
-  const fileSystemEntryTags: TS.Tag[] = fsEntry.meta?.tags ?? [];
-
-  const entryTags = useMemo(() => {
-    const sideCarTitles = new Set(fileSystemEntryTags.map((t) => t.title));
-    return [
-      ...fileSystemEntryTags,
-      ...fileNameTags.filter((t) => !sideCarTitles.has(t.title)),
-    ];
-  }, [fileSystemEntryTags, fileNameTags]);
-
-  // Keep per-tag DnD wiring active during multi-select: dragging a tag onto one
-  // of the selected entries applies it to the whole selection (see endDrag in
-  // TagContainerDnd). Only read-only locations fall back to static tags.
-  const useStaticTags = gridCellLocation.isReadOnly;
-  // Cap the number of inline tag chips. Files with more get a "+N" chip that
-  // opens the rest in a popover. 0 disables the cap.
-  const cap =
-    typeof maxVisibleTags === 'number' && maxVisibleTags > 0
-      ? maxVisibleTags
-      : Infinity;
-  const visibleTags =
-    entryTags.length > cap ? entryTags.slice(0, cap) : entryTags;
-  const overflowTags =
-    entryTags.length > cap ? entryTags.slice(cap) : undefined;
-  const renderTags = useCallback(() => {
-    let sideCarLength = 0;
-    return visibleTags.map((tag: TS.Tag, index) => {
-      const tagContainer = useStaticTags ? (
-        <TagContainer
-          tag={tag}
-          key={entryPath + tag.title}
-          entry={fsEntry}
-          handleTagMenu={handleTagMenu}
-        />
-      ) : (
-        <TagContainerDnd
-          tag={tag}
-          index={tag.type === 'sidecar' ? index : index - sideCarLength}
-          key={entryPath + tag.title}
-          entry={fsEntry}
-          addTag={handleAddTag}
-          handleTagMenu={handleTagMenu}
-          editTagForEntry={handleEditTag}
-          reorderTags={reorderTags}
-        />
-      );
-      if (tag.type === 'sidecar') {
-        sideCarLength = index + 1;
-      }
-      return tagContainer;
-    });
-  }, [
-    visibleTags,
-    useStaticTags,
-    entryPath,
-    fsEntry,
-    handleTagMenu,
-    handleAddTag,
-    handleEditTag,
-    reorderTags,
-  ]);
-
-  // Memoized handlers for clarity and performance
   const handleCellClick = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation();
@@ -395,233 +158,227 @@ function GridCell(props: Props) {
   );
 
   const handleContextMenu = useCallback(
-    (event: React.MouseEvent) => {
-      handleGridContextMenu(event, fsEntry);
-    },
+    (event: React.MouseEvent) => handleGridContextMenu(event, fsEntry),
     [fsEntry, handleGridContextMenu],
   );
 
-  const handleThumbError = useCallback(
-    (event: React.SyntheticEvent<HTMLImageElement>) => {
-      event.currentTarget.style.display = 'none';
-    },
-    [],
+  const handleDoubleClick = useCallback(
+    (event: React.MouseEvent) => handleGridCellDblClick(event, fsEntry),
+    [fsEntry, handleGridCellDblClick],
   );
 
-  function generateCardHeader() {
-    return (
-      !isSmall &&
-      fsEntry.isFile &&
-      fsEntry.lmdt && (
-        <>
-          <TsTooltip
-            title={
-              t('core:modifiedDate') + ': ' + formatDateTime(fsEntry.lmdt, true)
-            }
-          >
-            {formatDateTime(fsEntry.lmdt, false)}
-          </TsTooltip>
-          <TsTooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
-            <span>{' | ' + formatFileSize(fsEntry.size)}</span>
-          </TsTooltip>
-        </>
-      )
-    );
+  // Every hook has run by now, so bailing out is safe for the rules of hooks.
+  if (!location && fsEntry.locationID) {
+    return null;
   }
 
-  function generateExtension() {
-    return (
-      <TsTooltip
-        title={
-          <>
-            {fsEntry.isBrokenSymlink ? (
-              <>
-                {i18n.t('core:brokenSymbolicLink')}
-                <br />
-              </>
-            ) : fsEntry.isSymbolicLink ? (
-              <>
-                {i18n.t('core:symbolicLinkTo', {
-                  target: fsEntry.symlinkTargetPath || '?',
-                })}
-                <br />
-              </>
-            ) : null}
-            {i18n.t('clickToSelect')}: {fsEntry.name}
-          </>
-        }
-      >
-        <FileExtBadge
-          sx={{
-            backgroundColor: fileSystemEntryColor,
-          }}
-          noWrap={true}
-          variant="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (selectionMode) {
-              selectEntry(fsEntry, !selected);
-            } else {
-              selectEntry(fsEntry);
-            }
-          }}
-        >
-          {selectionMode ? (
-            selected ? (
-              <SelectedIcon />
-            ) : (
-              <UnSelectedIcon />
-            )
-          ) : fsEntry.isFile ? (
-            fsEntry.extension
-          ) : (
-            <FolderOutlineIcon />
-          )}
-        </FileExtBadge>
-      </TsTooltip>
-    );
-  }
+  const isDark = theme.palette.mode === 'dark';
+  const primary = theme.palette.primary.main;
+  const showMeta = !isSmall && fsEntry.isFile && !!fsEntry.lmdt;
 
   return (
-    <Card
-      ref={(node: HTMLElement | null) => {
-        cellRootRef.current = node;
-      }}
+    <Box
+      ref={cellRef}
       data-entry-id={fsEntry.uuid}
       data-tid={`fsEntryName_${dataTidFormat(fsEntry.name)}`}
       data-selected={selected}
-      raised={selected}
-      sx={{
-        height: maxHeight,
-        minHeight: maxHeight,
-        maxHeight,
-        maxWidth: 400,
-        marginBottom: 'auto',
-        borderRadius: AppConfig.defaultCSSRadius,
-        backgroundColor: alpha(theme.palette.divider, 0.7),
-        border: `2px solid ${selected ? theme.palette.primary.main : 'transparent'}`,
-        display: 'flex',
-        boxShadow: 'none',
-        flexDirection: 'column',
-      }}
       onContextMenu={handleContextMenu}
-      onDoubleClick={(event) => handleGridCellDblClick(event, fsEntry)}
+      onDoubleClick={handleDoubleClick}
       onClick={handleCellClick}
       onDrag={handleCellClick}
+      sx={{
+        height: cellHeight,
+        maxWidth: 400,
+        marginBottom: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        cursor: 'default',
+        borderRadius: AppConfig.defaultCSSRadius,
+        border: '1px solid',
+        borderColor: selected ? primary : theme.palette.divider,
+        // Opaque base so the text stays readable on dark/coloured folder
+        // backgrounds; the selection tint is layered on top of it.
+        backgroundColor: theme.palette.background.paper,
+        backgroundImage: selected
+          ? tintLayer(alpha(primary, isDark ? 0.2 : 0.08))
+          : 'none',
+        // A 1px ring on top of the 1px border reads as a 2px outline for the
+        // selected state without shifting the layout.
+        boxShadow: selected ? `0 0 0 1px ${primary}` : 'none',
+        transition:
+          'box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease',
+        '&:hover': {
+          borderColor: selected
+            ? primary
+            : alpha(theme.palette.text.primary, 0.24),
+          boxShadow: selected
+            ? `0 0 0 1px ${primary}, 0 6px 16px ${alpha('#000', isDark ? 0.45 : 0.12)}`
+            : `0 6px 16px ${alpha('#000', isDark ? 0.45 : 0.12)}`,
+        },
+        '&:hover .ts-grid-thumb': { transform: 'scale(1.03)' },
+        ...revealOnHoverSx(selected),
+      }}
     >
       <Box
         sx={{
-          height: maxHeight - 70,
           position: 'relative',
-          backgroundColor: findBackgroundColorForFolder(fsEntry),
+          flex: '0 0 auto',
+          height: thumbHeight,
+          overflow: 'hidden',
+          backgroundColor:
+            folderBgColor && folderBgColor !== 'transparent'
+              ? folderBgColor
+              : alpha(theme.palette.text.primary, isDark ? 0.06 : 0.035),
         }}
       >
-        <Box sx={{ position: 'absolute' }}>
-          {showTags && entryTags.length > 0 ? (
-            <>
-              {renderTags()}
-              {overflowTags && (
-                <TagsOverflowChip
-                  remaining={overflowTags}
-                  entry={fsEntry}
-                  handleTagMenu={handleTagMenu}
-                />
-              )}
-            </>
-          ) : (
-            <TagsPreview tags={entryTags} />
-          )}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1,
+            padding: '2px',
+          }}
+        >
+          <EntryTags
+            fsEntry={fsEntry}
+            entryTags={entryTags}
+            visibleTags={visibleTags}
+            overflowTags={overflowTags}
+            showTags={showTags}
+            // Keep per-tag DnD active during multi-select: dragging a tag onto
+            // a selected entry applies it to the whole selection (endDrag in
+            // TagContainerDnd). Only read-only locations use static tags.
+            staticTags={!!location?.isReadOnly}
+            handleTagMenu={handleTagMenu}
+          />
         </Box>
-        {fsEntry.meta?.thumbPath && thumbSrc ? (
-          <CardMedia
+        {thumbSrc ? (
+          <Box
             component="img"
+            className="ts-grid-thumb"
             loading="lazy"
-            onError={handleThumbError}
+            decoding="async"
+            draggable={false}
+            onError={onThumbError}
             alt={t('core:thumbnailOfEntry', { name: fsEntry.name })}
             data-tid="imageThumbnailTID"
-            height="auto"
-            src={thumbSrc.replace(/#/g, '%23')}
+            src={thumbSrc}
             sx={{
-              height: maxHeight - 70,
+              display: 'block',
+              width: '100%',
+              height: thumbHeight,
               objectFit: thumbnailMode,
+              transition: 'transform 250ms ease',
             }}
           />
         ) : (
           <Box
             sx={{
-              width: '50%',
-              height: 'auto',
-              margin: '0 auto',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <EntryIcon
-              isFile={fsEntry.isFile}
-              fileExtension={fsEntry.extension}
-              isSymbolicLink={fsEntry.isSymbolicLink}
-              isBrokenSymlink={fsEntry.isBrokenSymlink}
-            />
+            <Box sx={{ width: '45%', opacity: 0.9 }}>
+              <EntryIcon
+                isFile={fsEntry.isFile}
+                fileExtension={fsEntry.extension}
+                isSymbolicLink={fsEntry.isSymbolicLink}
+                isBrokenSymlink={fsEntry.isBrokenSymlink}
+              />
+            </Box>
           </Box>
         )}
       </Box>
-      <CardContent sx={{ padding: '1px 5px 0px 5px', flexGrow: 1 }}>
-        <Typography
-          title={fsEntry.name}
+      <Box
+        sx={{
+          flex: '1 1 auto',
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '5px 4px 4px 8px',
+        }}
+      >
+        <Box sx={{ minWidth: 0, paddingRight: '4px' }}>
+          <Typography
+            variant="body2"
+            noWrap
+            title={fsEntry.name}
+            sx={{ fontWeight: 500, lineHeight: 1.35 }}
+          >
+            {entryTitle}
+          </Typography>
+          {description && (
+            <Typography
+              title={description}
+              data-tid="gridCellDescription"
+              variant="caption"
+              noWrap
+              component="div"
+              sx={{
+                lineHeight: 1.3,
+                fontStyle: 'italic',
+                color: theme.palette.text.secondary,
+              }}
+            >
+              {description}
+            </Typography>
+          )}
+        </Box>
+        <Box
           sx={{
-            paddingRight: '4px',
-            overflowX: 'clip',
-            textWrap: 'nowrap',
-            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            minWidth: 0,
           }}
         >
-          {entryTitle}
-        </Typography>
-        {description && (
+          <EntryBadge
+            fsEntry={fsEntry}
+            color={badgeColor}
+            selected={selected}
+            selectionMode={selectionMode}
+          />
           <Typography
-            title={description}
-            data-tid="gridCellDescription"
             variant="caption"
-            gutterBottom
-            sx={{
-              display: 'block',
-              lineHeight: '12px',
-              paddingRight: '4px',
-              overflowX: 'clip',
-              textWrap: 'nowrap',
-              whiteSpace: 'nowrap',
-              fontStyle: 'italic',
-              color: 'gray',
-            }}
+            noWrap
+            component="div"
+            sx={{ flex: 1, minWidth: 0, color: theme.palette.text.secondary }}
           >
-            {description}
+            {showMeta && (
+              <>
+                <TsTooltip
+                  title={
+                    t('core:modifiedDate') +
+                    ': ' +
+                    formatDateTime(fsEntry.lmdt, true)
+                  }
+                >
+                  <span>{formatDateTime(fsEntry.lmdt, false)}</span>
+                </TsTooltip>
+                {' · '}
+                <TsTooltip title={fsEntry.size + ' ' + t('core:sizeInBytes')}>
+                  <span>{formatFileSize(fsEntry.size)}</span>
+                </TsTooltip>
+              </>
+            )}
           </Typography>
-        )}
-      </CardContent>
-      <CardHeader
-        sx={{
-          padding: '2px',
-          '.MuiCardHeader-avatar': {
-            margin: 0,
-            alignSelf: 'flex-start',
-          },
-          '.MuiCardHeader-subheader': {
-            fontSize: 12,
-            marginLeft: '5px',
-          },
-        }}
-        action={
           <TsIconButton
+            className={CELL_MENU_BUTTON_CLASS}
             aria-label="entry context menu"
             size="small"
-            sx={{ marginRight: '5px' }}
             onClick={handleContextMenu}
           >
             <MoreMenuIcon />
           </TsIconButton>
-        }
-        subheader={generateCardHeader()}
-        avatar={generateExtension()}
-      />
-    </Card>
+        </Box>
+      </Box>
+    </Box>
   );
 }
 

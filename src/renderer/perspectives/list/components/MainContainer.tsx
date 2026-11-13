@@ -47,7 +47,7 @@ import { TS } from '-/tagspaces.namespace';
 import useFirstRender from '-/utils/useFirstRender';
 import { Box } from '@mui/material';
 import Links from 'assets/links';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ListCellsStyleContextProvider } from '../hooks/ListCellsStyleProvider';
 
@@ -168,18 +168,21 @@ function ListPerspective(props: Props) {
     setIsGridSettingsDialogOpened(true);
   };
 
-  const handleTagMenu = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    tag: TS.Tag,
-    entry: TS.FileSystemEntry,
-  ) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleTagMenu = useCallback(
+    (
+      event: React.ChangeEvent<HTMLInputElement>,
+      tag: TS.Tag,
+      entry: TS.FileSystemEntry,
+    ) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-    selectedTag.current = tag;
-    selectedEntry.current = entry;
-    setTagContextMenuAnchorEl(event.currentTarget);
-  };
+      selectedTag.current = tag;
+      selectedEntry.current = entry;
+      setTagContextMenuAnchorEl(event.currentTarget);
+    },
+    [],
+  );
 
   // const closeOptionsMenu = () => {
   //   setOptionsContextMenuAnchorEl(null);
@@ -279,43 +282,48 @@ function ListPerspective(props: Props) {
   };
   useKeyBindings(keyMap, keyBindingHandlers);
 
-  const getCellContent = (
-    fsEntry: TS.FileSystemEntry,
-    selected: boolean,
-    selectionMode: boolean,
-    index: number,
-    handleGridContextMenu: (
-      event: React.MouseEvent<HTMLDivElement>,
+  // Memoised so CellView's memo() can skip rows whose own props didn't change
+  // (mirrors the Grid perspective).
+  const getCellContent = useCallback(
+    (
       fsEntry: TS.FileSystemEntry,
-    ) => void,
-    handleGridCellClick,
-    handleGridCellDblClick,
-    isLast?: boolean,
-  ) => {
-    return (
-      <FileSourceDnd entry={fsEntry}>
-        <TagDropContainer entry={fsEntry}>
-          <RowCell
-            selected={selected}
-            fsEntry={fsEntry}
-            isLast={isLast}
-            selectionMode={selectionMode}
-            handleTagMenu={handleTagMenu}
-            handleGridContextMenu={(
-              event: React.MouseEvent<HTMLDivElement>,
-              fsEntry: TS.FileSystemEntry,
-            ) => {
-              setMouseX(event.clientX);
-              setMouseY(event.clientY);
-              handleGridContextMenu(event, fsEntry);
-            }}
-            handleGridCellDblClick={handleGridCellDblClick}
-            handleGridCellClick={handleGridCellClick}
-          />
-        </TagDropContainer>
-      </FileSourceDnd>
-    );
-  };
+      selected: boolean,
+      selectionMode: boolean,
+      index: number,
+      handleGridContextMenu: (
+        event: React.MouseEvent<HTMLDivElement>,
+        fsEntry: TS.FileSystemEntry,
+      ) => void,
+      handleGridCellClick,
+      handleGridCellDblClick,
+      isLast?: boolean,
+    ) => {
+      return (
+        <FileSourceDnd entry={fsEntry}>
+          <TagDropContainer entry={fsEntry}>
+            <RowCell
+              selected={selected}
+              fsEntry={fsEntry}
+              isLast={isLast}
+              selectionMode={selectionMode}
+              handleTagMenu={handleTagMenu}
+              handleGridContextMenu={(
+                event: React.MouseEvent<HTMLDivElement>,
+                fsEntry: TS.FileSystemEntry,
+              ) => {
+                setMouseX(event.clientX);
+                setMouseY(event.clientY);
+                handleGridContextMenu(event, fsEntry);
+              }}
+              handleGridCellDblClick={handleGridCellDblClick}
+              handleGridCellClick={handleGridCellClick}
+            />
+          </TagDropContainer>
+        </FileSourceDnd>
+      );
+    },
+    [handleTagMenu],
+  );
 
   return (
     <Box

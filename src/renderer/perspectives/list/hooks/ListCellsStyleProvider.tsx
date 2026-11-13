@@ -33,14 +33,16 @@ export type ListCellsStyleContextProviderProps = {
 export const ListCellsStyleContextProvider = ({
   children,
 }: ListCellsStyleContextProviderProps) => {
-  const context = useMemo(() => {
+  const context = useMemo<ListCellsStyleData>(() => {
     return {
       cellsStyle: {
+        display: 'flex',
+        flexDirection: 'column',
+        rowGap: 2,
         marginTop: 5,
         marginBottom: 70,
-        paddingRight: 4,
-        paddingLeft: 4,
-        gridTemplateColumns: 'none',
+        paddingRight: 8,
+        paddingLeft: 8,
       },
     };
   }, []);
