@@ -866,9 +866,6 @@ export async function generateTGAThumbnail(
         } else {
           resolve('');
         }
-
-        // Cleanup local references
-        (srcCanvas as any) = null;
       });
     } catch (e) {
       console.log(`Error creating TGA thumb for : ${fileURL}`, e);
