@@ -151,6 +151,16 @@ export { default as CancelIcon } from '@mui/icons-material/Cancel';
 
 export { default as WarningIcon } from '@mui/icons-material/Warning';
 
+export { default as NotificationWarningIcon } from '@mui/icons-material/WarningAmberRounded';
+
+export { default as NotificationErrorIcon } from '@mui/icons-material/ErrorOutlineRounded';
+
+export { default as NotificationSuccessIcon } from '@mui/icons-material/CheckCircleOutlineRounded';
+
+export { default as NotificationInfoIcon } from '@mui/icons-material/InfoOutlined';
+
+export { default as NotificationUpdateIcon } from '@mui/icons-material/SystemUpdateAltRounded';
+
 export { default as SendIcon } from '@mui/icons-material/Send';
 
 export { default as CloseDialogIcon } from '@mui/icons-material/Close';

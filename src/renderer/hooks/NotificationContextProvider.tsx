@@ -18,6 +18,7 @@
 
 import React, {
   createContext,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -26,13 +27,29 @@ import React, {
 import ConfirmDialog from '-/components/dialogs/ConfirmDialog';
 import { setGlobalErrorNotifier } from '-/services/globalErrorHandlers';
 
-type NotificationStatus = {
-  visible: boolean;
+export type NotificationType =
+  | 'default'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'error';
+
+export type AppNotification = {
+  key: number;
   text: string;
   tid: string;
-  notificationType: 'default' | 'info' | 'warning' | 'error';
+  notificationType: NotificationType;
   autohide: boolean;
+  /** How many times the same text+type was shown while still visible */
+  count: number;
+  /** Changes whenever the toast is re-triggered, restarting its timer */
+  stamp: number;
+  /** Set while the exit animation runs; removed in onExited */
+  closing: boolean;
 };
+
+/** Older toasts beyond this are dropped (oldest non-error first) */
+const MAX_NOTIFICATIONS = 3;
 
 type NotificationContextData = {
   openConfirmDialog: (
@@ -49,14 +66,19 @@ type NotificationContextData = {
     customCancelText?: string,
   ) => void;
   closeConfirmDialog: () => void;
-  notificationStatus: NotificationStatus;
+  /** Visible toasts, oldest first */
+  notifications: AppNotification[];
   showNotification: (
     text: string,
-    notificationType?: 'default' | 'info' | 'warning' | 'error',
+    notificationType?: NotificationType,
     autohide?: boolean,
     tid?: string,
   ) => void;
   hideNotifications: (excludeTypes?: string[]) => void;
+  /** Starts the exit animation of one toast */
+  dismissNotification: (key: number) => void;
+  /** Removes a toast once its exit animation finished */
+  removeNotification: (key: number) => void;
   isGeneratingThumbs: boolean;
   setGeneratingThumbs: (isGen: boolean) => void;
   //NotificationTypes: 'default' | 'error';
@@ -65,9 +87,11 @@ type NotificationContextData = {
 export const NotificationContext = createContext<NotificationContextData>({
   openConfirmDialog: undefined,
   closeConfirmDialog: undefined,
-  notificationStatus: undefined,
+  notifications: [],
   showNotification: () => {},
   hideNotifications: () => {},
+  dismissNotification: () => {},
+  removeNotification: () => {},
   isGeneratingThumbs: false,
   setGeneratingThumbs: () => {},
   //NotificationTypes: 'default'
@@ -93,12 +117,8 @@ export const NotificationContextProvider = ({
   const help = useRef<string>(undefined);
   const customConfirmText = useRef<string>(undefined);
   const customCancelText = useRef<string>(undefined);
-  const [notificationStatus, setNotificationStatus] = useState<any>({
-    visible: false,
-    text: null,
-    notificationType: 'default',
-    autohide: true,
-  });
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const nextKey = useRef<number>(1);
   const [isGeneratingThumbs, setGeneratingThumbs] = useState<boolean>(false);
 
   function openConfirmDialog(
@@ -132,62 +152,116 @@ export const NotificationContextProvider = ({
     setConfirmDialogOpened(false);
   }
 
-  function showNotification(
-    text: string,
-    notificationType = 'default',
-    autohide = true,
-    tid = 'notificationTID',
-  ) {
-    setNotificationStatus({
-      visible: true,
-      text,
-      tid,
-      notificationType,
-      autohide,
-    });
-  }
+  const showNotification = useCallback(
+    (
+      text: string,
+      notificationType: NotificationType = 'default',
+      autohide = true,
+      tid = 'notificationTID',
+    ) => {
+      if (!text) {
+        return;
+      }
+      const stamp = nextKey.current;
+      nextKey.current += 1;
+      setNotifications((prev) => {
+        const existing = prev.find(
+          (n) =>
+            !n.closing &&
+            n.text === text &&
+            n.notificationType === notificationType,
+        );
+        if (existing) {
+          // Same message again: bump the counter and restart its timer
+          // instead of stacking a duplicate.
+          return [
+            ...prev.filter((n) => n !== existing),
+            {
+              ...existing,
+              tid,
+              autohide: existing.autohide && autohide,
+              count: existing.count + 1,
+              stamp,
+            },
+          ];
+        }
+        const next = [
+          ...prev,
+          {
+            key: stamp,
+            text,
+            tid,
+            notificationType,
+            autohide,
+            count: 1,
+            stamp,
+            closing: false,
+          },
+        ];
+        // Drop the oldest toasts over the cap, sparing errors while possible
+        // so a burst of "done" messages cannot push an error off the screen.
+        while (next.filter((n) => !n.closing).length > MAX_NOTIFICATIONS) {
+          const victim =
+            next.find((n) => !n.closing && n.notificationType !== 'error') ??
+            next.find((n) => !n.closing);
+          next.splice(next.indexOf(victim), 1);
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     setGlobalErrorNotifier((text, notificationType, autohide, tid) => {
-      setNotificationStatus({
-        visible: true,
+      showNotification(
         text,
-        tid: tid ?? 'globalErrorTID',
-        notificationType: notificationType ?? 'error',
-        autohide: autohide ?? true,
-      });
+        notificationType ?? 'error',
+        autohide ?? true,
+        tid ?? 'globalErrorTID',
+      );
     });
     return () => setGlobalErrorNotifier(null);
+  }, [showNotification]);
+
+  const hideNotifications = useCallback((excludeTypes: string[] = []) => {
+    setNotifications((prev) =>
+      prev.map((n) =>
+        excludeTypes.includes(n.notificationType) ? n : { ...n, closing: true },
+      ),
+    );
   }, []);
 
-  function hideNotifications(excludeTypes = []) {
-    if (
-      !excludeTypes.some((type) => type === notificationStatus.notificationType)
-    ) {
-      setNotificationStatus({
-        visible: false,
-        text: null,
-        notificationType: 'default',
-        autohide: true,
-      });
-    }
-  }
+  const dismissNotification = useCallback((key: number) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.key === key ? { ...n, closing: true } : n)),
+    );
+  }, []);
+
+  const removeNotification = useCallback((key: number) => {
+    setNotifications((prev) => prev.filter((n) => n.key !== key));
+  }, []);
 
   const context = useMemo(() => {
     return {
-      notificationStatus,
-      /*NotificationTypes: {
-        default: 'default',
-        error: 'error'
-      },*/
+      notifications,
       isGeneratingThumbs,
       setGeneratingThumbs,
       showNotification,
       hideNotifications,
+      dismissNotification,
+      removeNotification,
       openConfirmDialog,
       closeConfirmDialog,
     };
-  }, [notificationStatus, isGeneratingThumbs]);
+  }, [
+    notifications,
+    isGeneratingThumbs,
+    showNotification,
+    hideNotifications,
+    dismissNotification,
+    removeNotification,
+  ]);
 
   return (
     <NotificationContext.Provider value={context}>
