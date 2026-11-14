@@ -168,6 +168,13 @@ function RowCell(props: Props) {
   const primary = theme.palette.primary.main;
   const hasFolderColor = !!folderBgColor && folderBgColor !== 'transparent';
   const thumbSize = Math.max(entryHeight - 8, 24);
+  // Size the badge to the extension (~9px per uppercase 12px glyph + padding),
+  // between the 40px minimum and a 64px cap where longer ones get ellipsized.
+  // Based on the extension, not the selection state, so toggling selection
+  // mode doesn't shift the title.
+  const badgeWidth = fsEntry.isFile
+    ? Math.min(64, Math.max(40, (fsEntry.extension?.length || 0) * 9 + 14))
+    : 40;
 
   const sizeText = fsEntry.isFile ? formatFileSize(fsEntry.size) : '';
   const dateText =
@@ -227,14 +234,14 @@ function RowCell(props: Props) {
             : `inset 0 0 0 1px ${theme.palette.divider}`,
         },
         // Hairline separator in the gap below the row, inset to start at the
-        // title column (6px padding + 64px badge + 10px gap). Hidden on the
+        // title column (6px padding + badge + 10px gap). Hidden on the
         // last row and while the row is hovered/selected, where the rounded
         // highlight already separates it.
         position: 'relative',
         '&::after': {
           content: '""',
           position: 'absolute',
-          left: 80,
+          left: 6 + badgeWidth + 10,
           right: 8,
           bottom: -1.5,
           height: '1px',
@@ -251,7 +258,7 @@ function RowCell(props: Props) {
         color={badgeColor}
         selected={selected}
         selectionMode={selectionMode}
-        width={64}
+        width={badgeWidth}
       />
       {isTiny ? (
         <Typography
