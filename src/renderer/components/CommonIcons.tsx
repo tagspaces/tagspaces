@@ -417,3 +417,13 @@ export const OllamaIcon = (props) => (
     </svg>
   </SvgIcon>
 );
+
+// search accuracy: similar (≈), exact (=), exact and case-sensitive (Tt)
+export { default as SimilarMatchIcon } from '@mui/icons-material/Waves';
+
+export { default as ExactMatchIcon } from '@mui/icons-material/DragHandle';
+
+export { default as CaseSensitiveMatchIcon } from '@mui/icons-material/TextFields';
+
+// search scope "all locations"
+export { default as AllLocationsIcon } from '@mui/icons-material/Public';

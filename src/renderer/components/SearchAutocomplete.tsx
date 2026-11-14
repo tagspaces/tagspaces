@@ -19,11 +19,17 @@
 import AppConfig from '-/AppConfig';
 import {
   AddIcon,
+  AllLocationsIcon,
   ArrowDropDownIcon,
+  CaseSensitiveMatchIcon,
   CloseIcon,
+  ExactMatchIcon,
+  FolderIcon,
+  LocalLocationIcon,
   OrIcon,
   RemoveIcon,
   RemoveTagIcon,
+  SimilarMatchIcon,
 } from '-/components/CommonIcons';
 import {
   ActionType,
@@ -1477,18 +1483,37 @@ function SearchAutocomplete(props: Props) {
   );
 
   /**
-   * Scope and accuracy always have a value; removing their chip resets
-   * them to the default (location / fuzzy), so only offer the remove
-   * button when they deviate from it.
+   * Scope and accuracy always have a value, so their chips have no remove
+   * button: they are changed through the chip's dropdown (Backspace and
+   * "clear search" still reset them to the default).
    */
   function isRemovableChip(action: SearchOptionType): boolean {
-    if (isAction(action.action, SearchQueryComposition.SCOPE)) {
-      return searchBoxing !== scope.location;
+    return (
+      !isAction(action.action, SearchQueryComposition.SCOPE) &&
+      !isAction(action.action, SearchQueryComposition.ACCURACY)
+    );
+  }
+
+  /** Icon instead of the long accuracy label in the chip; the label is the tooltip */
+  function getAccuracyIcon(type: string = searchType.current) {
+    if (type === accuracy.strict) {
+      return <CaseSensitiveMatchIcon fontSize="small" />;
     }
-    if (isAction(action.action, SearchQueryComposition.ACCURACY)) {
-      return searchType.current !== accuracy.fuzzy;
+    if (type === accuracy.semistrict) {
+      return <ExactMatchIcon fontSize="small" />;
     }
-    return true;
+    return <SimilarMatchIcon fontSize="small" />;
+  }
+
+  /** Icon instead of the scope label in the chip; the label is the tooltip */
+  function getScopeIcon(type: string = searchBoxing) {
+    if (type === scope.global) {
+      return <AllLocationsIcon fontSize="small" />;
+    }
+    if (type === scope.folder) {
+      return <FolderIcon fontSize="small" />;
+    }
+    return <LocalLocationIcon fontSize="small" />;
   }
 
   function getPlaceholder(): string {
@@ -1651,6 +1676,10 @@ function SearchAutocomplete(props: Props) {
                   sx={{
                     border: '1px solid gray',
                     display: 'flex',
+                    // same height for text, icon and tag chips
+                    alignItems: 'center',
+                    height: 24,
+                    boxSizing: 'border-box',
                     minHeight: '0',
                     minWidth: '0',
                     margin: '2px',
@@ -1696,12 +1725,21 @@ function SearchAutocomplete(props: Props) {
                         textTransform: 'lowercase',
                         padding: 0,
                         margin: 0,
+                        minHeight: 0,
+                        // MUI's 64px default makes icon-only chips too wide
+                        minWidth: 0,
+                        lineHeight: '20px',
                       }}
                       endIcon={
                         <ArrowDropDownIcon sx={{ marginLeft: '-10px' }} />
                       }
+                      aria-label={option}
                     >
-                      {removePrefix(option, action.action)}
+                      {isAction(action.action, SearchQueryComposition.ACCURACY)
+                        ? getAccuracyIcon()
+                        : isAction(action.action, SearchQueryComposition.SCOPE)
+                          ? getScopeIcon()
+                          : removePrefix(option, action.action)}
                     </TsButton>
                   )}
 
@@ -1764,6 +1802,17 @@ function SearchAutocomplete(props: Props) {
                 </TsButton>
               ) : (
                 <>
+                  {(option.action === ExecActions.ACCURACY_SEARCH ||
+                    option.action === ExecActions.SCOPE_SEARCH) && (
+                    <Box
+                      component="span"
+                      sx={{ display: 'flex', marginRight: '8px' }}
+                    >
+                      {option.action === ExecActions.ACCURACY_SEARCH
+                        ? getAccuracyIcon(option.id)
+                        : getScopeIcon(option.id)}
+                    </Box>
+                  )}
                   <b>{option.label}</b>
                   &nbsp;{option.descr}
                 </>

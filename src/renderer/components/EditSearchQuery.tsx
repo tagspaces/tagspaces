@@ -19,17 +19,22 @@
 import AppConfig from '-/AppConfig';
 import { getSearchTypeGroupExts } from '-/services/utils-io';
 import {
+  AllLocationsIcon,
   ArchiveIcon,
   AudioIcon,
   BookIcon,
   BookmarkIcon,
+  CaseSensitiveMatchIcon,
   DocumentIcon,
   EmailIcon,
+  ExactMatchIcon,
   FileIcon,
   FolderIcon,
   InfoTooltipIcon,
+  LocalLocationIcon,
   NoteIcon,
   PictureIcon,
+  SimilarMatchIcon,
   UntaggedIcon,
   VideoIcon,
 } from '-/components/CommonIcons';
@@ -77,6 +82,9 @@ const searchTips: Array<[string, string]> = [
 interface Props {
   executeSearchOnEnter?: boolean;
 }
+
+/** icon in front of a scope / accuracy toggle label */
+const toggleIconSx = { marginRight: '4px', flexShrink: 0 };
 
 function EditSearchQuery(props: Props) {
   const { t } = useTranslation();
@@ -278,6 +286,7 @@ function EditSearchQuery(props: Props) {
             tooltip={t('searchPlaceholder')}
             value="location"
           >
+            <LocalLocationIcon fontSize="small" sx={toggleIconSx} />
             {t('location')}
           </TsToggleButton>
           <TsToggleButton
@@ -287,6 +296,7 @@ function EditSearchQuery(props: Props) {
             tooltip={t('searchCurrentFolderWithSubFolders')}
             value="folder"
           >
+            <FolderIcon fontSize="small" sx={toggleIconSx} />
             {t('folder')}
           </TsToggleButton>
           <TsToggleButton
@@ -301,6 +311,7 @@ function EditSearchQuery(props: Props) {
             }
             value="global"
           >
+            <AllLocationsIcon fontSize="small" sx={toggleIconSx} />
             {currentWorkSpace
               ? currentWorkSpace.fullName + ' - ' + currentWorkSpace.shortName
               : t('globalSearch')}
@@ -324,6 +335,7 @@ function EditSearchQuery(props: Props) {
             value="fuzzy"
             data-tid="fuzzySearchTID"
           >
+            <SimilarMatchIcon fontSize="small" sx={toggleIconSx} />
             {t('searchTypeFuzzy')}
           </TsToggleButton>
           <TsToggleButton
@@ -334,6 +346,7 @@ function EditSearchQuery(props: Props) {
             value="semistrict"
             data-tid="semiStrictSearchTID"
           >
+            <ExactMatchIcon fontSize="small" sx={toggleIconSx} />
             {t('searchTypeSemiStrict')}
           </TsToggleButton>
           <TsToggleButton
@@ -345,6 +358,7 @@ function EditSearchQuery(props: Props) {
             value="strict"
             data-tid="strictSearchTID"
           >
+            <CaseSensitiveMatchIcon fontSize="small" sx={toggleIconSx} />
             {t('searchTypeStrict')}
           </TsToggleButton>
         </ToggleButtonGroup>
