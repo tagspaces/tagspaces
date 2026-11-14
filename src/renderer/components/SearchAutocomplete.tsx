@@ -33,6 +33,7 @@ import {
   SearchOptionType,
   SearchQueryComposition,
   accuracy,
+  accuracyLabelKeys,
   findAction,
   isAction,
   scope,
@@ -102,7 +103,7 @@ function SearchAutocomplete(props: Props) {
   const { tempSearchQuery, setTempSearchQuery } = useSearchQueryContext();
   const { openHistoryItem } = useBrowserHistoryContext();
   const { tagGroups } = useEditedTagLibraryContext();
-  const { isIndexing, searchAllLocations, searchLocationIndex } =
+  const { isIndexing, searchAllLocations, searchLocationIndex, getIndex } =
     useLocationIndexContext();
   const { searches } = useSavedSearchesContext();
   const { fileOpenHistory, fileEditHistory, folderOpenHistory, searchHistory } =
@@ -174,6 +175,11 @@ function SearchAutocomplete(props: Props) {
       : undefined;
 
   const firstRender = useFirstRender();
+  /** true once a search was executed in this search session */
+  const hasSearched = useRef<boolean>(false);
+  const autoRunTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  /** refreshed every render, so the delayed call sees the latest state */
+  const autoRun = useRef<() => void>(() => {});
 
   useEffect(() => {
     if (!firstRender || searchQuery?.executeSearch) {
@@ -188,6 +194,24 @@ function SearchAutocomplete(props: Props) {
     if (Object.keys(searchQuery).length > 0) {
       let emptySearch = true;
       const actions: SearchOptionType[] = [];
+
+      // searchQuery is the source of truth for the filters: sync every ref
+      // (falling back to the defaults), so a filter cleared elsewhere (e.g.
+      // in the advanced search panel) does not linger in the next search.
+      fileTypes.current =
+        searchQuery.fileTypes || AppConfig.SearchTypeGroups?.any;
+      searchType.current = searchQuery.searchType || 'fuzzy';
+      lastModified.current = searchQuery.lastModified || '';
+      dateCreated.current = searchQuery.dateCreated || '';
+      fileSize.current = searchQuery.fileSize || '';
+      tagTimePeriodFrom.current = searchQuery.tagTimePeriodFrom || null;
+      tagTimePeriodTo.current = searchQuery.tagTimePeriodTo || null;
+      // forceIndexing is a one-shot of the executed query, never sticky
+      forceIndexing.current = false;
+      const sBoxing: ScopeType = !currentLocationId
+        ? scope.global
+        : searchQuery.searchBoxing || scope.location;
+      setSearchBoxing(sBoxing);
 
       if (searchQuery.tagsAND && searchQuery.tagsAND.length > 0) {
         searchQuery.tagsAND.forEach((tag) => {
@@ -233,14 +257,11 @@ function SearchAutocomplete(props: Props) {
       }
 
       if (searchQuery.searchBoxing) {
-        const sBoxing = !currentLocationId
-          ? scope.global
-          : searchQuery.searchBoxing;
-        setSearchBoxing(sBoxing);
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.SCOPE.fullName,
-          label: SearchQueryComposition.SCOPE.fullName + ' ' + sBoxing,
+          label:
+            SearchQueryComposition.SCOPE.fullName + ' ' + t('core:' + sBoxing),
         });
       }
       if (
@@ -248,7 +269,6 @@ function SearchAutocomplete(props: Props) {
         JSON.stringify(searchQuery.fileTypes) !==
           JSON.stringify(AppConfig.SearchTypeGroups?.any)
       ) {
-        fileTypes.current = searchQuery.fileTypes;
         emptySearch = false;
         let keyFileType;
         Object.entries(AppConfig.SearchTypeGroups).forEach(([key, value]) => {
@@ -265,18 +285,16 @@ function SearchAutocomplete(props: Props) {
         });
       }
       if (searchQuery.searchType) {
-        searchType.current = searchQuery.searchType;
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.ACCURACY.fullName,
           label:
             SearchQueryComposition.ACCURACY.fullName +
             ' ' +
-            t('core:' + searchQuery.searchType),
+            t(accuracyLabelKeys[searchQuery.searchType]),
         });
       }
       if (searchQuery.lastModified) {
-        lastModified.current = searchQuery.lastModified;
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.LAST_MODIFIED.fullName,
@@ -287,7 +305,6 @@ function SearchAutocomplete(props: Props) {
         });
       }
       if (searchQuery.dateCreated) {
-        dateCreated.current = searchQuery.dateCreated;
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.DATE_CREATED.fullName,
@@ -297,19 +314,10 @@ function SearchAutocomplete(props: Props) {
             t('core:' + searchQuery.dateCreated),
         });
       }
-      if (searchQuery.tagTimePeriodFrom) {
-        tagTimePeriodFrom.current = searchQuery.tagTimePeriodFrom;
+      if (searchQuery.tagTimePeriodFrom || searchQuery.tagTimePeriodTo) {
         emptySearch = false;
-      }
-      if (searchQuery.tagTimePeriodTo) {
-        tagTimePeriodTo.current = searchQuery.tagTimePeriodTo;
-        emptySearch = false;
-      }
-      if (searchQuery.forceIndexing) {
-        forceIndexing.current = searchQuery.forceIndexing;
       }
       if (searchQuery.fileSize) {
-        fileSize.current = searchQuery.fileSize;
         emptySearch = false;
         actions.push({
           action: SearchQueryComposition.SIZE.fullName,
@@ -330,34 +338,105 @@ function SearchAutocomplete(props: Props) {
           forceUpdate();
         }
         if (searchQuery.executeSearch) {
+          hasSearched.current = true;
           const sQuery = {
             ...searchQuery,
             textQuery: txtQuery,
           };
-          if (searchBoxing === 'global') {
+          // use the scope of this query, the searchBoxing state is only
+          // updated on the next render
+          if (sBoxing === scope.global) {
             searchAllLocations(sQuery, currentWorkSpace);
           } else {
             searchLocationIndex(sQuery);
           }
+        } else {
+          // a filter changed after results are shown: refresh them
+          scheduleAutoRun();
         }
       }
     }
   }
 
+  /**
+   * Re-run an already executed search shortly after its filters change.
+   * Limited to cheap searches: the in-memory index of the current location.
+   * Global searches, missing indexes and running indexing keep requiring
+   * an explicit Search.
+   */
+  function scheduleAutoRun() {
+    clearTimeout(autoRunTimer.current);
+    autoRunTimer.current = setTimeout(() => autoRun.current(), 300);
+  }
+
+  autoRun.current = () => {
+    const index = getIndex();
+    if (
+      !hasSearched.current ||
+      searchBoxing === scope.global ||
+      isIndexing !== undefined ||
+      !index ||
+      index.length < 1
+    ) {
+      return;
+    }
+    if (haveSearchFilters(buildSearchQuery())) {
+      executeSearch();
+    }
+  };
+
+  useEffect(() => () => clearTimeout(autoRunTimer.current), []);
+
   const clickSearchButton = () => {
     executeSearch();
   };
 
+  const closeDropdown = () => {
+    isOpen.current = false;
+    forceUpdate();
+  };
+
+  /**
+   * Runs before MUI's own Autocomplete key handling (MUI calls the root
+   * onKeyDown first and honours `defaultMuiPrevented`).
+   */
   const onKeyDownHandler = (event) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      if (!isOpen.current) {
+      // A keyboard/mouse-highlighted option is pending selection when the
+      // input carries a non-empty aria-activedescendant.
+      const hasHighlightedOption =
+        isOpen.current &&
+        !!event.target?.getAttribute?.('aria-activedescendant');
+      const inFilterMode = actionValues.current.some((action) =>
+        isAction(action.action, SearchActions.FILTER),
+      );
+      if (hasHighlightedOption || haveEmptyAction() || inFilterMode) {
+        // Let MUI commit the option / the value of a pending action
+        // (e.g. "+" followed by a free tag name, "f:" filter text).
+        if (!isOpen.current) {
+          executeSearch();
+        } else {
+          closeDropdown();
+        }
+        return;
+      }
+      // Plain text and/or completed chips: search on the first Enter.
+      event.preventDefault();
+      event.defaultMuiPrevented = true;
+      closeDropdown();
+      if (haveSearchFilters(buildSearchQuery())) {
         executeSearch();
-      } else {
-        isOpen.current = false;
-        forceUpdate();
       }
     } else if (event.key === 'Escape' || event.keyCode === 27) {
-      clearSearch();
+      // First Esc closes the suggestions, the second one clears the search.
+      event.preventDefault();
+      event.stopPropagation();
+      event.defaultMuiPrevented = true;
+      if (isOpen.current) {
+        closeDropdown();
+      } else {
+        clearSearch();
+      }
     } else if (event.key === 'ArrowDown' || event.keyCode === 40) {
       if (!isOpen.current) {
         isOpen.current = true;
@@ -372,14 +451,17 @@ function SearchAutocomplete(props: Props) {
         resetActions(actionValues.current);
         isOpen.current = true;
         forceUpdate();
+        syncQueryFromChips();
       }
     } else {
       isOpen.current = true;
     }
   };
 
-  function resetValues(exceptions: Array<SearchOptionType>) {
-    setTempSearchQuery({ textQuery: '' }, true);
+  function resetValues(exceptions: Array<SearchOptionType>, keepText = false) {
+    if (!keepText) {
+      setTempSearchQuery({ textQuery: '' }, true);
+    }
     if (
       !exceptions.some((action) =>
         isAction(action.action, SearchQueryComposition.SCOPE),
@@ -464,37 +546,25 @@ function SearchAutocomplete(props: Props) {
     if (actions.length > 0) {
       const actionsArr = actions.filter((a) => isAction(a.action, action));
       if (actionsArr.length > 0) {
-        return actionsArr.map((a) => ({
-          title:
-            a.label.indexOf(action.shortName) === 0
-              ? a.label.substring(action.shortName.length)
-              : action.fullName && a.label.indexOf(action.fullName) === 0
-                ? a.label.substring(action.fullName.length)
-                : a.label,
-        }));
+        return (
+          actionsArr
+            .map((a) => ({
+              title:
+                a.label.indexOf(action.shortName) === 0
+                  ? a.label.substring(action.shortName.length)
+                  : action.fullName && a.label.indexOf(action.fullName) === 0
+                    ? a.label.substring(action.fullName.length)
+                    : a.label,
+            }))
+            // a bare "+"/"-"/"|" chip still waits for its tag name
+            .filter((tag) => tag.title)
+        );
       }
     }
     return [];
   }
 
-  const executeSearch = () => {
-    if (
-      actionValues.current.some((action) =>
-        isAction(action.action, SearchActions.FILTER),
-      )
-    ) {
-      // don't execute search on search filter
-      return;
-    }
-    if (
-      tempSearchQuery.textQuery &&
-      (tempSearchQuery.textQuery.startsWith('ts:?ts') ||
-        tempSearchQuery.textQuery.startsWith(AppConfig.tsProtocol + '?ts'))
-    ) {
-      openLinkDispatch(tempSearchQuery.textQuery, { fullWidth: false });
-      clearSearch();
-      return;
-    }
+  function buildSearchQuery(): TS.SearchQuery {
     const tagsAND = getTags(
       actionValues.current,
       SearchQueryComposition.TAG_AND,
@@ -504,7 +574,7 @@ function SearchAutocomplete(props: Props) {
       actionValues.current,
       SearchQueryComposition.TAG_NOT,
     );
-    const sQuery: TS.SearchQuery = {
+    return {
       textQuery: tempSearchQuery.textQuery,
       tagsAND,
       tagsOR,
@@ -526,6 +596,27 @@ function SearchAutocomplete(props: Props) {
       showUnixHiddenEntries: showUnixHiddenEntries,
       executeSearch: true,
     };
+  }
+
+  const executeSearch = () => {
+    if (
+      actionValues.current.some((action) =>
+        isAction(action.action, SearchActions.FILTER),
+      )
+    ) {
+      // don't execute search on search filter
+      return;
+    }
+    if (
+      tempSearchQuery.textQuery &&
+      (tempSearchQuery.textQuery.startsWith('ts:?ts') ||
+        tempSearchQuery.textQuery.startsWith(AppConfig.tsProtocol + '?ts'))
+    ) {
+      openLinkDispatch(tempSearchQuery.textQuery, { fullWidth: false });
+      clearSearch();
+      return;
+    }
+    const sQuery = buildSearchQuery();
     if (!haveSearchFilters(sQuery)) {
       clearSearch();
     } else {
@@ -797,7 +888,7 @@ function SearchAutocomplete(props: Props) {
           options.push({
             id: key,
             action: ExecActions.ACCURACY_SEARCH,
-            label: t('core:' + key),
+            label: t(accuracyLabelKeys[key]),
             filter,
           });
         });
@@ -848,12 +939,23 @@ function SearchAutocomplete(props: Props) {
       if (typeof options[i] === 'object') {
         option = { ...options[i] };
       } else {
-        const action = findAction(options[i]);
-        option = {
-          label: options[i],
-          fullName: action,
-          action: action,
-        };
+        // Strings are either the display value of an existing chip (MUI hands
+        // chips back as strings, e.g. "locations" for an "l:" chip) or typed
+        // input. Reuse existing chips as-is instead of re-parsing their
+        // display value, which may be a bare word that findAction ignores.
+        const existing = previousActions.find(
+          (a) => a.label === options[i] || a.fullName === options[i],
+        );
+        if (existing) {
+          option = { ...existing };
+        } else {
+          const action = findAction(options[i]);
+          option = {
+            label: options[i],
+            fullName: action,
+            action: action,
+          };
+        }
       }
       const prevAction = previousActions.find(
         (obj) =>
@@ -1118,7 +1220,7 @@ function SearchAutocomplete(props: Props) {
           // executeSearch();
         } else if (option.action === undefined) {
           // text query
-          setTempSearchQuery({ textQuery: option.label }, true);
+          setTempSearchQuery({ textQuery: option.label });
 
           const pAction = actions[actions.length - 1];
           if (pAction && isAction(pAction.action, SearchActions.FILTER)) {
@@ -1223,7 +1325,7 @@ function SearchAutocomplete(props: Props) {
           }
         }
         actionValues.current = combined;
-        setTempSearchQuery({ textQuery }, true);
+        setTempSearchQuery({ textQuery });
         searchQuery.textQuery = textQuery;
         // Close the dropdown — a pasted/fully-typed complex query is a
         // complete intent. Leaving it open would make the next Enter press
@@ -1243,7 +1345,7 @@ function SearchAutocomplete(props: Props) {
         (action) => !actionValues.current.some((v) => v.label === action),
       );
       const txtQuery = inputArr.join(' ');
-      setTempSearchQuery({ textQuery: txtQuery }, true);
+      setTempSearchQuery({ textQuery: txtQuery });
       searchQuery.textQuery = txtQuery;
       forceUpdate();
     } else if (reason === 'clear') {
@@ -1297,11 +1399,40 @@ function SearchAutocomplete(props: Props) {
       );
       resetActions(actionValues.current);
       forceUpdate();
+      syncQueryFromChips();
     }
   }
 
+  /**
+   * After a chip was removed, write the remaining filters back to the
+   * searchQuery. Otherwise the removed filter stays in searchQuery and
+   * comes back with the next filter change. Also refreshes shown results.
+   */
+  function syncQueryFromChips() {
+    const hasPendingCommand = actionValues.current.some((a) =>
+      Object.values(SearchActions).some((sa) => isAction(a.action, sa)),
+    );
+    if (hasPendingCommand) {
+      return;
+    }
+    const query = buildSearchQuery();
+    setSearchQuery({
+      ...query,
+      // before the first search keep defaults implicit (no chips for them)
+      ...(!hasSearched.current && {
+        searchBoxing:
+          query.searchBoxing === scope.location
+            ? undefined
+            : query.searchBoxing,
+        searchType:
+          query.searchType === accuracy.fuzzy ? undefined : query.searchType,
+      }),
+      executeSearch: false,
+    });
+  }
+
   function resetActions(actions: Array<SearchOptionType>) {
-    resetValues(actions);
+    resetValues(actions, true);
     if (actions.length === 0) {
       searchOptions.current = getSearchOptions();
       currentOptions.current = undefined;
@@ -1344,6 +1475,31 @@ function SearchAutocomplete(props: Props) {
       </TsIconButton>
     </>
   );
+
+  /**
+   * Scope and accuracy always have a value; removing their chip resets
+   * them to the default (location / fuzzy), so only offer the remove
+   * button when they deviate from it.
+   */
+  function isRemovableChip(action: SearchOptionType): boolean {
+    if (isAction(action.action, SearchQueryComposition.SCOPE)) {
+      return searchBoxing !== scope.location;
+    }
+    if (isAction(action.action, SearchQueryComposition.ACCURACY)) {
+      return searchType.current !== accuracy.fuzzy;
+    }
+    return true;
+  }
+
+  function getPlaceholder(): string {
+    if (searchBoxing === scope.global || !currentLocationId) {
+      return t('core:searchPlaceholderGlobal');
+    }
+    if (searchBoxing === scope.folder) {
+      return t('core:searchPlaceholderFolder');
+    }
+    return t('core:searchPlaceholder');
+  }
 
   function haveEmptyAction(): boolean {
     if (actionValues.current.length > 0) {
@@ -1549,24 +1705,20 @@ function SearchAutocomplete(props: Props) {
                     </TsButton>
                   )}
 
-                  {!isAction(action.action, SearchQueryComposition.SCOPE) &&
-                    !isAction(
-                      action.action,
-                      SearchQueryComposition.ACCURACY,
-                    ) && (
-                      <TsIconButton
-                        onClick={() => {
-                          handleChange(null, [option], 'remove-value');
-                        }}
-                        sx={{
-                          padding: '0 3px 0 0',
-                          textTransform: 'lowercase',
-                        }}
-                        data-tid={dataTidFormat('close' + option)}
-                      >
-                        <RemoveTagIcon fontSize="small" />
-                      </TsIconButton>
-                    )}
+                  {isRemovableChip(action) && (
+                    <TsIconButton
+                      onClick={() => {
+                        handleChange(null, [option], 'remove-value');
+                      }}
+                      sx={{
+                        padding: '0 3px 0 0',
+                        textTransform: 'lowercase',
+                      }}
+                      data-tid={dataTidFormat('close' + option)}
+                    >
+                      <RemoveTagIcon fontSize="small" />
+                    </TsIconButton>
+                  )}
                 </Box>
               );
             })
@@ -1644,7 +1796,7 @@ function SearchAutocomplete(props: Props) {
                   forceUpdate();
                 }}
                 autoFocus
-                placeholder={t('core:searchTitle')}
+                placeholder={getPlaceholder()}
                 size="small"
               />
             );

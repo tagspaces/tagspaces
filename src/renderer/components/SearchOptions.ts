@@ -107,6 +107,13 @@ export const accuracy = {
   strict: 'strict',
 };
 
+/** i18n keys for the user-facing names of the accuracy modes */
+export const accuracyLabelKeys = {
+  fuzzy: 'core:searchTypeFuzzy',
+  semistrict: 'core:searchTypeSemiStrict',
+  strict: 'core:searchTypeStrict',
+};
+
 export type ScopeType = 'location' | 'folder' | 'global';
 
 export function isAction(action: string, actionType: ActionType): boolean {
@@ -114,6 +121,23 @@ export function isAction(action: string, actionType: ActionType): boolean {
     action !== undefined &&
     (action === actionType.shortName || action === actionType.fullName)
   );
+}
+
+/**
+ * Only syntax-like keywords are recognised in typed input: the ones ending
+ * with ":" ("t:", "type:", "h:") and the single-char tag operators
+ * ("+", "-", "|"). Bare command words ("history", "filter", "locations", ...)
+ * are never treated as commands, so they stay searchable as plain text —
+ * use their short forms ("h:", "f:", "l:", ...) to invoke the command.
+ */
+function matchesKeyword(option: string, keyword: string): boolean {
+  if (!keyword) {
+    return false;
+  }
+  if (keyword.endsWith(':') || keyword.length === 1) {
+    return option.startsWith(keyword);
+  }
+  return false;
 }
 
 export function findAction(option: string, equal = false): string {
@@ -124,7 +148,8 @@ export function findAction(option: string, equal = false): string {
   let action = actions.find((a) =>
     equal
       ? option === a.shortName || option === a.fullName
-      : option.startsWith(a.shortName) || option.startsWith(a.fullName),
+      : matchesKeyword(option, a.shortName) ||
+        matchesKeyword(option, a.fullName),
   );
   if (action) {
     return action.fullName ? action.fullName : action.shortName;

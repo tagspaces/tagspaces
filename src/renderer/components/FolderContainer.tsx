@@ -21,6 +21,9 @@ import { BetaLabel } from '-/components/HelperComponents';
 import PathBreadcrumbs from '-/components/PathBreadcrumbs';
 import RenderPerspective from '-/components/RenderPerspective';
 import SearchBox from '-/components/SearchBox';
+import SearchResultsSummary, {
+  SearchNoResults,
+} from '-/components/SearchResultsSummary';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsMenuList from '-/components/TsMenuList';
@@ -92,6 +95,14 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
     enterSearchMode,
     isSearchMode,
   } = useDirectoryContentContext();
+
+  // Grid and List show the search summary in their folder details line
+  const showSearchSummary =
+    isSearchMode &&
+    !!currentPerspective &&
+    currentPerspective !== PerspectiveIDs.UNSPECIFIED &&
+    currentPerspective !== PerspectiveIDs.GRID &&
+    currentPerspective !== PerspectiveIDs.LIST;
 
   const isDesktopMode = useSelector(getDesktopMode);
   const hideProFeatures: boolean = useSelector(isHideProFeatures);
@@ -439,6 +450,7 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
         <a href="#" id="downloadFile" />
         <RenderPerspective />
       </Box>
+      {isSearchMode && <SearchNoResults />}
       {/* Perspective Switcher */}
       {isDesktopMode ? (
         <Box
@@ -447,8 +459,13 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
             right: 15,
             zIndex: 1000,
             position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
           }}
         >
+          {/* right side, so the bottom-left stays free for the pagination */}
+          {showSearchSummary && <SearchResultsSummary />}
           <ToggleButtonGroup
             value={currentPerspective}
             size="small"
@@ -515,6 +532,18 @@ function FolderContainer({ toggleDrawer, drawerOpened, hidden }: Props) {
           >
             <PerspectiveIcon />
           </Fab>
+          {showSearchSummary && (
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: -24,
+                right: 80,
+                zIndex: 1000,
+              }}
+            >
+              <SearchResultsSummary />
+            </Box>
+          )}
           <Menu
             id="demo-positioned-menu"
             aria-labelledby="demo-positioned-button"

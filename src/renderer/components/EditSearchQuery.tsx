@@ -38,7 +38,6 @@ import TsTooltip from '-/components/TsTooltip';
 import TsDatePicker from '-/components/TsDatePicker';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
-import TsSwitch from '-/components/TsSwitch';
 import TsTextField from '-/components/TsTextField';
 import TsToggleButton from '-/components/TsToggleButton';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
@@ -48,8 +47,8 @@ import { isDesktopMode } from '-/reducers/settings';
 import { TS } from '-/tagspaces.namespace';
 import { ListItemText, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
@@ -58,9 +57,22 @@ import Typography from '@mui/material/Typography';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { formatFileSize } from '@tagspaces/tagspaces-common/misc';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+
+/** [example, i18n key of its explanation] for the extended search syntax */
+const searchTips: Array<[string, string]> = [
+  ['sun', 'searchTipFuzzy'],
+  ['=sun', 'searchTipExact'],
+  ['"sun and beach"', 'searchTipPhrase'],
+  ["'sun 'beach", 'searchTipOr'],
+  ['!sun', 'searchTipNot'],
+  ['^sun', 'searchTipStartsWith'],
+  ['!^sun', 'searchTipNotStartsWith'],
+  ['.pdf$', 'searchTipEndsWith'],
+  ['!.pdf$', 'searchTipNotEndsWith'],
+];
 
 interface Props {
   executeSearchOnEnter?: boolean;
@@ -69,6 +81,7 @@ interface Props {
 function EditSearchQuery(props: Props) {
   const { t } = useTranslation();
   const { executeSearchOnEnter } = props;
+  const [showTips, setShowTips] = useState<boolean>(false);
   const desktopMode = useSelector(isDesktopMode);
   const { tempSearchQuery, setTempSearchQuery, clearSearch, executeSearch } =
     useSearchQueryContext();
@@ -201,8 +214,8 @@ function EditSearchQuery(props: Props) {
         value={tempSearchQuery.textQuery}
         onChange={handleSearchTermChange}
         size={desktopMode ? 'small' : 'medium'}
-        onKeyDown={() => {
-          if (executeSearchOnEnter) {
+        onKeyDown={(event) => {
+          if (executeSearchOnEnter && event.key === 'Enter') {
             executeSearch();
           }
         }}
@@ -210,61 +223,45 @@ function EditSearchQuery(props: Props) {
           input: {
             endAdornment: (
               <InputAdornment position="end">
-                <TsTooltip
-                  title={
-                    <>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{
-                          color: 'inherit',
-                        }}
-                      >
-                        Tips for the extended search
-                      </Typography>
-                      <Typography
-                        variant="subtitle2"
-                        sx={{
-                          color: 'inherit',
-                        }}
-                      >
-                        💡 <b>{'sun'}</b> - will match entries having the word
-                        sun but also san or sum in the name
-                        <br />
-                        💡 <b>{'=sun'}</b> - will match entries having exactly
-                        the word sun in the name
-                        <br />
-                        💡 <b>{'"sun and beach"'}</b> - will match entries
-                        having `sun and beach´ in the name
-                        <br />
-                        💡 <b>{"'sun 'beach"}</b> - will match entries having
-                        sun or beach in the name
-                        <br />
-                        💡 <b>{'!sun'}</b> - will match entries which do not
-                        contain sun
-                        <br />
-                        💡 <b>{'^sun'}</b> - will match entries beginning with
-                        sun
-                        <br />
-                        💡 <b>{'!^sun'}</b> - will match entries witch do not
-                        begin with sun
-                        <br />
-                        💡 <b>{'.pdf$'}</b> - will match entries ending with
-                        .pdf
-                        <br />
-                        💡 <b>{'!.pdf$'}</b> - will match entries not ending
-                        with .pdf
-                        <br />
-                      </Typography>
-                    </>
-                  }
+                <TsIconButton
+                  size="small"
+                  data-tid="searchTipsToggleTID"
+                  tooltip={t('core:searchTipsTitle')}
+                  aria-expanded={showTips}
+                  aria-controls="searchTipsTID"
+                  onClick={() => setShowTips(!showTips)}
                 >
                   <InfoTooltipIcon />
-                </TsTooltip>
+                </TsIconButton>
               </InputAdornment>
             ),
           },
         }}
       />
+      <Collapse in={showTips} unmountOnExit>
+        <Box
+          id="searchTipsTID"
+          data-tid="searchTipsTID"
+          sx={{
+            padding: '8px 12px',
+            borderRadius: AppConfig.defaultCSSRadius,
+            border: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
+          <Typography variant="subtitle2" sx={{ marginBottom: '4px' }}>
+            {t('core:searchTipsTitle')}
+          </Typography>
+          {searchTips.map(([example, key]) => (
+            <Typography variant="body2" key={key} sx={{ marginBottom: '2px' }}>
+              <Box component="code" sx={{ fontWeight: 'bold' }}>
+                {example}
+              </Box>{' '}
+              – {t('core:' + key)}
+            </Typography>
+          ))}
+        </Box>
+      </Collapse>
       <FormControl disabled={isIndexing !== undefined}>
         <ToggleButtonGroup
           onChange={switchSearchBoxing}
@@ -351,25 +348,6 @@ function EditSearchQuery(props: Props) {
             {t('searchTypeStrict')}
           </TsToggleButton>
         </ToggleButtonGroup>
-      </FormControl>
-      <FormControl disabled={isIndexing !== undefined}>
-        <FormControlLabel
-          labelPlacement="start"
-          sx={{ justifyContent: 'space-between', marginLeft: 0 }}
-          control={
-            <TsSwitch
-              data-tid="forceIndexingTID"
-              tooltip={t('forceReindexTooltip')}
-              checked={!!tempSearchQuery.forceIndexing}
-              onChange={(event) =>
-                setTempSearchQuery({
-                  forceIndexing: event.target.checked,
-                })
-              }
-            />
-          }
-          label={t('forceReindex')}
-        />
       </FormControl>
       <FormControl disabled={isIndexing !== undefined}>
         <TagsSelect

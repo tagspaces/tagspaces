@@ -69,10 +69,18 @@ export async function searchEngine(
     }
 
     if (options.reindexing) {
-      // forceIndexingTID is a TsSwitch (MUI Switch) since the force-reindex
-      // redesign — clicking the root span doesn't reliably toggle it, so
-      // check the underlying input (same pattern as changeFullTextIndex).
-      await global.client.check('[data-tid=forceIndexingTID] input');
+      // "Rebuild index" in the advanced search header does a full re-index
+      // of the current location; wait until it has finished (the button is
+      // disabled while indexing) before searching.
+      await clickOn('[data-tid=rebuildIndexTID]');
+      await global.client
+        .waitForSelector('[data-tid=rebuildIndexTID]:disabled', {
+          timeout: 3000,
+        })
+        .catch(() => {}); // a tiny index can finish before we look
+      await global.client.waitForSelector('[data-tid=rebuildIndexTID]:enabled', {
+        timeout: 60000,
+      });
     }
     if (options.searchType) {
       await clickOn('[data-tid=' + options.searchType + ']');

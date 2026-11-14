@@ -75,6 +75,8 @@ type LocationIndexContextData = {
   indexLoadedOn: number | undefined;
   indexExpired: () => boolean;
   isIndexing: string | undefined;
+  /** true while a search (location or global) is collecting its results */
+  isSearchRunning: boolean;
   indexingProgress: { count: number; folder: string } | undefined;
   getIndex: () => TS.FileSystemEntry[] | undefined;
   getLastIndex: (locationId: string) => Promise<TS.FileSystemEntry[]>;
@@ -84,6 +86,7 @@ type LocationIndexContextData = {
     force?: boolean,
     fullTextIndex?: boolean,
     extractLinks?: boolean,
+    forceFullReindex?: boolean,
   ) => Promise<boolean>;
   createLocationsIndexes: (
     extractText?: boolean,
@@ -109,6 +112,7 @@ export const LocationIndexContext = createContext<LocationIndexContextData>({
   indexLoadedOn: undefined,
   indexExpired: () => true,
   isIndexing: undefined,
+  isSearchRunning: false,
   indexingProgress: undefined,
   getIndex: () => undefined,
   getLastIndex: undefined,
@@ -155,6 +159,14 @@ export const LocationIndexContextProvider = ({
     { count: number; folder: string } | undefined
   >(undefined);
   const walkingRef = useRef(true);
+  const searchRunning = useRef<boolean>(false);
+
+  function setSearchRunning(running: boolean) {
+    if (searchRunning.current !== running) {
+      searchRunning.current = running;
+      forceUpdate();
+    }
+  }
   const index = useRef<TS.FileSystemEntry[]>(undefined);
   const indexLoadedOn = useRef<number>(undefined);
   const [ignored, forceUpdate] = useReducer((x: number) => x + 1, 0, undefined);
@@ -602,11 +614,18 @@ export const LocationIndexContextProvider = ({
       });
   }
 
+  /**
+   * @param force - index even if indexing is disabled for the location
+   *   (after confirmation)
+   * @param forceFullReindex - rebuild from scratch instead of updating the
+   *   existing index incrementally
+   */
   function createLocationIndex(
     location: CommonLocation,
     force = false,
     fullTextIndex?: boolean,
     extractLinks?: boolean,
+    forceFullReindex = false,
   ): Promise<boolean> {
     walkingRef.current = true;
     if (location) {
@@ -617,7 +636,12 @@ export const LocationIndexContextProvider = ({
             t('core:indexDisabledConfirm'),
             (result) => {
               if (result) {
-                createLocationIndexInt(location, fullTextIndex, extractLinks);
+                createLocationIndexInt(
+                  location,
+                  fullTextIndex,
+                  extractLinks,
+                  forceFullReindex,
+                );
               }
             },
             'cancelIndexDisabledDialogTID',
@@ -626,7 +650,12 @@ export const LocationIndexContextProvider = ({
           );
         }
       } else {
-        return createLocationIndexInt(location, fullTextIndex, extractLinks);
+        return createLocationIndexInt(
+          location,
+          fullTextIndex,
+          extractLinks,
+          forceFullReindex,
+        );
       }
     }
     return Promise.resolve(false);
@@ -636,6 +665,7 @@ export const LocationIndexContextProvider = ({
     location: CommonLocation,
     fullTextIndex?: boolean,
     extractLinks?: boolean,
+    forceFullReindex = false,
   ): Promise<boolean> {
     if (location) {
       isIndexing.current = location.uuid;
@@ -650,6 +680,7 @@ export const LocationIndexContextProvider = ({
         location.ignorePatternPaths,
         enableWS,
         extractLinks,
+        forceFullReindex,
       )
         .then((directoryIndex) => {
           // createDirectoryIndexWrapper returns `false` on error — guard
@@ -912,77 +943,86 @@ export const LocationIndexContextProvider = ({
       false,
       'TIDSearching',
     );
+    setSearchRunning(true);
     setTimeout(async () => {
-      const currentPath = await getLocationPath(currentLocation);
+      try {
+        const currentPath = await getLocationPath(currentLocation);
 
-      if (!index.current || index.current.length < 1) {
-        const directoryIndex = await loadIndexFromDisk(
-          currentPath,
-          currentLocation.uuid,
-        );
-        if (directoryIndex) {
-          setIndex(directoryIndex);
-        }
-      }
-      // Workaround used to show the start search notification
-      const currentTime = new Date().getTime();
-      const indexAge = indexLoadedOn.current
-        ? currentTime - indexLoadedOn.current
-        : 0;
-
-      // On readonly locations a usable existing index (in memory or on
-      // disk) is reused as-is — we cannot persist a fresh one anyway, and
-      // a walker error would wipe the good index via the `false` sentinel
-      // from createDirectoryIndexWrapper.
-      const hasUsableIndex = index.current && index.current.length > 0;
-      const skipReindexOnReadOnly =
-        currentLocation.isReadOnly && hasUsableIndex;
-
-      if (
-        !skipReindexOnReadOnly &&
-        (searchQuery.forceIndexing ||
-          (!currentLocation.disableIndexing &&
-            (!index.current ||
-              index.current.length < 1 ||
-              indexAge > maxIndexAge.current)))
-      ) {
-        console.log('Start creating index for : ' + currentPath);
-        // Surface the indexing snackbar (with live progress + cancel)
-        // while the walker runs. Without this, search-triggered re-index
-        // on Electron + S3 walks silently because PageNotification gates
-        // on `isIndexing !== undefined`.
-        isIndexing.current = currentLocation.uuid;
-        forceUpdate();
-        try {
-          const newIndex = await createDirectoryIndexWrapper(
-            {
-              path: currentPath,
-              locationID: currentLocation.uuid,
-              ...(isCloudLocation && {
-                bucketName: currentLocation.bucketName,
-              }),
-            },
-            currentLocation.fullTextIndex,
-            currentLocation.ignorePatternPaths,
-            enableWS,
-            undefined,
-            !!searchQuery.forceIndexing,
+        if (!index.current || index.current.length < 1) {
+          const directoryIndex = await loadIndexFromDisk(
+            currentPath,
+            currentLocation.uuid,
           );
-          if (Array.isArray(newIndex) && newIndex.length > 0) {
-            setIndex(newIndex);
+          if (directoryIndex) {
+            setIndex(directoryIndex);
           }
-        } finally {
-          isIndexing.current = undefined;
-          setIndexingProgress(undefined);
-          forceUpdate();
         }
-      }
-      getSearchResults(index.current, searchQuery).then((results) => {
-        setSearchResults(results);
-        enhanceSearchEntries(results);
-      });
+        // Workaround used to show the start search notification
+        const currentTime = new Date().getTime();
+        const indexAge = indexLoadedOn.current
+          ? currentTime - indexLoadedOn.current
+          : 0;
 
-      hideNotifications();
+        // On readonly locations a usable existing index (in memory or on
+        // disk) is reused as-is — we cannot persist a fresh one anyway, and
+        // a walker error would wipe the good index via the `false` sentinel
+        // from createDirectoryIndexWrapper.
+        const hasUsableIndex = index.current && index.current.length > 0;
+        const skipReindexOnReadOnly =
+          currentLocation.isReadOnly && hasUsableIndex;
+
+        if (
+          !skipReindexOnReadOnly &&
+          (searchQuery.forceIndexing ||
+            (!currentLocation.disableIndexing &&
+              (!index.current ||
+                index.current.length < 1 ||
+                indexAge > maxIndexAge.current)))
+        ) {
+          console.log('Start creating index for : ' + currentPath);
+          // Surface the indexing snackbar (with live progress + cancel)
+          // while the walker runs. Without this, search-triggered re-index
+          // on Electron + S3 walks silently because PageNotification gates
+          // on `isIndexing !== undefined`.
+          isIndexing.current = currentLocation.uuid;
+          forceUpdate();
+          try {
+            const newIndex = await createDirectoryIndexWrapper(
+              {
+                path: currentPath,
+                locationID: currentLocation.uuid,
+                ...(isCloudLocation && {
+                  bucketName: currentLocation.bucketName,
+                }),
+              },
+              currentLocation.fullTextIndex,
+              currentLocation.ignorePatternPaths,
+              enableWS,
+              undefined,
+              !!searchQuery.forceIndexing,
+            );
+            if (Array.isArray(newIndex) && newIndex.length > 0) {
+              setIndex(newIndex);
+            }
+          } finally {
+            isIndexing.current = undefined;
+            setIndexingProgress(undefined);
+            forceUpdate();
+          }
+        }
+        getSearchResults(index.current, searchQuery)
+          .then((results) => {
+            setSearchResults(results);
+            enhanceSearchEntries(results);
+          })
+          .finally(() => setSearchRunning(false));
+
+        hideNotifications();
+      } catch (e) {
+        console.log('Searching location index failed', e);
+        setSearchRunning(false);
+        hideNotifications();
+      }
     }, 50);
   }
 
@@ -991,6 +1031,7 @@ export const LocationIndexContextProvider = ({
     workSpace: TS.WorkSpace = undefined,
   ) {
     console.time('globalSearch');
+    setSearchRunning(true);
     setSearchResults([]);
     showNotification(t('core:searching'), 'default', false, 'TIDSearching');
 
@@ -1075,14 +1116,14 @@ export const LocationIndexContextProvider = ({
         console.timeEnd('globalSearch');
         if (maxSearchResultReached) {
           showNotification(
-            'Global search finished, reaching the max. search results. The first ' +
-              searchResults.length +
-              ' entries are listed.',
+            t('core:globalSearchMaxResultsReached', {
+              count: searchResults.length,
+            }),
             'default',
             true,
           );
         } else {
-          showNotification(t('Global search completed'), 'default', true);
+          showNotification(t('core:globalSearchCompleted'), 'default', true);
         }
         console.log('Global search completed!');
       })
@@ -1092,6 +1133,7 @@ export const LocationIndexContextProvider = ({
       })
       .finally(() => {
         isIndexing.current = undefined;
+        searchRunning.current = false;
         setIndexingProgress(undefined);
         forceUpdate();
       });
@@ -1272,6 +1314,7 @@ export const LocationIndexContextProvider = ({
     indexLoadedOn: indexLoadedOn.current,
     indexExpired,
     isIndexing: isIndexing.current,
+    isSearchRunning: searchRunning.current,
     indexingProgress,
     cancelDirectoryIndexing,
     createLocationIndex,

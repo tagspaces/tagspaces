@@ -517,4 +517,36 @@ test.describe('TST06 - Test Search in file structure:', () => {
       5000,
     );
   });
+
+  test('TST0648 - Advanced search settings survive closing the panel; no-results suggestions [web,s3,electron]', async () => {
+    if (!(await isDisplayed('#textQuery', true, 3000))) {
+      await clickOn('[data-tid=toggleSearch]');
+    }
+    await clickOn('[data-tid=advancedSearch]');
+    // case-sensitive matching, then close the panel without searching
+    await clickOn('[data-tid=strictSearchTID]');
+    await clickOn('[data-tid=closeSearchTID]');
+    // typing in the search bar must not drop the setting from the panel:
+    // case-sensitive "SaMpLe" matches none of the sample.* files
+    await addSearchCommand('SaMpLe', true);
+    await expectElementExist('[data-tid=searchNoResultsTID]', true, 5000);
+    await expectElementExist(getGridFileSelector('sample.md'), false, 5000);
+    // the suggestion re-runs the search with similar (fuzzy) matching
+    await clickOn('[data-tid=searchSuggestionFuzzyTID]');
+    await expectElementExist(getGridFileSelector('sample.md'), true, 5000);
+    await expectElementExist('[data-tid=searchNoResultsTID]', false, 5000);
+  });
+
+  test('TST0649 - Changing a filter refreshes the results without Enter [web,s3,electron]', async () => {
+    await addSearchCommand('t:', false);
+    await clickOn('#textQuery-option-1'); // images
+    await global.client.keyboard.press('Enter');
+    await expectElementExist(getGridFileSelector('sample.jpg'), true, 5000);
+    await expectElementExist(getGridFileSelector('sample.md'), false, 5000);
+    // switch the type chip to notes; the results update on their own
+    await clickOn('[data-tid=menutype_images]');
+    await clickOn('#textQuery-option-2'); // notes
+    await expectElementExist(getGridFileSelector('sample.md'), true, 5000);
+    await expectElementExist(getGridFileSelector('sample.jpg'), false, 5000);
+  });
 });

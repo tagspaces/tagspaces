@@ -36,6 +36,7 @@ import CellView from '-/perspectives/common/CellView';
 import { CellVisibilityProvider } from '-/perspectives/grid/hooks/CellVisibilityContext';
 import { useSortedDirContext } from '-/perspectives/grid/hooks/useSortedDirContext';
 import { Pro } from '-/pro';
+import { useSearchSummary } from '-/components/SearchResultsSummary';
 import { dataTidFormat } from '-/services/test';
 import { getDescriptionPreview } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -101,7 +102,7 @@ function GridPagination(props: Props) {
     gridPageLimit,
   } = usePerspectiveSettingsContext();
   const { findLocation } = useCurrentLocationContext();
-  const { directoryMeta, getAllPropertiesPromise } =
+  const { directoryMeta, getAllPropertiesPromise, isSearchMode } =
     useDirectoryContentContext();
   const { sortedDirContent } = useSortedDirContext();
   const { page, pageFiles, setCurrentPage } = usePaginationContext();
@@ -226,14 +227,28 @@ function GridPagination(props: Props) {
     return { fileCount, dirCount };
   }, [sortedDirContent]);
 
+  const searchSummary = useSearchSummary();
   const folderSummary = useMemo(() => {
     if (selectedEntries && selectedEntries.length > 0) {
       return t('core:entriesSelected', { count: selectedEntries.length });
     }
+    // in search mode: count, query and scope instead of the folder counts
+    if (searchSummary) {
+      return searchSummary.running
+        ? t('core:searching')
+        : searchSummary.summaryText;
+    }
     return dirCount > 0
       ? t('core:foldersAndFilesFound', { folders: dirCount, files: fileCount })
       : t('core:filesFound', { files: fileCount });
-  }, [selectedEntries, dirCount, fileCount, t]);
+  }, [
+    selectedEntries,
+    searchSummary?.running,
+    searchSummary?.summaryText,
+    dirCount,
+    fileCount,
+    t,
+  ]);
 
   // Called when a selection drag ends. We look for any item elements whose
   // bounding rectangle intersects the drag rectangle.
@@ -492,6 +507,8 @@ function GridPagination(props: Props) {
             <CellVisibilityProvider scrollRoot={containerEl}>
               <GridCellsContainer>
                 {pageFiles.length < 1 &&
+                  // in search mode SearchResultsSummary explains empty results
+                  !isSearchMode &&
                   renderEmptyState(t('core:noFileFolderFound'))}
                 {fileCount < 1 &&
                   dirCount >= 1 &&
@@ -540,19 +557,22 @@ function GridPagination(props: Props) {
                 />
               </TsTooltip>
             )}
-            {!showDetails && !showPagination && pageFiles.length > 0 && (
-              <Box sx={{ padding: '15px', bottom: '10px' }}>
-                <Typography
-                  sx={{
-                    fontSize: '0.8rem',
-                    filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
-                    color: theme.palette.text.primary,
-                  }}
-                >
-                  {folderSummary}
-                </Typography>
-              </Box>
-            )}
+            {!showDetails &&
+              // in search mode the summary is not only in the pagination tooltip
+              (!showPagination || isSearchMode) &&
+              pageFiles.length > 0 && (
+                <Box sx={{ padding: '15px', bottom: '10px' }}>
+                  <Typography
+                    sx={{
+                      fontSize: '0.8rem',
+                      filter: `drop-shadow(0px 0px 4px ${theme.palette.background.default})`,
+                      color: theme.palette.text.primary,
+                    }}
+                  >
+                    {folderSummary}
+                  </Typography>
+                </Box>
+              )}
           </SelectionArea>
         </Box>
       </Box>

@@ -17,17 +17,21 @@
  */
 
 import AppConfig from '-/AppConfig';
-import { CloseIcon, CreateFileIcon, EditIcon } from '-/components/CommonIcons';
+import {
+  CloseIcon,
+  EditIcon,
+  ReloadIcon,
+  SaveIcon,
+} from '-/components/CommonIcons';
 import EditSearchQuery from '-/components/EditSearchQuery';
 import TsTooltip from '-/components/TsTooltip';
 import TsButton from '-/components/TsButton';
 import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
-import { useDirectoryContentContext } from '-/hooks/useDirectoryContentContext';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSavedSearchesContext } from '-/hooks/useSavedSearchesContext';
 import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
-import { isDesktopMode } from '-/reducers/settings';
 import { openURLExternally } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
 import { Box } from '@mui/material';
@@ -40,20 +44,18 @@ import Typography from '@mui/material/Typography';
 import Links from 'assets/links';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 
 interface Props {
-  style?: any;
-  //hideDrawer?: () => void;
+  /** close after the search was executed */
   onClose: () => void;
+  /** close without searching, keeping the edited query as a draft */
+  onDismiss: () => void;
 }
 
 function SearchPopover(props: Props) {
   const { t } = useTranslation();
-  const { onClose } = props;
-  const desktopMode = useSelector(isDesktopMode);
-  const { openCurrentDirectory, setSearchQuery, exitSearchMode } =
-    useDirectoryContentContext();
+  const { onClose, onDismiss } = props;
+  const { currentLocation } = useCurrentLocationContext();
   const { searches } = useSavedSearchesContext();
   const {
     tempSearchQuery,
@@ -61,7 +63,8 @@ function SearchPopover(props: Props) {
     openSaveSearchDialog,
     executeSearch,
   } = useSearchQueryContext();
-  const { getIndex, isIndexing } = useLocationIndexContext();
+  const { getIndex, isIndexing, createLocationIndex } =
+    useLocationIndexContext();
 
   const handleSavedSearchChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -77,55 +80,89 @@ function SearchPopover(props: Props) {
     setTempSearchQuery({ ...savedSearch }, true);
   };
 
-  const clearSearch = () => {
-    onClose();
-    openCurrentDirectory().then(() => {
-      setSearchQuery({});
-      exitSearchMode();
-    });
+  /** Clears the form only — the search mode and its results stay */
+  const resetForm = () => {
+    setTempSearchQuery(
+      {
+        textQuery: '',
+        searchBoxing: tempSearchQuery.searchBoxing || 'location',
+        searchType: 'fuzzy',
+      },
+      true,
+    );
   };
 
-  const indexStatus = getIndex()
-    ? t('core:indexedEntriesCount', { count: getIndex().length })
+  const rebuildIndex = () => {
+    createLocationIndex(currentLocation, true, undefined, undefined, true);
+  };
+
+  const indexing = isIndexing !== undefined;
+  const index = getIndex();
+  const indexStatus = index
+    ? t('core:indexedEntriesCount', { count: index.length })
     : t('core:indexEmpty');
+  const rebuildDisabled =
+    indexing || !currentLocation || currentLocation.isReadOnly;
+
   return (
-    <div
-      style={
+    <Box
+      sx={
         {
-          maxWidth: 400,
-          height: '100%',
-          paddingLeft: 5,
-          paddingRight: 0,
+          width: 400,
+          maxWidth: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: 0,
+          flex: 1,
+          paddingLeft: '5px',
           WebkitAppRegion: 'no-drag',
-        } as React.CSSProperties & { WebkitAppRegion?: string }
+        } as any
       }
     >
-      <Box sx={{ display: 'flex' }}>
-        <Typography variant="button" sx={{ margin: '12px 0 10px 10px' }}>
-          {t('core:advancedSearch')}
-        </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         <Typography
           variant="caption"
-          sx={{ flex: 1, margin: 'auto', paddingLeft: '10px' }}
+          noWrap
+          title={indexStatus}
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            paddingLeft: '10px',
+            color: 'text.secondary',
+          }}
+          data-tid="indexStatusTID"
         >
           {indexStatus}
         </Typography>
+        <TsButton
+          data-tid="rebuildIndexTID"
+          variant="text"
+          size="small"
+          disabled={rebuildDisabled}
+          tooltip={
+            currentLocation?.isReadOnly
+              ? t('core:readOnlyLocationIndexDisabled')
+              : t('core:forceReindexTooltip')
+          }
+          startIcon={<ReloadIcon fontSize="small" />}
+          onClick={rebuildIndex}
+        >
+          {t('core:rebuildIndex')}
+        </TsButton>
         <TsIconButton
-          sx={{ marginLeft: 'auto', height: '40px' }}
+          sx={{ height: '40px' }}
           data-tid="closeSearchTID"
-          onClick={onClose}
+          onClick={onDismiss}
         >
           <CloseIcon />
         </TsIconButton>
       </Box>
       <Box
         sx={{
-          paddingTop: '0px',
+          flex: 1,
+          minHeight: 0,
           paddingLeft: '10px',
           paddingRight: '10px',
-          marginTop: '0px',
-          height: 'calc(100% - 90px)',
-          maxHeight: 'calc(100% - 90px)',
           overflowX: 'hidden',
           overflowY: 'auto',
           scrollbarGutter: 'stable',
@@ -153,7 +190,7 @@ function SearchPopover(props: Props) {
                 </FormHelperText>
                 <TsSelect
                   name="savedSearch"
-                  disabled={isIndexing !== undefined}
+                  disabled={indexing}
                   onChange={handleSavedSearchChange}
                   value={tempSearchQuery.uuid ? tempSearchQuery.uuid : -1}
                 >
@@ -198,7 +235,7 @@ function SearchPopover(props: Props) {
                 data-tid="addSearchBtnTID"
                 onClick={() => openSaveSearchDialog('new_from_search')}
               >
-                <CreateFileIcon />
+                <SaveIcon />
               </TsIconButton>
             </ButtonGroup>
           </Grid>
@@ -212,7 +249,6 @@ function SearchPopover(props: Props) {
           display: 'flex',
           justifyContent: 'space-between',
           padding: AppConfig.defaultSpaceBetweenButtons,
-          paddingTop: 0,
         }}
       >
         <TsButton
@@ -224,26 +260,30 @@ function SearchPopover(props: Props) {
           {t('help')}
         </TsButton>
         <div>
-          <TsButton onClick={clearSearch} id="resetSearchButton">
+          <TsButton
+            onClick={resetForm}
+            id="resetSearchButton"
+            tooltip={t('core:resetSearchFormTooltip')}
+          >
             {t('resetBtn')}
           </TsButton>
           <TsButton
             sx={{ marginLeft: AppConfig.defaultSpaceBetweenButtons }}
             variant="contained"
-            disabled={isIndexing !== undefined}
+            disabled={indexing}
             id="searchButtonAdvTID"
             onClick={() => {
               executeSearch();
               onClose();
             }}
           >
-            {isIndexing !== undefined
+            {indexing
               ? t('core:searchDisabledWhileIndexing')
               : t('searchTitle')}
           </TsButton>
         </div>
       </Box>
-    </div>
+    </Box>
   );
 }
 
