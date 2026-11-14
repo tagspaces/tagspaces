@@ -310,7 +310,7 @@ function GridCell(props: Props) {
             variant="body2"
             noWrap
             title={fsEntry.name}
-            sx={{ fontWeight: 500, lineHeight: 1.35 }}
+            sx={{ lineHeight: 1.35 }}
           >
             {entryTitle}
           </Typography>

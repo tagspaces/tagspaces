@@ -259,7 +259,7 @@ function RowCell(props: Props) {
           noWrap
           component="div"
           title={[fsEntry.name, sizeText, dateText].filter(Boolean).join(' · ')}
-          sx={{ flex: 1, minWidth: 0, fontWeight: 500 }}
+          sx={{ flex: 1, minWidth: 0 }}
         >
           {entryTitle}
           {tags}
