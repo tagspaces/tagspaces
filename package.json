@@ -177,7 +177,7 @@
     "@tagspaces/tagspaces-common": "4.8.9",
     "@tagspaces/tagspaces-common-aws3": "4.8.9",
     "@tagspaces/tagspaces-indexer": "4.8.9",
-    "@tagspaces/tagspaces-search": "4.8.9",
+    "@tagspaces/tagspaces-search": "4.9.3",
     "@xmldom/xmldom": ">=0.8.15",
     "capacitor-plugin-cdv-purchase": "13.17.1",
     "coordinate-parser": "1.0.7",

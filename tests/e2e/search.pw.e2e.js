@@ -549,4 +549,21 @@ test.describe('TST06 - Test Search in file structure:', () => {
     await expectElementExist(getGridFileSelector('sample.md'), true, 5000);
     await expectElementExist(getGridFileSelector('sample.jpg'), false, 5000);
   });
+
+  test('TST0650 - Type filter excludes folders, also together with a text query [web,s3,electron]', async () => {
+    // picking the type runs the search, no folder listing stays on screen
+    await addSearchCommand('t:', false);
+    await global.client
+      .locator('[role=option]', { hasText: 'Documents' })
+      .first()
+      .click();
+    await expectElementExist(getGridFileSelector('sample.pdf'), true, 5000);
+    await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
+    // a text query must not bring back entries the type filter removed
+    await global.client.type('#textQuery', 'sample');
+    await global.client.keyboard.press('Enter');
+    await expectElementExist(getGridFileSelector('sample.pdf'), true, 5000);
+    await expectElementExist(getGridFileSelector('sample.jpg'), false, 5000);
+    await expectElementExist(getGridFileSelector('empty_folder'), false, 5000);
+  });
 });

@@ -183,6 +183,12 @@ function SearchAutocomplete(props: Props) {
   const firstRender = useFirstRender();
   /** true once a search was executed in this search session */
   const hasSearched = useRef<boolean>(false);
+  /**
+   * true once a type / size / date filter was picked from the dropdown: like
+   * a search, that asks for narrowed results, so the auto-run applies it
+   * instead of leaving the plain folder listing on screen
+   */
+  const filterChosen = useRef<boolean>(false);
   const autoRunTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   /** refreshed every render, so the delayed call sees the latest state */
   const autoRun = useRef<() => void>(() => {});
@@ -365,7 +371,8 @@ function SearchAutocomplete(props: Props) {
   }
 
   /**
-   * Re-run an already executed search shortly after its filters change.
+   * Re-run an already executed search shortly after its filters change (or
+   * run it, when a type / size / date filter was picked).
    * Limited to cheap searches: the in-memory index of the current location.
    * Global searches, missing indexes and running indexing keep requiring
    * an explicit Search.
@@ -377,12 +384,13 @@ function SearchAutocomplete(props: Props) {
 
   autoRun.current = () => {
     const index = getIndex();
+    const hasIndex = index && index.length > 0;
     if (
-      !hasSearched.current ||
       searchBoxing === scope.global ||
       isIndexing !== undefined ||
-      !index ||
-      index.length < 1
+      // a re-run needs the in-memory index; the first run after picking a
+      // filter loads it like any search does
+      !(hasSearched.current ? hasIndex : filterChosen.current)
     ) {
       return;
     }
@@ -1122,6 +1130,7 @@ function SearchAutocomplete(props: Props) {
               fileTypes: fileTypes.current,
               executeSearch: false,
             });
+            filterChosen.current = true;
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1141,6 +1150,7 @@ function SearchAutocomplete(props: Props) {
               fileSize: id,
               executeSearch: false,
             });
+            filterChosen.current = true;
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1166,6 +1176,7 @@ function SearchAutocomplete(props: Props) {
               lastModified: id,
               executeSearch: false,
             });
+            filterChosen.current = true;
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
@@ -1183,6 +1194,7 @@ function SearchAutocomplete(props: Props) {
               dateCreated: id,
               executeSearch: false,
             });
+            filterChosen.current = true;
           }
           if (hasOptionsChanged) {
             changeOptions(option.action);
