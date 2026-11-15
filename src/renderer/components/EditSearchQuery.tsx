@@ -45,6 +45,7 @@ import TsIconButton from '-/components/TsIconButton';
 import TsSelect from '-/components/TsSelect';
 import TsTextField from '-/components/TsTextField';
 import TsToggleButton from '-/components/TsToggleButton';
+import { useCurrentLocationContext } from '-/hooks/useCurrentLocationContext';
 import { useLocationIndexContext } from '-/hooks/useLocationIndexContext';
 import { useSearchQueryContext } from '-/hooks/useSearchQueryContext';
 import { Pro } from '-/pro';
@@ -94,6 +95,12 @@ function EditSearchQuery(props: Props) {
   const { tempSearchQuery, setTempSearchQuery, clearSearch, executeSearch } =
     useSearchQueryContext();
   const { isIndexing } = useLocationIndexContext();
+  const { currentLocationId } = useCurrentLocationContext();
+  // Missing scope / accuracy means the default; select it so the user sees
+  // what the search will use (same fallback as the search bar).
+  const selectedScope =
+    tempSearchQuery.searchBoxing || (currentLocationId ? 'location' : 'global');
+  const selectedAccuracy = tempSearchQuery.searchType || 'fuzzy';
 
   const workSpacesContext = Pro?.contextProviders?.WorkSpacesContext
     ? useContext<TS.WorkSpacesContextData>(
@@ -276,7 +283,7 @@ function EditSearchQuery(props: Props) {
           size="small"
           exclusive
           sx={{ marginBottom: 0, alignSelf: 'center' }}
-          value={tempSearchQuery.searchBoxing}
+          value={selectedScope}
         >
           <TsToggleButton
             sx={{
@@ -324,7 +331,7 @@ function EditSearchQuery(props: Props) {
           size="small"
           exclusive
           sx={{ marginBottom: 0, alignSelf: 'center' }}
-          value={tempSearchQuery.searchType}
+          value={selectedAccuracy}
         >
           <TsToggleButton
             sx={{

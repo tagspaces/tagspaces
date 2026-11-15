@@ -17,6 +17,7 @@
  *
  */
 
+import AppConfig from '-/AppConfig';
 import { TS } from '-/tagspaces.namespace';
 import {
   searchLocationIndex,
@@ -25,7 +26,18 @@ import {
 } from '@tagspaces/tagspaces-search';
 
 export function haveSearchFilters(searchQuery: TS.SearchQuery) {
-  return _haveSearchFilters(searchQuery);
+  // The library compares fileTypes with the "any" group by reference, but
+  // the queries here carry copies of it — which would count "any type" as
+  // an active filter (e.g. an auto-run searching with nothing but the
+  // defaults after the last chip was removed).
+  const fileTypes = searchQuery?.fileTypes;
+  const isAnyType =
+    Array.isArray(fileTypes) &&
+    JSON.stringify(fileTypes) ===
+      JSON.stringify(AppConfig.SearchTypeGroups?.any);
+  return _haveSearchFilters(
+    isAnyType ? { ...searchQuery, fileTypes: undefined } : searchQuery,
+  );
 }
 
 export function defaultTitle(searchQuery: TS.SearchQuery) {

@@ -63,7 +63,7 @@ import {
   getShowUnixHiddenEntries,
   isDesktopMode,
 } from '-/reducers/settings';
-import { haveSearchFilters } from '-/services/search';
+import { defaultTitle, haveSearchFilters } from '-/services/search';
 import { dataTidFormat } from '-/services/test';
 import { removePrefix } from '-/services/utils-io';
 import { TS } from '-/tagspaces.namespace';
@@ -457,11 +457,21 @@ function SearchAutocomplete(props: Props) {
         forceUpdate();
       }
     } else if (event.key === 'Backspace' || event.keyCode === 8) {
-      if (
-        tempSearchQuery.textQuery.length === 0 &&
-        actionValues.current.length > 0
-      ) {
-        actionValues.current = actionValues.current.slice(0, -1);
+      // Read the input itself: textQuery is undefined after a search
+      // without text (only tags/filters), and the context value can lag
+      // behind the last keystroke.
+      const inputText = (event.target as HTMLInputElement)?.value ?? '';
+      if (inputText.length === 0 && actionValues.current.length > 0) {
+        // MUI would remove its last value itself and call onChange with
+        // 'removeOption', which is not handled — keep it out of the way.
+        event.preventDefault();
+        event.defaultMuiPrevented = true;
+        // remove the chip shown last, not the last one added
+        const chips = chipsInDisplayOrder();
+        const lastChip = chips[chips.length - 1];
+        actionValues.current = actionValues.current.filter(
+          (v) => v !== lastChip,
+        );
         resetActions(actionValues.current);
         isOpen.current = true;
         forceUpdate();
@@ -471,6 +481,37 @@ function SearchAutocomplete(props: Props) {
       isOpen.current = true;
     }
   };
+
+  /**
+   * Chips in the order they are shown:
+   *   1. scope and accuracy first (search-wide modifiers)
+   *   2. other filters next (type, size, dates)
+   *   3. tag chips (+/-/|) last
+   * Only visual — actionValues.current itself isn't reordered.
+   */
+  function chipsInDisplayOrder(): Array<SearchOptionType> {
+    return actionValues.current
+      .map((v, i) => {
+        let priority = 1; // other filters
+        if (
+          v.action === SearchQueryComposition.SCOPE.fullName ||
+          v.action === SearchQueryComposition.ACCURACY.fullName
+        ) {
+          priority = 0;
+        } else if (
+          v.action === SearchQueryComposition.TAG_AND.shortName ||
+          v.action === SearchQueryComposition.TAG_OR.shortName ||
+          v.action === SearchQueryComposition.TAG_NOT.shortName
+        ) {
+          priority = 2;
+        }
+        return { v, i, priority };
+      })
+      .sort((a, b) =>
+        a.priority !== b.priority ? a.priority - b.priority : a.i - b.i,
+      )
+      .map(({ v }) => v);
+  }
 
   function resetValues(exceptions: Array<SearchOptionType>, keepText = false) {
     if (!keepText) {
@@ -666,7 +707,15 @@ function SearchAutocomplete(props: Props) {
     if (isAction(action, SearchActions.LOCATION)) {
       if (currentOptions.current !== action) {
         currentOptions.current = action;
-        searchOptions.current = locations.map((location) => {
+        const seen = new Set<string>();
+        const uniqueLocations = locations.filter((location) => {
+          if (seen.has(location.uuid)) {
+            return false;
+          }
+          seen.add(location.uuid);
+          return true;
+        });
+        searchOptions.current = uniqueLocations.map((location) => {
           return {
             id: location.uuid,
             descr: location.path,
@@ -1252,7 +1301,9 @@ function SearchAutocomplete(props: Props) {
             }
           }
         }
-      } else {
+      } else if (!actions.includes(prevAction)) {
+        // typing an existing command again (e.g. "l:" while the "locations"
+        // chip is there) resolves to the same chip — don't add it twice
         actions.push(prevAction);
       }
     }
@@ -1434,17 +1485,20 @@ function SearchAutocomplete(props: Props) {
       return;
     }
     const query = buildSearchQuery();
+    const hasChip = (key: ActionType) =>
+      actionValues.current.some((a) => isAction(a.action, key));
     setSearchQuery({
       ...query,
-      // before the first search keep defaults implicit (no chips for them)
-      ...(!hasSearched.current && {
-        searchBoxing:
-          query.searchBoxing === scope.location
-            ? undefined
-            : query.searchBoxing,
-        searchType:
-          query.searchType === accuracy.fuzzy ? undefined : query.searchType,
-      }),
+      // Scope and accuracy only stay explicit while their chip is there.
+      // Otherwise the query re-creates a chip the user just removed with
+      // Backspace (after a search they are written out explicitly), and the
+      // last chips could never be cleared. Missing means the default.
+      searchBoxing: hasChip(SearchQueryComposition.SCOPE)
+        ? query.searchBoxing
+        : undefined,
+      searchType: hasChip(SearchQueryComposition.ACCURACY)
+        ? query.searchType
+        : undefined,
       executeSearch: false,
     });
   }
@@ -1468,30 +1522,19 @@ function SearchAutocomplete(props: Props) {
   }
 
   const endAdornment = (
-    <>
-      <TsIconButton
-        tooltip={t('core:advancedSearch')}
-        id="advancedButton"
-        data-tid="advancedSearch"
-        size={desktopMode ? 'small' : 'medium'}
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-          setAnchorSearch(event.currentTarget);
-        }}
-      >
-        <AdvancedSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
-      </TsIconButton>
-      <TsIconButton
-        tooltip={t('clearSearch') + ' (ESC)'}
-        id="clearSearchID"
-        onClick={() => {
-          clearSearch();
-        }}
-        size={desktopMode ? 'small' : 'medium'}
-        edge="end"
-      >
-        <CloseIcon fontSize={desktopMode ? 'small' : 'medium'} />
-      </TsIconButton>
-    </>
+    <TsIconButton
+      key="advancedButton"
+      tooltip={t('core:advancedSearch')}
+      id="advancedButton"
+      data-tid="advancedSearch"
+      size={desktopMode ? 'small' : 'medium'}
+      edge="end"
+      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorSearch(event.currentTarget);
+      }}
+    >
+      <AdvancedSearchIcon fontSize={desktopMode ? 'small' : 'medium'} />
+    </TsIconButton>
   );
 
   /**
@@ -1499,6 +1542,14 @@ function SearchAutocomplete(props: Props) {
    * button: they are changed through the chip's dropdown (Backspace and
    * "clear search" still reset them to the default).
    */
+  /** l:, h:, b:, q:, s: — they open a list of entries, not a filter */
+  function isCommandChip(action: SearchOptionType): boolean {
+    return (
+      !!action &&
+      Object.values(SearchActions).some((sa) => isAction(action.action, sa))
+    );
+  }
+
   function isRemovableChip(action: SearchOptionType): boolean {
     return (
       !isAction(action.action, SearchQueryComposition.SCOPE) &&
@@ -1582,35 +1633,9 @@ function SearchAutocomplete(props: Props) {
           autoSelect
           autoComplete
           handleHomeEndKeys
-          value={
-            // Sort for display:
-            //   1. scope and accuracy first (search-wide modifiers)
-            //   2. other filters next (type, size, dates)
-            //   3. tag chips (+/-/|) last
-            // Only visual — actionValues.current itself isn't reordered.
-            actionValues.current
-              .map((v, i) => {
-                let priority = 1; // other filters
-                if (v.action === SearchQueryComposition.SCOPE.fullName) {
-                  priority = 0;
-                } else if (
-                  v.action === SearchQueryComposition.ACCURACY.fullName
-                ) {
-                  priority = 0;
-                } else if (
-                  v.action === SearchQueryComposition.TAG_AND.shortName ||
-                  v.action === SearchQueryComposition.TAG_OR.shortName ||
-                  v.action === SearchQueryComposition.TAG_NOT.shortName
-                ) {
-                  priority = 2;
-                }
-                return { v, i, priority };
-              })
-              .sort((a, b) =>
-                a.priority !== b.priority ? a.priority - b.priority : a.i - b.i,
-              )
-              .map(({ v }) => (v.fullName ? v.fullName : v.label))
-          }
+          value={chipsInDisplayOrder().map((v) =>
+            v.fullName ? v.fullName : v.label,
+          )}
           onChange={handleChange}
           inputValue={
             tempSearchQuery.textQuery ? tempSearchQuery.textQuery : ''
@@ -1742,8 +1767,12 @@ function SearchAutocomplete(props: Props) {
                         minWidth: 0,
                         lineHeight: '20px',
                       }}
+                      // command chips (l:, h:, b:, q:, s:) only list their
+                      // entries, they have no values to pick from
                       endIcon={
-                        <ArrowDropDownIcon sx={{ marginLeft: '-10px' }} />
+                        isCommandChip(action) ? undefined : (
+                          <ArrowDropDownIcon sx={{ marginLeft: '-10px' }} />
+                        )
                       }
                       aria-label={option}
                     >
@@ -1774,6 +1803,33 @@ function SearchAutocomplete(props: Props) {
             })
           }
           options={searchOptions.current}
+          // What the input shows while an option is highlighted with the
+          // arrow keys (autoComplete): the query of a search-history entry,
+          // and for history / bookmarks the typed text instead of the path.
+          getOptionLabel={(option) => {
+            if (typeof option === 'string') {
+              return option;
+            }
+            if (option.searchQuery) {
+              return defaultTitle(option.searchQuery);
+            }
+            if (
+              option.action === ExecActions.OPEN_HISTORY ||
+              option.action === ExecActions.OPEN_BOOKMARK
+            ) {
+              return tempSearchQuery.textQuery ?? '';
+            }
+            return option.label ?? '';
+          }}
+          // MUI keys options by label by default. Labels are not unique
+          // (e.g. two locations with the same name), and duplicate React
+          // keys leave stale copies of an option in the list on every
+          // filter change.
+          getOptionKey={(option) =>
+            typeof option === 'string'
+              ? option
+              : [option.group, option.action, option.id, option.label].join('|')
+          }
           groupBy={(option) => option.group}
           renderGroup={(params) => (
             <li key={params.key}>
@@ -1863,6 +1919,19 @@ function SearchAutocomplete(props: Props) {
             );
           }}
         />
+        {/* outside the scrolling input, so chips or a long query can never
+            push it out of view (narrow / mobile screens) */}
+        <TsIconButton
+          tooltip={t('clearSearch') + ' (ESC)'}
+          id="clearSearchID"
+          onClick={() => {
+            clearSearch();
+          }}
+          size={desktopMode ? 'small' : 'medium'}
+          sx={{ flexShrink: 0, marginLeft: '2px' }}
+        >
+          <CloseIcon fontSize={desktopMode ? 'small' : 'medium'} />
+        </TsIconButton>
         <TsButton
           tooltip={isIndexing ? t('searchDisabledWhileIndexing') : ''}
           id="searchButton"
