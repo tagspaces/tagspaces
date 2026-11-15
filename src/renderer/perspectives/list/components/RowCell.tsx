@@ -277,7 +277,6 @@ function RowCell(props: Props) {
             variant="body2"
             title={fsEntry.path}
             sx={{
-              fontWeight: 500,
               lineHeight: 1.35,
               wordBreak: 'break-word',
               display: '-webkit-box',
