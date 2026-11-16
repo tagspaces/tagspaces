@@ -48,5 +48,26 @@ export async function closeWelcomePlaywright() {
     } catch (e) {
       // onboarding wizard not present (e.g., onboardingCompleted already)
     }
+  } else {
+    // No license dialog means this is a returning-user startup (e.g. after an
+    // in-test reload on a worker that booted without extconfig.js). The
+    // mobile-apps teaser auto-opens there on every start and its modal
+    // swallows clicks, so dismiss it. Skipped on a fresh start on purpose —
+    // the teaser must not show there, and TST9401 asserts that.
+    try {
+      const teaserClose = await global.client.waitForSelector(
+        '[data-tid=closeMobileTeaserTID]',
+        { timeout: 1000, state: 'visible' },
+      );
+      if (teaserClose) {
+        await teaserClose.click();
+        await global.client.waitForSelector('[data-tid=closeMobileTeaserTID]', {
+          timeout: 5000,
+          state: 'hidden',
+        });
+      }
+    } catch (e) {
+      // teaser not shown (hidden via settings or extconfig) — nothing to do
+    }
   }
 }

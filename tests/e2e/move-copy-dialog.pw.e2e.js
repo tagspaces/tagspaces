@@ -244,11 +244,11 @@ test.describe('TST10 - Move/Copy dialog new features', () => {
     // dirs too. Deselect destName (the freshly-created destination folder
     // sitting at the root); otherwise the dialog's cyclic-target guard sees
     // it in `selectedDirs` and disables `confirmCopyFiles` when we descend
-    // into destName as the target. The CardHeader's avatar span is the
-    // selection toggle — same shape selectRowFiles uses (NOT `div button`,
-    // which lands on the entry's three-dots context-menu trigger).
+    // into destName as the target. The extension badge is the selection
+    // toggle — same element selectRowFiles uses (NOT the entry's three-dots
+    // context-menu button).
     await clickOn(
-      `[data-tid="fsEntryName_${destName}"] div:nth-child(3) div span`,
+      `[data-tid="fsEntryName_${destName}"] [data-tid=entrySelectBadgeTID]`,
     );
 
     // Open the bulk move/copy dialog via the toolbar action.
@@ -340,7 +340,7 @@ test.describe('TST10 - Move/Copy dialog new features', () => {
     // Deselect destName so the cyclic-target guard doesn't disable the
     // primary CTA — see the same note in TST1009.
     await clickOn(
-      `[data-tid="fsEntryName_${destName}"] div:nth-child(3) div span`,
+      `[data-tid="fsEntryName_${destName}"] [data-tid=entrySelectBadgeTID]`,
     );
     await clickOn('[data-tid=gridPerspectiveCopySelectedFiles]');
     await clickOnIfVisible('[data-tid=mcfModeCopy]');

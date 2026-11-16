@@ -563,7 +563,9 @@ test.describe('TST04 - Testing the tag library:', () => {
     );
   });
 
-  test('TST0430 - Add multiple tag groups to a location [web,s3,electron,_pro]', async ({
+  // Not tagged `web` for the same reason as TST0427/TST0428: it asserts the
+  // groups reappear after a reload, and web does not persist locations.
+  test('TST0430 - Add multiple tag groups to a location [s3,electron,_pro]', async ({
     isS3,
     testDataDir,
   }) => {

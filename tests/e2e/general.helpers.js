@@ -538,7 +538,7 @@ export async function selectAllFiles() {
 export async function selectFilesByID(arrEntryIds = []) {
   for (let i = 0; i < arrEntryIds.length; i++) {
     await clickOn(
-      'div[data-entry-id="' + arrEntryIds[i] + '"] div:nth-child(3) div button',
+      'div[data-entry-id="' + arrEntryIds[i] + '"] [data-tid=entrySelectBadgeTID]',
     );
   }
 }
@@ -557,10 +557,9 @@ export async function selectRowFiles(arrIndex = []) {
         const divEl = await filesList[index].$('div div');
         const id = await divEl.getAttribute('data-entry-id');
         arrElements.push(id);
-        const spanEl = await divEl.$(
-          'div:nth-child(3) div span',
-        );
-        await spanEl.click();
+        // The extension badge is the cell's selection toggle.
+        const badgeEl = await divEl.$('[data-tid=entrySelectBadgeTID]');
+        await badgeEl.click();
       }
     }
   }

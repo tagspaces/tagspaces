@@ -383,6 +383,7 @@ export function EntryBadge({
       }
     >
       <FileExtBadge
+        data-tid="entrySelectBadgeTID"
         sx={{
           backgroundColor: color,
           flexShrink: 0,
